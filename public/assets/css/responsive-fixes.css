@@ -1,0 +1,299 @@
+/* 
+ * ACCP 2026 - Custom Responsive Fixes
+ * This file contains mobile-first responsive fixes
+ */
+
+/* Mobile Header Space Adjustment */
+@media (max-width: 991px) {
+    .inner-page-header {
+        padding-top: 120px !important;
+        padding-bottom: 60px !important;
+    }
+
+    .inner-page-header .heading1 h1 {
+        font-size: 32px !important;
+        line-height: 40px !important;
+    }
+
+    .inner-page-header .heading1 a {
+        font-size: 14px !important;
+        line-height: 20px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .inner-page-header {
+        padding-top: 100px !important;
+        padding-bottom: 40px !important;
+    }
+
+    .inner-page-header .heading1 h1 {
+        font-size: 28px !important;
+        line-height: 36px !important;
+    }
+
+    .inner-page-header .heading1 a {
+        font-size: 12px !important;
+        line-height: 18px !important;
+        word-break: break-word;
+    }
+}
+
+/* Hero Section Mobile Adjustments */
+@media (max-width: 991px) {
+    .hero1-section-area {
+        padding-top: 80px !important;
+    }
+
+    .hero1-section-area .hero1-header h1 {
+        font-size: 36px !important;
+        line-height: 44px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero1-section-area {
+        padding-top: 70px !important;
+    }
+
+    .hero1-section-area .hero1-header h1 {
+        font-size: 28px !important;
+        line-height: 36px !important;
+    }
+
+    .hero1-section-area .hero1-header h5 {
+        font-size: 16px !important;
+    }
+}
+
+/* Contact Page Map Fix */
+@media (max-width: 767px) {
+    .mapouter .gmap_canvas iframe {
+        width: 100% !important;
+        height: 300px !important;
+    }
+}
+
+/* Pricing Box Mobile */
+@media (max-width: 767px) {
+    .pricing-boxarea {
+        margin-bottom: 20px;
+    }
+}
+
+/* Schedule Items Mobile */
+@media (max-width: 767px) {
+    .schedule-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+    }
+
+    .schedule-time {
+        min-width: auto !important;
+    }
+
+    .schedule-type {
+        align-self: flex-start !important;
+    }
+}
+
+/* Footer Mobile Fixes */
+@media (max-width: 767px) {
+    .footer-area .single-footer {
+        margin-bottom: 30px;
+    }
+}
+
+/* Form Elements Mobile */
+@media (max-width: 767px) {
+    .contact4-boxarea {
+        padding: 20px !important;
+    }
+
+    .input-area input,
+    .input-area textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* Buttons Mobile */
+@media (max-width: 767px) {
+
+    .vl-btn1,
+    .vl-btn2 {
+        padding: 12px 20px !important;
+        font-size: 14px !important;
+    }
+
+    .btn-area1 {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Section Spacing Mobile */
+@media (max-width: 767px) {
+    .sp1 {
+        padding: 60px 0 !important;
+    }
+
+    .sp2 {
+        padding: 50px 0 !important;
+    }
+
+    .space-margin60 {
+        margin-bottom: 30px !important;
+    }
+}
+
+/* Heading Mobile */
+@media (max-width: 767px) {
+    .heading2 h2 {
+        font-size: 28px !important;
+        line-height: 36px !important;
+    }
+
+    .heading2 h5 {
+        font-size: 14px !important;
+    }
+}
+
+/* Login Page Mobile */
+@media (max-width: 767px) {
+    .login-card {
+        padding: 30px 20px !important;
+    }
+}
+
+/* Table Mobile Scroll */
+@media (max-width: 767px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Image Animations Mobile */
+@media (max-width: 767px) {
+    .image-anime {
+        margin-bottom: 30px;
+    }
+}
+
+/* CTA Section Mobile */
+@media (max-width: 991px) {
+
+    .cta1-section-area,
+    .cta2-section-area {
+        padding: 50px 0 !important;
+    }
+
+    .cta1-section-area .cta-header h3,
+    .cta2-section-area .cta-header h3 {
+        font-size: 24px !important;
+        margin-bottom: 20px;
+    }
+
+    .cta1-section-area .btn-area1,
+    .cta2-section-area .btn-area1 {
+        text-align: center !important;
+        margin-top: 20px;
+    }
+}
+
+/* Service/Track Boxes Mobile */
+@media (max-width: 767px) {
+    .service2-boxarea {
+        margin-bottom: 20px;
+    }
+}
+
+/* Countdown Timer Mobile */
+@media (max-width: 767px) {
+    .countdown-area .single-countdown h3 {
+        font-size: 32px !important;
+    }
+
+    .countdown-area .single-countdown p {
+        font-size: 12px !important;
+    }
+}
+
+/* Speaker Cards Mobile */
+@media (max-width: 767px) {
+    .speaker-card {
+        margin-bottom: 20px;
+    }
+}
+
+/* Gallery Grid Mobile */
+@media (max-width: 767px) {
+    .gallery-area .gallery-item {
+        margin-bottom: 15px;
+    }
+}
+
+/* FAQ Accordion Mobile */
+@media (max-width: 767px) {
+    .faq-area .accordion-button {
+        font-size: 14px !important;
+        padding: 15px !important;
+    }
+
+    .faq-area .accordion-body {
+        font-size: 14px !important;
+    }
+}
+
+/* Hide desktop-only elements on mobile */
+@media (max-width: 991px) {
+    .d-lg-block.d-none {
+        display: none !important;
+    }
+}
+
+/* Show mobile-only elements */
+@media (min-width: 992px) {
+    .d-lg-none {
+        display: none !important;
+    }
+}
+
+/* Fix for overlapping elements */
+@media (max-width: 767px) {
+    .position-absolute {
+        position: relative !important;
+    }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus states for accessibility */
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    outline: 2px solid #FFBA00;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+
+    .header-area,
+    .footer-area,
+    .mobile-sidebar {
+        display: none !important;
+    }
+
+    .inner-page-header {
+        padding-top: 20px !important;
+    }
+}

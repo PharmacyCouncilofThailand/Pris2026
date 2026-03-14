@@ -1,0 +1,46 @@
+## 1. Zero Tolerance for Inline Styles & SCSS Hacks
+- **Tailwind First:** ALWAYS use Tailwind CSS utility classes (e.g., `className="flex flex-col text-center"`).
+- **NO SCSS Modules:** Do NOT create `.module.scss` files. Use Tailwind for all styling.
+- **Mobile-First Tailwind:** Write default classes for mobile, use responsive prefixes (`md:`, `lg:`) for desktop.
+- **Tailwind Config:** Use `tailwind.config.ts` for design tokens (colors, spacing, fonts) instead of magic numbers or CSS variables.
+- **No !important:** Use Tailwind's specificity or clsx/tailwind-merge. Use `!important` ONLY when strictly necessary to override stubborn third-party styles.
+
+## 2. Internationalization (i18n) First
+- NEVER use hardcoded strings in the UI.
+- ALWAYS use `next-intl` (e.g., `t('key')`) for all user-facing text.
+
+## 3. Modern Next.js Architecture
+- **Server Components Default:** Keep components as Server Components by default. Add `'use client'` ONLY at the top of files when interactivity or React hooks (useState, useEffect) are needed.
+- **Images & Links:** Use Next.js `<Image>` (`next/image`) and `<Link>` (`next/link`) ONLY.
+- **Fonts:** Use `next/font/google` or local fonts configured via Next.js.
+
+## 4. UI Kit & Reusability (shadcn/ui First)
+- **Check shadcn/ui First:** ALWAYS look in `@/components/ui/` (shadcn components) before reinventing wheels perfectly.
+- If a standard component is missing, install it via CLI (e.g., `npx shadcn@latest add dialog`) rather than coding from scratch.
+- **Mandatory Usage:** Use `<Button>` from `@/components/ui/button` (not raw `<button>` or `<a>`). Use shadcn `<Input>` and `<Form>` components for forms.
+
+## 5. Strict TypeScript & Props
+- **No `any`:** Strict zero tolerance for `any` types.
+- **Interfaces:** Define `interface Props` or `type Props` for every component clearly.
+
+## 6. Accessibility (a11y) & Semantics
+- **Tags:** Use semantic HTML (`<nav>`, `<header>`, `<main>`, `<section>`, `<footer>`).
+- **Labels:** Interactive elements without visible text (like icon buttons) MUST have `aria-label`.
+
+## 7. Responsive Responsibility
+- **Laptop Safe:** Navigation and essential content MUST be fully visible and functional on Laptops (1200px+).
+- **Mobile Safe:** Ensure no horizontal overflow (`overflow-x-hidden`) on mobile screens.
+
+## 8. Development Hygiene
+- **Imports:** Use absolute paths (`@/components/...`, `@/lib/...`).
+- **Cleanup:** Remove unused imports, variables, and `console.log` statements immediately.
+- **Verify:** ALWAYS run `npm run build` before confirming major feature completions.
+
+## 9. Clean Code Architecture (Separation of Concerns)
+- **`src/app/`**: ONLY for Next.js routing, layouts, and page entry files (`page.tsx`, `layout.tsx`). Keep these files minimal. They should primarily fetch data and pass it to Section Components.
+- **`src/components/ui/`**: ONLY for dumb, highly reusable, stateless components (e.g., shadcn buttons, inputs, modals). They should not fetch data or contain business logic.
+- **`src/components/sections/`**: For large, page-specific functional blocks (e.g., `HeroSection`, `SpeakersShowcase`). These combine UI components and handle their own layout and animations (GSAP).
+- **`src/lib/`**: For utility functions, helper methods, API fetchers, and configurations (e.g., `utils.ts`, `cn()`).
+- **`src/hooks/`**: For custom React hooks (e.g., `useWindowSize`, `useGSAPTimeline`).
+- **`src/data/`**: For mock data, constants, and structured JSON (e.g., `speakersData.ts`, `navigation.ts`). DO NOT put data directly inside components.
+- **`src/types/`**: For global TypeScript interfaces and types shared across multiple files.

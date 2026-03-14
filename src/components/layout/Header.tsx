@@ -98,16 +98,17 @@ export default function Header() {
               {navigationData.map((item) => (
                 <NavigationMenuItem key={item.labelKey}>
                   {item.href && (!item.children || item.children.length === 0) ? (
-                    <Link href={`/${locale}${item.href}`} legacyBehavior passHref>
-                      <NavigationMenuLink
+                    <NavigationMenuLink render={
+                      <Link 
+                        href={`/${locale}${item.href}`}
                         className={cn(
                           navigationMenuTriggerStyle(),
                           "bg-transparent text-white hover:bg-white/10 hover:text-gold data-[active]:bg-white/10 data-[state=open]:bg-white/10 focus:bg-white/10"
                         )}
-                      >
-                        {t(item.labelKey)}
-                      </NavigationMenuLink>
-                    </Link>
+                      />
+                    }>
+                      {t(item.labelKey)}
+                    </NavigationMenuLink>
                   ) : (
                     <>
                       <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-gold data-[active]:bg-white/10 data-[state=open]:bg-white/10 focus:bg-white/10">

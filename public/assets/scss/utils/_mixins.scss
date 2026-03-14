@@ -1,0 +1,67 @@
+@use "sass:map";
+@use "breakpoints" as *;
+
+// ============================================
+// Media Query Mixin
+// ============================================
+
+// Map of standard breakpoints for cleaner usage
+$breakpoints-map: (
+  'xs': 576px,
+  'sm': 768px,
+  'md': 992px,
+  'lg': 1200px,
+  'xl': 1400px,
+  'xxl': 1600px
+);
+
+@mixin respond-to($breakpoint) {
+
+  // If the key exists in the map
+  @if map.has-key($breakpoints-map, $breakpoint) {
+    $value: map.get($breakpoints-map, $breakpoint);
+
+    @media (max-width: ($value - 0.02px)) {
+      @content;
+    }
+  }
+
+  // Handle specific max-width values (integer)
+  @else if type-of($breakpoint)=='number' {
+    @media (max-width: $breakpoint) {
+      @content;
+    }
+  }
+
+  // Handle existing string variables (legacy support)
+  @else if $breakpoint =='xl-down' {
+    @media (max-width: 1399px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint =='lg-down' {
+    @media (max-width: 1199px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint =='md-down' {
+    @media (max-width: 991px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint =='sm-down' {
+    @media (max-width: 767px) {
+      @content;
+    }
+  }
+
+  // Fallback for custom strings
+  @else {
+    @media #{$breakpoint} {
+      @content;
+    }
+  }
+}
