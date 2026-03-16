@@ -13,6 +13,19 @@ export default function GlobalRefreshRedirect() {
   useEffect(() => {
     if (!isInitialized) {
       isInitialized = true;
+      
+      // On completely fresh hard-load (F5 / Refresh)
+      if (typeof window !== "undefined") {
+        const perfEntries = performance.getEntriesByType("navigation");
+        if (perfEntries.length > 0) {
+          const navType = (perfEntries[0] as PerformanceNavigationTiming).type;
+          // If user hit refresh, redirect to home page so intro plays
+          if (navType === "reload" && pathname !== "/") {
+            window.location.href = "/";
+            return;
+          }
+        }
+      }
     }
 
     if (pathname !== "/") {

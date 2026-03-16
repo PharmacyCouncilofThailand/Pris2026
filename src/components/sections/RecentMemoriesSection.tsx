@@ -83,21 +83,18 @@ export default function RecentMemoriesSection() {
   return (
     <>
       <section className="relative bg-black text-white overflow-hidden">
-        {/* Header */}
-        <div className="relative z-10 pt-20 md:pt-28 pb-8 md:pb-12 text-center">
-          <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] font-black uppercase tracking-tighter leading-none mb-4 sm:mb-6">
-            Recent Memories
-          </h2>
-          <p className="text-white/50 text-base sm:text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed px-4">
-            Relive the highlights from the Pharmaceutical Research and Innovation Symposium 2025
-          </p>
-        </div>
+        {/* Theme background glows */}
+        <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full pointer-events-none opacity-50 translate-x-[-30%]" />
+        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[150px] rounded-full pointer-events-none opacity-50 translate-x-[30%]" />
+
 
         {/* Vertical Scrolling Gallery — 3 columns */}
-        <div className="relative h-[600px] sm:h-[700px] md:h-[800px] overflow-hidden">
+        <div className="relative h-[600px] sm:h-[700px] md:h-[800px] overflow-hidden z-10">
           {/* Top & Bottom fade overlays */}
           <div className="absolute top-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-b from-black to-transparent z-10 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-40 md:h-64 bg-gradient-to-t from-black via-black/60 to-transparent z-10 pointer-events-none flex">
+             <div className="w-full h-full backdrop-blur-xl [mask-image:linear-gradient(to_top,black_10%,transparent_100%)]" />
+          </div>
 
           <div className="flex gap-3 sm:gap-4 md:gap-5 px-3 sm:px-4 md:px-8 h-full">
             {/* Column 1 — scrolls UP */}

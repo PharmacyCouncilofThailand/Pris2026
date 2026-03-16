@@ -79,38 +79,37 @@ export const submissionSteps = [
 ];
 
 export const abstractExample = {
-  title: "IMPACT OF CLINICAL PHARMACY SERVICES ON PATIENT OUTCOMES IN A TERTIARY CARE HOSPITAL",
+  title: "Telehealth for optimizing asthma management during pregnancy: a randomized controlled trial",
   authors: [
-    { name: "John Doe", affiliation: 1, isPresenter: true },
-    { name: "Jane Smith", affiliation: 2 },
+    { name: "Elida Zairina", affiliation: 1, isPresenter: true },
+    { name: "Michael J Abramson", affiliation: 2 },
+    { name: "Kay Stewart", affiliation: 3 },
+    { name: "Johnson George", affiliation: 3 },
   ],
   affiliations: [
-    { id: 1, name: "Department of Pharmacy Practice, Faculty of Pharmacy, University A" },
-    { id: 2, name: "School of Pharmaceutical Sciences, University B" },
+    { id: 1, name: "Dept of Pharmacy Practice, Faculty of Pharmacy, Universitas Airlangga, Surabaya, Indonesia" },
+    { id: 2, name: "Dept of Epidemiology, School of Public Health and Preventive Medicine, Monash University, Melbourne, Australia" },
+    { id: 3, name: "Centre for Medicine Use and Safety, Faculty of Pharmacy and Pharmaceutical Sciences, Monash University, Melbourne, Australia" },
   ],
   sections: [
     {
       heading: "Background",
-      content: "Clinical pharmacy services have evolved significantly to improve patient safety and therapeutic outcomes...",
-    },
-    {
-      heading: "Objectives",
-      content: "To evaluate the impact of clinical pharmacist interventions on medication adherence and clinical markers...",
+      content: "Managing asthma in pregnant women is an integral part of asthma guidelines; however poorly controlled asthma during pregnancy remains a major problem. This study aimed to evaluate the efficacy of a telehealth program supported by a handheld respiratory device in improving asthma control during pregnancy.",
     },
     {
       heading: "Methods",
-      content: "A prospective randomized controlled study was conducted over 6 months involving 200 patients...",
+      content: "Pregnant women with asthma (n=72) from two antenatal clinics in Melbourne, Australia were randomized to one of the two groups: 1) intervention – involving a telehealth program and written asthma action plan supported by a handheld respiratory device and a smart phone application (Breathe-easy®); or 2) control group – usual care. Both groups were followed prospectively, and their asthma control scores were compared at 3 and 6 months.",
     },
     {
       heading: "Results",
-      content: "Patients in the intervention group showed a significant improvement in medication adherence (p < 0.05)...",
+      content: "At baseline, participants' mean (±SD) age was 31.4±4.5 years and gestational age 16.7±3.1 weeks. No significant differences in demographic, maternal or clinical characteristics were observed. At 6 months, compared to the usual care group, the intervention group had better asthma control (p=0.02) and asthma-related quality of life (p<0.01). There were no significant differences between groups in lung function, unscheduled healthcare visits, days off work/study, oral corticosteroid use or perinatal outcomes. No significant differences between groups were found in 3 months.",
     },
     {
       heading: "Conclusions",
-      content: "The integration of clinical pharmacists into the multidisciplinary care team significantly enhances patient care...",
+      content: "Telehealth interventions supporting self-management are feasible and efficacious to improve asthma control and asthma-related quality of life during pregnancy.",
     },
   ],
-  keywords: ["Clinical Pharmacy", "Patient Outcomes", "Medication Adherence", "Pharmacy Practice"],
+  keywords: ["asthma", "pregnant women", "quality-of-life", "telehealth"],
 };
 
 export const submissionFormLabels = {

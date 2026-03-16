@@ -203,8 +203,19 @@ export default function SpeakerSection() {
                 >
                   {/* Speaker Card Design */}
                   <div className="relative w-full h-full group bg-[#0d1529] border border-white/10 rounded-2xl flex flex-col justify-end p-6 shadow-2xl">
+                    
+                    {/* Speaker Image */}
+                    {speaker.image && (
+                      <div className="absolute inset-0 z-0">
+                        <img
+                          src={speaker.image}
+                          alt={speaker.name}
+                          className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 mix-blend-luminosity hover:mix-blend-normal"
+                        />
+                      </div>
+                    )}
+
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d1529]/60 to-[#0d1529] z-10" />
-                    <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,_white_1px,_transparent_1px)] bg-[length:10px_10px]" />
                     <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
                     
                     {/* Speaker Info */}

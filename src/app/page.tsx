@@ -19,8 +19,18 @@ const SpeakerSection = dynamic(
   { ssr: false }
 );
 
+const RegistrationCTASection = dynamic(
+  () => import("@/components/sections/RegistrationCTASection"),
+  { ssr: false }
+);
+
 const SponsorSection = dynamic(
   () => import("@/components/sections/SponsorSection"),
+  { ssr: false }
+);
+
+const HighlightVideoSection = dynamic(
+  () => import("@/components/sections/HighlightVideoSection"),
   { ssr: false }
 );
 
@@ -54,24 +64,24 @@ export default function Home() {
 
       {/* Blur transition removed as Sponsor is now dark theme */}
 
+      {/* Highlight Video */}
+      <div className="w-full relative" style={{ zIndex: 2 }}>
+        <HighlightVideoSection />
+      </div>
+
       {/* Recent Memories 2024 */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
         <RecentMemoriesSection />
       </div>
 
-      {/* Dynamic Blur Transition (Black Fade) */}
-      <div className="w-full h-24 md:h-32 -mt-12 md:-mt-16 relative z-10 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 backdrop-blur-3xl bg-gradient-to-b from-black via-black/60 to-transparent" />
+      {/* Registration CTA before Sponsors */}
+      <div className="w-full relative" style={{ zIndex: 2 }}>
+        <RegistrationCTASection />
       </div>
 
       {/* Sponsor Marquee */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
         <SponsorSection />
-      </div>
-
-      {/* Dynamic Blur Transition (Sponsor to Footer) */}
-      <div className="w-full h-24 md:h-32 -mt-12 md:-mt-16 relative z-10 pointer-events-none overflow-hidden">
-        <div className="absolute inset-0 backdrop-blur-3xl bg-gradient-to-b from-transparent via-black/60 to-black" />
       </div>
     </main>
   );

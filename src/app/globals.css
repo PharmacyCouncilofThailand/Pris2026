@@ -150,3 +150,21 @@ body.hero-playing footer {
 body.hero-playing main > div:not(:first-child) {
   opacity: 0;
 }
+
+/* Animated gradient border for Early Bird card */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes border-spin {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
+}
+
+.animate-border-spin {
+  --angle: 0deg;
+  background: conic-gradient(from var(--angle), #FF5A00, #0055FF, #FF5A00, #0055FF, #FF5A00);
+  animation: border-spin 4s linear infinite;
+}

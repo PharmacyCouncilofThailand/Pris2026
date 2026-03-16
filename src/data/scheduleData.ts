@@ -1,7 +1,7 @@
 export const scheduleData = [
   {
     day: "Day 1",
-    date: "July 9, 2026",
+    date: "October 15, 2026",
     events: [
       { 
         id: 1, 
@@ -21,7 +21,7 @@ export const scheduleData = [
           {
             name: "Prof. Dr. Kenji Yamamoto",
             role: "ACCP President",
-            image: "/assets/Img/all-images/memory/memory1.jpg"
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           }
         ]
       },
@@ -48,12 +48,12 @@ export const scheduleData = [
           {
             name: "Dr. Emily Chen",
             role: "Panelist",
-            image: "/assets/Img/all-images/bangkok/img2.jpg"
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           },
           {
             name: "Dr. James Carter",
             role: "Panelist",
-            image: "/assets/Img/all-images/memory/memory1.jpg"
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           },
           {
             name: "Prof. Maria Lopez",
@@ -73,7 +73,7 @@ export const scheduleData = [
   },
   {
     day: "Day 2",
-    date: "July 10, 2026",
+    date: "October 16, 2026",
     events: [
       { 
         id: 6, 
@@ -101,7 +101,7 @@ export const scheduleData = [
           {
             name: "Dr. Albert Wong",
             role: "Research Lead",
-            image: "/assets/Img/all-images/bangkok/img2.jpg"
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           }
         ]
       },
@@ -123,52 +123,9 @@ export const scheduleData = [
           {
             name: "Dr. Robert Garcia",
             role: "Workshop Lead",
-            image: "/assets/Img/all-images/memory/memory1.jpg"
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           }
         ]
-      },
-    ],
-  },
-  {
-    day: "Day 3",
-    date: "July 11, 2026",
-    events: [
-      { 
-        id: 11, 
-        time: "09:00 - 10:30", 
-        title: "Plenary Session 3: Global Health Challenges", 
-        description: "Addressing global health disparities and the role of pharmacists.", 
-        location: "World Ballroom", 
-        type: "Session",
-        speakers: [
-          {
-            name: "Assoc. Prof. Dr. Nattiya",
-            role: "PRIS 2026 Chair",
-            image: "/assets/Img/all-images/bangkok/img2.jpg"
-          }
-        ]
-      },
-      { 
-        id: 12, 
-        time: "10:30 - 11:00", 
-        title: "Coffee Break", 
-        location: "Exhibition Hall", 
-        type: "Break" 
-      },
-      { 
-        id: 13, 
-        time: "11:00 - 12:30", 
-        title: "Award Ceremony & Closing Remarks", 
-        description: "Celebrating outstanding contributions to the field of clinical pharmacy.", 
-        location: "World Ballroom", 
-        type: "Ceremony" 
-      },
-      { 
-        id: 14, 
-        time: "12:30 - 14:00", 
-        title: "Farewell Lunch", 
-        location: "Lotus Room", 
-        type: "Lunch" 
       },
     ],
   },

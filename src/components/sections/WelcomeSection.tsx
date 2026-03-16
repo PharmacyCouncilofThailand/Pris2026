@@ -62,7 +62,7 @@ export default function WelcomeSection() {
       ref={containerRef}
       className={cn(
         "relative pt-0 pb-20 md:pb-28 overflow-hidden z-[2]",
-        "bg-black"
+        "bg-white"
       )}
     >
 
@@ -76,20 +76,20 @@ export default function WelcomeSection() {
             </span>
             <span className="w-12 h-px bg-gold/40" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-white font-heading">
+          <h2 className="text-3xl md:text-4xl font-bold text-black font-heading">
             Meet Our Leaders
           </h2>
         </div>
 
-        {/* 3 Speakers in one row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
+        {/* Speakers in one row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-4xl mx-auto">
           {ORGANIZERS_DATA.map((person, index) => (
             <div
               key={index}
               className="speaker-card group flex flex-col items-center text-center"
             >
               {/* Profile Image */}
-              <div className="relative w-36 h-36 md:w-44 md:h-44 mb-6 rounded-full overflow-hidden ring-2 ring-white/10 group-hover:ring-gold/40 transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.3)]">
+              <div className="relative w-36 h-36 md:w-44 md:h-44 mb-6 rounded-full overflow-hidden ring-2 ring-black/10 group-hover:ring-gold/40 transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.1)]">
                 {person.image ? (
                   <Image
                     src={person.image}
@@ -99,8 +99,8 @@ export default function WelcomeSection() {
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                   />
                 ) : (
-                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <span className="text-4xl text-white/20">
+                  <div className="w-full h-full bg-black/5 flex items-center justify-center">
+                    <span className="text-4xl text-black/20">
                       {getName(person).charAt(0)}
                     </span>
                   </div>
@@ -110,12 +110,12 @@ export default function WelcomeSection() {
               </div>
 
               {/* Name */}
-              <h3 className="text-lg md:text-xl font-bold text-white mb-2 group-hover:text-gold transition-colors duration-300">
+              <h3 className="text-lg md:text-xl font-bold text-black mb-2 group-hover:text-gold transition-colors duration-300">
                 {getName(person)}
               </h3>
 
               {/* Position */}
-              <p className="text-sm text-white/50 leading-relaxed max-w-[240px]">
+              <p className="text-sm text-black/50 leading-relaxed max-w-[240px]">
                 {getPosition(person)}
               </p>
             </div>

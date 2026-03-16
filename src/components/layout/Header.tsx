@@ -33,6 +33,7 @@ const t = (key: string) => {
     about: "About",
     aboutPris: "About PRIS",
     welcomeMessages: "Welcome Messages",
+    committee: "Committee",
     callForAbstracts: "Call for Abstracts",
     abstractGuideline: "Abstract Guideline",
     registration: "Registration",
@@ -69,7 +70,7 @@ export default function Header() {
   const locale = "en";
 
   // Determine if we should use light-background colors (dark text)
-  const isLightPage = pathname === "/abstract-submission";
+  const isLightPage = pathname === "/abstract-submission" || pathname === "/about" || pathname === "/call-for-abstracts" || pathname === "/welcome-messages";
   const useDarkText = isLightPage && !isScrolled;
 
   return (
@@ -83,7 +84,18 @@ export default function Header() {
     >
       <div className="container mx-auto px-4 md:px-8 grid grid-cols-[auto_1fr_auto] items-center">
         {/* Logo */}
-        <Link href="/" className="relative flex items-center z-50">
+        <Link 
+          href="/" 
+          className="relative flex items-center z-50"
+          onClick={() => {
+            if (typeof document !== "undefined") {
+              if (document.activeElement instanceof HTMLElement) {
+                document.activeElement.blur();
+              }
+              document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+            }
+          }}
+        >
           <Image
             src="/assets/Img/logo/Pris2026-logo.svg"
             alt="Pris 2026 Logo"
@@ -109,6 +121,14 @@ export default function Header() {
                           "bg-transparent transition-colors",
                           useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
                         )}
+                        onClick={() => {
+                          if (typeof document !== "undefined") {
+                            if (document.activeElement instanceof HTMLElement) {
+                              document.activeElement.blur();
+                            }
+                            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+                          }
+                        }}
                       />
                     }>
                       {t(item.labelKey)}
@@ -128,7 +148,17 @@ export default function Header() {
                               <NavigationMenuLink render={
                                 <Link 
                                   href={child.href || "#"} 
-                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50" 
+                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700" 
+                                  onClick={() => {
+                                    if (typeof document !== "undefined") {
+                                      if (document.activeElement instanceof HTMLElement) {
+                                        document.activeElement.blur();
+                                      }
+                                      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+                                      // Shadcn UI uses custom pointers and escapes. Sometimes clicking also needs closing state
+                                      document.body.click(); 
+                                    }
+                                  }}
                                 />
                               }>
                                 <div className="text-sm font-bold leading-none">
