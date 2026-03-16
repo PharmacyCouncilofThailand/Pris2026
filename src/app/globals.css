@@ -123,8 +123,30 @@
   }
   body {
     @apply bg-background text-foreground;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
   }
   html {
     @apply font-sans;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Hide all chrome during Hero cinematic intro */
+body.hero-playing header,
+body.hero-playing footer {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Hide sections below hero so they can't flash during the intro */
+body.hero-playing main > div:not(:first-child) {
+  opacity: 0;
 }

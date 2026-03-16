@@ -57,7 +57,9 @@ export default function Header() {
 
   React.useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      // Don't show solid navbar while the Hero cinematic intro is still playing
+      const heroStillPlaying = document.body.classList.contains("hero-playing");
+      setIsScrolled(!heroStillPlaying && window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -66,33 +68,34 @@ export default function Header() {
   // Placeholder locale logic for links
   const locale = "en";
 
+  // Determine if we should use light-background colors (dark text)
+  const isLightPage = pathname === "/abstract-submission";
+  const useDarkText = isLightPage && !isScrolled;
+
   return (
     <header
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
+        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent py-3",
         isScrolled
-          ? "bg-black/90 backdrop-blur-md border-white/10 shadow-lg py-2"
-          : "bg-transparent py-4"
+          ? "bg-black/90 backdrop-blur-md border-white/10 shadow-lg"
+          : "bg-transparent"
       )}
     >
-      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
+      <div className="container mx-auto px-4 md:px-8 grid grid-cols-[auto_1fr_auto] items-center">
         {/* Logo */}
-        <Link href={`/${locale}`} className="relative flex items-center z-50">
+        <Link href="/" className="relative flex items-center z-50">
           <Image
-            src="/assets/img/logo/Pris2026-logo.png"
+            src="/assets/Img/logo/Pris2026-logo.svg"
             alt="Pris 2026 Logo"
-            width={100}
-            height={40}
-            className={cn(
-              "object-contain transition-all duration-300",
-              isScrolled ? "h-[45px] w-auto" : "h-[60px] w-auto"
-            )}
+            width={120}
+            height={48}
+            className={cn("object-contain h-[45px] w-auto transition-all", useDarkText && "brightness-0")}
             priority
           />
         </Link>
 
         {/* Desktop Navigation (shadcn/ui NavigationMenu) */}
-        <div className="hidden xl:flex items-center gap-6">
+        <div className="hidden xl:flex items-center justify-center">
           <NavigationMenu>
             <NavigationMenuList className="gap-2">
               {navigationData.map((item) => (
@@ -100,10 +103,11 @@ export default function Header() {
                   {item.href && (!item.children || item.children.length === 0) ? (
                     <NavigationMenuLink render={
                       <Link 
-                        href={`/${locale}${item.href}`}
+                        href={item.href}
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "bg-transparent text-white hover:bg-white/10 hover:text-gold data-[active]:bg-white/10 data-[state=open]:bg-white/10 focus:bg-white/10"
+                          "bg-transparent transition-colors",
+                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
                         )}
                       />
                     }>
@@ -111,21 +115,26 @@ export default function Header() {
                     </NavigationMenuLink>
                   ) : (
                     <>
-                      <NavigationMenuTrigger className="bg-transparent text-white hover:bg-white/10 hover:text-gold data-[active]:bg-white/10 data-[state=open]:bg-white/10 focus:bg-white/10">
+                      <NavigationMenuTrigger className={cn(
+                        "bg-transparent transition-colors",
+                        useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
+                      )}>
                         {t(item.labelKey)}
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
-                        <ul className="grid w-[250px] gap-2 p-4 bg-white rounded-lg shadow-xl">
+                        <ul className="grid w-[250px] gap-2 p-4 bg-white rounded-lg shadow-xl border border-slate-100">
                           {item.children?.map((child) => (
                             <li key={child.labelKey}>
-                              <Link
-                                href={`/${locale}${child.href}`}
-                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-gray-100 hover:text-gold focus:bg-gray-100"
-                              >
-                                <div className="text-sm font-medium leading-none text-gray-900">
+                              <NavigationMenuLink render={
+                                <Link 
+                                  href={child.href || "#"} 
+                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50" 
+                                />
+                              }>
+                                <div className="text-sm font-bold leading-none">
                                   {t(child.labelKey)}
                                 </div>
-                              </Link>
+                              </NavigationMenuLink>
                             </li>
                           ))}
                         </ul>
@@ -136,20 +145,23 @@ export default function Header() {
               ))}
             </NavigationMenuList>
           </NavigationMenu>
+        </div>
 
-          {/* Auth Buttons */}
-          <div className="flex items-center gap-4">
+        {/* Auth Buttons */}
+        <div className="hidden xl:flex items-center justify-end gap-4">
             <Link 
-              href={`/${locale}/login`}
+              href="/login"
               className={cn(
                 buttonVariants({ variant: "outline" }), 
-                "text-white border-white/30 hover:bg-white hover:text-black"
+                useDarkText 
+                  ? "text-slate-950 border-slate-300 hover:bg-slate-100" 
+                  : "text-white border-white/30 hover:bg-white hover:text-black"
               )}
             >
               {t("login")}
             </Link>
             <Link 
-              href={`/${locale}/signup`}
+              href="/signup"
               className={cn(
                 buttonVariants({ variant: "default" }), 
                 "bg-gold text-black hover:bg-gold/90 font-semibold"
@@ -157,11 +169,10 @@ export default function Header() {
             >
               {t("signUp")}
             </Link>
-          </div>
         </div>
 
         {/* Mobile Navigation (shadcn/ui Sheet) */}
-        <div className="xl:hidden flex items-center">
+        <div className="xl:hidden flex items-center justify-end col-start-3">
           <Sheet>
             <SheetTrigger
               className={cn(
@@ -177,11 +188,11 @@ export default function Header() {
               <div className="p-6 h-full flex flex-col">
                 <div className="mb-8 mt-4">
                   <Image
-                    src="/assets/img/logo/Pris2026-logo.png"
+                    src="/assets/Img/logo/Pris2026-logo.svg"
                     alt="Pris 2026 Logo"
-                    width={100}
-                    height={40}
-                    className="h-[50px] w-auto"
+                    width={120}
+                    height={48}
+                    className="h-[45px] w-auto"
                   />
                 </div>
                 
@@ -191,7 +202,7 @@ export default function Header() {
                       <li key={item.labelKey} className="border-b border-white/10 pb-4">
                         {item.href ? (
                           <Link
-                            href={`/${locale}${item.href}`}
+                            href={item.href}
                             className="text-lg font-medium hover:text-gold block"
                           >
                             {t(item.labelKey)}
@@ -206,7 +217,7 @@ export default function Header() {
                               {item.children?.map((child) => (
                                 <li key={child.labelKey}>
                                   <Link
-                                    href={`/${locale}${child.href}`}
+                                    href={child.href || "#"}
                                     className="text-gray-300 hover:text-gold block py-1"
                                   >
                                     {t(child.labelKey)}
