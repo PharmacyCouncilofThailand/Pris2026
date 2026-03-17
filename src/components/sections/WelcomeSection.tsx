@@ -89,14 +89,14 @@ export default function WelcomeSection() {
               className="speaker-card group flex flex-col items-center text-center"
             >
               {/* Profile Image */}
-              <div className="relative w-36 h-36 md:w-44 md:h-44 mb-6 rounded-full overflow-hidden ring-2 ring-black/10 group-hover:ring-gold/40 transition-all duration-500 shadow-[0_10px_40px_rgba(0,0,0,0.1)]">
+              <div className="relative w-36 h-36 md:w-44 md:h-44 mb-6 rounded-full overflow-hidden ring-2 ring-black/10 shadow-[0_10px_40px_rgba(0,0,0,0.1)]">
                 {person.image ? (
                   <Image
                     src={person.image}
                     alt={getName(person)}
                     fill
                     sizes="176px"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    className="object-cover"
                   />
                 ) : (
                   <div className="w-full h-full bg-black/5 flex items-center justify-center">
@@ -105,12 +105,11 @@ export default function WelcomeSection() {
                     </span>
                   </div>
                 )}
-                {/* Hover glow */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
               </div>
 
               {/* Name */}
-              <h3 className="text-lg md:text-xl font-bold text-black mb-2 group-hover:text-gold transition-colors duration-300">
+              <h3 className="text-lg md:text-xl font-bold text-black mb-2">
                 {getName(person)}
               </h3>
 

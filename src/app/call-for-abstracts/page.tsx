@@ -1,34 +1,71 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import gsap from "gsap";
 
-// Dynamic imports for the sections we'll build next
-// Using ssr: false for GSAP-heavy components
+// Dynamic imports for the sections
 const AbstractTimeline = dynamic(() => import("@/components/sections/AbstractTimeline"), { ssr: false });
 const AbstractTopicList = dynamic(() => import("@/components/sections/AbstractTopicList"), { ssr: false });
 const AbstractGuidelines = dynamic(() => import("@/components/sections/AbstractGuidelines"), { ssr: false });
 const AbstractExamples = dynamic(() => import("@/components/sections/AbstractExamples"), { ssr: false });
 
 export default function CallForAbstractsPage() {
+  const heroRef = useRef<HTMLElement>(null!);
+
+  useEffect(() => {
+    document.body.classList.remove("hero-playing");
+
+    const ctx = gsap.context(() => {
+      gsap.from(".cfa-hero-line", {
+        yPercent: 110,
+        stagger: 0.12,
+        duration: 1.6,
+        ease: "power4.out",
+        delay: 0.15,
+      });
+      gsap.from(".cfa-hero-sub", {
+        opacity: 0,
+        y: 30,
+        duration: 1.2,
+        ease: "power3.out",
+        delay: 0.8,
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 font-sans">
-      {/* ── Inner Page Header ── */}
-      <section className="pt-32 pb-16 md:pt-48 md:pb-24 border-b border-slate-200">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <nav className="flex items-center gap-3 mb-8 text-slate-500 text-sm font-semibold uppercase tracking-widest">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-slate-900 bg-slate-100 px-2 py-0.5 rounded">Call for Abstracts</span>
-          </nav>
-          
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 mb-8 font-outfit leading-tight tracking-tight">
-            Call for <span className="text-blue-600">Abstracts</span>
+
+      {/* ══════ HERO ══════ */}
+      <section
+        ref={heroRef}
+        className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center"
+      >
+        {/* decorative bg glows */}
+        <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
+          <div className="cfa-hero-sub flex items-center gap-4 mb-8">
+            <span className="w-12 h-px bg-blue-600" />
+            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
+            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— Call for Abstracts</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
+            <div className="overflow-hidden">
+              <span className="block cfa-hero-line">Call for</span>
+            </div>
+            <div className="overflow-hidden">
+              <span className="block cfa-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500">
+                Abstracts
+              </span>
+            </div>
           </h1>
-          <p className="text-xl md:text-2xl text-slate-600 leading-relaxed max-w-3xl">
-            We invite researchers, pharmacists, and health professionals to share their innovative work and research findings with the global community at PRIS 2026.
-          </p>
         </div>
       </section>
 

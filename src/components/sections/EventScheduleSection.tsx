@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { scheduleData } from "@/data/scheduleData";
 
 if (typeof window !== "undefined") {
@@ -105,10 +106,11 @@ export default function EventScheduleSection() {
         {/* ─── Day Selector (Mobile-First scrollable, Large typography) ─── */}
         <div className="day-tabs-container flex overflow-x-auto sm:flex-wrap gap-6 sm:gap-8 md:gap-16 mb-10 md:mb-20 border-b border-white/10 pb-6 sm:pb-8 no-scrollbar">
           {scheduleData.map((day, index) => (
-            <button
+            <Button
               key={index}
               onClick={() => setActiveTab(index)}
-              className="day-tab group flex flex-col items-start text-left cursor-pointer flex-shrink-0"
+              variant="ghost"
+              className="day-tab group flex flex-col items-start justify-start text-left cursor-pointer flex-shrink-0 h-auto p-0 hover:bg-transparent"
             >
               <span 
                 className={cn(
@@ -126,7 +128,7 @@ export default function EventScheduleSection() {
               >
                 {day.date}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -195,15 +197,16 @@ export default function EventScheduleSection() {
                         </div>
                       ))}
                     {event.speakers.length > 2 && (
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => toggleExpand(event.id)}
-                        className="mt-2 flex items-center justify-between gap-2 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-gold hover:text-white transition-colors duration-300 w-full px-2 py-1"
+                        className="mt-2 flex items-center justify-between gap-2 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-gold hover:text-white transition-colors duration-300 w-full px-2 py-1 h-auto"
                       >
                         {expandedEvents.has(event.id) ? "Show Less" : `View all ${event.speakers.length} speakers`}
                         <ChevronDown 
                           className={cn("w-4 h-4 transition-transform duration-300", expandedEvents.has(event.id) && "rotate-180")} 
                         />
-                      </button>
+                      </Button>
                     )}
                   </>
                 ) : (

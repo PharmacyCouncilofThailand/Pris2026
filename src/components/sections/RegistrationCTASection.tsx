@@ -69,13 +69,17 @@ export default function RegistrationCTASection() {
 
 
 
-    // Sticky timeline effect
-    ScrollTrigger.create({
-      trigger: ".timeline-container",
-      start: "top 20%",
-      end: "bottom 80%",
-      pin: ".timeline-title",
-      pinSpacing: false,
+    // Sticky timeline effect (Desktop only via matchMedia or CSS)
+    ScrollTrigger.matchMedia({
+      "(min-width: 1024px)": function() {
+        ScrollTrigger.create({
+          trigger: ".timeline-container",
+          start: "top 20%",
+          end: "bottom 80%",
+          pin: ".timeline-title",
+          pinSpacing: false,
+        });
+      }
     });
 
   }, { scope: containerRef });
@@ -83,7 +87,7 @@ export default function RegistrationCTASection() {
   return (
     <section 
       ref={containerRef} 
-      className="py-24 md:py-40 bg-white text-black relative font-sans selection:bg-[#0055FF] selection:text-white"
+      className="py-24 md:py-40 bg-white text-black relative font-sans selection:bg-[#0055FF] selection:text-white overflow-hidden"
     >
       {/* Massive Typography Hero */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px]">
@@ -93,50 +97,118 @@ export default function RegistrationCTASection() {
             Join The Elite
           </p>
           
-          <h2 className="text-[clamp(4rem,12vw,14rem)] leading-[0.8] font-black tracking-tighter uppercase overflow-hidden">
-            <div className="flex">
+          <h2 className="text-[clamp(3.5rem,10vw,14rem)] leading-[0.8] font-black tracking-tighter uppercase overflow-hidden break-words hyphens-auto">
+            <div className="flex flex-wrap">
               {"SECURE".split("").map((char, i) => (
                 <span key={`sec-${i}`} className="char-anim inline-block">{char}</span>
               ))}
             </div>
           </h2>
-          <h2 className="text-[clamp(4rem,12vw,14rem)] leading-[0.8] font-black tracking-tighter uppercase overflow-hidden flex items-center gap-4 md:gap-12 mt-2 md:mt-0">
-            <div className="fade-up w-16 md:w-48 h-[clamp(0.5rem,1.5vw,2rem)] bg-black shrink-0 relative overflow-hidden group">
+          <h2 className="text-[clamp(3.5rem,10vw,14rem)] leading-[0.8] font-black tracking-tighter uppercase overflow-hidden flex flex-col md:flex-row md:items-center gap-4 md:gap-12 mt-4 md:mt-2">
+            <div className="fade-up w-16 md:w-48 h-[1rem] md:h-[clamp(0.5rem,1.5vw,2rem)] bg-black shrink-0 relative overflow-hidden group mb-2 md:mb-0">
               <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-in-out" />
             </div>
-            <div className="flex">
+            <div className="flex flex-wrap">
               {"YOUR SPOT".split("").map((char, i) => (
-                <span key={`spot-${i}`} className="char-anim inline-block">{char}</span>
+                <span key={`spot-${i}`} className="char-anim inline-block">{char === " " ? "\u00A0" : char}</span>
               ))}
             </div>
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mt-16 md:mt-32 items-end">
-            <div className="md:col-span-5 fade-up">
-              <Link 
-                href="/registration"
-                className="group relative inline-flex items-center justify-between w-full md:w-auto bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02]"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
-                <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-[0.2em] flex items-center gap-6">
-                  Register Collection
-                  <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
-                    <MoveUpRight className="w-5 h-5" />
-                  </div>
-                </span>
-              </Link>
-            </div>
-            <div className="md:col-span-7 fade-up">
-              <p className="text-xl md:text-3xl font-light tracking-tight leading-[1.4] text-black/80 max-w-3xl">
+          <div className="mt-16 md:mt-32 fade-up max-w-3xl">
+              <p className="text-xl md:text-3xl font-light tracking-tight leading-[1.4] text-black/80">
                 A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br className="hidden md:block" />
                 <strong className="font-semibold text-black">Experience the future of pharmacy.</strong>
               </p>
-            </div>
           </div>
         </div>
       </div>
 
       <div className="draw-line-premium w-full h-[1px] bg-black/15 my-20" />
+
+      {/* Avant-Garde Timeline & Features Layout */}
+      <div className="container mx-auto px-4 md:px-8 max-w-[1600px] timeline-container relative">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-8">
+          
+          {/* Sticky Left Column (Responsive) */}
+          <div className="w-full lg:w-4/12 relative">
+            <div className="timeline-title lg:sticky lg:top-40 mb-8 lg:mb-0 relative z-10 bg-white lg:bg-transparent pb-4 lg:pb-0">
+              <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-6 flex items-center gap-3 fade-up">
+                <span className="w-8 h-px bg-[#0055FF]"></span> Need to Know
+              </p>
+              <h3 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter fade-up leading-[0.9] break-words">
+                Critical<br className="hidden sm:block" /> Dates.
+              </h3>
+            </div>
+          </div>
+
+          {/* Right Scroll Column */}
+          <div className="w-full lg:w-7/12 lg:ml-auto flex flex-col gap-24 md:gap-32">
+            
+            {/* Timeline */}
+            <div className="flex flex-col gap-12 border-l border-black/15 pl-6 md:pl-12 relative fade-up">
+              <div className="relative group">
+                <div className="absolute -left-[24.5px] md:-left-[48.5px] top-2 w-3 h-3 rounded-full bg-[#0055FF] group-hover:scale-150 group-hover:bg-[#FF5A00] transition-all duration-300" />
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#FF5A00] mb-3 group-hover:text-[#0055FF] transition-colors">May 1 – Jun 30, 2026</p>
+                <h5 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Early Bird Registration</h5>
+                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed max-w-xl">
+                  Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.
+                </p>
+              </div>
+
+              <div className="relative group">
+                <div className="absolute -left-[24.5px] md:-left-[48.5px] top-2 w-3 h-3 rounded-full border-2 border-[#0055FF] bg-white group-hover:scale-150 transition-all duration-300 group-hover:bg-[#0055FF]" />
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-black/40 mb-3 group-hover:text-[#0055FF] transition-colors">Jul 1 – Aug 31, 2026</p>
+                <h5 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Regular Registration</h5>
+                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed max-w-xl">
+                  Standard registration window. Rates increase to full price during this period.
+                </p>
+              </div>
+
+              <div className="relative group">
+                <div className="absolute -left-[24.5px] md:-left-[48.5px] top-2 w-3 h-3 rounded-full bg-black/20 group-hover:bg-black transition-all duration-300" />
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-black/100 mb-3">Aug 31, 2026</p>
+                <h5 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Registration Closes</h5>
+                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed max-w-xl">
+                  Last day to acquire passes. We strictly close the portal to begin final event preparations.
+                </p>
+              </div>
+            </div>
+
+            <div className="draw-line-premium w-full h-[1px] bg-black/10" />
+
+            {/* Features in Editorial Style */}
+            <div className="flex flex-col gap-16 md:gap-24 fade-up">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start group">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#0055FF] mb-4 transition-colors">Special Feature</p>
+                  <h4 className="text-3xl md:text-4xl font-semibold tracking-tighter group-hover:text-[#FF5A00] transition-colors">Exclusive<br/>Networking Night.</h4>
+                </div>
+                <div>
+                  <p className="text-lg text-black/60 font-light leading-relaxed">
+                    More than just knowledge—meet peers and build new alliances in a welcoming atmosphere, featuring a premium curated dinner experience.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start group">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-4 transition-colors">Exhibition</p>
+                  <h4 className="text-3xl md:text-4xl font-semibold tracking-tighter group-hover:text-[#0055FF] transition-colors">60+ Innovation<br/>Space.</h4>
+                </div>
+                <div>
+                   <p className="text-lg text-black/60 font-light leading-relaxed">
+                    Experience the latest pharmaceutical innovations and medical devices from over 60 leading companies. Stay ahead of future trends.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-24 md:my-40" />
 
       {/* Interactive Pricing Rows (Bespoke Table Layout) */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] pricing-wrapper">
@@ -211,89 +283,21 @@ export default function RegistrationCTASection() {
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-24 md:my-40" />
-
-      {/* Avant-Garde Timeline & Features Layout */}
-      <div className="container mx-auto px-4 md:px-8 max-w-[1600px] timeline-container relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8">
-          
-          {/* Sticky Left Column */}
-          <div className="lg:col-span-4 h-full relative">
-            <div className="timeline-title lg:sticky lg:top-40">
-              <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-6 flex items-center gap-3 fade-up">
-                <span className="w-8 h-px bg-[#0055FF]"></span> Need to Know
-              </p>
-              <h3 className="text-5xl md:text-7xl font-bold tracking-tighter fade-up leading-[0.9]">
-                Critical<br />Dates.
-              </h3>
-            </div>
-          </div>
-
-          {/* Right Scroll Column */}
-          <div className="lg:col-span-7 lg:col-start-6 flex flex-col gap-24 md:gap-32">
-            
-            {/* Timeline */}
-            <div className="flex flex-col gap-12 border-l border-black/15 pl-6 md:pl-12 relative fade-up">
-              <div className="relative group">
-                <div className="absolute -left-[24.5px] md:-left-[48.5px] top-2 w-3 h-3 rounded-full bg-[#0055FF] group-hover:scale-150 group-hover:bg-[#FF5A00] transition-all duration-300" />
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#FF5A00] mb-3 group-hover:text-[#0055FF] transition-colors">May 1 – Jun 30, 2026</p>
-                <h5 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Early Bird Registration</h5>
-                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed max-w-xl">
-                  Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.
-                </p>
+        {/* Register CTA Button */}
+        <div className="mt-16 md:mt-20 flex justify-center fade-up">
+          <Link 
+            href="/registration"
+            className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
+            <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-[0.2em] flex items-center gap-6">
+              Register Collection
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
+                <MoveUpRight className="w-5 h-5" />
               </div>
-
-              <div className="relative group">
-                <div className="absolute -left-[24.5px] md:-left-[48.5px] top-2 w-3 h-3 rounded-full border-2 border-[#0055FF] bg-white group-hover:scale-150 transition-all duration-300 group-hover:bg-[#0055FF]" />
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-black/40 mb-3 group-hover:text-[#0055FF] transition-colors">Jul 1 – Aug 31, 2026</p>
-                <h5 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Regular Registration</h5>
-                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed max-w-xl">
-                  Standard registration window. Rates increase to full price during this period.
-                </p>
-              </div>
-
-              <div className="relative group">
-                <div className="absolute -left-[24.5px] md:-left-[48.5px] top-2 w-3 h-3 rounded-full bg-black/20 group-hover:bg-black transition-all duration-300" />
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-black/100 mb-3">Aug 31, 2026</p>
-                <h5 className="text-3xl md:text-4xl font-semibold tracking-tight mb-4">Registration Closes</h5>
-                <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed max-w-xl">
-                  Last day to acquire passes. We strictly close the portal to begin final event preparations.
-                </p>
-              </div>
-            </div>
-
-            <div className="draw-line-premium w-full h-[1px] bg-black/10" />
-
-            {/* Features in Editorial Style */}
-            <div className="flex flex-col gap-16 md:gap-24 fade-up">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start group">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#0055FF] mb-4 transition-colors">Special Feature</p>
-                  <h4 className="text-3xl md:text-4xl font-semibold tracking-tighter group-hover:text-[#FF5A00] transition-colors">Exclusive<br/>Networking Night.</h4>
-                </div>
-                <div>
-                  <p className="text-lg text-black/60 font-light leading-relaxed">
-                    More than just knowledge—meet peers and build new alliances in a welcoming atmosphere, featuring a premium curated dinner experience.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start group">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-4 transition-colors">Exhibition</p>
-                  <h4 className="text-3xl md:text-4xl font-semibold tracking-tighter group-hover:text-[#0055FF] transition-colors">60+ Innovation<br/>Space.</h4>
-                </div>
-                <div>
-                   <p className="text-lg text-black/60 font-light leading-relaxed">
-                    Experience the latest pharmaceutical innovations and medical devices from over 60 leading companies. Stay ahead of future trends.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          </div>
+            </span>
+          </Link>
         </div>
       </div>
 

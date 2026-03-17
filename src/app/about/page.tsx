@@ -283,12 +283,12 @@ export default function AboutPrisPage() {
     >
 
       {/* ══════ HERO ══════ */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end px-6 md:px-12 pb-20 md:pb-28 pt-36">
+      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
         {/* decorative bg glows */}
         <div className="absolute top-0 left-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto w-full relative z-10">
+        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
           <div className="about-hero-sub flex items-center gap-4 mb-8">
             <span className="w-12 h-px bg-blue-600" />
             <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>

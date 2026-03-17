@@ -6,7 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Swiper from "swiper";
-import { EffectCoverflow, Pagination, Autoplay, Navigation, Keyboard, Mousewheel } from "swiper/modules";
+import { EffectCoverflow, Pagination, Autoplay, Navigation, Keyboard } from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
@@ -38,28 +38,28 @@ export default function SpeakerSection() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top", 
-          end: "+=400%",    // Increased duration for an even smoother, longer scroll feel
+          end: "+=150%",    // Reduced duration to make it easier to scroll past
           pin: true,        
-          scrub: 0.5,       
+          scrub: 1,         // Smooth scrubbing
         },
       });
 
       // 0. Slow zoom on the background image (Ken Burns cinematic effect)
       if (bgLayer) {
-        tl.to(bgLayer, { scale: 1.15, transformOrigin: "center center", duration: 15, ease: "none" }, 0);
+        tl.to(bgLayer, { scale: 1.15, transformOrigin: "center center", duration: 15, ease: "none", force3D: true }, 0);
       }
 
       // 1. Darken BG
       tl.to(
         overlayRef.current,
-        { backgroundColor: "rgba(0, 0, 0, 0.85)", duration: 2.5, ease: "power1.inOut" },
+        { backgroundColor: "rgba(0, 0, 0, 0.85)", duration: 2.5, ease: "power1.inOut", force3D: true },
         0
       );
 
       // 2. Text slides up from below the screen (No fade, pure scroll movement)
       tl.fromTo(
         textRef.current,
-        { y: window.innerHeight }, // starting completely below the viewport
+        { y: window.innerHeight, force3D: true }, // starting completely below the viewport
         { y: 0, duration: 4, ease: "none" }, // pure linear scrub movement
         1.5
       );
@@ -75,7 +75,8 @@ export default function SpeakerSection() {
           scale: 0.5, 
           opacity: 0, 
           duration: 3, 
-          ease: "none" 
+          ease: "none",
+          force3D: true
         },
         7.5
       );
@@ -83,7 +84,7 @@ export default function SpeakerSection() {
       // 5. Swiper fades in smoothly
       tl.fromTo(
         swiperContainerRef.current,
-        { y: 80, autoAlpha: 0, scale: 0.95 },
+        { y: 80, autoAlpha: 0, scale: 0.95, force3D: true },
         { y: 0, autoAlpha: 1, scale: 1, duration: 3, ease: "power2.out" },
         9 // slightly overlaps text exit
       );
@@ -99,7 +100,7 @@ export default function SpeakerSection() {
     if (!swiperDomRef.current) return;
 
     const swiperInstance = new Swiper(swiperDomRef.current, {
-      modules: [EffectCoverflow, Pagination, Autoplay, Navigation, Keyboard, Mousewheel],
+      modules: [EffectCoverflow, Pagination, Autoplay, Navigation, Keyboard],
       effect: "coverflow",
       grabCursor: true,
       centeredSlides: true,
@@ -127,10 +128,6 @@ export default function SpeakerSection() {
       },
       keyboard: {
         enabled: true,
-      },
-      mousewheel: {
-        thresholdDelta: 70,
-        forceToAxis: true, // IMPORTANT: Allows normal vertical page scrolling without trapping the user
       },
       breakpoints: {
         560: { slidesPerView: 2.5 },

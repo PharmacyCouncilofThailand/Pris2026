@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -46,8 +46,6 @@ const t = (key: string) => {
     more: "More",
     gallery: "Gallery",
     contact: "Contact",
-    login: "Login",
-    signUp: "Sign Up",
   };
   return translations[key] || key;
 };
@@ -66,9 +64,6 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Placeholder locale logic for links
-  const locale = "en";
-
   // Determine if we should use light-background colors (dark text)
   const isLightPage = pathname === "/abstract-submission" || pathname === "/about" || pathname === "/call-for-abstracts" || pathname === "/welcome-messages";
   const useDarkText = isLightPage && !isScrolled;
@@ -82,7 +77,7 @@ export default function Header() {
           : "bg-transparent"
       )}
     >
-      <div className="container mx-auto px-4 md:px-8 grid grid-cols-[auto_1fr_auto] items-center">
+      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
         <Link 
           href="/" 
@@ -177,37 +172,15 @@ export default function Header() {
           </NavigationMenu>
         </div>
 
-        {/* Auth Buttons */}
-        <div className="hidden xl:flex items-center justify-end gap-4">
-            <Link 
-              href="/login"
-              className={cn(
-                buttonVariants({ variant: "outline" }), 
-                useDarkText 
-                  ? "text-slate-950 border-slate-300 hover:bg-slate-100" 
-                  : "text-white border-white/30 hover:bg-white hover:text-black"
-              )}
-            >
-              {t("login")}
-            </Link>
-            <Link 
-              href="/signup"
-              className={cn(
-                buttonVariants({ variant: "default" }), 
-                "bg-gold text-black hover:bg-gold/90 font-semibold"
-              )}
-            >
-              {t("signUp")}
-            </Link>
-        </div>
-
         {/* Mobile Navigation (shadcn/ui Sheet) */}
-        <div className="xl:hidden flex items-center justify-end col-start-3">
+        <div className="xl:hidden flex items-center justify-end">
           <Sheet>
             <SheetTrigger
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
-                "text-white hover:bg-white/20 border border-white/20 "
+                useDarkText 
+                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200" 
+                  : "text-white hover:bg-white/20 border border-white/20"
               )}
             >
               <Menu className="h-6 w-6" />
@@ -261,27 +234,6 @@ export default function Header() {
                     ))}
                   </ul>
                 </nav>
-
-                <div className="mt-8 flex flex-col gap-3 pt-6 border-t border-white/10">
-                  <Link 
-                    href={`/${locale}/login`}
-                    className={cn(
-                      buttonVariants({ variant: "outline" }), 
-                      "w-full text-black bg-white hover:bg-gray-200"
-                    )}
-                  >
-                    {t("login")}
-                  </Link>
-                  <Link 
-                    href={`/${locale}/signup`}
-                    className={cn(
-                      buttonVariants({ variant: "default" }), 
-                      "w-full bg-gold text-black hover:bg-gold/90 font-semibold"
-                    )}
-                  >
-                    {t("signUp")}
-                  </Link>
-                </div>
               </div>
             </SheetContent>
           </Sheet>

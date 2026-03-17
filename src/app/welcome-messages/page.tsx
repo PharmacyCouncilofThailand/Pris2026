@@ -5,41 +5,13 @@ import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Quote } from "lucide-react";
+
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Fixed Data Structure with the exact required order
-const messagesData = [
-  {
-    id: "president",
-    name: "Mr. Preecha Bhandtivej",
-    role: "President, Pharmacy Council of Thailand",
-    thaiRole: "นายกสภาเภสัชกรรม",
-    image: "/assets/Img/Welcome message/นายกสภาดภสัชกรรม.svg",
-    quote: "A transformative era for clinical pharmacy practice awaits us as we gather for PRIS 2026.",
-    message: [
-      "On behalf of the Pharmacy Council of Thailand, it is my profound honor to welcome you to the 2nd Pharmacy Research and Innovation Summit (PRIS 2026).",
-      "As healthcare continues to evolve at an unprecedented pace, the role of pharmacists expands far beyond traditional boundaries. We are the bridge between cutting-edge medical research and patient-centric care.",
-      "This summit serves as a crucial platform for professionals, researchers, and policymakers to exchange visionary ideas, shape clinical guidelines, and foster innovations that will define the future of our profession both locally and globally. I look forward to the inspiring dialogues we will share."
-    ]
-  },
-  {
-    id: "secretary",
-    name: "Assoc. Prof. Sunee Lertsinudom",
-    role: "Secretary General, Pharmacy Council of Thailand",
-    thaiRole: "รศ.ภญ.สุณี เลิศสินอุดม เลขาธิการสภาเภสัชกรรม",
-    image: "/assets/Img/Welcome message/อ.สุณี.svg",
-    quote: "Empowering our profession through collaborative research, unwavering dedication, and shared vision.",
-    message: [
-      "Welcome to PRIS 2026. The Pharmacy Council remains deeply committed to advancing the standards of our practice through rigorous scientific engagement and international collaboration.",
-      "Over the next three days, you will have the unparalleled opportunity to delve into the latest advancements in pharmacology, precision medicine, and digital health strategies.",
-      "Your participation signifies a shared commitment to elevating patient care standards worldwide. I urge you to actively engage, question the status quo, and forge new partnerships that will resonate far beyond this summit."
-    ]
-  }
-];
+import { messagesData } from "@/data/welcomeMessages";
 
 export default function WelcomeMessagesPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -168,8 +140,7 @@ export default function WelcomeMessagesPage() {
                 </div>
 
                 <div className="speaker-content relative z-10 w-full">
-                  <Quote className="w-10 h-10 md:w-12 md:h-12 text-gold/30 mb-6 md:mb-8" />
-                  
+
                   <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-2 leading-tight">
                     {speaker.name}
                   </h2>

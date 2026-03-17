@@ -4,38 +4,8 @@ import React, { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Split images into 3 columns
-const column1 = [
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-7.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-29.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-55.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-60.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-84.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-92.jpg",
-];
-
-const column2 = [
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-4.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-11.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-33.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-83.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-23.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-74.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-89.jpg",
-];
-
-const column3 = [
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-8.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-31.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-38.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-3.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-4.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-62.jpg",
-  "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-94.jpg",
-];
-
-const allImages = [...column1, ...column2, ...column3];
+import { Button } from "@/components/ui/button";
+import { column1, column2, column3, allImages } from "@/data/recentMemoriesData";
 
 export default function RecentMemoriesSection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -210,26 +180,32 @@ export default function RecentMemoriesSection() {
           className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-2xl flex items-center justify-center"
           onClick={closeLightbox}
         >
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 text-white/60 hover:text-white transition-colors duration-300 p-2"
             onClick={closeLightbox}
           >
             <X className="w-6 h-6 sm:w-8 sm:h-8" />
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-10 text-white/40 hover:text-white transition-colors duration-300 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md"
             onClick={(e) => { e.stopPropagation(); goPrev(); }}
           >
             <ChevronLeft className="w-5 h-5 sm:w-8 sm:h-8" />
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-10 text-white/40 hover:text-white transition-colors duration-300 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md"
             onClick={(e) => { e.stopPropagation(); goNext(); }}
           >
             <ChevronRight className="w-5 h-5 sm:w-8 sm:h-8" />
-          </button>
+          </Button>
 
           <div
             className="relative w-[90vw] h-[80vh] max-w-5xl"
