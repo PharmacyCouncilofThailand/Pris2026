@@ -69,17 +69,17 @@ export default function RegistrationCTASection() {
 
 
 
-    // Sticky timeline effect (Desktop only via matchMedia or CSS)
-    ScrollTrigger.matchMedia({
-      "(min-width: 1024px)": function() {
-        ScrollTrigger.create({
-          trigger: ".timeline-container",
-          start: "top 20%",
-          end: "bottom 80%",
-          pin: ".timeline-title",
-          pinSpacing: false,
-        });
-      }
+    // Sticky timeline effect (Desktop only) — ใช้ gsap.matchMedia() แทน ScrollTrigger.matchMedia() ที่ถูก Deprecated ใน GSAP 3.12+
+    const mm = gsap.matchMedia();
+    mm.add("(min-width: 1024px)", () => {
+      ScrollTrigger.create({
+        trigger: ".timeline-container",
+        start: "top 20%",
+        end: "bottom 80%",
+        pin: ".timeline-title",
+        pinSpacing: false,
+      });
+      return () => {}; // cleanup
     });
 
   }, { scope: containerRef });
