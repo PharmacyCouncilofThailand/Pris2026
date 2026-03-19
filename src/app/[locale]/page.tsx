@@ -4,6 +4,11 @@ import Hero from "@/components/sections/Hero";
 import StickyStackWrapper from "@/components/layout/StickyStackWrapper";
 import dynamic from "next/dynamic";
 
+const PrisIntroSection = dynamic(
+  () => import("@/components/sections/PrisIntroSection"),
+  { ssr: false }
+);
+
 const WelcomeSection = dynamic(
   () => import("@/components/sections/WelcomeSection"),
   { ssr: false }
@@ -41,6 +46,11 @@ export default function Home() {
       <StickyStackWrapper>
         <Hero />
       </StickyStackWrapper>
+
+      {/* What is PRIS */}
+      <div className="w-full relative" style={{ zIndex: 2 }}>
+        <PrisIntroSection />
+      </div>
 
       {/* Welcome Section - slides over the Hero */}
       <div className="w-full relative" style={{ zIndex: 2 }}>

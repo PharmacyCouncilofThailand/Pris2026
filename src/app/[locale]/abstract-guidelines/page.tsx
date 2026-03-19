@@ -16,6 +16,14 @@ export default function DetailedGuidelines() {
   const pageRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("abstractGuidelines");
   const locale = useLocale();
+  const importantDatesReservationNote =
+    locale === "th"
+      ? submissionGuidelines.importantDatesReservationNoteTh
+      : submissionGuidelines.importantDatesReservationNote;
+  const importantDatesReviewNote =
+    locale === "th"
+      ? submissionGuidelines.presenterRegistrationNoteTh
+      : submissionGuidelines.presenterRegistrationNote;
 
   useGSAP(() => {
     // Hero lines reveal
@@ -93,7 +101,7 @@ export default function DetailedGuidelines() {
         </div>
       </section>
 
-      {/* ══════ INTRO ══════ */}
+      {/* INTRO */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-4xl mx-auto content-block">
           <p className="text-gray-500 text-base md:text-lg leading-[1.8] font-light">
@@ -102,10 +110,9 @@ export default function DetailedGuidelines() {
         </div>
       </section>
 
-      {/* ══════ IMPORTANT DATES ══════ */}
+      {/* IMPORTANT DATES */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
-
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
@@ -120,19 +127,25 @@ export default function DetailedGuidelines() {
             {submissionGuidelines.importantDates.map((item, idx) => (
               <div
                 key={idx}
-                className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200"
+                className="flex flex-col gap-1 border-b border-gray-200 py-5 md:flex-row md:items-baseline md:gap-8"
               >
-                <span className={`text-gray-900 font-medium text-lg md:w-[55%] ${item.highlight ? 'text-orange-600' : ''}`}>
+                <span className={`text-lg font-medium text-gray-900 md:w-[55%] ${item.highlight ? "text-orange-600" : ""}`}>
                   {locale === "th" && item.labelTh ? item.labelTh : item.label}
                 </span>
-                <span className="text-gray-400 text-sm">{locale === "th" && item.valueTh ? item.valueTh : item.value}</span>
+                <span className="text-sm text-gray-400">{locale === "th" && item.valueTh ? item.valueTh : item.value}</span>
               </div>
             ))}
           </div>
 
-          <div className="content-block mt-8">
-            <p className="text-orange-600 text-sm font-medium leading-relaxed">
-              ⚠ {locale === "th" ? submissionGuidelines.presenterRegistrationNoteTh : submissionGuidelines.presenterRegistrationNote}
+          <div className="content-block mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+              {locale === "th" ? "หมายเหตุการพิจารณา" : "Review Note"}
+            </p>
+            <p className="text-sm leading-relaxed text-slate-600 md:text-[0.95rem]">
+              {importantDatesReviewNote}
+            </p>
+            <p className="mt-3 text-sm font-semibold leading-relaxed text-red-700 md:text-[0.95rem]">
+              {importantDatesReservationNote}
             </p>
           </div>
         </div>
