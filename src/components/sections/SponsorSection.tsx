@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 // ข้อมูล 3 สปอนเซอร์ที่มีในระบบตอนนี้ (แถวแรก เลื่อนซ้าย)
 const sponsorsRow1 = [
@@ -19,6 +20,7 @@ const sponsorsRow2 = [
 ];
 
 export default function SponsorSection() {
+  const t = useTranslations("sponsors");
   // Duplicate arrays multiple times to create a seamless infinite scroll effect
   const marqueeItemsRow1 = [...sponsorsRow1, ...sponsorsRow1, ...sponsorsRow1, ...sponsorsRow1, ...sponsorsRow1, ...sponsorsRow1];
   const marqueeItemsRow2 = [...sponsorsRow2, ...sponsorsRow2, ...sponsorsRow2, ...sponsorsRow2, ...sponsorsRow2, ...sponsorsRow2];
@@ -38,7 +40,7 @@ export default function SponsorSection() {
               key={`row1-${sponsor.id}-${index}`} 
               className="mx-4 md:mx-8 flex items-center justify-center cursor-pointer group"
             >
-              <div className="relative h-20 w-32 sm:h-24 sm:w-48 md:h-28 md:w-56 flex items-center justify-center opacity-70 hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-500 p-2">
+              <div className="relative h-20 w-32 sm:h-24 sm:w-48 md:h-28 md:w-56 flex items-center justify-center p-2">
                 <Image
                   src={sponsor.logo}
                   alt={sponsor.name}
@@ -58,7 +60,7 @@ export default function SponsorSection() {
               key={`row2-${sponsor.id}-${index}`} 
               className="mx-4 md:mx-8 flex items-center justify-center cursor-pointer group"
             >
-              <div className="relative h-16 w-28 sm:h-20 sm:w-40 md:h-24 md:w-48 flex items-center justify-center opacity-70 hover:opacity-100 group-hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:scale-105 transition-all duration-500 p-2">
+              <div className="relative h-16 w-28 sm:h-20 sm:w-40 md:h-24 md:w-48 flex items-center justify-center p-2">
                 {/* Use standard img tag here to bypass Next.js hostname whitelist constraint on external images */}
                 <img
                   src={sponsor.logo}

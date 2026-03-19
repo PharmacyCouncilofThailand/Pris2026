@@ -19,8 +19,9 @@ export const navigationData: NavItem[] = [
     {
         labelKey: "callForAbstracts",
         children: [
-            { labelKey: "abstractGuideline", href: "/abstract-submission-guideline" },
+            { labelKey: "abstractGuideline", href: "/abstract-guidelines" },
             { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
+            { labelKey: "approvedPosterAbstracts", href: "/approved-poster-abstracts" },
         ],
     },
     {
@@ -32,11 +33,7 @@ export const navigationData: NavItem[] = [
     },
     {
         labelKey: "sponsorship",
-        children: [
-            { labelKey: "confirmedSponsors", href: "/sponsorship/confirmed-sponsors" },
-            { labelKey: "sponsorshipProspectusMenu", href: "/sponsorship/sponsorship-prospectus" },
-            { labelKey: "exhibitionFloorPlan", href: "/sponsorship/exhibition-floor-plan" },
-        ],
+        href: "/sponsorship",
     },
     {
         labelKey: "more",

@@ -1,0 +1,420 @@
+"use client";
+
+import React, { useRef } from "react";
+import { Link } from "@/i18n/routing";
+import { submissionGuidelines } from "@/data/abstractData";
+import gsap from "gsap";
+import { useTranslations, useLocale } from "next-intl";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+export default function DetailedGuidelines() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("abstractGuidelines");
+  const locale = useLocale();
+
+  useGSAP(() => {
+    // Hero lines reveal
+    gsap.from(".guide-hero-line", {
+      yPercent: 110,
+      stagger: 0.12,
+      duration: 1.6,
+      ease: "power4.out",
+      delay: 0.15,
+    });
+    gsap.from(".guide-hero-sub", {
+      opacity: 0,
+      y: 20,
+      duration: 1,
+      ease: "power3.out",
+      delay: 0.6,
+    });
+
+    // Content blocks fade in
+    const blocks = pageRef.current?.querySelectorAll(".content-block");
+    blocks?.forEach((block) => {
+      gsap.fromTo(
+        block,
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: block,
+            start: "top 85%",
+          },
+        }
+      );
+    });
+  }, { scope: pageRef });
+
+  return (
+    <main
+      ref={pageRef}
+      className="bg-white text-gray-900 overflow-hidden selection:bg-blue-500/20 min-h-screen"
+    >
+
+
+      {/* ══════ HERO ══════ */}
+      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
+        {/* decorative bg glows */}
+        <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
+          <div className="guide-hero-sub flex items-center gap-4 mb-8">
+            <span className="w-12 h-px bg-blue-600" />
+            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
+            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("heroSub")}</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
+            <div className="overflow-hidden">
+              <span className="block guide-hero-line">{t("title1")}</span>
+            </div>
+            <div className="overflow-hidden">
+              <span className="block guide-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500">
+                {t("title2")}
+              </span>
+            </div>
+          </h1>
+
+          <div className="guide-hero-sub max-w-2xl mx-auto mt-8 px-4">
+            <p className="text-gray-500 text-lg md:text-xl font-light leading-relaxed">
+              {t("desc")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ INTRO ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-4xl mx-auto content-block">
+          <p className="text-gray-500 text-base md:text-lg leading-[1.8] font-light">
+            {locale === "th" ? submissionGuidelines.introTh : submissionGuidelines.intro}
+          </p>
+        </div>
+      </section>
+
+      {/* ══════ IMPORTANT DATES ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-blue-600" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("timelineLabel")}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {t("timelineTitle")}
+            </h2>
+          </div>
+
+          <div className="content-block border-t border-gray-200">
+            {submissionGuidelines.importantDates.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200"
+              >
+                <span className={`text-gray-900 font-medium text-lg md:w-[55%] ${item.highlight ? 'text-orange-600' : ''}`}>
+                  {locale === "th" && item.labelTh ? item.labelTh : item.label}
+                </span>
+                <span className="text-gray-400 text-sm">{locale === "th" && item.valueTh ? item.valueTh : item.value}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="content-block mt-8">
+            <p className="text-orange-600 text-sm font-medium leading-relaxed">
+              ⚠ {locale === "th" ? submissionGuidelines.presenterRegistrationNoteTh : submissionGuidelines.presenterRegistrationNote}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ GENERAL INFORMATION ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-blue-600" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("overviewLabel")}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {t("overviewTitle")}
+            </h2>
+          </div>
+
+          <div className="content-block border-t border-gray-200">
+            {submissionGuidelines.generalInformation.map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200"
+              >
+                <span className="text-gray-900 font-medium text-base md:w-[45%]">{locale === "th" && item.labelTh ? item.labelTh : item.label}</span>
+                <span className="text-gray-500 text-sm md:text-base">{locale === "th" && item.valueTh ? item.valueTh : item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ ABSTRACT TOPICS ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-orange-500" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">{t("categoriesLabel")}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {t("categoriesTitle")}
+            </h2>
+          </div>
+
+          <div className="content-block border-t border-gray-200">
+            {(locale === "th" ? submissionGuidelines.abstractTopicsTh : submissionGuidelines.abstractTopics).map((topic, idx) => (
+              <div
+                key={idx}
+                className="flex items-baseline gap-6 py-5 border-b border-gray-200 hover:bg-gray-50/60 transition-colors"
+              >
+                <span className="text-orange-500 text-xs font-bold tracking-widest w-8 shrink-0">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <span className="text-gray-900 font-medium text-lg">{topic}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ SUBMISSION GUIDELINES ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-blue-600" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("rulesLabel")}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {t("rulesTitle")}
+            </h2>
+          </div>
+
+          <div className="content-block border-t border-gray-200">
+            {(locale === "th" ? submissionGuidelines.guidelinesTh : submissionGuidelines.guidelines).map((rule, idx) => (
+              <div
+                key={idx}
+                className="flex items-start gap-6 py-5 border-b border-gray-100"
+              >
+                <span className="text-gray-300 text-xs font-bold tracking-widest w-8 shrink-0 pt-1">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <p className="text-gray-600 text-base leading-relaxed font-light">{rule}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Callout notes */}
+          <div className="content-block mt-12 space-y-6 max-w-4xl">
+            <div className="border-l-2 border-blue-400 pl-6 py-2">
+              <p className="text-gray-500 text-sm leading-relaxed">{locale === "th" ? submissionGuidelines.acknowledgementNoteTh : submissionGuidelines.acknowledgementNote}</p>
+            </div>
+            <div className="border-l-2 border-orange-400 pl-6 py-2">
+              <p className="text-gray-500 text-sm leading-relaxed">{locale === "th" ? submissionGuidelines.reviewNoteTh : submissionGuidelines.reviewNote}</p>
+            </div>
+            <div className="border-l-2 border-red-400 pl-6 py-2">
+              <p className="text-red-600 text-sm font-medium leading-relaxed">{locale === "th" ? submissionGuidelines.noMediaNoteTh : submissionGuidelines.noMediaNote}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ ABSTRACT STRUCTURE ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-orange-500" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">{t("formatLabel")}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {t("formatTitle")}
+            </h2>
+          </div>
+
+          <div className="content-block max-w-4xl">
+            <p className="text-gray-500 text-base leading-[1.8] font-light mb-12">
+              {locale === "th" ? "บทคัดย่อต้องมีโครงสร้างตามหัวข้อต่อไปนี้:" : "Abstracts must be structured and include the following sections:"}
+            </p>
+          </div>
+
+          <div className="content-block border-t border-gray-200">
+            {submissionGuidelines.abstractStructure.map((item, idx) => (
+              <div
+                key={idx}
+                className="py-6 border-b border-gray-200"
+              >
+                <div className="flex items-baseline gap-6">
+                  <span className="text-orange-500 text-xs font-bold tracking-widest w-8 shrink-0">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <span className="text-gray-900 font-medium text-lg">{locale === "th" && item.titleTh ? item.titleTh : item.title}</span>
+                    {(locale === "th" ? item.descTh : item.desc) && (
+                      <span className="text-gray-400 text-sm ml-3">— {locale === "th" ? item.descTh : item.desc}</span>
+                    )}
+                  </div>
+                </div>
+                {(locale === "th" ? item.itemsTh : item.items) && (
+                  <div className="ml-14 mt-3 space-y-2">
+                    {(locale === "th" ? item.itemsTh : item.items)?.map((sub, subIdx) => (
+                      <p key={subIdx} className="text-gray-500 text-sm font-light flex items-start gap-3">
+                        <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0 mt-2" />
+                        {sub}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ WORD LIMIT ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto content-block">
+          <div className="border-t border-b border-gray-200 py-12 md:py-16 text-center">
+            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-orange-500 block mb-4">{locale === "th" ? "จำกัดจำนวนคำไม่เกิน" : "Maximum Word Limit"}</span>
+            <p className="text-3xl md:text-5xl font-black tracking-tighter text-gray-900 uppercase">
+              {locale === "th" ? submissionGuidelines.maxWordLimitTh : submissionGuidelines.maxWordLimit}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ FORMATTING ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-blue-600" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{locale === "th" ? "การจัดรูปแบบเอกสาร" : "Typography"}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {locale === "th" ? "รูปแบบ" : "Formatting"}
+            </h2>
+          </div>
+
+          <div className="content-block border-t border-gray-200">
+            {(locale === "th" ? submissionGuidelines.formattingTh : submissionGuidelines.formatting).map((item, idx) => (
+              <div
+                key={idx}
+                className="flex items-baseline gap-6 py-5 border-b border-gray-200"
+              >
+                <span className="text-blue-600 text-xs font-bold tracking-widest w-8 shrink-0">
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+                <span className="text-gray-700 font-medium text-base">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ DECLARATION & ACCEPTANCE ══════ */}
+      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+        <div className="max-w-6xl mx-auto">
+
+          <div className="content-block mb-16 md:mb-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-px bg-blue-600" />
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{locale === "th" ? "นโยบาย" : "Policies"}</span>
+            </div>
+            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+              {locale === "th" ? "นโยบาย" : "Policies"}
+            </h2>
+          </div>
+
+          {/* Declaration */}
+          <div className="content-block mb-16">
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{locale === "th" ? "การรับรองและการมอบสิทธิ์" : "Declaration & Assignation"}</h3>
+            <div className="border-t border-gray-200">
+              {(locale === "th" ? submissionGuidelines.policies.declarationTh : submissionGuidelines.policies.declaration).map((item, idx) => (
+                <div key={idx} className="flex items-start gap-6 py-5 border-b border-gray-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-2" />
+                  <p className="text-gray-600 text-base leading-relaxed font-light">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Acceptance */}
+          <div className="content-block mb-16">
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{locale === "th" ? "การแจ้งผลการพิจารณา" : "Acceptance Notification"}</h3>
+            <div className="border-t border-gray-200">
+              {(locale === "th" ? submissionGuidelines.policies.acceptanceTh : submissionGuidelines.policies.acceptance).map((item, idx) => (
+                <div key={idx} className="flex items-start gap-6 py-5 border-b border-gray-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-2" />
+                  <p className={`text-base leading-relaxed font-light ${idx === (locale === "th" ? submissionGuidelines.policies.acceptanceTh : submissionGuidelines.policies.acceptance).length - 1 ? 'text-orange-600 font-medium' : 'text-gray-600'}`}>
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Withdrawal */}
+          <div className="content-block">
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{locale === "th" ? "การถอนบทคัดย่อ" : "Abstract Withdrawal"}</h3>
+            <div className="border-t border-b border-gray-200 py-6">
+              <p className="text-gray-600 text-base leading-relaxed font-light">
+                {locale === "th" ? submissionGuidelines.policies.withdrawalTh : submissionGuidelines.policies.withdrawal}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════ CTA ══════ */}
+      <section className="py-24 md:py-32 bg-slate-50 border-t border-slate-200">
+        <div className="container mx-auto px-6 max-w-4xl text-center">
+          <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 tracking-tight">
+            {t("ctaTitle1")} <span className="text-blue-600">{t("ctaTitle2")}</span>
+          </h2>
+          <p className="text-lg md:text-xl text-slate-600 mb-12">
+            {t("ctaDesc")}
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/abstract-submission"
+              className="bg-blue-600 text-white font-bold px-8 py-4 uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
+            >
+              {t("submitBtn")}
+            </Link>
+            <Link
+              href="/call-for-abstracts"
+              className="bg-white text-slate-900 font-bold px-8 py-4 uppercase tracking-widest text-sm border border-slate-200 hover:bg-slate-100 transition-colors"
+            >
+              {t("backBtn")}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+
+    </main>
+  );
+}

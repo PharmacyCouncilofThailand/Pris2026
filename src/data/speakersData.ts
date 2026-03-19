@@ -1,17 +1,24 @@
 export const ORGANIZERS_DATA = [
   {
     name: "Mr. Preecha Bhandtivej",
-    nameTh: "นายปรีชา พันธุ์ติเวช",
-    position: "President, Pharmacy Council of Thailand",
+    nameTh: "ภก.ปรีชา พันธุ์ติเวช",
+    position: "President\nPharmacy Council of Thailand",
     positionTh: "นายกสภาเภสัชกรรม",
     image: "/assets/Img/Welcome message/นายกสภาดภสัชกรรม.svg",
   },
   {
     name: "Assoc. Prof. Sunee Lertsinudom",
     nameTh: "รศ.ภญ.สุณี เลิศสินอุดม",
-    position: "Secretary General, Pharmacy Council of Thailand",
+    position: "Secretary General\nPharmacy Council of Thailand",
     positionTh: "เลขาธิการสภาเภสัชกรรม",
     image: "/assets/Img/Welcome message/อ.สุณี.svg",
+  },
+  {
+    name: "Prof. Dr. Cholpat Sukkasem",
+    nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
+    position: "Assistant Secretary General\nPharmacy Council of Thailand\n& PRIS 2026 Chair",
+    positionTh: "ผู้ช่วยเลขธิการ สภาเภสัชกรรม\nและประธานจัดงาน PRIS 2026",
+    image: "/assets/Img/Welcome message/ประธานงานPris.svg",
   }
 ];
 

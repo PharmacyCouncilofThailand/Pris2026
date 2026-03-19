@@ -4,8 +4,9 @@ import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,7 +16,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/* ─────────────── Config ─────────────── */
+/* Config */
 const HERO_CFG = {
   /** How far the user needs to scroll (in vh) to complete the zoom */
   zoomScrollDistance: 1.0,
@@ -37,6 +38,7 @@ export default function Hero() {
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const t = useTranslations("hero");
 
   const heroCompleteRef = useRef<boolean>(false);
 
@@ -77,7 +79,7 @@ export default function Hero() {
       if (!svgRef.current) return;
       heroCompleteRef.current = false;
 
-      /* ── Returning visitor: skip all animation ── */
+      /* Returning visitor: skip all animation */
       if (hasPlayed()) {
         gsap.set(svgRef.current, { display: "none" });
         gsap.set(logoRef.current, { opacity: 1, y: 0, scale: 1 });
@@ -90,7 +92,7 @@ export default function Hero() {
         return;
       }
 
-      /* ── First visit: full cinematic intro ── */
+      /* First visit: full cinematic intro */
       // Initial states
       gsap.set(svgRef.current, { scale: 1, opacity: 1 });
       gsap.set(hintRef.current, { opacity: 0 });
@@ -158,8 +160,8 @@ export default function Hero() {
         scale: initialScale,
       });
 
-      // ─── Phase 2 (Wheel-driven): Zoom through "S" ───
-      // Lock scroll from the start — wheel events drive the animation
+      // Phase 2 (Wheel-driven): Zoom through "S"
+      // Lock scroll from the start; wheel events drive the animation
       document.body.style.overflow = "hidden";
 
       const tlZoom = gsap.timeline({ paused: true });
@@ -177,7 +179,7 @@ export default function Hero() {
         .to(svgRef.current, { opacity: 0, ease: "none", duration: 0.1 }, 0.9)
         .to(hintRef.current, { opacity: 0, duration: 0.1 }, 0);
 
-      // ─── Phase 3 (Auto + Locked): Reveal brand ───
+      // Phase 3 (Auto + Locked): Reveal brand
       const tlAuto = gsap.timeline({
         paused: true,
         onComplete: () => {
@@ -222,7 +224,7 @@ export default function Hero() {
           1.5,
         );
 
-      // ─── Wheel-driven zoom control ───
+      // Wheel-driven zoom control
       let scrollAccum = 0;
       const maxScroll = window.innerHeight * HERO_CFG.zoomScrollDistance;
       let autoTriggered = false;
@@ -335,15 +337,15 @@ export default function Hero() {
           className="flex flex-col md:flex-row gap-4 md:gap-5 z-[2]"
           style={{ opacity: 0 }}
         >
-          <Link
-            href="/registration"
+          <a
+            href="http://localhost:3003"
             className={cn(
               buttonVariants({ variant: "default" }),
               "bg-orange-500 text-white hover:bg-orange-400 shadow-[0_10px_20px_rgba(249,115,22,0.35)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.5)] font-bold px-8 py-6 text-base md:text-lg uppercase tracking-wider transition-all",
             )}
           >
-            Register Now
-          </Link>
+            {t('registerNow')}
+          </a>
           <Link
             href="/call-for-abstracts"
             className={cn(
@@ -351,7 +353,7 @@ export default function Hero() {
               "bg-[#203b89] text-white hover:bg-[#1a3070] shadow-[0_10px_20px_rgba(32,59,137,0.3)] hover:shadow-[0_15px_30px_rgba(32,59,137,0.4)] font-bold px-8 py-6 text-base md:text-lg uppercase tracking-wider transition-all",
             )}
           >
-            Submit Abstract
+            {t('submitAbstract')}
           </Link>
         </div>
       </div>
@@ -413,7 +415,7 @@ export default function Hero() {
         style={{ opacity: 0 }}
       >
         <div className="flex flex-col items-center gap-4 text-black text-xs font-medium uppercase tracking-[4px]">
-          <span>Scroll Down</span>
+          <span>{t('scrollDown')}</span>
           <ChevronDown className="w-5 h-5 text-black animate-bounce" />
         </div>
       </div>

@@ -1,41 +1,46 @@
-    export const galleryData = {
-    accp2025: {
-        title: "ACCP 2025 Highlights",
-        subtitle: "Memorable moments from the 24th Asian Conference on Clinical Pharmacy in Seoul, Korea",
-        images: [
-            { id: 1, src: "/assets/img/all-images/memory/memory-img1.jpg", alt: "ACCP 2025 in Bali indonesia", category: "ceremony" },
-            { id: 2, src: "/assets/img/all-images/memory/memory-img2.jpg", alt: "ACCP 2025 in Bali indonesia", category: "ceremony" },
-            { id: 3, src: "/assets/img/all-images/memory/memory-img4.jpg", alt: "ACCP 2025 in Bali indonesia", category: "ceremony" },
-            { id: 4, src: "/assets/img/all-images/memory/memory-img5.jpg", alt: "ACCP 2025 in Bali indonesia", category: "ceremony" },
-            { id: 5, src: "/assets/img/all-images/memory/memory-img6.jpg", alt: "ACCP 2025 in Bali indonesia", category: "ceremony" },
-            { id: 6, src: "/assets/img/all-images/memory/memory-img7.jpg", alt: "ACCP 2025 in Bali indonesia", category: "ceremony" },
-        ]
-    },
-    venue: {
-        title: "ACCP 2026 Venue",
-        subtitle: "Centara Grand & Bangkok Convention Centre at CentralWorld",
-        images: [
-            { id: 1, src: "/assets/img/all-images/event/event-img7.png", alt: "Convention Centre Exterior", category: "exterior" },
-            { id: 2, src: "/assets/img/all-images/event/event-img8.png", alt: "Main Conference Hall", category: "halls" },
-            { id: 3, src: "/assets/img/all-images/event/event-img9.png", alt: "Registration Area", category: "facilities" },
-            { id: 4, src: "/assets/img/all-images/event/event-img10.png", alt: "Breakout Rooms", category: "halls" },
-            { id: 5, src: "/assets/img/all-images/event/event-img11.png", alt: "Exhibition Space", category: "exhibition" },
-            { id: 6, src: "/assets/img/all-images/event/event-img12.png", alt: "Networking Lounge", category: "facilities" },
-            { id: 7, src: "/assets/img/all-images/event/event-img13.png", alt: "Dining Area", category: "facilities" },
-            { id: 8, src: "/assets/img/all-images/event/event-img25.png", alt: "Bangkok Skyline View", category: "exterior" },
-        ]
-    },
-    bangkok: {
-        title: "Explore Bangkok",
-        subtitle: "Discover the vibrant city of Bangkok - your destination for ACCP 2026",
-        images: [
-            { id: 1, src: "/assets/img/all-images/bangkok/img10.jpg", alt: "Wat Benchamabophit Dusitwanaram", category: "culture" },
-            { id: 2, src: "/assets/img/all-images/bangkok/img9.jpg", alt: "The Temple of the Emerald Buddha", category: "culture" },
-            { id: 3, src: "/assets/img/all-images/bangkok/img14.jpg", alt: "Wat Benchamabophit Dusitwanaram", category: "culture" },
-            { id: 4, src: "/assets/img/all-images/bangkok/img5.jpg", alt: "The Temple of the Emerald Buddha", category: "culture" },
-            { id: 5, src: "/assets/img/all-images/bangkok/img13.jpg", alt: "Wat Arun Temple", category: "culture" },
-            { id: 6, src: "/assets/img/all-images/bangkok/img7.jpg", alt: "Tha Chang Wang Luang Conservation Building", category: "culture" },    
-            
-        ]
-    }
-}
+export const galleryData = {
+  pris2025: {
+    title: "PRIS 2025 Highlights",
+    titleTh: "ภาพบรรยากาศ PRIS 2025",
+    subtitle: "Memorable moments from the Pharmacy Research and Innovation Summit 2025",
+    subtitleTh: "ภาพประทับใจจากงานประชุมวิชาการเภสัชกรรมและนวัตกรรม ปี 2568",
+    images: [
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-4.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-6.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-7.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-8.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-9.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-11.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-12.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-29.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-31.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-33.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-38.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-55.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD1-83.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-2.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-3.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-4.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-5.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-7.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-11.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-13.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-14.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-16.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-17.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-18.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-20.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-21.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-23.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-25.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-40.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-43.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-60.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-62.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-63.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-74.jpg",
+      "/assets/Img/PSIS_Higlight/PRIS_HighlightD2-82.jpg",
+    ]
+  }
+};

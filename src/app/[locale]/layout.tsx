@@ -1,0 +1,49 @@
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import GlobalRefreshRedirect from "@/components/layout/GlobalRefreshRedirect";
+import { AuthProvider } from "@/context/AuthContext";
+
+type Locale = (typeof routing.locales)[number];
+
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as Locale)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
+
+  return (
+    <NextIntlClientProvider messages={messages}>
+      <AuthProvider>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if(history.scrollRestoration) history.scrollRestoration="manual";
+              window.scrollTo(0,0);
+              
+              if (window.location.pathname === "/" || window.location.pathname === "/en" || window.location.pathname === "/th") {
+                document.body.classList.add("hero-playing");
+              }
+            `,
+          }}
+        />
+        <GlobalRefreshRedirect />
+        <Header />
+        {children}
+        <Footer />
+      </AuthProvider>
+    </NextIntlClientProvider>
+  );
+}

@@ -12,9 +12,11 @@ if (typeof window !== "undefined") {
 }
 
 import { ORGANIZERS_DATA } from "@/data/speakersData";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function WelcomeSection() {
-  const locale: string = "en";
+  const locale = useLocale();
+  const t = useTranslations("welcome");
   const containerRef = useRef<HTMLDivElement>(null);
 
   const getName = (p: (typeof ORGANIZERS_DATA)[0]) =>
@@ -68,21 +70,28 @@ export default function WelcomeSection() {
 
       <div className="container mx-auto px-4 relative z-[2] pt-20 md:pt-28">
         {/* Header */}
-        <div className="welcome-header text-center mb-16 md:mb-20">
+        <div className="welcome-header text-center mb-16 md:mb-20 flex flex-col items-center">
           <div className="flex items-center justify-center gap-4 mb-4">
             <span className="w-12 h-px bg-gold/40" />
             <span className="text-xs font-semibold tracking-[0.25em] uppercase text-gold/70">
-              Welcome Messages
+              {t("welcomeMessages")}
             </span>
             <span className="w-12 h-px bg-gold/40" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-black font-heading">
-            Meet Our Leaders
+          <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] text-black mb-6">
+            {t.rich('title', {
+              br: () => <br className="hidden md:block" />
+            })}
           </h2>
+          <p className="text-sm font-semibold uppercase tracking-widest text-black/60 text-center">
+            {t.rich('subtitle', {
+              br: () => <br className="hidden md:block" />
+            })}
+          </p>
         </div>
 
         {/* Speakers in one row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
           {ORGANIZERS_DATA.map((person, index) => (
             <div
               key={index}
@@ -114,7 +123,7 @@ export default function WelcomeSection() {
               </h3>
 
               {/* Position */}
-              <p className="text-sm text-black/50 leading-relaxed max-w-[240px]">
+              <p className="text-sm text-black/50 leading-relaxed max-w-[240px] whitespace-pre-line">
                 {getPosition(person)}
               </p>
             </div>
