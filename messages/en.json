@@ -7,7 +7,7 @@
     "committee": "Committee",
     "callForAbstracts": "Call for Abstracts",
     "abstractGuideline": "Abstract Guideline",
-    "approvedPosterAbstracts": "Approved Posters",
+    "approvedPosterAbstracts": "Approved Abstracts",
     "registration": "Registration",
     "registrationInfo": "Registration Info",
     "policies": "Policies",
@@ -39,6 +39,24 @@
     "welcomeMessages": "OFFICIAL ADDRESSES",
     "title": "Welcome \nMessages.",
     "subtitle": "Discover the vision driving \nPRIS 2026."
+  },
+  "prisIntro": {
+    "eyebrow": "About PRIS",
+    "title": "What is PRIS?",
+    "intro": "PRIS is a meeting ground for pharmacy research, professional dialogue, and practical innovation. It brings together pharmacists, researchers, students, and partners to exchange ideas that move the profession forward.",
+    "body": "From scientific presentations and emerging technologies to collaborative discussion across sectors, PRIS is designed to turn knowledge into real-world impact.",
+    "research": {
+      "title": "Research",
+      "desc": "Showcasing current studies, academic work, and evidence that strengthen the profession."
+    },
+    "innovation": {
+      "title": "Innovation",
+      "desc": "Highlighting fresh ideas, digital tools, and practical solutions for modern pharmacy."
+    },
+    "connection": {
+      "title": "Connection",
+      "desc": "Creating space for pharmacists, students, educators, and partners to collaborate."
+    }
   },
   "speakers": {
     "sectionSubtitle": "Meet Our Experts",
@@ -73,10 +91,10 @@
     "description": "A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br className='hidden md:block' /><strong className='font-semibold text-black'>Experience the future of pharmacy.</strong>",
     "needToKnow": "Need to Know",
     "criticalDates": "Critical Dates.",
-    "periodEarly": "May 1 \u2013 Jun 30, 2026",
+    "periodEarly": "May 1 – Jun 30, 2026",
     "titleEarly": "Early Bird Registration",
     "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
-    "periodRegular": "Jul 1 \u2013 Aug 31, 2026",
+    "periodRegular": "Jul 1 – Aug 31, 2026",
     "titleRegular": "Regular Registration",
     "descRegular": "Standard registration window. Rates increase to full price during this period.",
     "periodClosed": "Aug 31, 2026",
@@ -84,14 +102,14 @@
     "descClosed": "Last day to acquire passes. We strictly close the portal to begin final event preparations.",
     "feature1Label": "Special Feature",
     "feature1Title": "Exclusive\nNetworking Night.",
-    "feature1Desc": "More than just knowledge\u2014meet peers and build new alliances in a welcoming atmosphere, featuring a premium curated dinner experience.",
+    "feature1Desc": "More than just knowledge—meet peers and build new alliances in a welcoming atmosphere, featuring a premium curated dinner experience.",
     "feature2Label": "Exhibition",
     "feature2Title": "60+ Innovation\nSpace.",
     "feature2Desc": "Experience the latest pharmaceutical innovations and medical devices from over 60 leading companies. Stay ahead of future trends.",
     "tiersTitle": "Registration\nTiers.",
     "tiersSubtitle": "Select your pass type",
-    "tierEarlyLabel": "General \u2022 Before Jun 30, 2026",
-    "tierRegLabel": "General \u2022 From Jul 1, 2026",
+    "tierEarlyLabel": "General • Before Jun 30, 2026",
+    "tierRegLabel": "General • From Jul 1, 2026",
     "tierPostGrad": "Post Graduate",
     "tierPostGradLabel": "Master's & Ph.D. Level",
     "tierUnderGrad": "Under Graduate",
@@ -108,7 +126,7 @@
     "location": "Bangkok, Thailand",
     "title": "About",
     "whatIsTitle": "What is PRIS?",
-    "whatIsDesc": "PRIS, or the <span className='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields \u2014 academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span className='text-orange-600 font-medium'>driving the pharmacy profession forward</span> to keep pace with the changes in the modern healthcare world.",
+    "whatIsDesc": "PRIS, or the <span className='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields — academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span className='text-orange-600 font-medium'>driving the pharmacy profession forward</span> to keep pace with the changes in the modern healthcare world.",
     "orgTeam": "Organizing Team",
     "committee": "Committee",
     "advisors": "Advisors",

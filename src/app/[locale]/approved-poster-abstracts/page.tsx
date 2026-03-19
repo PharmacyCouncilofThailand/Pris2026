@@ -20,6 +20,7 @@ type PageCopy = {
   institutionField: string;
   oralPresentation: string;
   posterPresentation: string;
+  totalResults: string;
 };
 
 export default function ApprovedPosterAbstractsPage() {
@@ -63,8 +64,9 @@ export default function ApprovedPosterAbstractsPage() {
         emptyDesc: "ลองใช้คำค้นหาอื่น หรือลบคำค้นหาเพื่อดูรายการทั้งหมด",
         presenterField: "ผู้นำเสนอ",
         institutionField: "สถาบัน",
-        oralPresentation: "Oral Presentation",
-        posterPresentation: "Poster Presentation",
+        oralPresentation: "Oral",
+        posterPresentation: "Poster",
+        totalResults: "รายการ",
       }
     : {
         eyebrow: "Abstract Search",
@@ -77,8 +79,9 @@ export default function ApprovedPosterAbstractsPage() {
         emptyDesc: "Try another keyword or clear the search to see all approved abstracts.",
         presenterField: "Presenter",
         institutionField: "Institution",
-        oralPresentation: "Oral Presentation",
-        posterPresentation: "Poster Presentation",
+        oralPresentation: "Oral",
+        posterPresentation: "Poster",
+        totalResults: "results",
       };
 
   const normalizedQuery = deferredSearchQuery.trim().toLowerCase();
@@ -97,56 +100,69 @@ export default function ApprovedPosterAbstractsPage() {
       {/* ══════ HERO ══════ */}
       <section
         ref={heroRef}
-        className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center overflow-visible"
+        className="relative pt-24 pb-12 px-4 flex flex-col justify-end items-center text-center overflow-visible
+                   sm:pt-32 sm:pb-16 sm:px-6
+                   md:pt-48 md:pb-28 md:px-12"
       >
         {/* decorative bg glows */}
-        <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.04] rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.04] rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-blue-500/[0.04] rounded-full blur-[120px] pointer-events-none sm:w-[700px] sm:h-[700px] sm:blur-[180px]" />
+        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-orange-500/[0.04] rounded-full blur-[100px] pointer-events-none sm:w-[500px] sm:h-[500px] sm:blur-[150px]" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
-            <span className="text-gray-400 text-[10px] tracking-widest uppercase">— {copy.eyebrow}</span>
+          <div className="hero-sub flex items-center gap-2 mb-5 sm:gap-4 sm:mb-8">
+            <span className="h-px w-6 bg-blue-600 sm:w-12" />
+            <span className="text-[8px] font-semibold tracking-[0.2em] uppercase text-blue-600 sm:text-[10px] sm:tracking-[0.3em]">PRIS 2026</span>
+            <span className="text-gray-400 text-[8px] tracking-[0.18em] uppercase sm:text-[10px] sm:tracking-widest">— {copy.eyebrow}</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
+          <h1 className="px-1 text-[2.5rem] font-black uppercase tracking-tighter leading-[0.88] text-gray-900
+                         sm:text-6xl md:text-8xl lg:text-[8rem]">
             <div className="overflow-hidden">
               <span className="block hero-line">{copy.title1}</span>
             </div>
-            <div className="overflow-hidden py-2" >
-              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-2">
+            <div className="overflow-hidden py-1 sm:py-2" >
+              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-1 sm:pb-2">
                 {copy.title2}
               </span>
             </div>
           </h1>
           
-          <p className="hero-sub mt-8 max-w-2xl text-lg text-gray-500 font-light leading-relaxed">
+          <p className="hero-sub mt-4 max-w-xl text-sm text-gray-500 font-light leading-relaxed px-2
+                        sm:mt-8 sm:max-w-2xl sm:text-lg sm:px-0">
             {copy.desc}
           </p>
         </div>
       </section>
 
       {/* ══════ SEARCH & LIST ══════ */}
-      <section className="relative px-6 pb-32">
+      <section className="relative px-4 pb-20 sm:px-6 sm:pb-32">
         <div className="max-w-6xl mx-auto">
           
           {/* Search Bar - Full Width */}
-          <div className="rounded-[2rem] border border-gray-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative z-20 -mt-8 mb-16 overflow-hidden">
+          <div className="relative z-20 -mt-2 mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+                         sm:-mt-8 sm:mb-16 sm:rounded-[2rem]">
             <div className="relative w-full">
-              <Search className="pointer-events-none absolute left-6 top-1/2 size-6 -translate-y-1/2 text-gray-400" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-gray-400 sm:left-6 sm:size-6" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder={copy.searchPlaceholder}
-                className="w-full bg-white py-6 pl-16 pr-6 text-lg font-medium text-gray-700 outline-none transition placeholder:text-gray-400 focus:bg-gray-50/50"
+                className="w-full bg-white py-3.5 pl-12 pr-4 text-sm font-medium text-gray-700 outline-none transition placeholder:text-gray-400 focus:bg-gray-50/50
+                          sm:py-6 sm:pl-16 sm:pr-6 sm:text-lg"
               />
             </div>
           </div>
 
+          {/* Results count */}
+          {normalizedQuery && (
+            <p className="mb-4 text-xs text-gray-400 font-medium tracking-wide sm:mb-6 sm:text-sm">
+              {filteredPosters.length} {copy.totalResults}
+            </p>
+          )}
+
           {filteredPosters.length > 0 ? (
-            <div className="grid gap-8 xl:grid-cols-2">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 md:gap-6">
               {filteredPosters.map((poster, index) => (
                 <PosterCard
                   key={poster.id}
@@ -157,12 +173,14 @@ export default function ApprovedPosterAbstractsPage() {
               ))}
             </div>
           ) : (
-            <div className="mt-10 rounded-3xl border border-dashed border-gray-200 bg-gray-50/80 px-6 py-28 text-center">
-              <div className="mx-auto flex size-20 items-center justify-center rounded-full bg-white text-gray-400 shadow-[0_4px_20px_rgb(0,0,0,0.03)] mb-6">
-                <FileText className="size-8" />
+            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-gray-50/80 px-5 py-12 text-center
+                           sm:mt-10 sm:rounded-3xl sm:px-6 sm:py-28">
+              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-white text-gray-400 shadow-[0_4px_20px_rgb(0,0,0,0.03)]
+                             sm:mb-6 sm:size-20">
+                <FileText className="size-6 sm:size-8" />
               </div>
-              <h2 className="text-2xl font-black tracking-tight text-gray-900 md:text-3xl">{copy.emptyTitle}</h2>
-              <p className="mx-auto mt-4 max-w-xl text-base text-gray-500">
+              <h2 className="text-xl font-black tracking-tight text-gray-900 sm:text-2xl md:text-3xl">{copy.emptyTitle}</h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500 sm:mt-4 sm:text-base">
                 {copy.emptyDesc}
               </p>
             </div>
@@ -184,12 +202,16 @@ function PosterCard({
 }) {
   return (
     <article
-      className="group relative overflow-hidden rounded-[2rem] border border-gray-200 bg-white p-8 md:p-10 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-blue-200"
+      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300
+                 sm:rounded-[1.75rem] sm:p-6
+                 md:p-8
+                 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-blue-200"
     >
-      {/* Type Marker (Oral vs Poster) at Top Right */}
+      {/* Type Marker (Oral vs Poster) — short label, contained inside card */}
       <div 
         className={cn(
-          "absolute top-0 right-0 rounded-bl-3xl px-6 py-2.5 text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] shadow-sm z-10 transition-colors",
+          "absolute top-0 right-0 z-10 rounded-bl-xl px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.15em] shadow-sm transition-colors",
+          "sm:rounded-bl-2xl sm:px-5 sm:py-2 sm:text-[10px] sm:tracking-[0.2em]",
           poster.presentationType === "Oral" 
             ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white" 
             : "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
@@ -198,28 +220,39 @@ function PosterCard({
         {poster.presentationType === "Oral" ? copy.oralPresentation : copy.posterPresentation}
       </div>
 
-      <div className="absolute left-0 top-0 h-full w-1.5 bg-gradient-to-b from-blue-500 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-500 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:w-1.5" />
       
-      <div className="pointer-events-none absolute bottom-5 right-6 text-[5rem] md:text-[6.5rem] font-black tracking-tighter leading-none text-gray-50/80 group-hover:text-blue-50 transition-colors duration-300">
+      {/* Background number */}
+      <div className="pointer-events-none absolute bottom-3 right-3 text-[2.5rem] font-black tracking-tighter leading-none text-gray-50/80 group-hover:text-blue-50 transition-colors duration-300
+                     sm:bottom-5 sm:right-6 sm:text-[5rem]
+                     md:text-[6.5rem]">
         {String(index + 1).padStart(2, "0")}
       </div>
 
       <div className="relative z-10">
-        <div className="flex flex-wrap items-center gap-4 mb-2">
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gray-600">
+        {/* Badge row */}
+        <div className="mb-1 flex flex-wrap items-center gap-2 pr-16 sm:mb-2 sm:gap-4 sm:pr-24">
+          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-600
+                          sm:px-3 sm:py-1 sm:text-[10px]">
             {copy.approvedBadge}
           </span>
-          <p className="font-mono text-xs font-semibold tracking-widest text-blue-600">{poster.id}</p>
+          <p className="font-mono text-[10px] font-semibold tracking-widest text-blue-600 sm:text-xs">{poster.id}</p>
         </div>
 
-        <h2 className="mt-6 mb-10 max-w-xl text-xl font-bold leading-snug tracking-tight text-gray-900 md:text-2xl lg:text-[1.65rem]">
+        {/* Title */}
+        <h2 className="mt-3 mb-4 text-base font-bold leading-snug tracking-tight text-gray-900
+                       sm:mt-5 sm:mb-8 sm:text-xl
+                       md:text-2xl md:mb-10
+                       lg:text-[1.65rem]">
           {poster.title}
         </h2>
 
-        <div className="mt-auto pt-6 border-t border-gray-50/80 grid gap-6 sm:grid-cols-2">
-          <InfoRow icon={<User className="size-4" />} label={copy.presenterField} value={poster.presenter} />
+        {/* Info rows — stack on mobile, side by side on sm+ */}
+        <div className="mt-auto grid gap-3 border-t border-gray-100 pt-3
+                       sm:gap-5 sm:grid-cols-2 sm:pt-5">
+          <InfoRow icon={<User className="size-3.5 sm:size-4" />} label={copy.presenterField} value={poster.presenter} />
           <InfoRow
-            icon={<Building2 className="size-4" />}
+            icon={<Building2 className="size-3.5 sm:size-4" />}
             label={copy.institutionField}
             value={poster.affiliation}
           />
@@ -241,12 +274,12 @@ function InfoRow({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
-      <div className="flex items-center gap-2">
+    <div className={cn("flex flex-col gap-1", className)}>
+      <div className="flex items-center gap-1.5 sm:gap-2">
         <div className="text-blue-400">{icon}</div>
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400">{label}</p>
+        <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400 sm:text-[10px] sm:tracking-[0.2em]">{label}</p>
       </div>
-      <p className="text-sm font-medium leading-relaxed text-gray-800 ml-6">{value}</p>
+      <p className="pl-5 text-xs font-medium leading-relaxed text-gray-800 sm:pl-6 sm:text-sm">{value}</p>
     </div>
   );
 }
