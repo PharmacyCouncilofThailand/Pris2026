@@ -32,7 +32,7 @@ export default function LoginPage() {
     <main className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 lg:p-8 font-sans selection:bg-black selection:text-white pt-24 lg:pt-8 relative z-40">
       <div 
         ref={containerRef}
-        className="w-full max-w-[1240px] bg-white rounded-[2.5rem] p-3 shadow-[0_20px_80px_rgba(0,0,0,0.06)] flex gap-4 min-h-[85vh] lg:min-h-[760px] relative z-10"
+        className="w-full max-w-[1240px] bg-white rounded-[1.5rem] lg:rounded-[2.5rem] p-2 lg:p-3 shadow-[0_20px_80px_rgba(0,0,0,0.06)] flex gap-4 min-h-[85vh] lg:min-h-[760px] relative z-10"
       >
         {/* Abstract Background Left Side */}
         <div className="hidden lg:flex w-1/2 relative bg-[#08111f] rounded-[2rem] overflow-hidden flex-col justify-between p-12">
@@ -64,9 +64,21 @@ export default function LoginPage() {
         </div>
 
         {/* Form Right Side */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center py-12 px-8 sm:px-16 lg:px-20 xl:px-28 bg-white rounded-[2rem]">
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center py-10 px-6 sm:px-12 lg:px-20 xl:px-28 bg-white rounded-[1.5rem] lg:rounded-[2rem] overflow-y-auto">
           
-          <div className="w-full max-w-[420px]">
+          <div className="w-full max-w-[420px] py-4">
+            {/* Mobile Back Button */}
+            <div className="lg:hidden flex justify-start mb-6 fade-in-element">
+              <Link href="/" className="inline-flex items-center gap-2 group text-gray-500 hover:text-black transition-colors">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 border border-gray-200 group-hover:bg-gray-100 transition-colors shadow-sm">
+                  <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                </div>
+                <span className="text-[11px] uppercase tracking-widest font-bold">Back</span>
+              </Link>
+            </div>
+
             {/* Logo */}
             <div className="flex justify-center mb-10 fade-in-element">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">

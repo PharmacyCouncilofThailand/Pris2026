@@ -337,15 +337,15 @@ export default function Hero() {
           className="flex flex-col md:flex-row gap-4 md:gap-5 z-[2]"
           style={{ opacity: 0 }}
         >
-          <a
-            href="http://localhost:3003"
+          <Link
+            href="/registration"
             className={cn(
               buttonVariants({ variant: "default" }),
               "bg-orange-500 text-white hover:bg-orange-400 shadow-[0_10px_20px_rgba(249,115,22,0.35)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.5)] font-bold px-8 py-6 text-base md:text-lg uppercase tracking-wider transition-all",
             )}
           >
             {t('registerNow')}
-          </a>
+          </Link>
           <Link
             href="/call-for-abstracts"
             className={cn(
