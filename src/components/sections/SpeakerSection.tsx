@@ -19,8 +19,10 @@ if (typeof window !== "undefined") {
 }
 
 import { SPEAKERS_DATA } from "@/data/speakersData";
+import { useTranslations } from "next-intl";
 
 export default function SpeakerSection() {
+  const t = useTranslations("speakers");
   const sectionRef = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
@@ -174,9 +176,9 @@ export default function SpeakerSection() {
           className="text-white text-[clamp(1.75rem,5vw,4rem)] font-bold uppercase tracking-widest text-center flex flex-col items-center gap-4 will-change-transform"
         >
           <span className="text-sm md:text-lg text-gold font-normal tracking-[0.2em] uppercase">
-            Meet Our Experts
+            {t("sectionSubtitle")}
           </span>
-          Distinguished Speakers
+          {t("sectionTitle")}
         </h2>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 const msInSecond = 1000;
 const msInMinute = 60 * msInSecond;
@@ -26,6 +27,7 @@ interface CountdownProps {
 
 export default function Countdown({ className }: CountdownProps) {
   const [timeDif, setTimeDif] = useState<number | null>(null);
+  const t = useTranslations("countdown");
 
   useEffect(() => {
     const updateTime = () => {
@@ -57,10 +59,10 @@ export default function Countdown({ className }: CountdownProps) {
 
   return (
     <div className={cn("flex flex-wrap justify-center gap-3 md:gap-4", className)}>
-      <TimeUnit value={timeParts.days} label="Days" />
-      <TimeUnit value={timeParts.hours} label="Hours" />
-      <TimeUnit value={timeParts.minutes} label="Minutes" />
-      <TimeUnit value={timeParts.seconds} label="Seconds" />
+      <TimeUnit value={timeParts.days} label={t("days")} />
+      <TimeUnit value={timeParts.hours} label={t("hours")} />
+      <TimeUnit value={timeParts.minutes} label={t("minutes")} />
+      <TimeUnit value={timeParts.seconds} label={t("seconds")} />
     </div>
   );
 }

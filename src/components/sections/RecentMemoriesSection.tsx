@@ -6,9 +6,11 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { column1, column2, column3, allImages } from "@/data/recentMemoriesData";
+import { useTranslations } from "next-intl";
 
 export default function RecentMemoriesSection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const t = useTranslations("recentMemories");
 
   // Lightbox
   const openLightbox = useCallback((src: string) => {
@@ -57,6 +59,7 @@ export default function RecentMemoriesSection() {
         <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full pointer-events-none opacity-50 translate-x-[-30%]" />
         <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[150px] rounded-full pointer-events-none opacity-50 translate-x-[30%]" />
 
+        {/* Header removed — already shown in HighlightVideoSection above */}
 
         {/* Vertical Scrolling Gallery — 3 columns */}
         <div className="relative h-[600px] sm:h-[700px] md:h-[800px] overflow-hidden z-10">
@@ -65,6 +68,7 @@ export default function RecentMemoriesSection() {
           <div className="absolute bottom-0 left-0 right-0 h-40 md:h-64 bg-gradient-to-t from-black via-black/60 to-transparent z-10 pointer-events-none flex">
              <div className="w-full h-full backdrop-blur-xl [mask-image:linear-gradient(to_top,black_10%,transparent_100%)]" />
           </div>
+
 
           <div className="flex gap-3 sm:gap-4 md:gap-5 px-3 sm:px-4 md:px-8 h-full">
             {/* Column 1 — scrolls UP */}

@@ -1,10 +1,9 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { Menu, ChevronDown } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Menu, ChevronDown, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -23,40 +22,20 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
+import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { navigationData } from "@/data/navigation";
-
-// Minimal i18n mock function until next-intl is fully configured
-// We use uppercase for placeholders
-const t = (key: string) => {
-  const translations: Record<string, string> = {
-    home: "Home",
-    about: "About",
-    aboutPris: "About PRIS",
-    welcomeMessages: "Welcome Messages",
-    committee: "Committee",
-    callForAbstracts: "Call for Abstracts",
-    abstractGuideline: "Abstract Guideline",
-    registration: "Registration",
-    registrationInfo: "Registration Info",
-    policies: "Policies",
-    sponsorship: "Sponsorship",
-    confirmedSponsors: "Confirmed Sponsors",
-    sponsorshipProspectusMenu: "Sponsorship Prospectus",
-    exhibitionFloorPlan: "Exhibition Floor Plan",
-    more: "More",
-    gallery: "Gallery",
-    contact: "Contact",
-  };
-  return translations[key] || key;
-};
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const pathname = usePathname();
+  const locale = useLocale();
+  const router = useRouter();
+  const t = useTranslations("common");
+  type TranslationKey = Parameters<typeof t>[0];
+  type LinkHref = React.ComponentProps<typeof Link>["href"];
 
   React.useEffect(() => {
     const handleScroll = () => {
-      // Don't show solid navbar while the Hero cinematic intro is still playing
       const heroStillPlaying = document.body.classList.contains("hero-playing");
       setIsScrolled(!heroStillPlaying && window.scrollY > 50);
     };
@@ -64,9 +43,30 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Determine if we should use light-background colors (dark text)
-  const isLightPage = pathname === "/abstract-submission" || pathname === "/about" || pathname === "/call-for-abstracts" || pathname === "/welcome-messages";
+  const lightPages = [
+    "/abstract-submission",
+    "/about",
+    "/call-for-abstracts",
+    "/welcome-messages",
+    "/abstract-guidelines",
+    "/approved-poster-abstracts",
+    "/registration-policies",
+    "/sponsorship",
+    "/registration",
+    "/login",
+    "/signup",
+  ];
+  const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login");
   const useDarkText = isLightPage && !isScrolled;
+
+  if (pathname.includes("/login") || pathname.includes("/signup")) {
+    return null;
+  }
+
+  const switchLocale = () => {
+    const newLocale = locale === "en" ? "th" : "en";
+    router.replace(pathname, { locale: newLocale });
+  };
 
   return (
     <header
@@ -77,109 +77,171 @@ export default function Header() {
           : "bg-transparent"
       )}
     >
-      <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
-        {/* Logo */}
-        <Link 
-          href="/" 
-          className="relative flex items-center z-50"
-          onClick={() => {
-            if (typeof document !== "undefined") {
-              if (document.activeElement instanceof HTMLElement) {
-                document.activeElement.blur();
-              }
-              document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-            }
-          }}
-        >
-          <Image
-            src="/assets/Img/logo/Pris2026-logo.svg"
-            alt="Pris 2026 Logo"
-            width={120}
-            height={48}
-            className={cn("object-contain h-[45px] w-auto transition-all", useDarkText && "brightness-0")}
-            priority
-          />
-        </Link>
+      <div className="w-full px-4 md:px-6 xl:px-8">
+        <div className="flex items-center justify-between gap-3 xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-8">
+          {/* Left: Logo */}
+          <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
+            <Link
+              href="/"
+              className="relative flex items-center"
+              onClick={() => {
+                if (typeof document !== "undefined") {
+                  if (document.activeElement instanceof HTMLElement) {
+                    document.activeElement.blur();
+                  }
+                  document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+                }
+              }}
+            >
+              <Image
+                src="/assets/Img/logo/Pris2026-logo.svg"
+                alt="Pris 2026 Logo"
+                width={120}
+                height={48}
+                className={cn("object-contain h-[32px] w-auto transition-all xl:h-[36px]", useDarkText && "brightness-0")}
+                priority
+              />
+            </Link>
+          </div>
 
-        {/* Desktop Navigation (shadcn/ui NavigationMenu) */}
-        <div className="hidden xl:flex items-center justify-center">
-          <NavigationMenu>
-            <NavigationMenuList className="gap-2">
-              {navigationData.map((item) => (
-                <NavigationMenuItem key={item.labelKey}>
-                  {item.href && (!item.children || item.children.length === 0) ? (
-                    <NavigationMenuLink render={
-                      <Link 
-                        href={item.href}
-                        className={cn(
-                          navigationMenuTriggerStyle(),
+          {/* Center: Desktop Navigation */}
+          <div className="hidden xl:flex items-center justify-center xl:justify-self-center">
+            <NavigationMenu>
+              <NavigationMenuList className="gap-2">
+                {navigationData.map((item) => (
+                  <NavigationMenuItem key={item.labelKey}>
+                    {item.href && (!item.children || item.children.length === 0) ? (
+                      <NavigationMenuLink render={
+                        <Link
+                          href={item.href as LinkHref}
+                          className={cn(
+                            navigationMenuTriggerStyle(),
+                            "bg-transparent transition-colors",
+                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
+                          )}
+                          onClick={() => {
+                            if (typeof document !== "undefined") {
+                              if (document.activeElement instanceof HTMLElement) {
+                                document.activeElement.blur();
+                              }
+                              document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+                            }
+                          }}
+                        />
+                      }>
+                        {t(item.labelKey as TranslationKey)}
+                      </NavigationMenuLink>
+                    ) : (
+                      <>
+                        <NavigationMenuTrigger className={cn(
                           "bg-transparent transition-colors",
                           useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
-                        )}
-                        onClick={() => {
-                          if (typeof document !== "undefined") {
-                            if (document.activeElement instanceof HTMLElement) {
-                              document.activeElement.blur();
-                            }
-                            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-                          }
-                        }}
-                      />
-                    }>
-                      {t(item.labelKey)}
-                    </NavigationMenuLink>
-                  ) : (
-                    <>
-                      <NavigationMenuTrigger className={cn(
-                        "bg-transparent transition-colors",
-                        useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
-                      )}>
-                        {t(item.labelKey)}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <ul className="grid w-[250px] gap-2 p-4 bg-white rounded-lg shadow-xl border border-slate-100">
-                          {item.children?.map((child) => (
-                            <li key={child.labelKey}>
-                              <NavigationMenuLink render={
-                                <Link 
-                                  href={child.href || "#"} 
-                                  className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700" 
-                                  onClick={() => {
-                                    if (typeof document !== "undefined") {
-                                      if (document.activeElement instanceof HTMLElement) {
-                                        document.activeElement.blur();
+                        )}>
+                          {t(item.labelKey as TranslationKey)}
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                          <ul className="grid w-[250px] gap-2 p-4 bg-white rounded-lg shadow-xl border border-slate-100">
+                            {item.children?.map((child) => (
+                              <li key={child.labelKey}>
+                                <NavigationMenuLink render={
+                                  <Link
+                                    href={(child.href || "#") as LinkHref}
+                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
+                                    onClick={() => {
+                                      if (typeof document !== "undefined") {
+                                        if (document.activeElement instanceof HTMLElement) {
+                                          document.activeElement.blur();
+                                        }
+                                        document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+                                        document.body.click();
                                       }
-                                      document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-                                      // Shadcn UI uses custom pointers and escapes. Sometimes clicking also needs closing state
-                                      document.body.click(); 
-                                    }
-                                  }}
-                                />
-                              }>
-                                <div className="text-sm font-bold leading-none">
-                                  {t(child.labelKey)}
-                                </div>
-                              </NavigationMenuLink>
-                            </li>
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </>
-                  )}
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
+                                    }}
+                                  />
+                                }>
+                                  <div className="text-sm font-bold leading-none">
+                                    {t(child.labelKey as TranslationKey)}
+                                  </div>
+                                </NavigationMenuLink>
+                              </li>
+                            ))}
+                          </ul>
+                        </NavigationMenuContent>
+                      </>
+                    )}
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
 
-        {/* Mobile Navigation (shadcn/ui Sheet) */}
-        <div className="xl:hidden flex items-center justify-end">
+          {/* Right: Desktop Tools */}
+          <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
+            <button
+              onClick={switchLocale}
+              className={cn(
+                "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
+                useDarkText
+                  ? "text-slate-900 hover:bg-slate-100"
+                  : "text-white hover:bg-white/10"
+              )}
+            >
+              <Globe className="w-4 h-4" />
+              <span className="uppercase text-xs font-bold tracking-wider">
+                {locale === "en" ? "TH" : "EN"}
+              </span>
+            </button>
+
+            <div className={cn(
+              "flex items-center gap-4 border-l pl-4",
+              useDarkText ? "border-slate-200" : "border-white/20"
+            )}>
+              <Link
+                href="/login"
+                className={cn(
+                  "text-[12px] font-bold uppercase tracking-[0.15em] transition-colors duration-300",
+                  useDarkText ? "text-slate-600 hover:text-blue-600" : "text-white/80 hover:text-white"
+                )}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className={cn(
+                  "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                  useDarkText
+                    ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
+                    : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
+                )}
+              >
+                Sign up
+              </Link>
+            </div>
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="xl:hidden flex items-center justify-end gap-2">
+          {/* Mobile Language Switcher */}
+          <button
+            onClick={switchLocale}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
+              useDarkText
+                ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
+                : "text-white hover:bg-white/20 border border-white/20"
+            )}
+          >
+            <Globe className="w-4 h-4" />
+            <span className="uppercase text-xs font-bold tracking-wider">
+              {locale === "en" ? "TH" : "EN"}
+            </span>
+          </button>
+
           <Sheet>
             <SheetTrigger
               className={cn(
                 buttonVariants({ variant: "ghost", size: "icon" }),
-                useDarkText 
-                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200" 
+                useDarkText
+                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
                   : "text-white hover:bg-white/20 border border-white/20"
               )}
             >
@@ -198,32 +260,32 @@ export default function Header() {
                     className="h-[45px] w-auto"
                   />
                 </div>
-                
+
                 <nav className="flex-1 overflow-y-auto">
                   <ul className="flex flex-col gap-4">
                     {navigationData.map((item) => (
                       <li key={item.labelKey} className="border-b border-white/10 pb-4">
                         {item.href ? (
                           <Link
-                            href={item.href}
+                            href={item.href as LinkHref}
                             className="text-lg font-medium hover:text-gold block"
                           >
-                            {t(item.labelKey)}
+                            {t(item.labelKey as TranslationKey)}
                           </Link>
                         ) : (
                           <details className="group">
                             <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-gold">
-                              {t(item.labelKey)}
+                              {t(item.labelKey as TranslationKey)}
                               <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
                             </summary>
                             <ul className="mt-4 flex flex-col gap-3 pl-4 border-l-2 border-white/20">
                               {item.children?.map((child) => (
                                 <li key={child.labelKey}>
                                   <Link
-                                    href={child.href || "#"}
+                                    href={(child.href || "#") as LinkHref}
                                     className="text-gray-300 hover:text-gold block py-1"
                                   >
-                                    {t(child.labelKey)}
+                                    {t(child.labelKey as TranslationKey)}
                                   </Link>
                                 </li>
                               ))}
@@ -234,9 +296,26 @@ export default function Header() {
                     ))}
                   </ul>
                 </nav>
+
+                {/* Mobile Auth Buttons */}
+                <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
+                  <Link
+                    href="/login"
+                    className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 rounded-full hover:bg-white/5 transition-colors"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
+                  >
+                    Sign up
+                  </Link>
+                </div>
               </div>
             </SheetContent>
           </Sheet>
+        </div>
         </div>
       </div>
     </header>

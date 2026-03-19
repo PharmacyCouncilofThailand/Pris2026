@@ -1,0 +1,557 @@
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
+import { Link } from "@/i18n/routing";
+import { useAuth } from "@/context/AuthContext";
+import { 
+  User, 
+  Users, 
+  FileText, 
+  Upload, 
+  CheckCircle, 
+  ArrowRight, 
+  ArrowLeft,
+  Info,
+  Plus,
+  Trash2,
+  AlertCircle
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { submissionFormLabels, abstractCategories } from "@/data/abstractData";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { useTranslations, useLocale } from "next-intl";
+
+export default function AbstractSubmission() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const formRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("abstractSubmission");
+  const { user, isAuthenticated } = useAuth();
+  
+  // Form State
+  const [formData, setFormData] = useState({
+    author: { firstName: "", lastName: "", email: "", affiliation: "", phone: "" },
+    coAuthors: [] as any[],
+    abstract: { title: "", category: "", type: "", keywords: "" },
+    content: { background: "", objectives: "", methods: "", results: "", conclusions: "" },
+    file: null as File | null
+  });
+
+  // Autofill user data when logged in
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setFormData(prev => ({
+        ...prev,
+        author: {
+          ...prev.author,
+          firstName: user.firstName || prev.author.firstName,
+          lastName: user.lastName || prev.author.lastName,
+          email: user.email || prev.author.email,
+          affiliation: user.affiliation || prev.author.affiliation,
+          phone: user.phone || prev.author.phone,
+        }
+      }));
+    }
+  }, [isAuthenticated, user]);
+
+  const steps = [
+    { id: 1, label: t("steps.step1"), icon: <User className="w-5 h-5" /> },
+    { id: 2, label: t("steps.step2"), icon: <Users className="w-5 h-5" /> },
+    { id: 3, label: t("steps.step3"), icon: <FileText className="w-5 h-5" /> },
+    { id: 4, label: t("steps.step4"), icon: <Upload className="w-5 h-5" /> },
+    { id: 5, label: t("steps.step5"), icon: <CheckCircle className="w-5 h-5" /> },
+  ];
+
+  useGSAP(() => {
+    // Transition effect when step changes
+    gsap.fromTo(".step-content", 
+      { opacity: 0, x: 20 }, 
+      { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }
+    );
+  }, [currentStep]);
+
+  const handleNext = () => {
+    if (currentStep < 5) setCurrentStep(currentStep + 1);
+  };
+
+  const handleBack = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+
+  return (
+    <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-gold selection:text-black overflow-x-hidden">
+
+      
+      {/* ─── Modern Research Studio Layout ─── */}
+      <section className="pt-32 pb-40">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
+            
+            {/* Sidebar: Context & Navigation (Sticky) */}
+            <div className="lg:w-1/3 lg:sticky lg:top-32 lg:h-fit space-y-12">
+              <div className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-700">PRIS 2026</span>
+                </div>
+                <div className="space-y-2">
+                  <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight leading-[0.9] text-slate-950">
+                    {t("title1")}<br/>
+                    {t("title2")}
+                  </h1>
+                  <p className="text-slate-500 font-medium text-lg leading-relaxed pt-4">
+                    {t("desc")}
+                  </p>
+                </div>
+
+                <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6">
+                  <div className="flex gap-4">
+                    <Info className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
+                    <div>
+                      <h4 className="text-sm font-bold text-blue-900 mb-1">Important Note</h4>
+                      <p className="text-sm text-blue-700/80 leading-relaxed">
+                        Please double-check all author affiliations and the abstract structure before final submission.
+                      </p>
+                      <Link href="/abstract-guidelines" className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-4 inline-flex items-center gap-2 hover:text-blue-800 transition-colors">
+                        {t("warning")} <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Functional Stepper */}
+              <div className="space-y-4 pt-8 border-t border-slate-200">
+                {steps.map((step) => (
+                  <div key={step.id} className="flex items-center gap-6 group">
+                    <div className={cn(
+                      "w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black transition-all duration-500 border-2",
+                      currentStep === step.id 
+                        ? "bg-slate-950 border-slate-950 text-white shadow-xl scale-105" 
+                        : currentStep > step.id 
+                          ? "bg-blue-600 border-blue-600 text-white" 
+                          : "bg-white border-slate-200 text-slate-300"
+                    )}>
+                      {currentStep > step.id ? <CheckCircle className="w-4 h-4" /> : `0${step.id}`}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className={cn(
+                        "text-[9px] font-black uppercase tracking-widest",
+                        currentStep === step.id ? "text-orange-500" : "text-slate-300"
+                      )}>
+                        Stage 0{step.id}
+                      </span>
+                      <span className={cn(
+                        "text-[11px] font-black uppercase tracking-wider",
+                        currentStep === step.id ? "text-slate-900" : "text-slate-400"
+                      )}>
+                        {step.label}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              </div>
+            
+            {/* Main Form Workspace */}
+            <div className="lg:w-2/3 bg-white rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.03)] border border-slate-100 p-8 md:p-16 lg:p-20 overflow-hidden relative group">
+              {/* Decorative Soft Accents */}
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_70%)] pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.03)_0%,transparent_70%)] pointer-events-none" />
+
+              <div className="relative z-10 min-h-[500px]">
+                <div className="step-content">
+                  {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} />}
+                  {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} />}
+                  {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} />}
+                  {currentStep === 4 && <Step4Content content={formData.content} file={formData.file} setFormData={setFormData} />}
+                  {currentStep === 5 && <Step5Review data={formData} />}
+                </div>
+
+                {/* Navigation Controls */}
+                <div className="mt-32 pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                  <div>
+                    {currentStep > 1 && (
+                      <button 
+                        onClick={handleBack}
+                        className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[3px] text-slate-400 hover:text-slate-950 transition-colors"
+                      >
+                        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                        Previous Phase
+                      </button>
+                    )}
+                  </div>
+                  
+                  <button 
+                    onClick={handleNext}
+                    className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95"
+                  >
+                    {currentStep === 5 ? "Submit Final Abstract" : "Proceed to Next Stage"}
+                    <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+// Sub-component: Step 1
+function Step1Author({ data, setFormData }: any) {
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prev: any) => ({
+      ...prev,
+      author: { ...prev.author, [name]: value }
+    }));
+  };
+
+  return (
+    <div className="space-y-10">
+      <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
+        <div>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Presenting <span className="text-orange-500/80">Author</span></h2>
+          <p className="text-slate-500 font-medium text-lg italic">The primary voice of your research.</p>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <InputGroup label="First Name" name="firstName" value={data.firstName} onChange={handleChange} placeholder="e.g. John" />
+        <InputGroup label="Last Name" name="lastName" value={data.lastName} onChange={handleChange} placeholder="e.g. Doe" />
+        <div className="md:col-span-2">
+          <InputGroup label="Email Address" name="email" value={data.email} onChange={handleChange} placeholder="john.doe@university.edu" type="email" />
+        </div>
+        <div className="md:col-span-2">
+          <InputGroup label="Affiliation / Institution" name="affiliation" value={data.affiliation} onChange={handleChange} placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University" />
+        </div>
+        <InputGroup label="Phone Number" name="phone" value={data.phone} onChange={handleChange} placeholder="+66 XX XXX XXXX" />
+      </div>
+    </div>
+  );
+}
+
+// Sub-component: Step 2
+function Step2CoAuthors({ list, setFormData }: any) {
+  const addAuthor = () => {
+    setFormData((prev: any) => ({
+      ...prev,
+      coAuthors: [...prev.coAuthors, { firstName: "", lastName: "", affiliation: "", email: "" }]
+    }));
+  };
+
+  const removeAuthor = (index: number) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      coAuthors: prev.coAuthors.filter((_: any, i: number) => i !== index)
+    }));
+  };
+
+  const handleChange = (index: number, e: any) => {
+    const { name, value } = e.target;
+    const newList = [...list];
+    newList[index][name] = value;
+    setFormData((prev: any) => ({ ...prev, coAuthors: newList }));
+  };
+
+  return (
+    <div className="space-y-10">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
+        <div>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Co-<span className="text-orange-500/80">Authors</span></h2>
+          <p className="text-slate-500 font-medium text-lg italic">Include all contributors who made this possible.</p>
+        </div>
+        <button 
+          onClick={addAuthor}
+          className="px-8 py-4 bg-slate-950 text-white rounded-xl hover:bg-blue-600 transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-[3px] shadow-xl"
+        >
+          <Plus className="w-5 h-5" />
+          Add Co-Author
+        </button>
+      </div>
+
+      <div className="space-y-8 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
+        {list.length === 0 && (
+          <div className="p-16 border-2 border-dashed border-blue-100 rounded-[3rem] text-center bg-blue-50/30">
+            <div className="w-20 h-20 bg-blue-100/50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-10 h-10 text-blue-400" />
+            </div>
+            <p className="text-blue-900/40 font-black uppercase tracking-[3px] text-xs">No co-authors added yet. (Optional)</p>
+          </div>
+        )}
+        {list.map((author: any, idx: number) => (
+          <div key={idx} className="p-10 bg-white shadow-sm rounded-[3rem] border border-slate-100 relative group hover:border-orange-500/30 transition-all duration-500">
+            <button 
+              onClick={() => removeAuthor(idx)}
+              className="absolute top-8 right-8 text-slate-300 hover:text-rose-500 transition-colors p-3 bg-slate-50 rounded-2xl"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <InputGroup label="First Name" name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Jane" />
+              <InputGroup label="Last Name" name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Smith" />
+              <div className="md:col-span-2">
+                <InputGroup label="Institution / Affiliation" name="affiliation" value={author.affiliation} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" />
+              </div>
+              <div className="md:col-span-2">
+                <InputGroup label="Email Address (Contact)" name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Sub-component: Step 3
+function Step3Details({ data, setFormData }: any) {
+  const locale = useLocale();
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prev: any) => ({
+      ...prev,
+      abstract: { ...prev.abstract, [name]: value }
+    }));
+  };
+
+  return (
+    <div className="space-y-12">
+      <div>
+        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Abstract <span className="text-orange-500/80">Details</span></h2>
+        <p className="text-slate-500 font-medium text-lg italic">The identity and core focus of your work.</p>
+      </div>
+      
+      <div className="space-y-10">
+        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="flex flex-col gap-4">
+            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Submission Theme</label>
+            <select 
+              name="category" 
+              value={data.category} 
+              onChange={handleChange}
+              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
+            >
+              <option value="">{locale === "th" ? "เลือกหัวข้อ" : "Select Category"}</option>
+              {abstractCategories.map(cat => <option key={cat.id} value={cat.title}>{locale === "th" && cat.titleTh ? cat.titleTh : cat.title}</option>)}
+            </select>
+          </div>
+          
+          <div className="flex flex-col gap-4">
+            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Presentation Mode</label>
+            <div className="flex gap-3">
+              {['Oral', 'Poster', 'Either'].map(type => {
+                let typeLabel = type;
+                if (locale === "th") {
+                  if (type === "Oral") typeLabel = "ปากเปล่า";
+                  if (type === "Poster") typeLabel = "โปสเตอร์";
+                  if (type === "Either") typeLabel = "อย่างใดอย่างหนึ่ง";
+                }
+                return (
+                  <button 
+                    key={type}
+                    onClick={() => handleChange({ target: { name: 'type', value: type }})}
+                    className={`flex-1 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                      data.type === type ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
+                    }`}
+                  >
+                    {typeLabel}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <InputGroup label="Key Terminologies (Semicolon separated)" name="keywords" value={data.keywords} onChange={handleChange} placeholder="e.g. Pharmacy; Clinical; Outcomes" />
+      </div>
+    </div>
+  );
+}
+
+// Sub-component: Step 4
+function Step4Content({ content, file, setFormData }: any) {
+  const handleTextChange = (e: any) => {
+    const { name, value } = e.target;
+    setFormData((prev: any) => ({
+      ...prev,
+      content: { ...prev.content, [name]: value }
+    }));
+  };
+
+  const handleFileChange = (e: any) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFormData((prev: any) => ({ ...prev, file: selectedFile }));
+    }
+  };
+
+  return (
+    <div className="space-y-12">
+      <div>
+        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Body & <span className="text-orange-500/80">File</span></h2>
+        <p className="text-slate-500 font-medium text-lg italic">Structure your abstract and provide the documentation.</p>
+      </div>
+      
+      <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
+        {['Background', 'Objectives', 'Methods', 'Results', 'Conclusions'].map(section => (
+          <div key={section} className="space-y-4">
+            <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block">{section}</label>
+            <textarea 
+              name={section.toLowerCase()}
+              value={content[section.toLowerCase()]}
+              onChange={handleTextChange}
+              className="w-full px-6 py-6 bg-white border border-slate-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm"
+              placeholder={`Elaborate your ${section.toLowerCase()}...`}
+            />
+          </div>
+        ))}
+        
+        <div className="pt-10 border-t border-white/5">
+          <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
+          <div className="relative group">
+            <input 
+              type="file" 
+              accept=".pdf"
+              className="absolute inset-0 opacity-0 cursor-pointer z-10"
+              onChange={handleFileChange}
+            />
+            <div className={`p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white ${
+              file ? "border-emerald-500/30 bg-emerald-50 shadow-sm" : "border-slate-200 group-hover:border-gold group-hover:bg-gold/5"
+            }`}>
+              {file ? (
+                <div className="flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mb-6">
+                    <CheckCircle className="w-10 h-10 text-emerald-400" />
+                  </div>
+                  <p className="text-lg font-black text-white uppercase tracking-wider mb-2">{file.name}</p>
+                  <p className="text-[10px] text-emerald-400/60 font-black uppercase tracking-[3px]">Success Information</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
+                  </div>
+                  <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">Selection is Required</p>
+                  <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">PDF Document Only (Max 5MB)</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Sub-component: Step 5
+function Step5Review({ data }: any) {
+  return (
+    <div className="space-y-16">
+      <div className="space-y-4">
+        <h2 className="text-4xl lg:text-7xl font-black text-slate-950 uppercase tracking-tighter leading-none">
+          Manuscript<br/>
+          <span className="text-blue-600/80">Verification</span>
+        </h2>
+        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Phaze 05 / Final Audit Protocol</p>
+      </div>
+      
+      <div className="relative">
+        {/* Subtle Architectural Background Lines */}
+        <div className="absolute -inset-10 border border-slate-100 rounded-[3rem] pointer-events-none" />
+        <div className="absolute top-0 bottom-0 left-1/2 w-px bg-slate-50 hidden xl:block" />
+        
+        <div className="relative z-10 space-y-20">
+          {/* Header Metadata Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pb-16 border-b border-slate-100">
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Category</span>
+              <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.category || "General Pharmacy"}</p>
+            </div>
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Presentation</span>
+              <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.type || "Oral"} Mode</p>
+            </div>
+            <div className="space-y-3">
+              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Reference</span>
+              <p className="text-xl font-black text-slate-900 uppercase">PRIS-2026-TMP</p>
+            </div>
+          </div>
+
+          {/* Research Title Section */}
+          <div className="space-y-8">
+            <span className="text-[10px] font-black text-blue-600/40 uppercase tracking-[6px] block">Full Research Title</span>
+            <h3 className="text-4xl md:text-6xl font-black text-slate-950 leading-[1.1] uppercase tracking-tight">
+              "{data.abstract.title || "Untitled Research Submission"}"
+            </h3>
+          </div>
+
+          {/* Authors Dossier */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-20">
+            <div className="space-y-10">
+              <div className="pb-4 border-b-2 border-slate-950 w-fit">
+                <span className="text-[10px] font-black text-slate-950 uppercase tracking-[4px]">Principal Investigator</span>
+              </div>
+              <div className="space-y-4">
+                <p className="text-3xl font-black text-slate-950 uppercase leading-none">
+                  {data.author.firstName} {data.author.lastName}
+                </p>
+                <div className="space-y-2">
+                  <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">{data.author.affiliation}</p>
+                  <p className="text-xs text-blue-600/60 font-black tracking-widest">{data.author.email}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-10">
+              <div className="pb-4 border-b border-slate-200 w-fit">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Supporting Contributors</span>
+              </div>
+              <div className="space-y-6">
+                {data.coAuthors.length === 0 ? (
+                  <p className="text-slate-300 italic font-medium">No additional authors identified.</p>
+                ) : (
+                  <div className="grid grid-cols-1 gap-6">
+                    {data.coAuthors.map((ca: any, i: number) => (
+                      <div key={i} className="flex items-start gap-4">
+                        <span className="text-[10px] font-black text-slate-300 pt-1">0{i+1}</span>
+                        <div>
+                          <p className="text-sm font-black text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.affiliation}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Helper: Input Group
+function InputGroup({ label, placeholder, value, onChange, name, type = "text" }: any) {
+  return (
+    <div className="flex flex-col gap-4">
+      <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">{label}</label>
+      <input 
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 placeholder:text-slate-200 placeholder:font-black placeholder:uppercase placeholder:tracking-[2px] shadow-sm"
+      />
+    </div>
+  );
+}

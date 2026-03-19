@@ -1,0 +1,246 @@
+{
+  "common": {
+    "home": "Home",
+    "about": "About",
+    "aboutPris": "About PRIS",
+    "welcomeMessages": "Welcome Messages",
+    "committee": "Committee",
+    "callForAbstracts": "Call for Abstracts",
+    "abstractGuideline": "Abstract Guideline",
+    "approvedPosterAbstracts": "Approved Posters",
+    "registration": "Registration",
+    "registrationInfo": "Registration Info",
+    "policies": "Policies",
+    "sponsorship": "Sponsorship",
+    "more": "More",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "language": "Language",
+    "switchLang": "ภาษาไทย"
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "contactUs": "Contact Us",
+    "address": {
+      "title": "Office of the Secretary, Pharmacy Council of Thailand",
+      "line1": "Mahitala Dhibesra Building, 8th Floor",
+      "line2": "Ministry of Public Health, 88/19 Moo 4",
+      "line3": "Tiwanon Road, Talad Khwan",
+      "line4": "Mueang, Nonthaburi 11000"
+    },
+    "copyright": "© {year} Pharmacy Council of Thailand. All rights reserved."
+  },
+  "hero": {
+    "registerNow": "Register Now",
+    "submitAbstract": "Submit Abstract",
+    "scrollDown": "Scroll Down"
+  },
+  "welcome": {
+    "welcomeMessages": "OFFICIAL ADDRESSES",
+    "title": "Welcome \nMessages.",
+    "subtitle": "Discover the vision driving \nPRIS 2026."
+  },
+  "speakers": {
+    "sectionSubtitle": "Meet Our Experts",
+    "sectionTitle": "Distinguished Speakers",
+    "viewAll": "View all speakers"
+  },
+  "schedule": {
+    "sectionSubtitle": "Event Timeline",
+    "sectionTitle": "Event Schedule.",
+    "downloadPdf": "Download PDF Schedule",
+    "day1": "Day 1",
+    "day2": "Day 2",
+    "date1": "October 15, 2026",
+    "date2": "October 16, 2026"
+  },
+  "highlightVideo": {
+    "title": "Recent Memories",
+    "subtitle": "Relive the highlights from the Pharmaceutical Research and Innovation Symposium 2025"
+  },
+  "recentMemories": {
+    "title": "Recent Memories",
+    "subtitle": "Glimpses into the vibrant community and monumental achievements from the previous Pharmaceutical Research and Innovation Symposium."
+  },
+  "sponsors": {
+    "title": "Our Sponsors",
+    "subtitle": "Supported by leaders in pharmaceutical research and healthcare innovation."
+  },
+  "registrationCTA": {
+    "pretitle": "Join The Elite",
+    "title1": "GET",
+    "title2": "YOUR PASS",
+    "description": "A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br className='hidden md:block' /><strong className='font-semibold text-black'>Experience the future of pharmacy.</strong>",
+    "needToKnow": "Need to Know",
+    "criticalDates": "Critical Dates.",
+    "periodEarly": "May 1 \u2013 Jun 30, 2026",
+    "titleEarly": "Early Bird Registration",
+    "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
+    "periodRegular": "Jul 1 \u2013 Aug 31, 2026",
+    "titleRegular": "Regular Registration",
+    "descRegular": "Standard registration window. Rates increase to full price during this period.",
+    "periodClosed": "Aug 31, 2026",
+    "titleClosed": "Registration Closes",
+    "descClosed": "Last day to acquire passes. We strictly close the portal to begin final event preparations.",
+    "feature1Label": "Special Feature",
+    "feature1Title": "Exclusive\nNetworking Night.",
+    "feature1Desc": "More than just knowledge\u2014meet peers and build new alliances in a welcoming atmosphere, featuring a premium curated dinner experience.",
+    "feature2Label": "Exhibition",
+    "feature2Title": "60+ Innovation\nSpace.",
+    "feature2Desc": "Experience the latest pharmaceutical innovations and medical devices from over 60 leading companies. Stay ahead of future trends.",
+    "tiersTitle": "Registration\nTiers.",
+    "tiersSubtitle": "Select your pass type",
+    "tierEarlyLabel": "General \u2022 Before Jun 30, 2026",
+    "tierRegLabel": "General \u2022 From Jul 1, 2026",
+    "tierPostGrad": "Post Graduate",
+    "tierPostGradLabel": "Master's & Ph.D. Level",
+    "tierUnderGrad": "Under Graduate",
+    "tierUnderGradLabel": "Bachelor's Level",
+    "registerCollection": "Register Collection"
+  },
+  "countdown": {
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds"
+  },
+  "about": {
+    "location": "Bangkok, Thailand",
+    "title": "About",
+    "whatIsTitle": "What is PRIS?",
+    "whatIsDesc": "PRIS, or the <span className='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields \u2014 academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span className='text-orange-600 font-medium'>driving the pharmacy profession forward</span> to keep pace with the changes in the modern healthcare world.",
+    "orgTeam": "Organizing Team",
+    "committee": "Committee",
+    "advisors": "Advisors",
+    "orgCommittee": "Organizing Committee",
+    "subcommittees": "Subcommittees"
+  },
+  "cfa": {
+    "title1": "Call for",
+    "title2": "Abstracts",
+    "ctaTitle1": "Ready to Share Your ",
+    "ctaTitle2": "Innovation?",
+    "ctaDesc": "Join us in shaping the future of pharmacy. Submit your abstract today and be part of the most influential symposium of 2026.",
+    "submitAbstract": "Submit Abstract"
+  },
+  "welcomeMessages": {
+    "pretitle": "Official Addresses",
+    "title1": "Welcome",
+    "title2": "Messages",
+    "desc": "Hear from our esteemed leadership as they share their vision and officially welcome you to the PRIS 2026 summit.",
+    "bgText": "Welcome",
+    "signature": "PRIS 2026 Executive"
+  },
+  "abstractGuidelines": {
+    "heroSub": "Abstract Guidelines",
+    "title1": "Guidelines for",
+    "title2": "Submission",
+    "desc": "Essential information, formatting rules, and detailed structure for submitting your research abstract.",
+    "timelineLabel": "Timeline",
+    "timelineTitle": "Important Dates",
+    "overviewLabel": "Overview",
+    "overviewTitle": "General Information",
+    "categoriesLabel": "Categories",
+    "categoriesTitle": "Abstract Topics",
+    "rulesLabel": "Rules",
+    "rulesTitle": "Submission Rules",
+    "formatLabel": "Format",
+    "formatTitle": "Abstract Structure",
+    "ctaTitle1": "Ready to submit your",
+    "ctaTitle2": "abstract?",
+    "ctaDesc": "After reviewing these guidelines thoroughly, you can proceed to the submission portal.",
+    "submitBtn": "Submission Portal",
+    "backBtn": "Back to Call for Abstracts"
+  },
+  "abstractStatus": {
+    "title1": "Submission ",
+    "title2": "Status",
+    "desc": "Track and manage your abstract submissions for PRIS 2026.",
+    "newSubmissionBtn": "+ New Submission",
+    "stats": {
+      "total": "Total Submissions",
+      "accepted": "Accepted",
+      "underReview": "Under Review",
+      "revisionNeeded": "Revision Needed"
+    },
+    "searchPlaceholder": "Search by title or ID...",
+    "filterBtn": "Filter"
+  },
+  "abstractSubmission": {
+    "title1": "Submission",
+    "title2": "Portal",
+    "desc": "Please ensure your abstract adheres strictly to the PRIS 2026 formatting guidelines. Submissions exceeding 250 words will not be accepted.",
+    "warning": "Read Full Guidelines",
+    "steps": {
+      "step1": "Presenting Author",
+      "step2": "Co-Authors",
+      "step3": "Abstract Details",
+      "step4": "Body & File",
+      "step5": "Review"
+    },
+    "buttons": {
+      "next": "Next Step",
+      "back": "Back",
+      "submit": "Submit Abstract",
+      "addAuth": "Add Co-Author"
+    }
+  },
+  "registrationPolicies": {
+    "pretitle": "Registration",
+    "pretitleSub": "Policies",
+    "title1": "Cancellation &",
+    "title2": "Refund Policy",
+    "intro": "Please review the following policies carefully before registering for PRIS 2026. All cancellation requests must be submitted in writing to",
+    "paymentMethod": {
+      "title": "Payment Method",
+      "text1": "Payment for online registration is only possible by credit card.",
+      "text2": "Once you have filled out all the required information for your registration, please click the \"payment\" button where a pop-up payment page will appear. Please complete all required information."
+    },
+    "confirmation": {
+      "title": "Confirmation of Registration",
+      "items": [
+        "An automatic confirmation email will be sent to you upon the completion of your registration.",
+        "Registrants can check the status of their registration and payment on 'Profile' by logging into the online registration system.",
+        "Official receipt from the online registration system will be send to your email once your payment is completed.",
+        "Please note that the receipt will be available after your payment is completed."
+      ]
+    },
+    "cancellation": {
+      "title": "Cancellations & Refund Policy",
+      "items": [
+        "To cancel your registration and request for a refund, please download the below cancellation request form, fill it out, and send it to the secretariat via email before the deadline.",
+        "Refunds will be made according to the following cancellation & refund policy."
+      ],
+      "table": {
+        "th1": "Deadline",
+        "th2": "Refund Rate",
+        "r1c1": "Before 30 April 2026",
+        "r1c2": "75% of registration fee",
+        "r2c1": "1 – 31 May 2026",
+        "r2c2": "40% of registration fee",
+        "r3c1": "After 31 May 2026",
+        "r3c2": "No refund"
+      },
+      "downloadBtn": "Refund Request Form Coming Soon"
+    },
+    "faq": {
+      "pretitle": "FAQ",
+      "title": "Frequently Asked Questions",
+      "backBtn": "Back to Home"
+    }
+  },
+  "sponsorship": {
+    "pretitle": "PRIS 2026",
+    "pretitleSub": "Partners",
+    "title1": "Our Valued",
+    "title2": "Sponsors",
+    "intro": "PRIS 2026 is made possible through the generous support of our sponsors and partners. We gratefully acknowledge their contribution to the advancement of pharmacy research and innovation.",
+    "tierLabel": "Tier",
+    "cta": {
+      "pretitle": "Partner With Us",
+      "title": "Become a Sponsor",
+      "desc": "Showcase your brand to leaders in pharmacy research and innovation. Contact us to learn about available sponsorship packages.",
+      "btn": "Contact Secretariat"
+    }
+  }
+}

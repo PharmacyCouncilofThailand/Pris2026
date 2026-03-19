@@ -23,7 +23,7 @@ export default function AbstractGuidelines() {
               General Format
             </h3>
             <ul className="list-disc list-outside pl-5 space-y-3 text-slate-600 leading-relaxed">
-              {submissionGuidelines.general.map((rule, i) => (
+              {submissionGuidelines.guidelines.map((rule, i) => (
                 <li key={i}>
                   {rule}
                 </li>
@@ -37,7 +37,7 @@ export default function AbstractGuidelines() {
               Important Note
             </h4>
             <p className="text-orange-800 leading-relaxed">
-              {submissionGuidelines.importantNote}
+              {submissionGuidelines.presenterRegistrationNote}
             </p>
           </section>
         </div>
@@ -45,3 +45,4 @@ export default function AbstractGuidelines() {
     </section>
   );
 }
+

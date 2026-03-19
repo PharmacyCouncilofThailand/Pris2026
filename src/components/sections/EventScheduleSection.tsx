@@ -9,12 +9,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { scheduleData } from "@/data/scheduleData";
+import { useTranslations, useLocale } from "next-intl";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function EventScheduleSection() {
+  const t = useTranslations("schedule");
+  const locale = useLocale();
   const [activeTab, setActiveTab] = useState(0);
   const [expandedEvents, setExpandedEvents] = useState<Set<number>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
@@ -90,17 +93,17 @@ export default function EventScheduleSection() {
         
         {/* Header - Editorial Style */}
         <div className="mb-12 sm:mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 agenda-title">
-          <div>
-            <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <span className="w-8 sm:w-12 h-px bg-gold" />
-              <span className="text-[10px] sm:text-xs font-semibold tracking-[0.3em] uppercase text-gold">
-                PRIS 2026
-              </span>
+            <div className="agenda-title">
+              <div className="flex items-center gap-4 mb-3">
+                <span className="w-12 h-px bg-gold/50" />
+                <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                  {t('sectionSubtitle')}
+                </h3>
+              </div>
+              <h2 className="text-4xl sm:text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-[0.9]">
+                {t('sectionTitle')}
+              </h2>
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] font-black uppercase tracking-tighter leading-none">
-              Event Schedule
-            </h2>
-          </div>
         </div>
 
         {/* ─── Day Selector (Mobile-First scrollable, Large typography) ─── */}
@@ -112,22 +115,24 @@ export default function EventScheduleSection() {
               variant="ghost"
               className="day-tab group flex flex-col items-start justify-start text-left cursor-pointer flex-shrink-0 h-auto p-0 hover:bg-transparent"
             >
-              <span 
-                className={cn(
-                  "text-2xl sm:text-3xl md:text-5xl font-bold uppercase tracking-tight transition-colors duration-500",
-                  activeTab === index ? "text-white" : "text-white/20 group-hover:text-white/60"
-                )}
-              >
-                {day.day}
-              </span>
-              <span 
-                className={cn(
-                  "text-xs sm:text-sm tracking-widest uppercase transition-colors duration-500 mt-1 sm:mt-2",
-                  activeTab === index ? "text-gold" : "text-white/20 group-hover:text-white/60"
-                )}
-              >
-                {day.date}
-              </span>
+              <div className="flex flex-col items-start gap-1 sm:gap-2">
+                <span 
+                  className={cn(
+                    "text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight transition-colors duration-500",
+                    activeTab === index ? "text-white" : "text-white/20 group-hover:text-white/60"
+                  )}
+                >
+                  {t(`day${index + 1}`)}
+                </span>
+                <span 
+                  className={cn(
+                    "text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-[0.15em] transition-colors duration-500",
+                    activeTab === index ? "text-gold" : "text-white/20 group-hover:text-white/60"
+                  )}
+                >
+                  {locale === "th" && day.dateTh ? day.dateTh : day.date}
+                </span>
+              </div>
             </Button>
           ))}
         </div>
@@ -145,24 +150,24 @@ export default function EventScheduleSection() {
                   {event.time}
                 </h3>
                 <span className="px-2.5 sm:px-3 py-1 rounded-full border border-white/20 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-white/50">
-                  {event.type}
+                  {locale === "th" && event.typeTh ? event.typeTh : event.type}
                 </span>
               </div>
 
               {/* Event Content */}
               <div className="lg:w-2/4 flex flex-col">
                 <h4 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4 leading-snug group-hover:text-gold transition-colors duration-300">
-                  {event.title}
+                  {locale === "th" && event.titleTh ? event.titleTh : event.title}
                 </h4>
-                {event.description && (
+                {(locale === "th" ? event.descriptionTh : event.description) && (
                   <p className="text-white/60 text-base sm:text-lg font-light leading-relaxed mb-5 sm:mb-6 max-w-2xl">
-                    {event.description}
+                    {locale === "th" ? event.descriptionTh : event.description}
                   </p>
                 )}
                 
                 <div className="flex items-center gap-2 text-sm text-white/40 uppercase tracking-widest mt-auto">
                   <MapPin className="w-4 h-4" />
-                  {event.location}
+                  {locale === "th" && event.locationTh ? event.locationTh : event.location}
                 </div>
               </div>
 
@@ -191,7 +196,7 @@ export default function EventScheduleSection() {
                               {speaker.name}
                             </h5>
                             <span className="text-[10px] md:text-xs text-gold uppercase tracking-wider block">
-                              {speaker.role}
+                              {locale === "th" && speaker.roleTh ? speaker.roleTh : speaker.role}
                             </span>
                           </div>
                         </div>
@@ -202,7 +207,9 @@ export default function EventScheduleSection() {
                         onClick={() => toggleExpand(event.id)}
                         className="mt-2 flex items-center justify-between gap-2 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-gold hover:text-white transition-colors duration-300 w-full px-2 py-1 h-auto"
                       >
-                        {expandedEvents.has(event.id) ? "Show Less" : `View all ${event.speakers.length} speakers`}
+                        {expandedEvents.has(event.id) 
+                          ? (locale === "th" ? "แสดงน้อยลง" : "Show Less") 
+                          : `${locale === "th" ? "ดูวิทยากรทั้งหมด" : "View all"} ${event.speakers.length} ${locale === "th" ? "ท่าน" : "speakers"}`}
                         <ChevronDown 
                           className={cn("w-4 h-4 transition-transform duration-300", expandedEvents.has(event.id) && "rotate-180")} 
                         />

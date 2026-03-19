@@ -3,11 +3,13 @@
 import React, { useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 export default function HighlightVideoSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const t = useTranslations("highlightVideo");
 
   const togglePlay = () => {
     if (videoRef.current) {
@@ -31,10 +33,10 @@ export default function HighlightVideoSection() {
         {/* Header Text */}
         <div className="text-center mb-8 md:mb-16 flex flex-col items-center">
           <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-4 md:mb-6">
-            Recent Memories
+            {t('title')}
           </h2>
           <p className="text-base sm:text-lg md:text-2xl text-white/70 max-w-3xl font-light leading-relaxed">
-            Relive the highlights from the Pharmaceutical Research and Innovation Symposium 2025
+            {t('subtitle')}
           </p>
         </div>
 
