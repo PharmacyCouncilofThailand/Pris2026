@@ -49,7 +49,7 @@ export default function Header() {
     "/call-for-abstracts",
     "/welcome-messages",
     "/abstract-guidelines",
-    "/approved-poster-abstracts",
+    "/approved-abstracts",
     "/registration-policies",
     "/sponsorship",
     "/registration",
@@ -59,7 +59,7 @@ export default function Header() {
   const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login");
   const useDarkText = isLightPage && !isScrolled;
 
-  if (pathname.includes("/login") || pathname.includes("/signup")) {
+  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/approved-abstracts")) {
     return null;
   }
 

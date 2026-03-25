@@ -21,7 +21,6 @@ export const navigationData: NavItem[] = [
         children: [
             { labelKey: "abstractGuideline", href: "/abstract-guidelines" },
             { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
-            { labelKey: "approvedPosterAbstracts", href: "/approved-poster-abstracts" },
         ],
     },
     {

@@ -116,5 +116,32 @@ export const approvedPosterAbstracts: ApprovedPosterAbstract[] = [
     category: "Social and Administrative Pharmacy",
     presentationType: "Oral",
     status: "Approved",
+  },
+  {
+    id: "ABS-P-2026-125",
+    title: "A Comprehensive Multi-Center Randomized Controlled Trial Evaluating the Long-Term Efficacy and Safety of Pharmacist-Led Chronic Disease Management Interventions in Community Pharmacy Settings Across Rural Thailand",
+    presenter: "Waraporn Khamkaew",
+    affiliation: "Khon Kaen University",
+    category: "Clinical Pharmacy",
+    presentationType: "Poster",
+    status: "Approved",
+  },
+  {
+    id: "ABS-O-2026-131",
+    title: "Development, Validation, and Implementation of an Artificial Intelligence-Powered Clinical Decision Support System for Real-Time Detection of Clinically Significant Drug-Drug Interactions in Hospital Electronic Prescribing Systems",
+    presenter: "Thanaporn Ritthidej",
+    affiliation: "Chulalongkorn University",
+    category: "Digital Pharmacy and Health Technology",
+    presentationType: "Oral",
+    status: "Approved",
+  },
+  {
+    id: "ABS-P-2026-142",
+    title: "Investigating the Impact of Structured Pharmaceutical Care Programs on Medication Adherence, Clinical Outcomes, and Quality of Life Among Elderly Patients With Multiple Chronic Comorbidities in Primary Care Settings",
+    presenter: "Siriwan Meechaiyo",
+    affiliation: "Mahidol University",
+    category: "Social and Administrative Pharmacy",
+    presentationType: "Poster",
+    status: "Approved",
   }
 ];
