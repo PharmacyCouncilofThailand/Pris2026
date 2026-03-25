@@ -1,10 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { abstractTimeline, submissionGuidelines } from "@/data/abstractData";
 import { useLocale } from "next-intl";
 
 export default function AbstractTimeline() {
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
+  
+  useEffect(() => {
+    setCurrentDate(new Date());
+  }, []);
+
   const locale = useLocale();
   const reservationNote =
     locale === "th"
@@ -26,24 +32,34 @@ export default function AbstractTimeline() {
         </div>
 
         <div className="space-y-0">
-          {abstractTimeline.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col justify-between border-t border-slate-200 py-6 first:border-t-0 md:flex-row md:items-center"
-            >
-              <div className="mb-2 md:mb-0 md:w-1/2">
-                <h3 className="text-sm font-semibold uppercase tracking-widest text-slate-500">
-                  {locale === "th" && item.labelTh ? item.labelTh : item.label}
-                </h3>
-              </div>
+          {abstractTimeline.map((item, index) => {
+            let isPastOrCurrent = false;
+            if (currentDate) {
+              const itemDate = new Date(item.date);
+              isPastOrCurrent = currentDate.getTime() >= itemDate.getTime();
+            }
+            const isHighlighted = item.color === "blue" ? false : true; // Keep existing logic if there's any or override
+            const finalHighlight = isHighlighted || isPastOrCurrent;
 
-              <div className="md:w-1/2 md:text-right">
-                <p className="font-outfit text-xl font-bold text-slate-900 md:text-2xl">
-                  {locale === "th" && item.dateTh ? item.dateTh : item.date}
-                </p>
+            return (
+              <div
+                key={index}
+                className="flex flex-col justify-between border-t border-slate-200 py-6 first:border-t-0 md:flex-row md:items-center transition-colors duration-300 hover:bg-slate-50/50"
+              >
+                <div className="mb-2 md:mb-0 md:w-1/2">
+                  <h3 className={`text-sm tracking-widest uppercase transition-colors duration-300 ${finalHighlight ? "text-red-500 font-bold" : "text-slate-500 font-semibold"}`}>
+                    {locale === "th" && item.labelTh ? item.labelTh : item.label}
+                  </h3>
+                </div>
+
+                <div className="md:w-1/2 md:text-right">
+                  <p className={`font-outfit text-xl transition-colors duration-300 md:text-2xl ${finalHighlight ? "text-red-600 font-black" : "text-slate-900 font-bold"}`}>
+                    {locale === "th" && item.dateTh ? item.dateTh : item.date}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">

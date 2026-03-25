@@ -18,7 +18,7 @@ export default function Footer() {
   const tFooter = useTranslations("footer");
   const pathname = usePathname();
 
-  if (pathname.includes("/login") || pathname.includes("/signup")) {
+  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/approved-abstracts")) {
     return null;
   }
 

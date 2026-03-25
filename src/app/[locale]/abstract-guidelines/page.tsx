@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import { submissionGuidelines } from "@/data/abstractData";
 import gsap from "gsap";
@@ -14,6 +14,7 @@ if (typeof window !== "undefined") {
 
 export default function DetailedGuidelines() {
   const pageRef = useRef<HTMLDivElement>(null);
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const t = useTranslations("abstractGuidelines");
   const locale = useLocale();
   const importantDatesReservationNote =
@@ -24,6 +25,11 @@ export default function DetailedGuidelines() {
     locale === "th"
       ? submissionGuidelines.presenterRegistrationNoteTh
       : submissionGuidelines.presenterRegistrationNote;
+
+  useEffect(() => {
+    // Set current date on the client side to avoid hydration mismatch
+    setCurrentDate(new Date());
+  }, []);
 
   useGSAP(() => {
     // Hero lines reveal
@@ -124,17 +130,28 @@ export default function DetailedGuidelines() {
           </div>
 
           <div className="content-block border-t border-gray-200">
-            {submissionGuidelines.importantDates.map((item, idx) => (
-              <div
-                key={idx}
-                className="flex flex-col gap-1 border-b border-gray-200 py-5 md:flex-row md:items-baseline md:gap-8"
-              >
-                <span className={`text-lg font-medium text-gray-900 md:w-[55%] ${item.highlight ? "text-orange-600" : ""}`}>
-                  {locale === "th" && item.labelTh ? item.labelTh : item.label}
-                </span>
-                <span className="text-sm text-gray-400">{locale === "th" && item.valueTh ? item.valueTh : item.value}</span>
-              </div>
-            ))}
+            {submissionGuidelines.importantDates.map((item, idx) => {
+              let isPastOrCurrent = false;
+              if (currentDate) {
+                const itemDate = new Date(item.value);
+                isPastOrCurrent = currentDate.getTime() >= itemDate.getTime();
+              }
+              const isHighlighted = item.highlight || isPastOrCurrent;
+
+              return (
+                <div
+                  key={idx}
+                  className="flex flex-col gap-1 border-b border-gray-200 py-5 md:flex-row md:items-baseline md:gap-8 transition-colors duration-300 hover:bg-gray-50/50"
+                >
+                  <span className={`text-lg transition-colors duration-300 md:w-[55%] ${isHighlighted ? "text-red-600 font-bold" : "text-gray-900 font-medium"}`}>
+                    {locale === "th" && item.labelTh ? item.labelTh : item.label}
+                  </span>
+                  <span className={`text-sm transition-colors duration-300 ${isHighlighted ? "text-red-500 font-medium" : "text-gray-400"}`}>
+                    {locale === "th" && item.valueTh ? item.valueTh : item.value}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
           <div className="content-block mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">

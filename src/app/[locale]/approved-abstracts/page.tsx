@@ -1,8 +1,8 @@
 "use client";
 
-import { useDeferredValue, useState, useEffect, useRef, type ReactNode } from "react";
+import { useDeferredValue, useState, useEffect, useRef, useCallback, type ReactNode } from "react";
 import { useLocale } from "next-intl";
-import { Building2, FileText, Search, User } from "lucide-react";
+import { Building2, ChevronDown, FileText, Search, User } from "lucide-react";
 import { approvedPosterAbstracts, type ApprovedPosterAbstract } from "@/data/approvedPosterAbstracts";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
@@ -21,9 +21,11 @@ type PageCopy = {
   oralPresentation: string;
   posterPresentation: string;
   totalResults: string;
+  showMore: string;
+  showLess: string;
 };
 
-export default function ApprovedPosterAbstractsPage() {
+export default function ApprovedAbstractsPage() {
   const locale = useLocale();
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearchQuery = useDeferredValue(searchQuery);
@@ -67,6 +69,8 @@ export default function ApprovedPosterAbstractsPage() {
         oralPresentation: "Oral",
         posterPresentation: "Poster",
         totalResults: "รายการ",
+        showMore: "ดูชื่อเต็ม",
+        showLess: "ย่อ",
       }
     : {
         eyebrow: "Abstract Search",
@@ -82,6 +86,8 @@ export default function ApprovedPosterAbstractsPage() {
         oralPresentation: "Oral",
         posterPresentation: "Poster",
         totalResults: "results",
+        showMore: "Show full title",
+        showLess: "Collapse",
       };
 
   const normalizedQuery = deferredSearchQuery.trim().toLowerCase();
@@ -97,72 +103,72 @@ export default function ApprovedPosterAbstractsPage() {
   return (
     <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 font-sans">
       
-      {/* ══════ HERO ══════ */}
+      {/* ══════ COMPACT HERO — optimised for 16:9 kiosk ══════ */}
       <section
         ref={heroRef}
-        className="relative pt-24 pb-12 px-4 flex flex-col justify-end items-center text-center overflow-visible
-                   sm:pt-32 sm:pb-16 sm:px-6
-                   md:pt-48 md:pb-28 md:px-12"
+        className="relative px-4 pt-8 pb-6 flex flex-col items-center text-center overflow-visible
+                   sm:px-6 sm:pt-12 sm:pb-8
+                   md:px-12 md:pt-16 md:pb-10"
       >
         {/* decorative bg glows */}
         <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-blue-500/[0.04] rounded-full blur-[120px] pointer-events-none sm:w-[700px] sm:h-[700px] sm:blur-[180px]" />
         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-orange-500/[0.04] rounded-full blur-[100px] pointer-events-none sm:w-[500px] sm:h-[500px] sm:blur-[150px]" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="hero-sub flex items-center gap-2 mb-5 sm:gap-4 sm:mb-8">
+          <div className="hero-sub flex items-center gap-2 mb-3 sm:gap-4 sm:mb-5">
             <span className="h-px w-6 bg-blue-600 sm:w-12" />
             <span className="text-[8px] font-semibold tracking-[0.2em] uppercase text-blue-600 sm:text-[10px] sm:tracking-[0.3em]">PRIS 2026</span>
             <span className="text-gray-400 text-[8px] tracking-[0.18em] uppercase sm:text-[10px] sm:tracking-widest">— {copy.eyebrow}</span>
           </div>
 
-          <h1 className="px-1 text-[2.5rem] font-black uppercase tracking-tighter leading-[0.88] text-gray-900
-                         sm:text-6xl md:text-8xl lg:text-[8rem]">
+          <h1 className="px-1 text-[2rem] font-black uppercase tracking-tighter leading-[0.88] text-gray-900
+                         sm:text-5xl md:text-7xl lg:text-[6rem]">
             <div className="overflow-hidden">
               <span className="block hero-line">{copy.title1}</span>
             </div>
-            <div className="overflow-hidden py-1 sm:py-2" >
-              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-1 sm:pb-2">
+            <div className="overflow-hidden py-0.5 sm:py-1">
+              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-0.5 sm:pb-1">
                 {copy.title2}
               </span>
             </div>
           </h1>
           
-          <p className="hero-sub mt-4 max-w-xl text-sm text-gray-500 font-light leading-relaxed px-2
-                        sm:mt-8 sm:max-w-2xl sm:text-lg sm:px-0">
+          <p className="hero-sub mt-2 max-w-xl text-xs text-gray-500 font-light leading-relaxed px-2
+                        sm:mt-4 sm:max-w-2xl sm:text-sm sm:px-0 md:text-base">
             {copy.desc}
           </p>
         </div>
       </section>
 
-      {/* ══════ SEARCH & LIST ══════ */}
-      <section className="relative px-4 pb-20 sm:px-6 sm:pb-32">
-        <div className="max-w-6xl mx-auto">
+      {/* ══════ SEARCH & GRID — 16:9 optimised layout ══════ */}
+      <section className="relative px-4 pb-12 sm:px-6 sm:pb-16 md:pb-20">
+        <div className="max-w-[1600px] mx-auto">
           
-          {/* Search Bar - Full Width */}
-          <div className="relative z-20 -mt-2 mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]
-                         sm:-mt-8 sm:mb-16 sm:rounded-[2rem]">
+          {/* Search Bar */}
+          <div className="relative z-20 mb-4 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]
+                         sm:mb-8 sm:rounded-2xl">
             <div className="relative w-full">
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-gray-400 sm:left-6 sm:size-6" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-gray-400 sm:left-6 sm:size-5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder={copy.searchPlaceholder}
-                className="w-full bg-white py-3.5 pl-12 pr-4 text-sm font-medium text-gray-700 outline-none transition placeholder:text-gray-400 focus:bg-gray-50/50
-                          sm:py-6 sm:pl-16 sm:pr-6 sm:text-lg"
+                className="w-full bg-white py-3 pl-11 pr-4 text-sm font-medium text-gray-700 outline-none transition placeholder:text-gray-400 focus:bg-gray-50/50
+                          sm:py-4 sm:pl-14 sm:pr-6 sm:text-base"
               />
             </div>
           </div>
 
           {/* Results count */}
           {normalizedQuery && (
-            <p className="mb-4 text-xs text-gray-400 font-medium tracking-wide sm:mb-6 sm:text-sm">
+            <p className="mb-3 text-xs text-gray-400 font-medium tracking-wide sm:mb-4 sm:text-sm">
               {filteredPosters.length} {copy.totalResults}
             </p>
           )}
 
           {filteredPosters.length > 0 ? (
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 md:gap-6">
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:gap-4">
               {filteredPosters.map((poster, index) => (
                 <PosterCard
                   key={poster.id}
@@ -174,12 +180,12 @@ export default function ApprovedPosterAbstractsPage() {
             </div>
           ) : (
             <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-gray-50/80 px-5 py-12 text-center
-                           sm:mt-10 sm:rounded-3xl sm:px-6 sm:py-28">
+                           sm:mt-10 sm:rounded-3xl sm:px-6 sm:py-20">
               <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-white text-gray-400 shadow-[0_4px_20px_rgb(0,0,0,0.03)]
-                             sm:mb-6 sm:size-20">
-                <FileText className="size-6 sm:size-8" />
+                             sm:mb-6 sm:size-16">
+                <FileText className="size-6 sm:size-7" />
               </div>
-              <h2 className="text-xl font-black tracking-tight text-gray-900 sm:text-2xl md:text-3xl">{copy.emptyTitle}</h2>
+              <h2 className="text-xl font-black tracking-tight text-gray-900 sm:text-2xl">{copy.emptyTitle}</h2>
               <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500 sm:mt-4 sm:text-base">
                 {copy.emptyDesc}
               </p>
@@ -191,6 +197,9 @@ export default function ApprovedPosterAbstractsPage() {
   );
 }
 
+/* ══════════════════════════════════════════════════════
+   POSTER CARD — with 2-line title clamp + expand dropdown
+   ══════════════════════════════════════════════════════ */
 function PosterCard({
   poster,
   index,
@@ -200,18 +209,35 @@ function PosterCard({
   index: number;
   copy: PageCopy;
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  // Detect if the title text overflows 2 lines
+  const checkClamp = useCallback(() => {
+    const el = titleRef.current;
+    if (!el) return;
+    // scrollHeight > clientHeight means content is clamped
+    setIsClamped(el.scrollHeight > el.clientHeight + 2);
+  }, []);
+
+  useEffect(() => {
+    checkClamp();
+    window.addEventListener("resize", checkClamp);
+    return () => window.removeEventListener("resize", checkClamp);
+  }, [checkClamp]);
+
   return (
     <article
-      className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300
-                 sm:rounded-[1.75rem] sm:p-6
-                 md:p-8
-                 hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-blue-200"
+      className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300
+                 sm:rounded-2xl sm:p-5
+                 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-blue-200"
     >
-      {/* Type Marker (Oral vs Poster) — short label, contained inside card */}
+      {/* Type Marker (Oral vs Poster) */}
       <div 
         className={cn(
-          "absolute top-0 right-0 z-10 rounded-bl-xl px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.15em] shadow-sm transition-colors",
-          "sm:rounded-bl-2xl sm:px-5 sm:py-2 sm:text-[10px] sm:tracking-[0.2em]",
+          "absolute top-0 right-0 z-10 rounded-bl-lg px-2.5 py-1 text-[7px] font-bold uppercase tracking-[0.15em] shadow-sm transition-colors",
+          "sm:rounded-bl-xl sm:px-3.5 sm:py-1.5 sm:text-[9px] sm:tracking-[0.2em]",
           poster.presentationType === "Oral" 
             ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white" 
             : "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
@@ -220,39 +246,54 @@ function PosterCard({
         {poster.presentationType === "Oral" ? copy.oralPresentation : copy.posterPresentation}
       </div>
 
-      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-500 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:w-1.5" />
+      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-500 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       
       {/* Background number */}
-      <div className="pointer-events-none absolute bottom-3 right-3 text-[2.5rem] font-black tracking-tighter leading-none text-gray-50/80 group-hover:text-blue-50 transition-colors duration-300
-                     sm:bottom-5 sm:right-6 sm:text-[5rem]
-                     md:text-[6.5rem]">
+      <div className="pointer-events-none absolute bottom-2 right-3 text-[2rem] font-black tracking-tighter leading-none text-gray-50/80 group-hover:text-blue-50 transition-colors duration-300
+                     sm:bottom-3 sm:right-4 sm:text-[3.5rem]">
         {String(index + 1).padStart(2, "0")}
       </div>
 
       <div className="relative z-10">
         {/* Badge row */}
-        <div className="mb-1 flex flex-wrap items-center gap-2 pr-16 sm:mb-2 sm:gap-4 sm:pr-24">
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-gray-600
-                          sm:px-3 sm:py-1 sm:text-[10px]">
+        <div className="mb-1 flex flex-wrap items-center gap-2 pr-14 sm:mb-1.5 sm:gap-3 sm:pr-20">
+          <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-gray-600
+                          sm:px-2.5 sm:text-[9px]">
             {copy.approvedBadge}
           </span>
-          <p className="font-mono text-[10px] font-semibold tracking-widest text-blue-600 sm:text-xs">{poster.id}</p>
+          <p className="font-mono text-[9px] font-semibold tracking-widest text-blue-600 sm:text-[10px]">{poster.id}</p>
         </div>
 
-        {/* Title */}
-        <h2 className="mt-3 mb-4 text-base font-bold leading-snug tracking-tight text-gray-900
-                       sm:mt-5 sm:mb-8 sm:text-xl
-                       md:text-2xl md:mb-10
-                       lg:text-[1.65rem]">
+        {/* Title — clamped to 2 lines */}
+        <h2
+          ref={titleRef}
+          className={cn(
+            "mt-2 text-sm font-bold leading-snug tracking-tight text-gray-900 transition-all duration-300",
+            "sm:mt-3 sm:text-base",
+            !isExpanded && "line-clamp-2"
+          )}
+        >
           {poster.title}
         </h2>
 
-        {/* Info rows — stack on mobile, side by side on sm+ */}
-        <div className="mt-auto grid gap-3 border-t border-gray-100 pt-3
-                       sm:gap-5 sm:grid-cols-2 sm:pt-5">
-          <InfoRow icon={<User className="size-3.5 sm:size-4" />} label={copy.presenterField} value={poster.presenter} />
+        {/* Expand / Collapse toggle — only shows when title overflows */}
+        {(isClamped || isExpanded) && (
+          <button
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-blue-500 hover:text-blue-700 transition-colors 
+                       sm:text-xs sm:mt-1.5"
+          >
+            <span>{isExpanded ? copy.showLess : copy.showMore}</span>
+            <ChevronDown className={cn("size-3 transition-transform duration-200 sm:size-3.5", isExpanded && "rotate-180")} />
+          </button>
+        )}
+
+        {/* Info rows */}
+        <div className="mt-3 grid gap-2 border-t border-gray-100 pt-2.5
+                       sm:gap-3 sm:grid-cols-2 sm:pt-3 sm:mt-4">
+          <InfoRow icon={<User className="size-3 sm:size-3.5" />} label={copy.presenterField} value={poster.presenter} />
           <InfoRow
-            icon={<Building2 className="size-3.5 sm:size-4" />}
+            icon={<Building2 className="size-3 sm:size-3.5" />}
             label={copy.institutionField}
             value={poster.affiliation}
           />
@@ -274,12 +315,12 @@ function InfoRow({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
-      <div className="flex items-center gap-1.5 sm:gap-2">
+    <div className={cn("flex flex-col gap-0.5", className)}>
+      <div className="flex items-center gap-1.5">
         <div className="text-blue-400">{icon}</div>
-        <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400 sm:text-[10px] sm:tracking-[0.2em]">{label}</p>
+        <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-gray-400 sm:text-[9px] sm:tracking-[0.2em]">{label}</p>
       </div>
-      <p className="pl-5 text-xs font-medium leading-relaxed text-gray-800 sm:pl-6 sm:text-sm">{value}</p>
+      <p className="pl-4 text-[11px] font-medium leading-relaxed text-gray-800 sm:pl-5 sm:text-xs">{value}</p>
     </div>
   );
 }
