@@ -58,12 +58,12 @@ export default function CallForAbstractsPage() {
             <span className="text-gray-300 text-[10px] tracking-widest uppercase">— Call for Abstracts</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
-            <div className="overflow-hidden">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
+            <div className="overflow-hidden py-2 -my-2">
               <span className="block cfa-hero-line">{t("title1")}</span>
             </div>
-            <div className="overflow-hidden">
-              <span className="block cfa-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500">
+            <div className="overflow-hidden py-2 -my-2">
+              <span className="block cfa-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-2">
                 {t("title2")}
               </span>
             </div>

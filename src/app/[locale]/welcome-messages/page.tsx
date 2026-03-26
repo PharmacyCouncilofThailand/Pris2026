@@ -96,12 +96,12 @@ export default function WelcomeMessagesPage() {
           </h4>
         </div>
 
-        <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-black uppercase tracking-tighter leading-none mb-8 flex flex-col items-center">
-          <div className="overflow-hidden">
+        <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-black uppercase tracking-tighter leading-tight mb-8 flex flex-col items-center">
+          <div className="overflow-hidden py-2 -my-2">
             <span className="block welcome-hero-line">{t("title1")}</span>
           </div>
-          <div className="overflow-hidden">
-            <span className="block welcome-hero-line">{t("title2")}</span>
+          <div className="overflow-hidden py-2 -my-2">
+            <span className="block welcome-hero-line pb-2">{t("title2")}</span>
           </div>
         </h1>
 
@@ -137,10 +137,7 @@ export default function WelcomeMessagesPage() {
 
               {/* Content Side */}
               <div className="w-full lg:w-7/12 flex flex-col justify-center relative py-8">
-                {/* Decorative background typography */}
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 text-[12vw] lg:text-[10vw] leading-none font-black text-black/[0.03] uppercase select-none pointer-events-none whitespace-nowrap overflow-hidden">
-                  {t("bgText")}
-                </div>
+                {/* Decorative background typography removed per user request */}
 
                 <div className="speaker-content relative z-10 w-full">
 

@@ -53,6 +53,17 @@ export default function Hero() {
     }
   };
 
+  const handleRegisterClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+      window.location.href = "/registration";
+    } else {
+      // Pass the redirect parameter so the login page knows to send them back to registration
+      window.location.href = "/login?redirect=/registration";
+    }
+  };
+
   // On mount: hide navbar during hero intro
   useEffect(() => {
     if (hasPlayed()) {
@@ -334,26 +345,29 @@ export default function Hero() {
 
         <div
           ref={buttonsRef}
-          className="flex flex-col md:flex-row gap-4 md:gap-5 z-[2]"
+          className="flex flex-col md:flex-row gap-4 md:gap-5 z-[2] mt-4"
           style={{ opacity: 0 }}
         >
-          <Link
+          <Link 
             href="/registration"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "bg-orange-500 text-white hover:bg-orange-400 shadow-[0_10px_20px_rgba(249,115,22,0.35)] hover:shadow-[0_15px_30px_rgba(249,115,22,0.5)] font-bold px-8 py-6 text-base md:text-lg uppercase tracking-wider transition-all",
-            )}
+            onClick={handleRegisterClick}
+            className="group relative inline-flex items-center justify-center bg-white/[0.05] backdrop-blur-[20px] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.1] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
           >
-            {t('registerNow')}
-          </Link>
-          <Link
-            href="/call-for-abstracts"
-            className={cn(
-              buttonVariants({ variant: "default" }),
-              "bg-[#203b89] text-white hover:bg-[#1a3070] shadow-[0_10px_20px_rgba(32,59,137,0.3)] hover:shadow-[0_15px_30px_rgba(32,59,137,0.4)] font-bold px-8 py-6 text-base md:text-lg uppercase tracking-wider transition-all",
-            )}
-          >
-            {t('submitAbstract')}
+            {/* Decorative gradient overlay matching countdown */}
+            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />
+
+            <span className="relative z-10 text-sm sm:text-base md:text-lg font-bold uppercase tracking-[0.2em] flex items-center gap-4">
+              {t("registerNow")}
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-500 group-hover:translate-x-1">
+                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+            </span>
+
+            {/* Bottom glowing line matching countdown */}
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-100" />
+            
+            {/* Hover bottom glowing line intensify */}
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
         </div>
       </div>

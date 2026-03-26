@@ -2,11 +2,12 @@
 
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import gsap from "gsap";
 
 export default function LoginPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
+  const router = useRouter();
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
@@ -95,14 +96,20 @@ export default function LoginPage() {
 
             <div className="text-center mb-12 fade-in-element">
               <h1 className="text-4xl lg:text-[2.75rem] font-serif tracking-tight text-gray-900 mb-3 leading-tight">
-                Welcome Back
+                Login
               </h1>
               <p className="text-sm font-medium text-gray-500">
                 Enter your email and password to access your account
               </p>
             </div>
 
-            <form className="space-y-6 fade-in-element" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-6 fade-in-element" onSubmit={(e) => { 
+              e.preventDefault(); 
+              localStorage.setItem('isLoggedIn', 'true'); 
+              const urlParams = new URLSearchParams(window.location.search);
+              const redirect = urlParams.get('redirect') || '/';
+              router.push(redirect); 
+            }}>
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="email">
                   Email

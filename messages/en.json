@@ -43,7 +43,7 @@
   "prisIntro": {
     "eyebrow": "About PRIS",
     "title": "What is PRIS?",
-    "intro": "PRIS, or the <span class='text-[#FF5A00] font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields — academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span class='text-[#FF5A00] font-medium'>driving the pharmacy profession forward</span> to keep pace with the changes in the modern healthcare world.",
+    "intro": "PRIS, or the <span class='text-[#FF5A00] font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields — academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span class='text-[#FF5A00] font-medium'>Pharmacy research & innovation driving sustainable healthcare</span> to keep pace with the changes in the modern healthcare world.",
     "body": "",
     "stat1Value": "1,000+",
     "stat1Label": "Participants",
@@ -120,7 +120,7 @@
     "tierPostGradLabel": "Master's & Ph.D. Level",
     "tierUnderGrad": "Under Graduate",
     "tierUnderGradLabel": "Bachelor's Level",
-    "registerCollection": "Register Collection"
+    "registerCollection": "Buy tickets"
   },
   "countdown": {
     "days": "Days",
@@ -132,7 +132,7 @@
     "location": "Bangkok, Thailand",
     "title": "About",
     "whatIsTitle": "What is PRIS?",
-    "whatIsDesc": "PRIS, or the <span class='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields — academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span class='text-orange-600 font-medium'>driving the pharmacy profession forward</span> to keep pace with the changes in the modern healthcare world.",
+    "whatIsDesc": "PRIS, or the <span class='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields — academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span class='text-orange-600 font-medium'>Pharmacy research & innovation driving sustainable healthcare</span> to keep pace with the changes in the modern healthcare world.",
     "orgTeam": "Organizing Team",
     "committee": "Committee",
     "advisors": "Advisors",

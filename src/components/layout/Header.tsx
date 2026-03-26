@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Menu, ChevronDown, Globe } from "lucide-react";
+import { Menu, ChevronDown, Globe, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -27,12 +27,19 @@ import { navigationData } from "@/data/navigation";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const pathname = usePathname();
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("common");
   type TranslationKey = Parameters<typeof t>[0];
   type LinkHref = React.ComponentProps<typeof Link>["href"];
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+    }
+  }, [pathname]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -52,11 +59,13 @@ export default function Header() {
     "/approved-abstracts",
     "/registration-policies",
     "/sponsorship",
-    "/registration",
+    "/contact",
     "/login",
     "/signup",
+    "/profile",
+    "/registration"
   ];
-  const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login");
+  const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login") || pathname.startsWith("/profile");
   const useDarkText = isLightPage && !isScrolled;
 
   if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/approved-abstracts")) {
@@ -195,26 +204,43 @@ export default function Header() {
               "flex items-center gap-4 border-l pl-4",
               useDarkText ? "border-slate-200" : "border-white/20"
             )}>
-              <Link
-                href="/login"
-                className={cn(
-                  "text-[12px] font-bold uppercase tracking-[0.15em] transition-colors duration-300",
-                  useDarkText ? "text-slate-600 hover:text-blue-600" : "text-white/80 hover:text-white"
-                )}
-              >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                className={cn(
-                  "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
-                  useDarkText
-                    ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
-                    : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
-                )}
-              >
-                Sign up
-              </Link>
+              {isLoggedIn ? (
+                <Link
+                  href="/profile"
+                  className={cn(
+                    "inline-flex h-10 items-center justify-center gap-2 rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                    useDarkText
+                      ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
+                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
+                  )}
+                >
+                  <User className="w-4 h-4" />
+                  My Profile
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className={cn(
+                      "text-[12px] font-bold uppercase tracking-[0.15em] transition-colors duration-300",
+                      useDarkText ? "text-slate-600 hover:text-blue-600" : "text-white/80 hover:text-white"
+                    )}
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className={cn(
+                      "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                      useDarkText
+                        ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
+                        : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
+                    )}
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -299,18 +325,30 @@ export default function Header() {
 
                 {/* Mobile Auth Buttons */}
                 <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
-                  <Link
-                    href="/login"
-                    className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 rounded-full hover:bg-white/5 transition-colors"
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
-                  >
-                    Sign up
-                  </Link>
+                  {isLoggedIn ? (
+                    <Link
+                      href="/profile"
+                      className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
+                    >
+                      <User className="w-4 h-4" />
+                      My Profile
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 rounded-full hover:bg-white/5 transition-colors"
+                      >
+                        Log in
+                      </Link>
+                      <Link
+                        href="/signup"
+                        className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
+                      >
+                        Sign up
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             </SheetContent>
