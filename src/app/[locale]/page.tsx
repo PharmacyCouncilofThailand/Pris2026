@@ -67,7 +67,10 @@ export default function Home() {
         <EventScheduleSection />
       </div>
 
-      {/* Blur transition removed as Sponsor is now dark theme */}
+      {/* Sponsor Marquee */}
+      <div className="w-full relative" style={{ zIndex: 2 }}>
+        <SponsorSection />
+      </div>
 
       {/* Highlight Video */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
@@ -77,11 +80,6 @@ export default function Home() {
       {/* Recent Memories 2024 */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
         <RecentMemoriesSection />
-      </div>
-
-      {/* Sponsor Marquee */}
-      <div className="w-full relative" style={{ zIndex: 2 }}>
-        <SponsorSection />
       </div>
 
 

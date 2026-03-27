@@ -8,7 +8,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useLocale } from "next-intl";
-import { galleryData } from "../../../../data/galleryData";
+import { galleryData } from "@/data/galleryData";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);

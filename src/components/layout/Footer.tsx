@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { Link, usePathname } from "@/i18n/routing";
 import { Mail, Phone, Globe, MapPin } from "lucide-react";
+import { galleryImages } from "@/data/galleryData";
 
 const quickLinks = [
   { labelKey: "home", href: "/" },
@@ -12,6 +13,8 @@ const quickLinks = [
   { labelKey: "registration", href: "/registration" },
   { labelKey: "gallery", href: "/gallery" },
 ];
+
+const galleryThumbs = galleryImages.slice(0, 6);
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -29,13 +32,13 @@ export default function Footer() {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/[0.02] rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#D4AF37]/[0.02] rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="container mx-auto px-6 md:px-12 max-w-[1400px] pt-24 pb-12 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 max-w-[1400px] pt-14 pb-8 relative z-10">
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 mb-10">
 
-          {/* Brand & Address (Col Span 5) */}
-          <div className="lg:col-span-5 flex flex-col">
-            <Link href="/" className="inline-block mb-10">
+          {/* Brand & Address (Col Span 4) */}
+          <div className="lg:col-span-4 flex flex-col">
+            <Link href="/" className="inline-block mb-6">
               <Image
                 src="/assets/Img/sponsors/logo สภา.jpg"
                 alt="Pharmacy Council Logo"
@@ -57,13 +60,13 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Quick Links (Col Span 3) */}
-          <div className="lg:col-span-3 lg:pl-8 flex flex-col">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-zinc-500 font-medium mb-8 flex items-center gap-3">
+          {/* Quick Links (Col Span 2) */}
+          <div className="lg:col-span-2 lg:pl-8 flex flex-col">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-zinc-500 font-medium mb-5 flex items-center gap-3">
               <span className="w-4 h-px bg-zinc-700"></span>
               {tFooter("navigation")}
             </h3>
-            <ul className="flex flex-col gap-4">
+            <ul className="flex flex-col gap-3">
               {quickLinks.map((link) => (
                 <li key={link.labelKey}>
                   <Link
@@ -78,13 +81,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact (Col Span 4) */}
-          <div className="lg:col-span-4 flex flex-col">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-zinc-500 font-medium mb-8 flex items-center gap-3">
+          {/* Contact (Col Span 3) */}
+          <div className="lg:col-span-3 flex flex-col">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-zinc-500 font-medium mb-5 flex items-center gap-3">
               <span className="w-4 h-px bg-zinc-700"></span>
               {tFooter("contactUs")}
             </h3>
-            <ul className="flex flex-col gap-6">
+            <ul className="flex flex-col gap-4">
               <li>
                 <a
                   href="tel:+6625919992"
@@ -121,6 +124,30 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+          </div>
+
+          {/* Gallery Thumbnails (Col Span 3) */}
+          <div className="lg:col-span-3 flex flex-col">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-zinc-500 font-medium mb-5 flex items-center gap-3">
+              <span className="w-4 h-px bg-zinc-700"></span>
+              Gallery
+            </h3>
+            <div className="grid grid-cols-3 gap-2">
+              {galleryThumbs.map((src, idx) => (
+                <Link key={idx} href="/gallery" className="block">
+                  <div className="relative aspect-square rounded-lg overflow-hidden group">
+                    <Image
+                      src={src}
+                      alt={`PRIS Gallery ${idx + 1}`}
+                      fill
+                      sizes="200px"
+                      className="object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
 
         </div>
