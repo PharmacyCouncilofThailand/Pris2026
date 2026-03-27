@@ -66,40 +66,22 @@ export default function PrisIntroSection() {
         }
       );
 
-      // ── Text Scramble Animation ──
-      const scrambleChars = "0123456789#+%&@";
-      document.querySelectorAll<HTMLElement>(".scramble-number").forEach((el) => {
-        const finalText = el.getAttribute("data-value") || "";
-        const totalFrames = 30; // ~2.5s at 80ms interval
-        let frame = 0;
-
-        ScrollTrigger.create({
-          trigger: el,
-          start: "top 88%",
-          once: true,
-          onEnter: () => {
-            const interval = setInterval(() => {
-              const progress = frame / totalFrames;
-              el.textContent = finalText
-                .split("")
-                .map((char, i) => {
-                  // Characters that are NOT digits stay fixed (like , + etc.)
-                  if (!/[0-9]/.test(char)) return char;
-                  // Reveal characters left to right based on progress
-                  const revealPoint = i / finalText.length;
-                  if (progress > revealPoint + 0.3) return char;
-                  return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-                })
-                .join("");
-              frame++;
-              if (frame > totalFrames) {
-                el.textContent = finalText;
-                clearInterval(interval);
-              }
-            }, 80);
+      // ── Stat Numbers Reveal ──
+      gsap.fromTo(
+        ".stat-number",
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".pris-stats",
+            start: "top 85%",
           },
-        });
-      });
+        }
+      );
     },
     { scope: containerRef }
   );
@@ -147,10 +129,9 @@ export default function PrisIntroSection() {
           {/* Stat 1: Participants */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
             <p
-              className="scramble-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
-              data-value={t("stat1Value")}
+              className="stat-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
-              &nbsp;
+              {t("stat1Value")}
             </p>
 
             {/* Icon: Network/People */}
@@ -187,10 +168,9 @@ export default function PrisIntroSection() {
           {/* Stat 2: Exhibition Booths */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
             <p
-              className="scramble-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
-              data-value={t("stat2Value")}
+              className="stat-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
-              &nbsp;
+              {t("stat2Value")}
             </p>
 
             {/* Icon: Exhibition Booth */}
@@ -223,10 +203,9 @@ export default function PrisIntroSection() {
           {/* Stat 3: Networking Night */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12">
             <p
-              className="scramble-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
-              data-value={t("stat3Value")}
+              className="stat-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
-              &nbsp;
+              {t("stat3Value")}
             </p>
 
             {/* Icon: Wine glasses / Networking */}
