@@ -17,8 +17,8 @@ const sponsorTiers = [
   {
     tier: "Platinum Sponsors",
     sponsors: [
-      { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/logo สภา.jpg" },
-      { id: 2, name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" },
+      { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png" },
+      { id: 2, name: "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png" },
     ]
   },
   {
@@ -80,7 +80,7 @@ export default function SponsorshipPage() {
 
 
       {/* ══════ HERO ══════ */}
-      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
+      <section className="relative pt-36 md:pt-48 pb-12 md:pb-16 px-6 md:px-12 flex flex-col justify-end items-center text-center">
         {/* decorative bg glows */}
         <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
@@ -92,7 +92,7 @@ export default function SponsorshipPage() {
             <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("pretitleSub")}</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[6rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
             <div className="overflow-hidden py-2 -my-2">
               <span className="block sponsor-hero-line">{t("title1")}</span>
             </div>
@@ -106,8 +106,8 @@ export default function SponsorshipPage() {
       </section>
 
       {/* ══════ INTRO ══════ */}
-      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
-        <div className="max-w-4xl mx-auto content-block text-center border-t border-b border-gray-200 py-12 md:py-16">
+      <section className="relative px-6 md:px-12 pb-12 md:pb-16">
+        <div className="max-w-4xl mx-auto content-block text-center border-t border-b border-gray-200 py-8 md:py-10">
           <p className="text-gray-500 text-base md:text-lg leading-[1.8] font-light max-w-2xl mx-auto">
             {t("intro")}
           </p>
@@ -115,18 +115,18 @@ export default function SponsorshipPage() {
       </section>
 
       {/* ══════ SPONSOR LOGOS ══════ */}
-      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+      <section className="relative px-6 md:px-12 pb-12 md:pb-16">
         <div className="max-w-6xl mx-auto">
           
-          <div className="text-center mb-16 md:mb-24 content-block">
+          <div className="text-center mb-10 md:mb-14 content-block">
             <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
               PARTNER
             </h2>
           </div>
 
           {sponsorTiers.map((tierData, index) => (
-            <div key={index} className="content-block mb-24 last:mb-0">
-              <div className="flex flex-col items-center text-center mb-16">
+            <div key={index} className="content-block mb-14 last:mb-0">
+              <div className="flex flex-col items-center text-center mb-8">
                 <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gray-400 mb-4">
                   {t("tierLabel")} {String(index + 1).padStart(2, "0")}
                 </span>
@@ -156,7 +156,7 @@ export default function SponsorshipPage() {
       </section>
 
       {/* ══════ BECOME A SPONSOR CTA ══════ */}
-      <section className="relative px-6 md:px-12 pb-32 md:pb-44">
+      <section className="relative px-6 md:px-12 pb-16 md:pb-24">
         <div className="max-w-4xl mx-auto content-block text-center">
           <div className="flex items-center justify-center gap-4 mb-8">
             <span className="w-12 h-px bg-orange-500" />
@@ -171,7 +171,9 @@ export default function SponsorshipPage() {
           </p>
           <div className="flex justify-center">
             <a
-              href="mailto:pharthai@pharmacycouncil.org"
+              href="https://sponsor-wine.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-gray-900 text-white font-bold px-10 py-4 text-center uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors"
             >
               {t("cta.btn")}

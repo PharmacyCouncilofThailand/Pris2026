@@ -2,7 +2,7 @@
 
 import React, { useRef } from "react";
 import { Link } from "@/i18n/routing";
-import { policyFaqs } from "../../../../data/policyData";
+import { policyFaqs } from "@/data/policyData";
 import { Download } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
