@@ -47,22 +47,30 @@ export default function Countdown({ className }: CountdownProps) {
   const timeParts = getPartsOfTimeDuration(timeDif);
 
   const TimeUnit = ({ value, label }: { value: number; label: string }) => (
-    <div className="flex flex-col items-center justify-center p-3 md:p-5 min-w-[80px] md:min-w-[100px] bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.1)] transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:shadow-[0_15px_50px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]">
-      <span className="text-3xl md:text-5xl font-black bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent tracking-wide">
-        {value}
-      </span>
-      <span className="text-xs md:text-sm text-gray-300 mt-1 uppercase tracking-wider font-medium">
-        {label}
-      </span>
+    <div className="relative flex flex-col items-center justify-center p-3.5 md:py-5 md:px-7 min-w-[80px] md:min-w-[110px] rounded-xl md:rounded-2xl border border-white/20 bg-white/[0.05] backdrop-blur-[20px] shadow-[0_12px_40px_rgba(0,85,255,0.15)] overflow-hidden">
+      
+      {/* Decorative gradient overlay (permanent) */}
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />
+      
+      <div className="relative z-10 flex flex-col items-center">
+        <span className="text-4xl sm:text-5xl md:text-[3.25rem] font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 tracking-tight tabular-nums drop-shadow-sm mb-1 md:mb-1.5">
+          {String(value).padStart(2, "0")}
+        </span>
+        <span className="text-[10px] sm:text-[11px] md:text-xs text-blue-300 uppercase tracking-[0.15em] font-medium">
+          {label}
+        </span>
+      </div>
+      
+      {/* Bottom glowing line (permanent) */}
+      <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-100" />
     </div>
   );
 
   return (
-    <div className={cn("flex flex-wrap justify-center gap-3 md:gap-4", className)}>
+    <div className={cn("flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5", className)}>
       <TimeUnit value={timeParts.days} label={t("days")} />
       <TimeUnit value={timeParts.hours} label={t("hours")} />
       <TimeUnit value={timeParts.minutes} label={t("minutes")} />
-      <TimeUnit value={timeParts.seconds} label={t("seconds")} />
     </div>
   );
 }

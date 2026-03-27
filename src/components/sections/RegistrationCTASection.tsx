@@ -99,20 +99,20 @@ export default function RegistrationCTASection() {
             {t("pretitle")}
           </p>
           
-          <h2 className="text-[clamp(3.5rem,10vw,14rem)] leading-[0.8] font-black tracking-tighter uppercase overflow-hidden break-words hyphens-auto">
+          <h2 className="text-[clamp(3.5rem,10vw,14rem)] leading-none font-black tracking-tighter uppercase overflow-hidden py-4 -my-4 break-words hyphens-auto">
             <div className="flex flex-wrap">
               {t("title1").split("").map((char, i) => (
                 <span key={`sec-${i}`} className="char-anim inline-block">{char}</span>
               ))}
             </div>
           </h2>
-          <h2 className="text-[clamp(3.5rem,10vw,14rem)] leading-[0.8] font-black tracking-tighter uppercase overflow-hidden flex flex-col md:flex-row md:items-center gap-4 md:gap-12 mt-4 md:mt-2">
+          <h2 className="text-[clamp(3.5rem,10vw,14rem)] leading-none font-black tracking-tighter uppercase overflow-hidden py-4 -my-4 flex flex-col md:flex-row md:items-center gap-4 md:gap-12 mt-4 md:mt-2">
             <div className="fade-up w-16 md:w-48 h-[1rem] md:h-[clamp(0.5rem,1.5vw,2rem)] bg-black shrink-0 relative overflow-hidden group mb-2 md:mb-0">
               <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700 ease-in-out" />
             </div>
             <div className="flex flex-wrap">
               {t("title2").split("").map((char, i) => (
-                <span key={`spot-${i}`} className="char-anim inline-block">{char === " " ? "\u00A0" : char}</span>
+                <span key={`spot-${i}`} className="char-anim inline-block pb-2">{char === " " ? "\u00A0" : char}</span>
               ))}
             </div>
           </h2>
@@ -300,8 +300,10 @@ export default function RegistrationCTASection() {
 
         {/* Register CTA Button */}
         <div className="mt-16 md:mt-20 flex justify-center fade-up">
-          <Link 
-            href="/registration"
+          <a
+            href="https://conference-web-tawny.vercel.app/events/mock-event-2025"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02]"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
@@ -311,7 +313,7 @@ export default function RegistrationCTASection() {
                 <MoveUpRight className="w-5 h-5" />
               </div>
             </span>
-          </Link>
+          </a>
         </div>
       </div>
 

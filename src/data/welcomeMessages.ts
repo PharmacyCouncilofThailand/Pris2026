@@ -44,7 +44,7 @@ export const messagesData = [
     name: "Prof. Dr. Cholpat Sukkasem",
     thaiName: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
     role: "Assistant Secretary General, Pharmacy Council of Thailand & PRIS 2026 Chair",
-    thaiRole: "ผู้ช่วยเลขธิการ สภาเภสัชกรรม และประธานจัดงาน PRIS 2026",
+    thaiRole: "ผู้ช่วยเลขาธิการ สภาเภสัชกรรม ประธานจัดงาน PRIS 2026",
     image: "/assets/Img/Welcome message/ประธานงานPris.svg",
     quote: "PRIS 2026 is where ideas converge, innovations emerge, and the future of pharmacy takes shape.",
     thaiQuote: "PRIS 2026 คือที่ที่ความคิดมาบรรจบ นวัตกรรมเกิดขึ้น และอนาคตของเภสัชกรรมถูกกำหนด",

@@ -92,12 +92,12 @@ export default function SponsorshipPage() {
             <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("pretitleSub")}</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
-            <div className="overflow-hidden">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
+            <div className="overflow-hidden py-2 -my-2">
               <span className="block sponsor-hero-line">{t("title1")}</span>
             </div>
-            <div className="overflow-hidden">
-              <span className="block sponsor-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700">
+            <div className="overflow-hidden py-2 -my-2">
+              <span className="block sponsor-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
                 {t("title2")}
               </span>
             </div>
@@ -117,6 +117,12 @@ export default function SponsorshipPage() {
       {/* ══════ SPONSOR LOGOS ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
+          
+          <div className="text-center mb-16 md:mb-24 content-block">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
+              PARTNER
+            </h2>
+          </div>
 
           {sponsorTiers.map((tierData, index) => (
             <div key={index} className="content-block mb-24 last:mb-0">
@@ -135,11 +141,10 @@ export default function SponsorshipPage() {
                     key={sponsor.id} 
                     className="relative flex items-center justify-center w-40 h-24 md:w-56 md:h-32"
                   >
-                    <Image
+                    <img
                       src={sponsor.logo}
                       alt={sponsor.name}
-                      fill
-                      className="object-contain"
+                      className="object-contain w-full h-full max-w-[80%] max-h-[80%]"
                     />
                   </div>
                 ))}

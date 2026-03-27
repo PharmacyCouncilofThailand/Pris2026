@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -31,80 +32,92 @@ export default function PrisIntroSection() {
 
   useGSAP(
     () => {
-      // ── Title chars stagger ──
+      // ── Title chars stagger (Scrub) ──
       gsap.fromTo(
         ".pris-char",
-        { y: "110%", opacity: 0 },
+        { y: "120%" },
         {
           y: "0%",
-          opacity: 1,
-          duration: 1.4,
-          stagger: 0.04,
-          ease: "expo.out",
-          scrollTrigger: { trigger: ".pris-title", start: "top 82%" },
+          ease: "none",
+          stagger: 0.02,
+          scrollTrigger: { 
+            trigger: ".pris-title", 
+            start: "top 85%", 
+            end: "bottom 50%", 
+            scrub: 1 
+          },
         }
       );
 
-      // ── Body paragraphs ──
+      // ── Body paragraphs (Scrub) ──
       gsap.fromTo(
-        ".pris-body",
-        { y: 40, opacity: 0 },
+        ".pris-body-line",
+        { y: "120%" },
         {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          stagger: 0.15,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".pris-body-wrap", start: "top 82%" },
+          y: "0%",
+          ease: "none",
+          stagger: 0.1,
+          scrollTrigger: { 
+            trigger: ".pris-body-wrap", 
+            start: "top 85%", 
+            end: "bottom 60%", 
+            scrub: 1 
+          },
         }
       );
 
-      // ── Stat counters ──
-      gsap.fromTo(
-        ".pris-stat",
-        { y: 60, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.1,
-          stagger: 0.12,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".pris-stats", start: "top 85%" },
-        }
-      );
+      // ── Text Scramble Animation ──
+      const scrambleChars = "0123456789#+%&@";
+      document.querySelectorAll<HTMLElement>(".scramble-number").forEach((el) => {
+        const finalText = el.getAttribute("data-value") || "";
+        const totalFrames = 30; // ~2.5s at 80ms interval
+        let frame = 0;
 
-
-      // ── Decorative line draw ──
-      gsap.utils.toArray<HTMLElement>(".pris-line").forEach((line) => {
-        gsap.fromTo(
-          line,
-          { scaleX: 0 },
-          {
-            scaleX: 1,
-            duration: 1.4,
-            ease: "power4.inOut",
-            transformOrigin: "left center",
-            scrollTrigger: { trigger: line, start: "top 90%" },
-          }
-        );
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 88%",
+          once: true,
+          onEnter: () => {
+            const interval = setInterval(() => {
+              const progress = frame / totalFrames;
+              el.textContent = finalText
+                .split("")
+                .map((char, i) => {
+                  // Characters that are NOT digits stay fixed (like , + etc.)
+                  if (!/[0-9]/.test(char)) return char;
+                  // Reveal characters left to right based on progress
+                  const revealPoint = i / finalText.length;
+                  if (progress > revealPoint + 0.3) return char;
+                  return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+                })
+                .join("");
+              frame++;
+              if (frame > totalFrames) {
+                el.textContent = finalText;
+                clearInterval(interval);
+              }
+            }, 80);
+          },
+        });
       });
     },
     { scope: containerRef }
   );
 
   return (
+    <>
     <section
       ref={containerRef}
-      className="relative bg-white text-black py-28 md:py-40 overflow-hidden selection:bg-[#0055FF] selection:text-white"
+      className="relative bg-white text-black pt-28 md:pt-40 pb-12 md:pb-16 overflow-hidden selection:bg-[#0055FF] selection:text-white"
     >
       {/* Subtle decorative elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/[0.04] rounded-full blur-[160px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 md:px-8 max-w-[1600px] relative">
+      <div className="container mx-auto px-4 md:px-8 max-w-[1600px] relative flex flex-col items-center text-center">
         {/* ── TITLE ── */}
-        <div className="pris-title overflow-hidden mb-16 md:mb-24">
-          <h2 className="text-[clamp(3rem,8vw,10rem)] leading-[0.85] font-black tracking-tighter uppercase">
+        <div className="pris-title overflow-hidden py-4 -my-4 mb-10 md:mb-16">
+          <h2 className="text-[clamp(3rem,8vw,10rem)] leading-none font-black tracking-tighter uppercase">
             {titleSegments.map((char, i) => (
                 <span key={i} className="pris-char inline-block">
                   {char === " " ? "\u00A0" : char}
@@ -113,57 +126,143 @@ export default function PrisIntroSection() {
           </h2>
         </div>
 
-        {/* ── BODY: Two-column editorial ── */}
-        <div className="pris-body-wrap grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-20 mb-20 md:mb-32">
-          <div>
+        {/* ── BODY: Centered Editorial ── */}
+        <div className="pris-body-wrap max-w-4xl mx-auto flex flex-col gap-6 lg:gap-10 mb-16 md:mb-20">
+          <div className="overflow-hidden py-2 -my-2 flex justify-center">
             <p
-              className="pris-body text-xl md:text-2xl lg:text-3xl font-light leading-[1.5] tracking-tight text-black/80"
+              className="pris-body-line text-xl md:text-2xl lg:text-3xl font-light leading-[1.6] tracking-tight text-black/80 inline-block"
               dangerouslySetInnerHTML={{ __html: t.raw("intro") }}
             />
           </div>
-          <div className="flex flex-col justify-end">
-            <p className="pris-body text-base md:text-lg leading-[1.8] text-black/50 font-light">
+          <div className="overflow-hidden py-2 -my-2 flex justify-center">
+            <p className="pris-body-line text-base md:text-lg leading-[1.8] text-black/50 font-light max-w-2xl inline-block">
               {t("body")}
             </p>
           </div>
         </div>
 
-        <div className="pris-line w-full h-px bg-black/10" />
+        {/* ── STATS ROW: White ── */}
+        <div className="pris-stats w-full grid grid-cols-1 sm:grid-cols-3 gap-0 border-t border-black/10">
 
-        {/* ── STATS ROW ── */}
-        <div className="pris-stats grid grid-cols-1 sm:grid-cols-3 gap-0 my-16 md:my-24">
           {/* Stat 1: Participants */}
-          <div className="pris-stat group border-b sm:border-b-0 sm:border-r border-black/10 py-10 sm:py-14 sm:pr-12 last:border-0">
-            <p className="text-[clamp(3rem,6vw,5.5rem)] font-black tracking-tighter leading-none text-black group-hover:text-[#FF5A00] transition-colors duration-500">
-              {t("stat1Value")}
+          <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
+            <p
+              className="scramble-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              data-value={t("stat1Value")}
+            >
+              &nbsp;
             </p>
-            <p className="mt-4 text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-black/40 group-hover:text-black/60 transition-colors duration-500">
+
+            {/* Icon: Network/People */}
+            <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
+              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
+                {/* Central person */}
+                <circle cx="40" cy="24" r="5" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M33 38a7 7 0 0114 0" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+                {/* Left person */}
+                <circle cx="16" cy="34" r="4" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M10 45a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.4" fill="none"/>
+                {/* Right person */}
+                <circle cx="64" cy="34" r="4" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M58 45a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.4" fill="none"/>
+                {/* Bottom left */}
+                <circle cx="24" cy="60" r="3.5" stroke="currentColor" strokeWidth="1.2"/>
+                {/* Bottom right */}
+                <circle cx="56" cy="60" r="3.5" stroke="currentColor" strokeWidth="1.2"/>
+                {/* Connection lines */}
+                <line x1="36" y1="29" x2="20" y2="34" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
+                <line x1="44" y1="29" x2="60" y2="34" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
+                <line x1="16" y1="49" x2="24" y2="56" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
+                <line x1="64" y1="49" x2="56" y2="56" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
+                <line x1="28" y1="60" x2="52" y2="60" stroke="currentColor" strokeWidth="1" opacity="0.25" strokeDasharray="3 3"/>
+                <line x1="40" y1="38" x2="40" y2="55" stroke="currentColor" strokeWidth="1" opacity="0.25" strokeDasharray="3 3"/>
+              </svg>
+            </div>
+
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-black/40">
               {t("stat1Label")}
             </p>
           </div>
 
-          {/* Stat 2: Booths */}
-          <div className="pris-stat group border-b sm:border-b-0 sm:border-r border-black/10 py-10 sm:py-14 sm:px-12 last:border-0">
-            <p className="text-[clamp(3rem,6vw,5.5rem)] font-black tracking-tighter leading-none text-black group-hover:text-[#0055FF] transition-colors duration-500">
-              {t("stat2Value")}
+          {/* Stat 2: Exhibition Booths */}
+          <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
+            <p
+              className="scramble-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              data-value={t("stat2Value")}
+            >
+              &nbsp;
             </p>
-            <p className="mt-4 text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-black/40 group-hover:text-black/60 transition-colors duration-500">
+
+            {/* Icon: Exhibition Booth */}
+            <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
+              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
+                {/* Canopy roof */}
+                <path d="M18 24L40 12L62 24" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                <line x1="18" y1="24" x2="62" y2="24" stroke="currentColor" strokeWidth="1.8"/>
+                {/* Pillars */}
+                <line x1="22" y1="24" x2="22" y2="56" stroke="currentColor" strokeWidth="1.8"/>
+                <line x1="58" y1="24" x2="58" y2="56" stroke="currentColor" strokeWidth="1.8"/>
+                {/* Counter */}
+                <rect x="22" y="42" width="36" height="14" rx="1" stroke="currentColor" strokeWidth="1.6"/>
+                {/* Person behind counter */}
+                <circle cx="40" cy="33" r="4" stroke="currentColor" strokeWidth="1.4"/>
+                <path d="M35 42a5 5 0 0110 0" stroke="currentColor" strokeWidth="1.4" fill="none"/>
+                {/* Base */}
+                <line x1="18" y1="56" x2="62" y2="56" stroke="currentColor" strokeWidth="1.8"/>
+                {/* Legs */}
+                <line x1="22" y1="56" x2="20" y2="64" stroke="currentColor" strokeWidth="1.4"/>
+                <line x1="58" y1="56" x2="60" y2="64" stroke="currentColor" strokeWidth="1.4"/>
+              </svg>
+            </div>
+
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-black/40">
               {t("stat2Label")}
             </p>
           </div>
 
-          {/* Stat 3: Networking */}
-          <div className="pris-stat group py-10 sm:py-14 sm:pl-12 border-b sm:border-b-0 border-black/10 last:border-0">
-            <p className="text-[clamp(3rem,6vw,5.5rem)] font-black tracking-tighter leading-none text-black group-hover:text-[#FF5A00] transition-colors duration-500">
-              {t("stat3Value")}
+          {/* Stat 3: Networking Night */}
+          <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12">
+            <p
+              className="scramble-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              data-value={t("stat3Value")}
+            >
+              &nbsp;
             </p>
-            <p className="mt-4 text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-black/40 group-hover:text-black/60 transition-colors duration-500">
+
+            {/* Icon: Wine glasses / Networking */}
+            <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
+              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
+                {/* Left glass */}
+                <path d="M22 18 Q22 32 30 36 L30 52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
+                <line x1="22" y1="18" x2="34" y2="18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                <path d="M34 18 Q34 32 30 36" stroke="currentColor" strokeWidth="1.6" fill="none"/>
+                <line x1="24" y1="52" x2="36" y2="52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                {/* Right glass */}
+                <path d="M46 18 Q46 32 50 36 L50 52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
+                <line x1="46" y1="18" x2="58" y2="18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                <path d="M58 18 Q58 32 50 36" stroke="currentColor" strokeWidth="1.6" fill="none"/>
+                <line x1="44" y1="52" x2="56" y2="52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                {/* Clink sparkle lines */}
+                <line x1="37" y1="14" x2="43" y2="14" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
+                <line x1="40" y1="10" x2="40" y2="16" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
+                {/* Decorative dots around */}
+                <circle cx="14" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
+                <circle cx="66" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
+                <circle cx="40" cy="62" r="2" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
+                <line x1="16" y1="30" x2="22" y2="25" stroke="currentColor" strokeWidth="0.8" opacity="0.2"/>
+                <line x1="64" y1="30" x2="58" y2="25" stroke="currentColor" strokeWidth="0.8" opacity="0.2"/>
+              </svg>
+            </div>
+
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-black/40">
               {t("stat3Label")}
             </p>
           </div>
+
         </div>
 
       </div>
     </section>
+    </>
   );
 }

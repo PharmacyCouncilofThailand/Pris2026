@@ -17,7 +17,7 @@ export const ORGANIZERS_DATA = [
     name: "Prof. Dr. Cholpat Sukkasem",
     nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
     position: "Assistant Secretary General\nPharmacy Council of Thailand\n& PRIS 2026 Chair",
-    positionTh: "ผู้ช่วยเลขธิการ สภาเภสัชกรรม\nและประธานจัดงาน PRIS 2026",
+    positionTh: "ผู้ช่วยเลขาธิการ สภาเภสัชกรรม\nประธานจัดงาน PRIS 2026",
     image: "/assets/Img/Welcome message/ประธานงานPris.svg",
   }
 ];

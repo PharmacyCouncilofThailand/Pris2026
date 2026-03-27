@@ -1,0 +1,192 @@
+"use client";
+
+import { useLocale } from "next-intl";
+import { Mail, MapPin, Phone, ArrowUpRight } from "lucide-react";
+import gsap from "gsap";
+import { useEffect, useRef } from "react";
+
+type PageCopy = {
+  eyebrow: string;
+  title1: string;
+  title2: string;
+  desc: string;
+  emailLabel: string;
+  emailValue: string;
+  emailDesc: string;
+  phoneLabel: string;
+  phoneValue: string;
+  phoneDesc: string;
+  addressLabel: string;
+  addressValue: string;
+};
+
+export default function ContactPage() {
+  const locale = useLocale();
+  const pageRef = useRef<HTMLDivElement>(null!);
+
+  const copy: PageCopy =
+    locale === "th"
+      ? {
+          eyebrow: "การติดต่อ",
+          title1: "Get in",
+          title2: "Touch",
+          desc: "มีข้อสงสัยเกี่ยวกับการลงทะเบียน การส่งผลงาน หรือการสนับสนุน? ติดต่อทีมงาน PRIS 2026 ได้ตามชช่องทางด้านล่าง",
+          emailLabel: "อีเมล",
+          emailValue: "pharthai@pharmacycouncil.org",
+          emailDesc: "สำหรับข้อซักถามทั่วไป การส่งบทคัดย่อ และการสนับสนุน",
+          phoneLabel: "โทรศัพท์",
+          phoneValue: "02-590-2625",
+          phoneDesc: "เวลาทำการ: จันทร์ - ศุกร์, 08:30 - 16:30 น.",
+          addressLabel: "ที่อยู่สำนักงาน",
+          addressValue: "สำนักงานเลขาธิการสภาเภสัชกรรม\nอาคารมหิตลาธิเบศร ชั้น 8\nกระทรวงสาธารณสุข ซอย 4\nถนนติวานนท์ อำเภอเมือง จังหวัดนนทบุรี 11000",
+        }
+      : {
+          eyebrow: "Contact Us",
+          title1: "Get in",
+          title2: "Touch",
+          desc: "Have a question about registration, abstract submission, or sponsorship? Reach out to the PRIS 2026 organizing team.",
+          emailLabel: "Email Us",
+          emailValue: "pharthai@pharmacycouncil.org",
+          emailDesc: "For general inquiries, abstract submissions, and sponsorship details.",
+          phoneLabel: "Call Us",
+          phoneValue: "02-590-2625",
+          phoneDesc: "Mon-Fri, 08:30 AM - 04:30 PM (ICT)",
+          addressLabel: "Office Address",
+          addressValue: "Office of the Secretary, Pharmacy Council of Thailand\nMahitala Dhibesra Building, 8th Floor\nMinistry of Public Health, 88/19 Moo 4\nTiwanon Road, Talad Khwan\nMueang, Nonthaburi 11000",
+        };
+
+  useEffect(() => {
+    document.body.classList.remove("hero-playing");
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-line", {
+        yPercent: 110,
+        stagger: 0.12,
+        duration: 1.6,
+        ease: "power4.out",
+        delay: 0.15,
+      });
+      gsap.from(".hero-sub", {
+        opacity: 0,
+        y: 30,
+        duration: 1.2,
+        ease: "power3.out",
+        delay: 0.8,
+      });
+    }, pageRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <main
+      ref={pageRef}
+      className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900"
+    >
+      <section className="relative px-6 pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex flex-col items-center">
+        {/* Glows */}
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-blue-500/[0.05] rounded-full blur-[120px] pointer-events-none md:w-[800px] md:h-[800px] md:blur-[180px]" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-orange-500/[0.04] rounded-full blur-[120px] pointer-events-none md:w-[600px] md:h-[600px] md:blur-[150px]" />
+
+        <div className="max-w-4xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
+          <div className="hero-sub flex items-center justify-center gap-3 mb-6 md:mb-8 md:gap-4">
+            <span className="h-px w-8 bg-orange-500 md:w-12" />
+            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500 md:text-xs">PRIS 2026</span>
+            <span className="text-gray-400 text-[10px] tracking-widest uppercase md:text-xs">— {copy.eyebrow}</span>
+          </div>
+
+          <h1 className="text-5xl font-black uppercase tracking-tighter leading-tight text-slate-900 sm:text-7xl md:text-8xl lg:text-[7rem]">
+            <div className="overflow-hidden py-2 -my-2">
+              <span className="block hero-line text-black">{copy.title1}</span>
+            </div>
+            <div className="overflow-hidden py-2 -my-2 flex flex-col items-center">
+              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500 pb-2">
+                {copy.title2}
+              </span>
+            </div>
+          </h1>
+
+          <p className="hero-sub mt-6 max-w-xl text-sm text-slate-500 font-light leading-relaxed md:mt-10 md:text-lg">
+            {copy.desc}
+          </p>
+        </div>
+
+        {/* ══════ EXPERIMENTAL FORM SECTION ══════ */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto mt-16 md:mt-24 mb-10 md:mb-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-12 lg:gap-20">
+            
+            {/* Left: Huge typography & Info */}
+            <div className="flex flex-col gap-6 md:sticky top-32 h-fit">
+              <div className="w-12 h-px bg-slate-900" />
+              <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black uppercase tracking-tighter leading-[0.85] text-slate-900">
+                Send <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500 py-2 inline-block">Inquiry.</span>
+              </h2>
+              <p className="text-slate-500 font-light text-base max-w-sm mt-2 leading-relaxed">
+                Fill out the details below, and our organizing team will get back to you within 24 hours.
+              </p>
+
+              <div className="mt-8 pt-8 border-t border-slate-200 flex flex-col gap-6">
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{copy.emailLabel}</h4>
+                  <a href={`mailto:${copy.emailValue}`} className="text-base font-medium text-slate-900 hover:text-blue-600 transition-colors">
+                    {copy.emailValue}
+                  </a>
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{copy.phoneLabel}</h4>
+                  <p className="text-base font-medium text-slate-900">{copy.phoneValue}</p>
+                </div>
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{copy.addressLabel}</h4>
+                  <p className="text-sm font-medium text-slate-500 leading-relaxed whitespace-pre-line max-w-xs">
+                    {copy.addressValue}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Unconventional Form Fields */}
+            <form className="flex flex-col gap-8 lg:gap-10 pt-4" onSubmit={(e) => e.preventDefault()}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+                <div className="relative group">
+                  <input type="text" id="firstName" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="First Name" />
+                  <label htmlFor="firstName" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">First Name</label>
+                </div>
+                
+                <div className="relative group">
+                  <input type="text" id="lastName" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="Last Name" />
+                  <label htmlFor="lastName" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Last Name</label>
+                </div>
+              </div>
+
+              <div className="relative group">
+                <input type="email" id="email" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="Email Address" />
+                <label htmlFor="email" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Email Address</label>
+              </div>
+
+              <div className="relative group">
+                <input type="text" id="subject" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="Subject" />
+                <label htmlFor="subject" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Subject</label>
+              </div>
+
+              <div className="relative group">
+                <textarea id="message" required rows={3} className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent resize-none leading-relaxed" placeholder="Your Message" />
+                <label htmlFor="message" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Your Message</label>
+              </div>
+
+              <div className="pt-2">
+                <button type="submit" className="group relative inline-flex items-center justify-between gap-8 bg-slate-50 border border-slate-200 shadow-sm text-slate-900 px-10 py-5 rounded-full overflow-hidden hover:border-slate-900 hover:shadow-xl transition-all duration-500 w-full md:w-auto">
+                  <div className="absolute inset-0 bg-slate-900 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-in-out" />
+                  <span className="relative z-10 text-xs font-bold uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500">Submit Form</span>
+                  <div className="relative z-10 w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center transition-colors duration-500">
+                    <ArrowUpRight className="w-4 h-4 text-white group-hover:scale-125 transition-transform duration-500" />
+                  </div>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      
+    </main>
+  );
+}

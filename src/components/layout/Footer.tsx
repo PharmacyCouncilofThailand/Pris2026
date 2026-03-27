@@ -10,6 +10,7 @@ const quickLinks = [
   { labelKey: "aboutPris", href: "/about" },
   { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
   { labelKey: "registration", href: "/registration" },
+  { labelKey: "gallery", href: "/gallery" },
 ];
 
 export default function Footer() {

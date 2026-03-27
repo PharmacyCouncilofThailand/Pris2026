@@ -83,11 +83,6 @@ export default function WelcomeSection() {
               br: () => <br className="hidden md:block" />
             })}
           </h2>
-          <p className="text-sm font-semibold uppercase tracking-widest text-black/60 text-center">
-            {t.rich('subtitle', {
-              br: () => <br className="hidden md:block" />
-            })}
-          </p>
         </div>
 
         {/* Speakers in one row */}

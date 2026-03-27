@@ -2,12 +2,13 @@
 
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import gsap from "gsap";
 import { ArrowLeft, UploadCloud } from "lucide-react";
 
 export default function StudentSignUpPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
+  const router = useRouter();
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
@@ -44,7 +45,7 @@ export default function StudentSignUpPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
           
           <div className="relative z-10 fade-in-up">
-            <Link href="/" className="inline-flex items-center gap-4 group text-white hover:text-white/80 transition-colors">
+            <Link href="/signup" className="inline-flex items-center gap-4 group text-white hover:text-white/80 transition-colors">
               <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/20 bg-white/5 group-hover:bg-white/10 transition-colors shadow-sm">
                 <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -103,7 +104,13 @@ export default function StudentSignUpPage() {
               </p>
             </div>
 
-            <form className="space-y-5 fade-in-up" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-5 fade-in-up" onSubmit={(e) => {
+              e.preventDefault();
+              localStorage.setItem('isLoggedIn', 'true');
+              const urlParams = new URLSearchParams(window.location.search);
+              const redirect = urlParams.get('redirect') || '/';
+              router.push(redirect);
+            }}>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>

@@ -297,12 +297,12 @@ export default function AboutPrisPage() {
             <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("location")}</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
-            <div className="overflow-hidden">
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
+            <div className="overflow-hidden py-2 -my-2">
               <span className="block about-hero-line">About</span>
             </div>
-            <div className="overflow-hidden">
-              <span className="block about-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700">
+            <div className="overflow-hidden py-2 -my-2">
+              <span className="block about-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
                 PRIS 2026
               </span>
             </div>

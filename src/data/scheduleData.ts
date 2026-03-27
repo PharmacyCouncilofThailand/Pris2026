@@ -13,7 +13,15 @@ export const scheduleData = [
         location: "Grand Foyer", 
         locationTh: "แกรนด์ฟอยเยอร์", 
         type: "Registration",
-        typeTh: "ลงทะเบียน" 
+        typeTh: "ลงทะเบียน",
+        speakers: [
+          {
+            name: "Dr. Emily Chen",
+            role: "Registration Coordinator",
+            roleTh: "ผู้ประสานงานลงทะเบียน",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
       { 
         id: 2, 
@@ -43,7 +51,15 @@ export const scheduleData = [
         location: "Exhibition Hall", 
         locationTh: "โถงนิทรรศการ", 
         type: "Break",
-        typeTh: "พักเบรค" 
+        typeTh: "พักเบรค",
+        speakers: [
+          {
+            name: "Prof. Maria Lopez",
+            role: "Event Host",
+            roleTh: "พิธีกร",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
       { 
         id: 4, 
@@ -91,7 +107,15 @@ export const scheduleData = [
         location: "Lotus Room", 
         locationTh: "ห้องโลตัส", 
         type: "Lunch",
-        typeTh: "อาหารกลางวัน" 
+        typeTh: "อาหารกลางวัน",
+        speakers: [
+          {
+            name: "Dr. James Carter",
+            role: "Symposium Chair",
+            roleTh: "ประธานการสัมมนา",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
     ],
   },
@@ -111,7 +135,15 @@ export const scheduleData = [
         location: "Meeting Rooms 1-4", 
         locationTh: "ห้องประชุม 1-4", 
         type: "Session",
-        typeTh: "การประชุม" 
+        typeTh: "การประชุม",
+        speakers: [
+          {
+            name: "Dr. Sarah Jenkins",
+            role: "Session Moderator",
+            roleTh: "ผู้ดำเนินการอภิปราย",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
       { 
         id: 7, 
@@ -121,7 +153,15 @@ export const scheduleData = [
         location: "Exhibition Hall", 
         locationTh: "โถงนิทรรศการ", 
         type: "Break",
-        typeTh: "พักเบรค" 
+        typeTh: "พักเบรค",
+        speakers: [
+          {
+            name: "Prof. Dr. Kenji Yamamoto",
+            role: "Host",
+            roleTh: "พิธีกร",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
       { 
         id: 8, 
@@ -151,7 +191,15 @@ export const scheduleData = [
         location: "Lotus Room", 
         locationTh: "ห้องโลตัส", 
         type: "Lunch",
-        typeTh: "อาหารกลางวัน" 
+        typeTh: "อาหารกลางวัน",
+        speakers: [
+          {
+            name: "Dr. Albert Wong",
+            role: "Host",
+            roleTh: "พิธีกร",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
       { 
         id: 10, 
