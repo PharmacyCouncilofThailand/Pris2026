@@ -237,7 +237,8 @@ export default function Hero() {
 
       // Wheel-driven zoom control
       let scrollAccum = 0;
-      const maxScroll = window.innerHeight * HERO_CFG.zoomScrollDistance;
+      // On mobile, require much less total scroll distance to finish the zoom
+      const maxScroll = window.innerHeight * (isMobile ? 0.35 : HERO_CFG.zoomScrollDistance);
       let autoTriggered = false;
 
       const handleWheel = (e: WheelEvent) => {
@@ -271,7 +272,9 @@ export default function Hero() {
       const handleTouchMove = (e: TouchEvent) => {
         e.preventDefault();
         if (autoTriggered) return;
-        const delta = touchStartY - e.touches[0].clientY;
+        
+        // Multiply touch delta by 2.5 to make single swipes more effective
+        const delta = (touchStartY - e.touches[0].clientY) * 2.5;
         touchStartY = e.touches[0].clientY;
 
         scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + delta));
