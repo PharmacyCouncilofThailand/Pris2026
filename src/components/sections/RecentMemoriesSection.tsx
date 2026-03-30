@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { column1, column2, column3, allImages } from "@/data/recentMemoriesData";
-import { useTranslations } from "next-intl";
 
 export default function RecentMemoriesSection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const t = useTranslations("recentMemories");
 
   // Lightbox
   const openLightbox = useCallback((src: string) => {

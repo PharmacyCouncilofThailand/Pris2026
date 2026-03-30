@@ -3,16 +3,20 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { Link, useRouter } from "@/i18n/routing";
+import { useAuth } from "@/context/AuthContext";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 export default function LoginPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const router = useRouter();
+  const { login } = useAuth();
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
+  }, []);
 
-    const ctx = gsap.context(() => {
+  useGSAP(() => {
       gsap.fromTo(
         ".fade-in-element",
         { opacity: 0, y: 15 },
@@ -24,10 +28,7 @@ export default function LoginPage() {
           ease: "power2.out",
         }
       );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: containerRef });
 
   return (
     <main className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 lg:p-8 font-sans selection:bg-black selection:text-white pt-24 lg:pt-8 relative z-40">
@@ -105,7 +106,9 @@ export default function LoginPage() {
 
             <form className="space-y-6 fade-in-element" onSubmit={(e) => { 
               e.preventDefault(); 
-              localStorage.setItem('isLoggedIn', 'true'); 
+              const form = e.target as HTMLFormElement;
+              const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+              login({ firstName: "Demo", lastName: "User", email: email }, "demo-token");
               const urlParams = new URLSearchParams(window.location.search);
               const redirect = urlParams.get('redirect') || '/';
               router.push(redirect); 
@@ -163,7 +166,7 @@ export default function LoginPage() {
 
             <div className="mt-12 text-center fade-in-element">
               <p className="text-sm font-medium text-gray-500">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/signup" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
                   Sign Up
                 </Link>

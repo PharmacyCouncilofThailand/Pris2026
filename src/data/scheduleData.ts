@@ -1,4 +1,6 @@
-export const scheduleData = [
+import { ScheduleDay } from "@/types";
+
+export const scheduleData: ScheduleDay[] = [
   {
     day: "Day 1",
     dayTh: "วันที่ 1",

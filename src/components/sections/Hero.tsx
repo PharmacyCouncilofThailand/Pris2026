@@ -8,9 +8,8 @@ import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import Countdown from "@/components/elements/Countdown";
+import { useAuth } from "@/context/AuthContext";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -39,24 +38,25 @@ export default function Hero() {
   const buttonsRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const t = useTranslations("hero");
+  const { isAuthenticated } = useAuth();
 
   const heroCompleteRef = useRef<boolean>(false);
 
-  // Track if hero has already played (persists across SPA nav, resets on F5)
+  // Track if hero has already played (persists across page reloads in the same tab)
   const hasPlayed = () => {
     if (typeof window === "undefined") return false;
-    return !!(window as unknown as Record<string, boolean>).__heroPlayed;
+    return !!(window as unknown as Record<string, boolean>).__heroPlayed || sessionStorage.getItem('heroPlayed') === 'true';
   };
   const markPlayed = () => {
     if (typeof window !== "undefined") {
       (window as unknown as Record<string, boolean>).__heroPlayed = true;
+      sessionStorage.setItem('heroPlayed', 'true');
     }
   };
 
   const handleRegisterClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       window.location.href = "/registration";
     } else {
       // Pass the redirect parameter so the login page knows to send them back to registration
@@ -115,9 +115,7 @@ export default function Hero() {
 
       // Phase 1 (Auto): Letters stagger in
       // Wheel/touch listeners will be added AFTER letters finish
-      let lettersReady = false;
       const addScrollListeners = () => {
-        lettersReady = true;
         window.addEventListener("wheel", handleWheel, { passive: false });
         window.addEventListener("touchstart", handleTouchStart, { passive: true });
         window.addEventListener("touchmove", handleTouchMove, { passive: false });
@@ -237,7 +235,8 @@ export default function Hero() {
 
       // Wheel-driven zoom control
       let scrollAccum = 0;
-      const maxScroll = window.innerHeight * HERO_CFG.zoomScrollDistance;
+      // On mobile, require much less total scroll distance to finish the zoom
+      const maxScroll = window.innerHeight * (isMobile ? 0.35 : HERO_CFG.zoomScrollDistance);
       let autoTriggered = false;
 
       const handleWheel = (e: WheelEvent) => {
@@ -271,7 +270,9 @@ export default function Hero() {
       const handleTouchMove = (e: TouchEvent) => {
         e.preventDefault();
         if (autoTriggered) return;
-        const delta = touchStartY - e.touches[0].clientY;
+        
+        // Multiply touch delta by 2.5 to make single swipes more effective
+        const delta = (touchStartY - e.touches[0].clientY) * 2.5;
         touchStartY = e.touches[0].clientY;
 
         scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + delta));
@@ -319,7 +320,7 @@ export default function Hero() {
         muted
         loop
         playsInline
-        preload="auto"
+        preload="metadata"
       />
 
       {/* Hero Content (Behind mask) */}
@@ -351,7 +352,7 @@ export default function Hero() {
           <Link 
             href="/registration"
             onClick={handleRegisterClick}
-            className="group relative inline-flex items-center justify-center bg-white/[0.05] backdrop-blur-[20px] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.1] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
+            className="group relative inline-flex items-center justify-center bg-white/[0.1] md:bg-white/[0.05] backdrop-blur-sm md:backdrop-blur-[20px] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.1] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
           >
             {/* Decorative gradient overlay matching countdown */}
             <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />

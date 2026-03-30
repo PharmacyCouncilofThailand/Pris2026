@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useRef, useEffect } from "react";
@@ -127,7 +128,7 @@ export default function WelcomeMessagesPage() {
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none" />
                 <Image
                   src={speaker.image}
-                  alt={locale === "th" && (speaker as any).thaiName ? (speaker as any).thaiName : speaker.name}
+                  alt={locale === "th" && (speaker as Record<string, any>).thaiName ? (speaker as Record<string, any>).thaiName : speaker.name}
                   fill
                   className="speaker-img object-cover object-top transition-all duration-1000 scale-105"
                   sizes="(max-width: 1024px) 100vw, 40vw"
@@ -142,7 +143,7 @@ export default function WelcomeMessagesPage() {
                 <div className="speaker-content relative z-10 w-full">
 
                   <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-black mb-2 leading-tight">
-                    {locale === "th" && (speaker as any).thaiName ? (speaker as any).thaiName : speaker.name}
+                    {locale === "th" && (speaker as Record<string, any>).thaiName ? (speaker as Record<string, any>).thaiName : speaker.name}
                   </h2>
                   <div className="mb-8 md:mb-10">
                     <p className="text-gold font-semibold uppercase tracking-widest text-xs sm:text-sm mb-1">
@@ -151,11 +152,11 @@ export default function WelcomeMessagesPage() {
                   </div>
 
                   <blockquote className="text-lg md:text-2xl font-light italic text-black/90 leading-relaxed mb-8 md:mb-10 border-l-2 border-gold pl-6 py-2">
-                    &quot;{locale === "th" && (speaker as any).thaiQuote ? (speaker as any).thaiQuote : speaker.quote}&quot;
+                    &quot;{locale === "th" && (speaker as Record<string, any>).thaiQuote ? (speaker as Record<string, any>).thaiQuote : speaker.quote}&quot;
                   </blockquote>
 
                   <div className="space-y-4 md:space-y-6">
-                    {(locale === "th" && (speaker as any).thaiMessage ? (speaker as any).thaiMessage : speaker.message).map((para: string, i: number) => (
+                    {(locale === "th" && (speaker as Record<string, any>).thaiMessage ? (speaker as Record<string, any>).thaiMessage : speaker.message).map((para: string, i: number) => (
                       <p key={i} className="text-black/70 text-base md:text-lg font-light leading-relaxed">
                         {para}
                       </p>

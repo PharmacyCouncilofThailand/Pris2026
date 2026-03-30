@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { Menu, ChevronDown, Globe, User } from "lucide-react";
+import { Menu, ChevronDown, Globe, User, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import {
@@ -24,22 +24,18 @@ import {
 
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { navigationData } from "@/data/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const { isAuthenticated: isLoggedIn } = useAuth();
+  const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("common");
   type TranslationKey = Parameters<typeof t>[0];
   type LinkHref = React.ComponentProps<typeof Link>["href"];
-
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
-    }
-  }, [pathname]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -74,7 +70,9 @@ export default function Header() {
 
   const switchLocale = () => {
     const newLocale = locale === "en" ? "th" : "en";
-    router.replace(pathname, { locale: newLocale });
+    startTransition(() => {
+      router.replace(pathname, { locale: newLocale });
+    });
   };
 
   return (
@@ -82,7 +80,7 @@ export default function Header() {
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent py-3",
         isScrolled
-          ? "bg-black/90 backdrop-blur-md border-white/10 shadow-lg"
+          ? "bg-black/95 md:bg-black/90 md:backdrop-blur-md border-white/10 shadow-lg"
           : "bg-transparent"
       )}
     >
@@ -187,14 +185,16 @@ export default function Header() {
           <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
             <button
               onClick={switchLocale}
+              disabled={isPending}
               className={cn(
                 "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
                 useDarkText
                   ? "text-slate-900 hover:bg-slate-100"
-                  : "text-white hover:bg-white/10"
+                  : "text-white hover:bg-white/10",
+                isPending && "opacity-50 cursor-not-allowed"
               )}
             >
-              <Globe className="w-4 h-4" />
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
               <span className="uppercase text-xs font-bold tracking-wider">
                 {locale === "en" ? "TH" : "EN"}
               </span>
@@ -249,14 +249,16 @@ export default function Header() {
           {/* Mobile Language Switcher */}
           <button
             onClick={switchLocale}
+            disabled={isPending}
             className={cn(
               "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
               useDarkText
                 ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
-                : "text-white hover:bg-white/20 border border-white/20"
+                : "text-white hover:bg-white/20 border border-white/20",
+              isPending && "opacity-50 cursor-not-allowed"
             )}
           >
-            <Globe className="w-4 h-4" />
+            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
             <span className="uppercase text-xs font-bold tracking-wider">
               {locale === "en" ? "TH" : "EN"}
             </span>

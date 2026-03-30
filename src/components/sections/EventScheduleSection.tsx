@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { scheduleData } from "@/data/scheduleData";
 import { useTranslations, useLocale } from "next-intl";
+import { SectionTitle } from "@/components/elements/SectionTitle";
+import { EventSpeaker } from "@/types";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -93,17 +95,12 @@ export default function EventScheduleSection() {
         
         {/* Header - Editorial Style */}
         <div className="mb-12 sm:mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 agenda-title">
-            <div className="agenda-title">
-              <div className="flex items-center gap-4 mb-3">
-                <span className="w-12 h-px bg-gold/50" />
-                <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                  {t('sectionSubtitle')}
-                </h3>
-              </div>
-              <h2 className="text-4xl sm:text-5xl md:text-7xl font-black text-white uppercase tracking-tighter leading-[0.9]">
-                {t('sectionTitle')}
-              </h2>
-            </div>
+            <SectionTitle
+              subtitle={t('sectionSubtitle')}
+              title={t('sectionTitle')}
+              align="left"
+              theme="dark"
+            />
         </div>
 
         {/* ─── Day Selector (Mobile-First scrollable, Large typography) ─── */}
@@ -139,7 +136,7 @@ export default function EventScheduleSection() {
 
         {/* ─── Event List (Clean layout without confining cards) ─── */}
         <div ref={listRef} className="flex flex-col">
-          {currentDay.events.map((event, i) => (
+          {currentDay.events.map((event) => (
             <div
               key={event.id}
               className="schedule-row group border-b border-white/10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12 relative hover:bg-white/[0.02] transition-colors duration-500"
@@ -177,10 +174,10 @@ export default function EventScheduleSection() {
                   <>
                     {event.speakers
                       .slice(0, expandedEvents.has(event.id) ? event.speakers.length : 2)
-                      .map((speaker: any, idx: number) => (
+                      .map((speaker: EventSpeaker, idx: number) => (
                         <div 
                           key={idx} 
-                          className="flex items-center gap-4 bg-white/5 p-3 md:p-4 rounded-xl border border-white/10 backdrop-blur-md hover:bg-white/10 hover:border-white/20 transition-all duration-300"
+                          className="flex items-center gap-4 bg-white/[0.08] p-3 md:p-4 rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
                         >
                           <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0">
                             <Image 

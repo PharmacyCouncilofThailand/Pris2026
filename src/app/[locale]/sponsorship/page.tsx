@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -141,6 +140,7 @@ export default function SponsorshipPage() {
                     key={sponsor.id} 
                     className="relative flex items-center justify-center w-40 h-24 md:w-56 md:h-32"
                   >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={sponsor.logo}
                       alt={sponsor.name}

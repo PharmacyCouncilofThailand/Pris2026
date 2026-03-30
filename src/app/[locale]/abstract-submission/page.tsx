@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -17,7 +18,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { submissionFormLabels, abstractCategories } from "@/data/abstractData";
+import { abstractCategories } from "@/data/abstractData";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
@@ -25,14 +26,13 @@ import { useTranslations, useLocale } from "next-intl";
 export default function AbstractSubmission() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const formRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("abstractSubmission");
   const { user, isAuthenticated } = useAuth();
   
   // Form State
   const [formData, setFormData] = useState({
     author: { firstName: "", lastName: "", email: "", affiliation: "", phone: "" },
-    coAuthors: [] as any[],
+    coAuthors: [] as { firstName: string, lastName: string, affiliation: string, email: string }[],
     abstract: { title: "", category: "", type: "", keywords: "" },
     content: { background: "", objectives: "", methods: "", results: "", conclusions: "" },
     files: [] as File[]
@@ -41,6 +41,7 @@ export default function AbstractSubmission() {
   // Autofill user data when logged in
   useEffect(() => {
     if (isAuthenticated && user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(prev => ({
         ...prev,
         author: {
@@ -238,8 +239,8 @@ export default function AbstractSubmission() {
 }
 
 // Sub-component: Step 1
-function Step1Author({ data, setFormData }: any) {
-  const handleChange = (e: any) => {
+function Step1Author({ data, setFormData }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
@@ -272,7 +273,7 @@ function Step1Author({ data, setFormData }: any) {
 }
 
 // Sub-component: Step 2
-function Step2CoAuthors({ list, setFormData }: any) {
+function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React.Dispatch<React.SetStateAction<any>> }) {
   const addAuthor = () => {
     setFormData((prev: any) => ({
       ...prev,
@@ -287,7 +288,7 @@ function Step2CoAuthors({ list, setFormData }: any) {
     }));
   };
 
-  const handleChange = (index: number, e: any) => {
+  const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const newList = [...list];
     newList[index][name] = value;
@@ -345,9 +346,9 @@ function Step2CoAuthors({ list, setFormData }: any) {
 }
 
 // Sub-component: Step 3
-function Step3Details({ data, setFormData }: any) {
+function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>> }) {
   const locale = useLocale();
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
@@ -391,7 +392,7 @@ function Step3Details({ data, setFormData }: any) {
                 return (
                   <button 
                     key={type}
-                    onClick={() => handleChange({ target: { name: 'type', value: type }})}
+                    onClick={() => handleChange({ target: { name: 'type', value: type } } as unknown as React.ChangeEvent<HTMLInputElement>)}
                     className={`flex-1 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[3px] transition-all ${
                       data.type === type ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
                     }`}
@@ -411,8 +412,8 @@ function Step3Details({ data, setFormData }: any) {
 }
 
 // Sub-component: Step 4
-function Step4Content({ content, files, setFormData }: any) {
-  const handleTextChange = (e: any) => {
+function Step4Content({ content, files, setFormData }: { content: any, files: File[], setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
@@ -420,8 +421,8 @@ function Step4Content({ content, files, setFormData }: any) {
     }));
   };
 
-  const handleFileChange = (e: any) => {
-    const selectedFiles = Array.from(e.target.files) as File[];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
     if (selectedFiles.length > 0) {
       setFormData((prev: any) => ({ ...prev, files: [...prev.files, ...selectedFiles] }));
     }
@@ -507,7 +508,7 @@ function Step4Content({ content, files, setFormData }: any) {
 }
 
 // Sub-component: Step 5
-function Step5Review({ data }: any) {
+function Step5Review({ data }: { data: any }) {
   return (
     <div className="space-y-16">
       <div className="space-y-4">
@@ -544,7 +545,7 @@ function Step5Review({ data }: any) {
           <div className="space-y-8">
             <span className="text-[10px] font-black text-blue-600/40 uppercase tracking-[6px] block">Full Research Title</span>
             <h3 className="text-4xl md:text-6xl font-black text-slate-950 leading-[1.1] uppercase tracking-tight">
-              "{data.abstract.title || "Untitled Research Submission"}"
+              &quot;{data.abstract.title || "Untitled Research Submission"}&quot;
             </h3>
           </div>
 
@@ -654,7 +655,7 @@ function Step5Review({ data }: any) {
 }
 
 // Helper: Input Group
-function InputGroup({ label, placeholder, value, onChange, name, type = "text" }: any) {
+function InputGroup({ label, placeholder, value, onChange, name, type = "text" }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string }) {
   return (
     <div className="flex flex-col gap-4">
       <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">{label}</label>

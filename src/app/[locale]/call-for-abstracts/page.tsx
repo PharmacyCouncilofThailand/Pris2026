@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Link } from "@/i18n/routing";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 
 // Dynamic imports for the sections
@@ -18,8 +19,9 @@ export default function CallForAbstractsPage() {
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
+  }, []);
 
-    const ctx = gsap.context(() => {
+  useGSAP(() => {
       gsap.from(".cfa-hero-line", {
         yPercent: 110,
         stagger: 0.12,
@@ -34,10 +36,7 @@ export default function CallForAbstractsPage() {
         ease: "power3.out",
         delay: 0.8,
       });
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: heroRef });
 
   return (
     <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 font-sans">

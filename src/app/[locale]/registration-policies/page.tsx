@@ -207,8 +207,8 @@ export default function RegistrationPolicies() {
           <div className="content-block border-t border-gray-200">
             {policyFaqs.map((faq, idx) => (
               <div key={idx} className="border-b border-gray-200 py-6">
-                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">{locale === "th" && (faq as any).questionTh ? (faq as any).questionTh : faq.question}</h3>
-                <p className="text-gray-600 font-light leading-relaxed">{locale === "th" && (faq as any).answerTh ? (faq as any).answerTh : faq.answer}</p>
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">{locale === "th" && (faq as Record<string, string>).questionTh ? (faq as Record<string, string>).questionTh : faq.question}</h3>
+                <p className="text-gray-600 font-light leading-relaxed">{locale === "th" && (faq as Record<string, string>).answerTh ? (faq as Record<string, string>).answerTh : faq.answer}</p>
               </div>
             ))}
           </div>

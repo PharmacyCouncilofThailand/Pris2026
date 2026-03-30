@@ -3,17 +3,21 @@
 import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { Link, useRouter } from "@/i18n/routing";
+import { useAuth } from "@/context/AuthContext";
 import gsap from "gsap";
-import { ArrowLeft } from "lucide-react";
+import { useGSAP } from "@gsap/react";
+
 
 export default function PharmacistSignUpPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const router = useRouter();
+  const { login } = useAuth();
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
+  }, []);
 
-    const ctx = gsap.context(() => {
+  useGSAP(() => {
       gsap.fromTo(
         ".fade-in-up",
         { opacity: 0, y: 30 },
@@ -25,10 +29,7 @@ export default function PharmacistSignUpPage() {
           ease: "power3.out",
         }
       );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: containerRef });
 
   return (
     <main className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 lg:p-8 font-sans selection:bg-black selection:text-white pt-24 lg:pt-8 relative z-40">
@@ -106,7 +107,11 @@ export default function PharmacistSignUpPage() {
 
             <form className="space-y-5 fade-in-up" onSubmit={(e) => {
               e.preventDefault();
-              localStorage.setItem('isLoggedIn', 'true');
+              const form = e.target as HTMLFormElement;
+              const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+              const firstName = (form.elements.namedItem('firstName') as HTMLInputElement).value;
+              const lastName = (form.elements.namedItem('lastName') as HTMLInputElement).value;
+              login({ firstName, lastName, email }, "demo-token");
               const urlParams = new URLSearchParams(window.location.search);
               const redirect = urlParams.get('redirect') || '/';
               router.push(redirect);
@@ -241,7 +246,7 @@ export default function PharmacistSignUpPage() {
                 <div className="w-[300px] h-[74px] rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-between px-3">
                   <div className="flex items-center gap-3">
                     <div className="w-[28px] h-[28px] rounded-[2px] border-[2px] border-[#c1c1c1] bg-white cursor-pointer hover:border-[#b2b2b2]"></div>
-                    <span className="text-[14px] font-medium text-gray-600">I'm not a robot</span>
+                    <span className="text-[14px] font-medium text-gray-600">I&apos;m not a robot</span>
                   </div>
                   <div className="flex flex-col items-center justify-center pt-1">
                     <svg className="w-[28px] h-[28px] opacity-70 mb-0.5" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">

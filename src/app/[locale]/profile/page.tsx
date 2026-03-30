@@ -1,29 +1,29 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { useRouter } from "@/i18n/routing";
-import { QrCode, LogOut, Mail, Briefcase, BadgeCheck, Ticket } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { QrCode, LogOut, Mail, Briefcase, BadgeCheck } from "lucide-react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 export default function ProfilePage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const router = useRouter();
+  const { logout, user } = useAuth();
 
-  const handleSignOut = () => {
-    localStorage.removeItem("isLoggedIn");
+  const handleLogout = () => {
+    logout();
     router.push("/");
   };
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
+  useGSAP(() => {
       gsap.fromTo(
         ".fade-in-stagger",
         { y: 30, opacity: 0 },
         { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" }
       );
-    }, containerRef);
-    return () => ctx.revert();
-  }, []);
+  }, { scope: containerRef });
 
   return (
     <main
@@ -35,13 +35,15 @@ export default function ProfilePage() {
         {/* Top Action Bar */}
         <div className="w-full flex justify-between items-end mb-6 fade-in-stagger pl-2">
           <div>
-             <h1 className="text-sm font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2">
-               <Ticket className="w-4 h-4" />
-               Your Event Pass
-             </h1>
-          </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                  {user?.firstName ? `${user.firstName} ${user.lastName}` : "Dr. Emily Chen"}
+                </h1>
+                <p className="text-[#0d1f4a] font-semibold tracking-wide uppercase text-sm mt-1.5 flex items-center gap-2">
+                  <BadgeCheck className="w-4 h-4 text-blue-500" /> Confirmed Delegate
+                </p>
+              </div>
           <button
-            onClick={handleSignOut}
+            onClick={handleLogout}
             className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors"
           >
             <span>Sign Out</span>

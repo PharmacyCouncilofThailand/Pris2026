@@ -20,7 +20,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_UNAUTHORIZED_EVENT = 'pris-auth:unauthorized';
 
 function clearStoredAuth() {
     localStorage.removeItem('pris_user');
@@ -49,11 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const sessionUser = sessionStorage.getItem('pris_user');
         const sessionToken = sessionStorage.getItem('pris_token');
 
-        let storedUser: string | null = localUser || sessionUser;
-        let storedToken: string | null = localToken || sessionToken;
+        const storedUser: string | null = localUser || sessionUser;
+        const storedToken: string | null = localToken || sessionToken;
 
         if (storedToken && isTokenExpired(storedToken)) {
             clearStoredAuth();
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsLoading(false);
             return;
         }
