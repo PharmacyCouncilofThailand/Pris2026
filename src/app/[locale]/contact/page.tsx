@@ -1,8 +1,9 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { Mail, MapPin, Phone, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { useEffect, useRef } from "react";
 
 type PageCopy = {
@@ -57,7 +58,9 @@ export default function ContactPage() {
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
-    const ctx = gsap.context(() => {
+  }, []);
+
+  useGSAP(() => {
       gsap.from(".hero-line", {
         yPercent: 110,
         stagger: 0.12,
@@ -72,10 +75,7 @@ export default function ContactPage() {
         ease: "power3.out",
         delay: 0.8,
       });
-    }, pageRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: pageRef });
 
   return (
     <main

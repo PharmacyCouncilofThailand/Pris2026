@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef } from "react";
-import { Link } from "@/i18n/routing";
 import { MoveUpRight, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import gsap from "gsap";
@@ -52,7 +51,7 @@ export default function RegistrationCTASection() {
     );
 
     // Highly engineered line drawing
-    gsap.utils.toArray(".draw-line-premium").forEach((line: any) => {
+    gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
       gsap.fromTo(
         line,
         { scaleX: 0 },

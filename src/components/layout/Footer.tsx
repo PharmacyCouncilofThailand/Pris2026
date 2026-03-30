@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link, usePathname } from "@/i18n/routing";
 import { Mail, Phone, Globe, MapPin } from "lucide-react";
@@ -70,10 +70,12 @@ export default function Footer() {
               {quickLinks.map((link) => (
                 <li key={link.labelKey}>
                   <Link
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     href={link.href as any}
                     className="text-zinc-400 hover:text-white transition-colors duration-300 text-sm font-light inline-flex items-center group"
                   >
                     <span className="w-0 h-px bg-[#D4AF37] mr-0 group-hover:w-3 group-hover:mr-3 transition-all duration-300 ease-out" />
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {t(link.labelKey as any)}
                   </Link>
                 </li>

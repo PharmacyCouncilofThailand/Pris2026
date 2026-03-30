@@ -4,14 +4,16 @@ import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 export default function SignUpTypePage() {
   const containerRef = useRef<HTMLDivElement>(null!);
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
+  }, []);
 
-    const ctx = gsap.context(() => {
+  useGSAP(() => {
       gsap.fromTo(
         ".fade-in-element",
         { opacity: 0, y: 15 },
@@ -23,10 +25,7 @@ export default function SignUpTypePage() {
           ease: "power2.out",
         }
       );
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: containerRef });
 
   return (
     <main className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 lg:p-8 font-sans selection:bg-black selection:text-white pt-24 lg:pt-8 relative z-40">

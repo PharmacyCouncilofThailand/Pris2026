@@ -44,7 +44,7 @@ export default function SponsorSection() {
               key={`r1-${sponsor.id}-${index}`}
               className="mx-3 md:mx-5 flex items-center justify-center flex-shrink-0 group"
             >
-              <div className="relative h-20 w-40 md:h-28 md:w-56 flex items-center justify-center p-4 rounded-xl bg-white/[0.04] border border-white/[0.08] overflow-hidden">
+              <div className="relative h-20 w-40 md:h-28 md:w-56 flex items-center justify-center p-4">
                 <Image
                   src={sponsor.logo}
                   alt={sponsor.name}
@@ -65,6 +65,7 @@ export default function SponsorSection() {
               className="mx-5 md:mx-8 flex items-center justify-center flex-shrink-0 group"
             >
               <div className="relative h-12 w-28 md:h-16 md:w-40 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={sponsor.logo}
                   alt={sponsor.name}

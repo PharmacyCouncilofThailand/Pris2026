@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -32,36 +31,36 @@ export default function PrisIntroSection() {
 
   useGSAP(
     () => {
-      // ── Title chars stagger (Scrub) ──
+      // ── Title chars stagger (No scrub, simple play on scroll) ──
       gsap.fromTo(
         ".pris-char",
         { y: "120%" },
         {
           y: "0%",
-          ease: "none",
+          ease: "power3.out",
+          duration: 0.8,
           stagger: 0.02,
           scrollTrigger: { 
             trigger: ".pris-title", 
             start: "top 85%", 
-            end: "bottom 50%", 
-            scrub: 1 
+            toggleActions: "play reverse play reverse"
           },
         }
       );
 
-      // ── Body paragraphs (Scrub) ──
+      // ── Body paragraphs (No scrub) ──
       gsap.fromTo(
         ".pris-body-line",
         { y: "120%" },
         {
           y: "0%",
-          ease: "none",
+          ease: "power3.out",
+          duration: 1,
           stagger: 0.1,
           scrollTrigger: { 
             trigger: ".pris-body-wrap", 
             start: "top 85%", 
-            end: "bottom 60%", 
-            scrub: 1 
+            toggleActions: "play reverse play reverse"
           },
         }
       );
@@ -129,7 +128,7 @@ export default function PrisIntroSection() {
           {/* Stat 1: Participants */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
             <p
-              className="stat-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
               {t("stat1Value")}
             </p>
@@ -168,7 +167,7 @@ export default function PrisIntroSection() {
           {/* Stat 2: Exhibition Booths */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
             <p
-              className="stat-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
               {t("stat2Value")}
             </p>
@@ -203,7 +202,7 @@ export default function PrisIntroSection() {
           {/* Stat 3: Networking Night */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12">
             <p
-              className="stat-number text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
               {t("stat3Value")}
             </p>

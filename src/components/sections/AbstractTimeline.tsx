@@ -8,6 +8,7 @@ export default function AbstractTimeline() {
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentDate(new Date());
   }, []);
 

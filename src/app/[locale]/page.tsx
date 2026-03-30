@@ -5,38 +5,31 @@ import StickyStackWrapper from "@/components/layout/StickyStackWrapper";
 import dynamic from "next/dynamic";
 
 const PrisIntroSection = dynamic(
-  () => import("@/components/sections/PrisIntroSection"),
-  { ssr: false }
+  () => import("@/components/sections/PrisIntroSection")
 );
 
 const WelcomeSection = dynamic(
-  () => import("@/components/sections/WelcomeSection"),
-  { ssr: false }
+  () => import("@/components/sections/WelcomeSection")
 );
 
 const EventScheduleSection = dynamic(
-  () => import("@/components/sections/EventScheduleSection"),
-  { ssr: false }
+  () => import("@/components/sections/EventScheduleSection")
 );
 
 const SpeakerSection = dynamic(
-  () => import("@/components/sections/SpeakerSection"),
-  { ssr: false }
+  () => import("@/components/sections/SpeakerSection")
 );
 
 const SponsorSection = dynamic(
-  () => import("@/components/sections/SponsorSection"),
-  { ssr: false }
+  () => import("@/components/sections/SponsorSection")
 );
 
 const HighlightVideoSection = dynamic(
-  () => import("@/components/sections/HighlightVideoSection"),
-  { ssr: false }
+  () => import("@/components/sections/HighlightVideoSection")
 );
 
 const RecentMemoriesSection = dynamic(
-  () => import("@/components/sections/RecentMemoriesSection"),
-  { ssr: false }
+  () => import("@/components/sections/RecentMemoriesSection")
 );
 
 export default function Home() {

@@ -28,6 +28,7 @@ export default function DetailedGuidelines() {
 
   useEffect(() => {
     // Set current date on the client side to avoid hydration mismatch
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentDate(new Date());
   }, []);
 

@@ -206,10 +206,12 @@ export default function SpeakerSection() {
                     {/* Speaker Image */}
                     {speaker.image && (
                       <div className="absolute inset-0 z-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={speaker.image}
                           alt={speaker.name}
-                          className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700 mix-blend-luminosity hover:mix-blend-normal"
+                          loading="lazy"
+                          className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700"
                         />
                       </div>
                     )}

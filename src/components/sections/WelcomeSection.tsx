@@ -13,6 +13,7 @@ if (typeof window !== "undefined") {
 
 import { ORGANIZERS_DATA } from "@/data/speakersData";
 import { useLocale, useTranslations } from "next-intl";
+import { SectionTitle } from "@/components/elements/SectionTitle";
 
 export default function WelcomeSection() {
   const locale = useLocale();
@@ -39,22 +40,22 @@ export default function WelcomeSection() {
         }
       );
 
-      // Animate each card with stagger
-      const cards = gsap.utils.toArray<HTMLElement>(".speaker-card");
-      cards.forEach((card, i) => {
-        gsap.fromTo(
-          card,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            delay: i * 0.15,
-            ease: "power3.out",
-            scrollTrigger: { trigger: card, start: "top 85%" },
-          }
-        );
-      });
+      // Animate cards as a staggered group when the grid comes into view
+      gsap.fromTo(
+        ".speaker-card",
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: { 
+            trigger: ".welcome-grid", 
+            start: "top 85%" 
+          },
+        }
+      );
     },
     { scope: containerRef }
   );
@@ -70,23 +71,18 @@ export default function WelcomeSection() {
 
       <div className="container mx-auto px-4 relative z-[2] pt-20 md:pt-28">
         {/* Header */}
-        <div className="welcome-header text-center mb-16 md:mb-20 flex flex-col items-center">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <span className="w-12 h-px bg-gold/40" />
-            <span className="text-xs font-semibold tracking-[0.25em] uppercase text-gold/70">
-              {t("welcomeMessages")}
-            </span>
-            <span className="w-12 h-px bg-gold/40" />
-          </div>
-          <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] text-black mb-6">
-            {t.rich('title', {
-              br: () => <br className="hidden md:block" />
-            })}
-          </h2>
-        </div>
+        <SectionTitle
+          subtitle={t("welcomeMessages")}
+          title={t.rich('title', {
+            br: () => <br className="hidden md:block" />
+          })}
+          align="center"
+          theme="light"
+          className="welcome-header mb-16 md:mb-20"
+        />
 
         {/* Speakers in one row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
+        <div className="welcome-grid grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
           {ORGANIZERS_DATA.map((person, index) => (
             <div
               key={index}
@@ -100,6 +96,8 @@ export default function WelcomeSection() {
                     alt={getName(person)}
                     fill
                     sizes="176px"
+                    priority
+                    quality={90}
                     className="object-cover"
                   />
                 ) : (

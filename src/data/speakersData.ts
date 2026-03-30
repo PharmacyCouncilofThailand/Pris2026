@@ -1,4 +1,6 @@
-export const ORGANIZERS_DATA = [
+import { Organizer, Speaker } from "@/types";
+
+export const ORGANIZERS_DATA: Organizer[] = [
   {
     name: "Mr. Preecha Bhandtivej",
     nameTh: "ภก.ปรีชา พันธุ์ติเวช",
@@ -22,7 +24,7 @@ export const ORGANIZERS_DATA = [
   }
 ];
 
-export const SPEAKERS_DATA = [
+export const SPEAKERS_DATA: Speaker[] = [
   { id: 1, name: "Prof. Dr. Kenji Yamamoto", position: "Keynote Speaker", role: "ACCP President", image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg" },
   { id: 2, name: "Assoc. Prof. Dr. Nattiya", position: "Guest Speaker", role: "PRIS 2026 Chair", image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg" },
   { id: 3, name: "Dr. Sarah Jenkins", position: "Plenary Speaker", role: "Clinical Innovator", image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg" },

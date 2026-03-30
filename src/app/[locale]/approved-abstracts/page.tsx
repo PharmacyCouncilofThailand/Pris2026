@@ -6,6 +6,7 @@ import { Building2, ChevronDown, FileText, Search, User } from "lucide-react";
 import { approvedPosterAbstracts, type ApprovedPosterAbstract } from "@/data/approvedPosterAbstracts";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 type PageCopy = {
   eyebrow: string;
@@ -33,8 +34,9 @@ export default function ApprovedAbstractsPage() {
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
+  }, []);
 
-    const ctx = gsap.context(() => {
+  useGSAP(() => {
       gsap.from(".hero-line", {
         yPercent: 110,
         stagger: 0.12,
@@ -49,10 +51,7 @@ export default function ApprovedAbstractsPage() {
         ease: "power3.out",
         delay: 0.8,
       });
-    }, heroRef);
-
-    return () => ctx.revert();
-  }, []);
+  }, { scope: heroRef });
 
   const copy: PageCopy = locale === "th"
     ? {
