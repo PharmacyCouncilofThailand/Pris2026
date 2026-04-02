@@ -39,9 +39,10 @@ export default function WelcomeMessagesPage() {
     const entries = gsap.utils.toArray(".speaker-entry") as HTMLElement[];
     entries.forEach((entry) => {
       const img = entry.querySelector(".speaker-img");
+      const imgContainer = entry.querySelector(".speaker-img-container");
       const content = entry.querySelector(".speaker-content");
       
-      // Image Parallax Effect
+      // Image internal parallax effect (scrub)
       if (img) {
         gsap.fromTo(
           img,
@@ -60,15 +61,16 @@ export default function WelcomeMessagesPage() {
         );
       }
 
-      // Content Fade & Slide up
-      if (content) {
+      // Container and Content Fade & Slide up (Wait for scroll)
+      if (content && imgContainer) {
         gsap.fromTo(
-          content,
+          [imgContainer, content],
           { opacity: 0, y: 80 },
           {
             opacity: 1,
             y: 0,
             duration: 1.2,
+            stagger: 0.15,
             ease: "power3.out",
             scrollTrigger: {
               trigger: entry,
@@ -124,7 +126,7 @@ export default function WelcomeMessagesPage() {
               className={`speaker-entry relative w-full flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 md:gap-16 items-center group`}
             >
               {/* Image Side - Contained with rounded corners */}
-              <div className="w-full lg:w-5/12 aspect-[3/4] md:aspect-[4/5] relative overflow-hidden rounded-2xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-black/10">
+              <div className="speaker-img-container w-full lg:w-5/12 aspect-[3/4] md:aspect-[4/5] relative overflow-hidden rounded-2xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-black/10">
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none" />
                 <Image
                   src={speaker.image}
