@@ -29,14 +29,7 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Ceremony",
         typeTh: "พิธีเปิด",
-        speakers: [
-          {
-            name: "H.E. Minister of Public Health",
-            role: "Presiding Officer",
-            roleTh: "ประธานในพิธี",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        speakers: []
       },
       { 
         id: 3, 
