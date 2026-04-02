@@ -9,116 +9,148 @@ export const scheduleData: ScheduleDay[] = [
     events: [
       { 
         id: 1, 
-        time: "08:00 - 09:00", 
-        title: "Registration & Welcome Coffee", 
-        titleTh: "ลงทะเบียนและรับประทานของว่าง", 
-        location: "Grand Foyer", 
-        locationTh: "แกรนด์ฟอยเยอร์", 
+        time: "08:00 – 16:00", 
+        title: "Registration", 
+        titleTh: "ลงทะเบียน (Registration)", 
+        location: "Registration Desk",
+        locationTh: "จุดลงทะเบียน",
         type: "Registration",
         typeTh: "ลงทะเบียน",
-        speakers: [
-          {
-            name: "Dr. Emily Chen",
-            role: "Registration Coordinator",
-            roleTh: "ผู้ประสานงานลงทะเบียน",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        speakers: []
       },
       { 
         id: 2, 
-        time: "09:00 - 10:30", 
-        title: "Opening Ceremony & Keynote Address", 
-        titleTh: "พิธีเปิดและปาฐกถาพิเศษ", 
-        description: "Hear from our distinguished guests as we kick off the ACCP 2026 conference.", 
-        descriptionTh: "รับฟังปาฐกถาจากแขกผู้มีเกียรติในพิธีเปิดการประชุม ACCP 2026", 
-        location: "World Ballroom", 
-        locationTh: "เวิลด์บอลรูม", 
-        type: "Keynote",
-        typeTh: "ปาฐกถา",
+        time: "09:00 – 09:30", 
+        title: "Opening Ceremony by the Minister of Public Health", 
+        titleTh: "Opening Ceremony โดย รัฐมนตรีว่าการกระทรวงสาธารณสุข", 
+        description: "(Substitute: Permanent Secretary of MOPH / FDA Secretary-General / President of the Pharmacy Council)", 
+        descriptionTh: "(สำรอง: ปลัดกระทรวงสาธารณสุข / เลขาธิการ อย. / นายกสภาเภสัชกรรม)", 
+        location: "Main Stage",
+        locationTh: "เวทีห้องประชุมใหญ่",
+        type: "Ceremony",
+        typeTh: "พิธีเปิด",
         speakers: [
           {
-            name: "Prof. Dr. Kenji Yamamoto",
-            role: "ACCP President",
-            roleTh: "ประธาน ACCP",
+            name: "H.E. Minister of Public Health",
+            role: "Presiding Officer",
+            roleTh: "ประธานในพิธี",
             image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           }
         ]
       },
       { 
         id: 3, 
-        time: "10:30 - 11:00", 
-        title: "Networking Break & Exhibition Viewing", 
-        titleTh: "พักรับประทานอาหารว่างและเยี่ยมชมนิทรรศการ", 
-        location: "Exhibition Hall", 
-        locationTh: "โถงนิทรรศการ", 
-        type: "Break",
-        typeTh: "พักเบรค",
-        speakers: [
-          {
-            name: "Prof. Maria Lopez",
-            role: "Event Host",
-            roleTh: "พิธีกร",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        time: "09:30 – 10:30", 
+        title: "Plenary Lecture", 
+        titleTh: "Plenary Lecture", 
+        description: '“Transforming Pharmacy Practice Under Ministry of Public Health Policies”',
+        descriptionTh: "“พลิกโฉมงานเภสัชกรรมภายใต้นโยบายกระทรวงสาธารณสุข”",
+        location: "Main Stage",
+        locationTh: "เวทีห้องประชุมใหญ่",
+        type: "Lecture",
+        typeTh: "บรรยายหลัก",
+        speakers: []
       },
       { 
         id: 4, 
-        time: "11:00 - 12:30", 
-        title: "Plenary Session 1: Future of Clinical Pharmacy", 
-        titleTh: "การประชุมเต็มคณะ 1: อนาคตของเภสัชกรรมคลินิก", 
-        description: "Exploring the latest trends and innovations shaping the future of clinical pharmacy practice.", 
-        descriptionTh: "สำรวจแนวโน้มล่าสุดและนวัตกรรมที่เป็นตัวกำหนดอนาคตของการปฏิบัติงานวิชาชีพเภสัชกรรมคลินิก", 
-        location: "World Ballroom", 
-        locationTh: "เวิลด์บอลรูม", 
-        type: "Session",
-        typeTh: "การประชุม",
-        speakers: [
-          {
-            name: "Dr. Sarah Jenkins",
-            role: "Plenary Speaker",
-            roleTh: "วิทยากร",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          },
-          {
-            name: "Dr. Emily Chen",
-            role: "Panelist",
-            roleTh: "ผู้ร่วมอภิปราย",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          },
-          {
-            name: "Dr. James Carter",
-            role: "Panelist",
-            roleTh: "ผู้ร่วมอภิปราย",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          },
-          {
-            name: "Prof. Maria Lopez",
-            role: "Panelist",
-            roleTh: "ผู้ร่วมอภิปราย",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        time: "10:30 – 11:00", 
+        title: "Coffee Break & Poster/Exhibition Viewing", 
+        titleTh: "Coffee Break & Poster/Exhibition Viewing", 
+        location: "Exhibition Hall",
+        locationTh: "โถงนิทรรศการ",
+        type: "Break",
+        typeTh: "พักเบรค",
+        speakers: []
       },
       { 
         id: 5, 
-        time: "12:30 - 14:00", 
-        title: "Lunch Symposia", 
-        titleTh: "สัมมนาวิชาการภาคกลางวัน", 
-        location: "Lotus Room", 
-        locationTh: "ห้องโลตัส", 
+        time: "11:00 – 12:00", 
+        title: "Parallel Sessions", 
+        titleTh: "Parallel Sessions", 
+        description: "Main Stage (Jupiter 4-7): Panel “Unlocking Pharmacy Profession Pain Points”\nRoom 1 (Jupiter 11): Young Pharmacist\nRoom 2 (Jupiter 12): Workshop: Professional Direction (Community)\nRoom 3 (Jupiter 13): Workshop: Professional Direction (Industrial)",
+        descriptionTh: "Main Stage: (Jupiter 4-7) Topic 1: เสวนา “ปลดล็อค Pain Point วิชาชีพเภสัชกรรม”\nRoom 1: (Jupiter11) Young Pharmacist (สนภท.)\nRoom 2: (Jupiter12) Workshop: ทิศทางวิชาชีพ (สายชุมชน)\nRoom 3: (Jupiter13) Workshop: ทิศทางวิชาชีพ (สายอุตสาหกรรม)", 
+        location: "Various Rooms", 
+        locationTh: "ตามห้องต่าง ๆ", 
+        type: "Session",
+        typeTh: "การประชุม",
+        speakers: []
+      },
+      { 
+        id: 6, 
+        time: "12:00 – 13:00", 
+        title: "Lunch Symposium Sessions", 
+        titleTh: "Lunch Symposium Sessions", 
+        description: "Session 1 (12:00 – 12:30)\nSession 2 (12:30 – 13:00)",
+        descriptionTh: "Session 1 (12:00 – 12:30)\nSession 2 (12:30 – 13:00)",
+        location: "Various Rooms",
+        locationTh: "ตามห้องต่าง ๆ",
         type: "Lunch",
         typeTh: "อาหารกลางวัน",
-        speakers: [
-          {
-            name: "Dr. James Carter",
-            role: "Symposium Chair",
-            roleTh: "ประธานการสัมมนา",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        speakers: []
       },
+      { 
+        id: 7, 
+        time: "13:00 – 15:00", 
+        title: "Scientific Sessions & Exhibition", 
+        titleTh: "Scientific Sessions & Exhibition", 
+        description: "Poster & Booth Exhibition\nOral Presentation I-IV (4 Parallel Rooms, 6 presentations/session, 15 min each)",
+        descriptionTh: "Poster & Booth Exhibition\nOral Presentation I-IV (4 Parallel Rooms, 6 presentations/session, 15 min each)",
+        location: "Exhibition Hall & Meeting Rooms",
+        locationTh: "โถงนิทรรศการ และห้องประชุม",
+        type: "Session",
+        typeTh: "การประชุม",
+        speakers: []
+      },
+      { 
+        id: 8, 
+        time: "15:00 – 15:30", 
+        title: "Coffee Break", 
+        titleTh: "Coffee Break", 
+        location: "Exhibition Hall",
+        locationTh: "โถงนิทรรศการ",
+        type: "Break",
+        typeTh: "พักเบรค",
+        speakers: []
+      },
+      { 
+        id: 9, 
+        time: "15:30 – 16:00", 
+        title: "Parallel Sessions", 
+        titleTh: "Parallel Sessions", 
+        description: "Main Stage: Corporate Symposium\nRooms 1-3: Student Presentation (Pharmaceutical Sciences)",
+        descriptionTh: "Main Stage: Corporate Symposium\nRooms 1-3: Student Presentation (Pharmaceutical Sciences)",
+        location: "Various Rooms",
+        locationTh: "ตามห้องต่าง ๆ",
+        type: "Session",
+        typeTh: "การประชุม",
+        speakers: []
+      },
+      { 
+        id: 10, 
+        time: "16:00 – 16:30", 
+        title: "Organizational Report", 
+        titleTh: "Organizational Report", 
+        description: "(Pharmacy Council and Royal College of Pharmacy)",
+        descriptionTh: "(สภาเภสัชกรรม และราชวิทยาลัย)",
+        location: "Main Stage",
+        locationTh: "เวทีห้องประชุมใหญ่",
+        type: "Session",
+        typeTh: "การประชุม",
+        speakers: []
+      },
+      { 
+        id: 11, 
+        time: "16:30 – 18:00", 
+        title: "Welcome Reception & Networking", 
+        titleTh: "Welcome Reception & Networking", 
+        description: "Includes Awarding of Certificates and Diplomas",
+        descriptionTh: "พร้อมพิธีมอบประกาศนียบัตร และวุฒิบัตร",
+        location: "Grand Foyer",
+        locationTh: "แกรนด์ฟอยเยอร์",
+        type: "Networking",
+        typeTh: "พบปะสังสรรค์",
+        speakers: []
+      }
     ],
   },
   {
@@ -128,101 +160,103 @@ export const scheduleData: ScheduleDay[] = [
     dateTh: "16 ตุลาคม 2569",
     events: [
       { 
-        id: 6, 
-        time: "08:30 - 10:00", 
-        title: "Parallel Sessions A", 
-        titleTh: "การประชุมกลุ่มย่อย A", 
-        description: "Choose from 4 different tracks covering specialized clinical areas.", 
-        descriptionTh: "เลือกเข้าร่วมจาก 4 หัวข้อย่อยที่ครอบคลุมสาขาคลินิกเฉพาะทาง", 
-        location: "Meeting Rooms 1-4", 
-        locationTh: "ห้องประชุม 1-4", 
-        type: "Session",
-        typeTh: "การประชุม",
-        speakers: [
-          {
-            name: "Dr. Sarah Jenkins",
-            role: "Session Moderator",
-            roleTh: "ผู้ดำเนินการอภิปราย",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        id: 12, 
+        time: "08:00 – 16:00", 
+        title: "Registration", 
+        titleTh: "ลงทะเบียน", 
+        location: "Registration Desk",
+        locationTh: "จุดลงทะเบียน",
+        type: "Registration",
+        typeTh: "ลงทะเบียน",
+        speakers: []
       },
       { 
-        id: 7, 
-        time: "10:00 - 10:30", 
-        title: "Morning Break & Poster Viewing", 
-        titleTh: "พักรับประทานอาหารว่างและเยี่ยมชมนิทรรศการโปสเตอร์", 
-        location: "Exhibition Hall", 
-        locationTh: "โถงนิทรรศการ", 
+        id: 13, 
+        time: "09:00 – 09:30", 
+        title: "Keynote Lecture 1", 
+        titleTh: "Keynote Lecture 1", 
+        description: '“AI in Pharmacy Practice”',
+        descriptionTh: "“AI กับงานเภสัชกรรม”",
+        location: "Main Stage",
+        locationTh: "เวทีห้องประชุมใหญ่",
+        type: "Keynote",
+        typeTh: "ปาฐกถา",
+        speakers: []
+      },
+      { 
+        id: 14, 
+        time: "09:30 – 10:00", 
+        title: "Keynote Lecture 2", 
+        titleTh: "Keynote Lecture 2", 
+        description: '“Advance and Innovation Pharmacy I”',
+        descriptionTh: "“Advance and Innovation Pharmacy I”",
+        location: "Main Stage",
+        locationTh: "เวทีห้องประชุมใหญ่",
+        type: "Keynote",
+        typeTh: "ปาฐกถา",
+        speakers: []
+      },
+      { 
+        id: 15, 
+        time: "10:00 – 10:30", 
+        title: "Coffee Break & Poster Viewing", 
+        titleTh: "พักรับประทานอาหารว่าง และเยี่ยมชมนิทรรศการโปสเตอร์", 
+        location: "Exhibition Hall",
+        locationTh: "โถงนิทรรศการ",
         type: "Break",
         typeTh: "พักเบรค",
-        speakers: [
-          {
-            name: "Prof. Dr. Kenji Yamamoto",
-            role: "Host",
-            roleTh: "พิธีกร",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        speakers: []
       },
       { 
-        id: 8, 
-        time: "10:30 - 12:00", 
-        title: "Plenary Session 2: Precision Medicine", 
-        titleTh: "การประชุมเต็มคณะ 2: การแพทย์แม่นยำ", 
-        description: "How genomics is transforming therapeutic approaches.", 
-        descriptionTh: "จีโนมิกส์พลิกโฉมแนวทางการรักษาอย่างไร", 
-        location: "World Ballroom", 
-        locationTh: "เวิลด์บอลรูม", 
+        id: 16, 
+        time: "10:30 – 12:00", 
+        title: "Scientific & Networking Sessions", 
+        titleTh: "Scientific & Networking Sessions", 
+        description: "Main Stage:\nTopic 3: Advance and Innovation Pharmacy II\nTopic 4: Advance and Innovation Pharmacy III\nTopic 5: Advance and Innovation Pharmacy IV\nRoom 1: Networking (Education)\nRoom 2-3: Networking",
+        descriptionTh: "Main Stage:\nTopic 3: Advance and Innovation Pharmacy II\nTopic 4: Advance and Innovation Pharmacy III\nTopic 5: Advance and Innovation Pharmacy IV\nRoom 1: Networking (ด้านการศึกษา)\nRoom 2-3: Networking",
+        location: "Various Rooms",
+        locationTh: "ตามห้องต่าง ๆ",
         type: "Session",
         typeTh: "การประชุม",
-        speakers: [
-          {
-            name: "Dr. Albert Wong",
-            role: "Research Lead",
-            roleTh: "หัวหน้าฝ่ายวิจัย",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        speakers: []
       },
       { 
-        id: 9, 
-        time: "12:00 - 13:30", 
-        title: "Networking Lunch", 
-        titleTh: "รับประทานอาหารกลางวัน", 
-        location: "Lotus Room", 
-        locationTh: "ห้องโลตัส", 
+        id: 17, 
+        time: "12:00 – 13:00", 
+        title: "Lunch Symposium Sessions", 
+        titleTh: "Lunch Symposium Sessions", 
+        description: "Session 3 (12:00 – 12:30)\nSession 4 (12:30 – 13:00)",
+        descriptionTh: "Session 3 (12:00 – 12:30)\nSession 4 (12:30 – 13:00)",
+        location: "Various Rooms",
+        locationTh: "ตามห้องต่าง ๆ",
         type: "Lunch",
         typeTh: "อาหารกลางวัน",
-        speakers: [
-          {
-            name: "Dr. Albert Wong",
-            role: "Host",
-            roleTh: "พิธีกร",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        speakers: []
       },
       { 
-        id: 10, 
-        time: "13:30 - 15:30", 
-        title: "Interactive Workshops", 
-        titleTh: "การประชุมเชิงปฏิบัติการ", 
-        description: "Hands-on training sessions with industry experts.", 
-        descriptionTh: "การฝึกอบรมเชิงปฏิบัติการกับผู้เชี่ยวชาญ", 
-        location: "Meeting Rooms 1-4", 
-        locationTh: "ห้องประชุม 1-4", 
-        type: "Workshop",
-        typeTh: "เวิร์คช็อป",
-        speakers: [
-          {
-            name: "Dr. Robert Garcia",
-            role: "Workshop Lead",
-            roleTh: "ผู้นำเวิร์คช็อป",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          }
-        ]
+        id: 18, 
+        time: "13:00 – 16:30", 
+        title: "Scientific Sessions", 
+        titleTh: "Scientific Sessions", 
+        description: "Oral Presentation V-VIII (Parallel Sessions)\nStudent Presentation (Pharm Care / Pharm Science)",
+        descriptionTh: "Oral Presentation V-VIII (Parallel Sessions)\nStudent Presentation (Pharm Care / Pharm Science)",
+        location: "Meeting Rooms",
+        locationTh: "ห้องประชุม",
+        type: "Session",
+        typeTh: "การประชุม",
+        speakers: []
       },
+      { 
+        id: 19, 
+        time: "17:00", 
+        title: "Award Ceremony", 
+        titleTh: "Award Ceremony", 
+        location: "Main Stage",
+        locationTh: "เวทีห้องประชุมใหญ่",
+        type: "Ceremony",
+        typeTh: "พิธีมอบรางวัล",
+        speakers: []
+      }
     ],
   },
 ];
