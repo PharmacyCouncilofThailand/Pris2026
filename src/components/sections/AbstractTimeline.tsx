@@ -24,37 +24,47 @@ export default function AbstractTimeline() {
   const reviewNoteTitle = locale === "th" ? "หมายเหตุการพิจารณา" : "Review Note";
 
   return (
-    <section className="border-b border-slate-200 py-20 md:py-28">
-      <div className="container mx-auto max-w-5xl px-6">
-        <div className="mb-12 md:mb-16">
-          <h2 className="font-outfit text-3xl font-black tracking-tight text-slate-900 md:text-4xl">
-            {locale === "th" ? "กำหนดการสำคัญ" : "Important Dates"}
+    <section className="py-20 md:py-32 bg-[#FAFBFF] md:bg-white text-slate-900 overflow-hidden">
+      <div className="container mx-auto max-w-5xl px-6 md:px-8">
+        
+        {/* Header Section */}
+        <div className="mb-14 md:mb-20">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-10 h-[2px] bg-[#0055FF]"></div>
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#0055FF]">
+              {locale === "th" ? "กำหนดการ" : "Timeline"}
+            </p>
+          </div>
+          <h2 className="font-outfit text-5xl sm:text-6xl md:text-[5.5rem] font-black tracking-tighter leading-[0.9]">
+            {locale === "th" ? "วันสำคัญ" : "Important Dates"}
           </h2>
         </div>
 
-        <div className="space-y-0">
+        {/* Timeline List */}
+        <div className="flex flex-col border-t border-slate-200">
           {abstractTimeline.map((item, index) => {
             let isPastOrCurrent = false;
             if (currentDate) {
               const itemDate = new Date(item.date);
               isPastOrCurrent = currentDate.getTime() >= itemDate.getTime();
             }
-            const isHighlighted = item.color === "blue" ? false : true; // Keep existing logic if there's any or override
-            const finalHighlight = isHighlighted || isPastOrCurrent;
+            
+            // First item gets specific red styling according to the design
+            const isFirstItem = index === 0;
 
             return (
               <div
                 key={index}
-                className="flex flex-col justify-between border-t border-slate-200 py-6 first:border-t-0 md:flex-row md:items-center transition-colors duration-300 hover:bg-slate-50/50"
+                className="flex flex-col justify-between py-6 md:py-8 border-b border-slate-200 md:flex-row md:items-center transition-colors duration-300 hover:bg-slate-50"
               >
-                <div className="mb-2 md:mb-0 md:w-1/2">
-                  <h3 className={`text-sm tracking-widest uppercase transition-colors duration-300 ${finalHighlight ? "text-red-500 font-bold" : "text-slate-500 font-semibold"}`}>
+                <div className="mb-3 md:mb-0 md:w-1/2">
+                  <h3 className={`text-base md:text-lg transition-colors duration-300 ${isFirstItem ? "text-red-600 font-bold" : "text-slate-800 font-medium"}`}>
                     {locale === "th" && item.labelTh ? item.labelTh : item.label}
                   </h3>
                 </div>
 
                 <div className="md:w-1/2 md:text-right">
-                  <p className={`font-outfit text-xl transition-colors duration-300 md:text-2xl ${finalHighlight ? "text-red-600 font-black" : "text-slate-900 font-bold"}`}>
+                  <p className={`font-outfit text-sm md:text-[0.95rem] transition-colors duration-300 ${isFirstItem ? "text-red-500 font-semibold" : "text-slate-400 font-medium"}`}>
                     {locale === "th" && item.dateTh ? item.dateTh : item.date}
                   </p>
                 </div>
@@ -63,14 +73,15 @@ export default function AbstractTimeline() {
           })}
         </div>
 
-        <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+        {/* Requirements Box */}
+        <div className="mt-12 md:mt-16 rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-[0_2px_20px_rgb(0,0,0,0.03)]">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
             {reviewNoteTitle}
           </p>
-          <p className="text-sm leading-relaxed text-slate-600 md:text-[0.95rem]">
+          <p className="text-[0.9rem] leading-relaxed text-slate-600 mb-5">
             {reviewNote}
           </p>
-          <p className="mt-3 text-sm font-semibold leading-relaxed text-red-700 md:text-[0.95rem]">
+          <p className="text-[0.9rem] font-bold text-red-600">
             {reservationNote}
           </p>
         </div>

@@ -242,8 +242,8 @@ export default function RegistrationCTASection() {
                 </div>
               </div>
               <div className="text-left md:text-right flex flex-col items-start md:items-end gap-1">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-black transition-colors duration-500">฿1,000</div>
-                <div className="text-lg font-medium text-black/30 group-hover:text-black/50 transition-colors duration-500 line-through">฿1,500</div>
+                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-black transition-colors duration-500">฿1,250</div>
+                <div className="text-lg font-medium text-black/30 group-hover:text-black/50 transition-colors duration-500 line-through">฿2,000</div>
               </div>
             </div>
           </div>
@@ -259,39 +259,55 @@ export default function RegistrationCTASection() {
                 </div>
               </div>
               <div className="text-left md:text-right">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-white transition-colors duration-500">฿1,500</div>
+                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-white transition-colors duration-500">฿2,000</div>
               </div>
             </div>
           </div>
 
-          {/* Row 3: Post Grad (ORANGE HOVER) */}
+          {/* Row 3: Late Registration (ORANGE HOVER) */}
           <div className="pricing-row group relative border-t border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#FF5A00] cursor-pointer bg-transparent text-black">
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
               <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
-                <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-black/60 transition-colors duration-500 w-24">03</span>
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] group-hover:text-black/60 transition-colors duration-500 w-24">03</span>
                 <div>
-                  <h4 className="text-3xl md:text-5xl font-bold tracking-tighter mb-3 group-hover:text-black transition-colors duration-500">{t("tierPostGrad")}</h4>
-                  <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-black/70 transition-colors duration-500">{t("tierPostGradLabel")}</p>
+                  <h4 className="text-4xl md:text-6xl font-bold tracking-tighter mb-3 group-hover:text-black transition-colors duration-500">{t("tierLate")}</h4>
+                  <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-black/70 transition-colors duration-500">{t("tierLateLabel")}</p>
                 </div>
               </div>
               <div className="text-left md:text-right">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-black transition-colors duration-500">฿1,000</div>
+                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-black transition-colors duration-500">฿2,500</div>
               </div>
             </div>
           </div>
 
-          {/* Row 4: Under Grad (BLUE HOVER) */}
-          <div className="pricing-row group relative border-y border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#0055FF] cursor-pointer bg-transparent text-black hover:text-white">
+          {/* Row 4: Post Grad (BLUE HOVER) */}
+          <div className="pricing-row group relative border-t border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#0055FF] cursor-pointer bg-transparent text-black hover:text-white">
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
               <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
                 <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-white/60 transition-colors duration-500 w-24">04</span>
                 <div>
-                  <h4 className="text-3xl md:text-5xl font-bold tracking-tighter mb-3 transition-colors duration-500 group-hover:text-white">{t("tierUnderGrad")}</h4>
-                  <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-white/80 transition-colors duration-500">{t("tierUnderGradLabel")}</p>
+                  <h4 className="text-3xl md:text-5xl font-bold tracking-tighter mb-3 group-hover:text-white transition-colors duration-500">{t("tierPostGrad")}</h4>
+                  <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-white/80 transition-colors duration-500">{t("tierPostGradLabel")}</p>
+                </div>
+              </div>
+              <div className="text-left md:text-right">
+                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-white transition-colors duration-500">฿1,000</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Row 5: Under Grad (ORANGE HOVER) */}
+          <div className="pricing-row group relative border-y border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#FF5A00] cursor-pointer bg-transparent text-black">
+            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
+              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-black/60 transition-colors duration-500 w-24">05</span>
+                <div>
+                  <h4 className="text-3xl md:text-5xl font-bold tracking-tighter mb-3 transition-colors duration-500 group-hover:text-black">{t("tierUnderGrad")}</h4>
+                  <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-black/70 transition-colors duration-500">{t("tierUnderGradLabel")}</p>
                 </div>
               </div>
               <div className="text-left md:text-right flex items-baseline gap-3">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter transition-colors duration-500 group-hover:text-white">฿500</div>
+                <div className="text-4xl md:text-6xl font-black tracking-tighter transition-colors duration-500 group-hover:text-black">฿500</div>
               </div>
             </div>
           </div>
