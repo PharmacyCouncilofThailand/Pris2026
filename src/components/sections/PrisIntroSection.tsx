@@ -40,10 +40,11 @@ export default function PrisIntroSection() {
           ease: "power3.out",
           duration: 0.8,
           stagger: 0.02,
+          force3D: true, // Make sure GPU acceleration is forced
           scrollTrigger: { 
             trigger: ".pris-title", 
             start: "top 85%", 
-            toggleActions: "play reverse play reverse"
+            toggleActions: "play none none reverse" // Removed aggressive mid-screen reversing
           },
         }
       );
@@ -51,16 +52,18 @@ export default function PrisIntroSection() {
       // ── Body paragraphs (No scrub) ──
       gsap.fromTo(
         ".pris-body-line",
-        { y: "120%" },
+        { y: "120%", opacity: 0 },
         {
           y: "0%",
+          opacity: 1,
           ease: "power3.out",
           duration: 1,
           stagger: 0.1,
+          force3D: true,
           scrollTrigger: { 
             trigger: ".pris-body-wrap", 
             start: "top 85%", 
-            toggleActions: "play reverse play reverse"
+            toggleActions: "play none none reverse"
           },
         }
       );
@@ -75,9 +78,11 @@ export default function PrisIntroSection() {
           duration: 1.2,
           stagger: 0.2,
           ease: "power3.out",
+          force3D: true,
           scrollTrigger: {
             trigger: ".pris-stats",
             start: "top 85%",
+            toggleActions: "play none none reverse"
           },
         }
       );

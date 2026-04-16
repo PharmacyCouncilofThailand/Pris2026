@@ -56,7 +56,7 @@ export default function Countdown({ className }: CountdownProps) {
 }
 
 const TimeUnit = ({ value, label }: { value: number; label: string }) => (
-  <div className="relative flex flex-col items-center justify-center p-3.5 md:py-5 md:px-7 min-w-[80px] md:min-w-[110px] rounded-xl md:rounded-2xl border border-white/20 bg-white/[0.1] md:bg-white/[0.05] backdrop-blur-sm md:backdrop-blur-[20px] shadow-[0_12px_40px_rgba(0,85,255,0.15)] overflow-hidden">
+  <div className="relative flex flex-col items-center justify-center p-3.5 md:py-5 md:px-7 min-w-[80px] md:min-w-[110px] rounded-xl md:rounded-2xl border border-white/20 bg-black/30 md:bg-black/40 shadow-[0_12px_40px_rgba(0,85,255,0.15)] overflow-hidden">
     
     {/* Decorative gradient overlay (permanent) */}
     <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />

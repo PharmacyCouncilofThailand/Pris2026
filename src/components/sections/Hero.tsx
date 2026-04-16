@@ -113,37 +113,16 @@ export default function Hero() {
       // Start video immediately so it shows through the text mask
       videoRef.current?.play().catch(() => { /* autoplay may be blocked */ });
 
-      // Phase 1 (Auto): Letters stagger in
-      // Wheel/touch listeners will be added AFTER letters finish
-      const addScrollListeners = () => {
-        window.addEventListener("wheel", handleWheel, { passive: false });
-        window.addEventListener("touchstart", handleTouchStart, { passive: true });
-        window.addEventListener("touchmove", handleTouchMove, { passive: false });
-      };
-
-      const maskLetters = svgRef.current.querySelectorAll(".mask-letter");
-      if (maskLetters.length) {
-        gsap.set(maskLetters, { fill: "white" });
-        gsap.to(maskLetters, {
-          fill: "black",
-          duration: 0.35,
-          stagger: 0.08,
-          ease: "power2.out",
-          delay: 0.4,
-          onComplete: () => {
-            gsap.to(hintRef.current, {
-              opacity: 1,
-              duration: 0.5,
-              ease: "power2.out",
-            });
-            // Now allow scrolling
-            addScrollListeners();
-          },
-        });
-      } else {
-        gsap.set(hintRef.current, { opacity: 1 });
-        addScrollListeners();
-      }
+      // Device settings
+      const isMobile = window.innerWidth <= 1024; // Treat tablets as mobile for scrolling performance
+      const { initialScale, initialY } = isMobile
+        ? HERO_CFG.mobile
+        : HERO_CFG.desktop;
+      gsap.set(logoRef.current, {
+        opacity: 0,
+        y: initialY,
+        scale: initialScale,
+      });
 
       // Calculate zoom origin (center of "S")
       const calcOrigin = () => {
@@ -158,18 +137,6 @@ export default function Hero() {
       calcOrigin();
       document.fonts?.ready.then(calcOrigin);
 
-      // Device settings
-      const isMobile = window.innerWidth <= 768;
-      const { initialScale, initialY } = isMobile
-        ? HERO_CFG.mobile
-        : HERO_CFG.desktop;
-      gsap.set(logoRef.current, {
-        opacity: 0,
-        y: initialY,
-        scale: initialScale,
-      });
-
-      // Phase 2 (Wheel-driven): Zoom through "S"
       // Lock scroll from the start; wheel events drive the animation
       document.body.style.overflow = "hidden";
 
@@ -197,62 +164,41 @@ export default function Hero() {
           document.body.classList.remove("hero-playing");
           heroCompleteRef.current = true;
           markPlayed();
-          videoRef.current?.play().catch(() => {
-            /* noop */
-          });
+          videoRef.current?.play().catch(() => { /* noop */ });
           gsap.set(svgRef.current, { display: "none" });
         },
       });
-      tlAuto
-        .to(
-          logoRef.current,
-          {
-            opacity: 1,
-            y: initialY,
-            scale: initialScale,
-            ease: "power2.out",
-            duration: 0.8,
-          },
-          0,
-        )
-        .to(
-          logoRef.current,
-          { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6 },
-          1.0,
-        )
-        .fromTo(
-          countdownRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 },
-          1.3,
-        )
-        .fromTo(
-          buttonsRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 },
-          1.5,
-        );
+      if (isMobile) {
+        // Mobile-optimized: Single smooth continuous push (avoids the 0.2s pause gap that looks like stutter)
+        tlAuto
+          .to(logoRef.current, { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
+          .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.0);
+      } else {
+        // Desktop: Two-phase motion (syncs with the SVG mask scroll)
+        tlAuto
+          .to(logoRef.current, { opacity: 1, y: initialY, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
+          .to(logoRef.current, { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
+          .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.5);
+      }
 
       // Wheel-driven zoom control
       let scrollAccum = 0;
-      // On mobile, require much less total scroll distance to finish the zoom
-      const maxScroll = window.innerHeight * (isMobile ? 0.35 : HERO_CFG.zoomScrollDistance);
+      const maxScroll = window.innerHeight * HERO_CFG.zoomScrollDistance;
       let autoTriggered = false;
 
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        if (autoTriggered) return; // Already triggered auto-play, ignore
+        if (autoTriggered) return; // Already triggered
 
-        // Accumulate scroll delta (clamp between 0 and max)
         scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + e.deltaY));
         const progress = scrollAccum / maxScroll;
         tlZoom.progress(progress);
 
-        // Trigger auto-play when zoom reaches threshold
         if (progress >= HERO_CFG.autoTriggerAt) {
           autoTriggered = true;
           window.removeEventListener("wheel", handleWheel);
-          // Finish zoom to 100% then play brand reveal
           gsap.to(tlZoom, {
             progress: 1,
             duration: 0.4,
@@ -262,43 +208,51 @@ export default function Hero() {
         }
       };
 
-      // Also handle touch for mobile
-      let touchStartY = 0;
-      const handleTouchStart = (e: TouchEvent) => {
-        touchStartY = e.touches[0].clientY;
+      const triggerAutoPlay = () => {
+        autoTriggered = true;
+        gsap.set(svgRef.current, { display: "none" });
+        gsap.set(hintRef.current, { display: "none" });
+        tlAuto.play();
       };
-      const handleTouchMove = (e: TouchEvent) => {
-        e.preventDefault();
-        if (autoTriggered) return;
-        
-        // Multiply touch delta by 2.5 to make single swipes more effective
-        const delta = (touchStartY - e.touches[0].clientY) * 2.5;
-        touchStartY = e.touches[0].clientY;
 
-        scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + delta));
-        const progress = scrollAccum / maxScroll;
-        tlZoom.progress(progress);
-
-        if (progress >= HERO_CFG.autoTriggerAt) {
-          autoTriggered = true;
-          window.removeEventListener("touchmove", handleTouchMove);
-          window.removeEventListener("touchstart", handleTouchStart);
-          gsap.to(tlZoom, {
-            progress: 1,
-            duration: 0.4,
-            ease: "power2.in",
-            onComplete: () => { tlAuto.play(); },
-          });
+      const bindInteractions = () => {
+        if (isMobile) {
+          triggerAutoPlay();
+        } else {
+          window.addEventListener("wheel", handleWheel, { passive: false });
         }
       };
+
+      // Phase 1 (Auto): Letters stagger in
+      const maskLetters = svgRef.current.querySelectorAll(".mask-letter");
+      if (isMobile) {
+        // Mobile optimization: Skip SVG Mask and Scroll Zoom entirely for performance
+        triggerAutoPlay();
+      } else if (maskLetters.length) {
+        gsap.set(maskLetters, { fill: "white" });
+        gsap.to(maskLetters, {
+          fill: "black",
+          duration: 0.35,
+          stagger: 0.08,
+          ease: "power2.out",
+          delay: 0.4,
+          onComplete: () => {
+            if (!isMobile) {
+              gsap.to(hintRef.current, { opacity: 1, duration: 0.5, ease: "power2.out" });
+            }
+            bindInteractions();
+          },
+        });
+      } else {
+        if (!isMobile) gsap.set(hintRef.current, { opacity: 1 });
+        bindInteractions();
+      }
 
       // NOTE: wheel/touch listeners are added in addScrollListeners()
       // after the letter stagger animation completes
 
       return () => {
         window.removeEventListener("wheel", handleWheel);
-        window.removeEventListener("touchstart", handleTouchStart);
-        window.removeEventListener("touchmove", handleTouchMove);
         tlZoom.kill();
         tlAuto.kill();
       };
@@ -314,8 +268,7 @@ export default function Hero() {
       {/* Background Video */}
       <video
         ref={videoRef}
-        src="/assets/Img/BG/30fps.mp4"
-        poster="/assets/Img/BG/BG-4500x2281.webp"
+        src="/assets/Img/BG/New BG 30fps.mp4"
         className="absolute inset-0 w-full h-full object-cover transform-gpu opacity-90 z-0 pointer-events-none"
         muted
         loop
@@ -325,13 +278,13 @@ export default function Hero() {
 
       {/* Hero Content (Behind mask) */}
       <div className="absolute inset-0 w-full h-full z-0 flex flex-col justify-center items-center pointer-events-auto">
-        <div ref={logoRef} className="mb-8 md:mb-10 z-[2]" style={{ opacity: 0 }}>
+        <div ref={logoRef} className="mb-8 md:mb-10 z-[2] will-change-transform transform-gpu" style={{ opacity: 0 }}>
           <Image
             src="/assets/Img/logo/Pris2026-logo.svg"
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
-            className="w-full max-w-[340px] md:max-w-[550px] h-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            className="w-full max-w-[340px] md:max-w-[550px] h-auto md:drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
             priority
           />
         </div>
@@ -352,7 +305,7 @@ export default function Hero() {
           <Link 
             href="/registration"
             onClick={handleRegisterClick}
-            className="group relative inline-flex items-center justify-center bg-white/[0.1] md:bg-white/[0.05] backdrop-blur-sm md:backdrop-blur-[20px] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.1] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
+            className="group relative inline-flex items-center justify-center bg-white/[0.1] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.15] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
           >
             {/* Decorative gradient overlay matching countdown */}
             <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />

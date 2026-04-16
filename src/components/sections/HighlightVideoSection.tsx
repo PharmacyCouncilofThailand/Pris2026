@@ -48,10 +48,11 @@ export default function HighlightVideoSection() {
             loop
             muted
             playsInline
+            preload="none"
             className="w-full h-full object-cover"
           >
             <source
-              src="/assets/Img/PSIS_Higlight/Highlight PRIS 2025 - Day 1 - สภาเภสัชกรรม Pharmacy Council (720p, h264).mp4"
+              src="/assets/Img/PRIS_Higlight/highlight-pris2025-day1.mp4"
               type="video/mp4"
             />
           </video>
@@ -62,7 +63,7 @@ export default function HighlightVideoSection() {
               onClick={togglePlay}
               variant="outline"
               size="icon"
-              className="bg-black/40 hover:bg-black/70 text-white rounded-full w-10 h-10 md:w-14 md:h-14 backdrop-blur-md transition-all border-white/20 hover:scale-110"
+              className="bg-black/40 hover:bg-black/70 text-white rounded-full w-10 h-10 md:w-14 md:h-14 md:backdrop-blur-md transition-all border-white/20 hover:scale-110"
               aria-label={isPlaying ? "Pause video" : "Play video"}
             >
               {isPlaying ? <Pause className="w-4 h-4 md:w-6 md:h-6" /> : <Play className="w-4 h-4 md:w-6 md:h-6 ml-1" />}

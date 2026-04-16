@@ -127,6 +127,7 @@ export default function EventScheduleSection() {
           y: 0,
           duration: 1.2,
           ease: "power4.out",
+          force3D: true,
           scrollTrigger: { trigger: ".agenda-title", start: "top 80%" },
         }
       );
@@ -141,6 +142,7 @@ export default function EventScheduleSection() {
           duration: 0.8,
           stagger: 0.1,
           ease: "power3.out",
+          force3D: true,
           scrollTrigger: { trigger: ".day-tabs-container", start: "top 85%" },
         }
       );
@@ -162,6 +164,7 @@ export default function EventScheduleSection() {
         duration: 0.8,
         stagger: 0.08,
         ease: "power3.out",
+        force3D: true,
       }
     );
   }, [activeTab]);

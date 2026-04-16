@@ -4,6 +4,7 @@ import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from "next/image";
 
 import Swiper from "swiper";
 import { EffectCoverflow, Pagination, Autoplay, Navigation, Keyboard } from "swiper/modules";
@@ -40,7 +41,7 @@ export default function SpeakerSection() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top", 
-          end: "+=150%",    // Reduced duration to make it easier to scroll past
+          end: "+=150%",    // Reduced duration
           pin: true,        
           scrub: 1,         // Smooth scrubbing
         },
@@ -52,44 +53,19 @@ export default function SpeakerSection() {
       }
 
       // 1. Darken BG
-      tl.to(
-        overlayRef.current,
-        { backgroundColor: "rgba(0, 0, 0, 0.85)", duration: 2.5, ease: "power1.inOut", force3D: true },
-        0
-      );
+      tl.to(overlayRef.current, { backgroundColor: "rgba(0, 0, 0, 0.85)", duration: 2.5, ease: "power1.inOut", force3D: true }, 0);
 
-      // 2. Text slides up from below the screen (No fade, pure scroll movement)
-      tl.fromTo(
-        textRef.current,
-        { y: window.innerHeight, force3D: true }, // starting completely below the viewport
-        { y: 0, duration: 4, ease: "none" }, // pure linear scrub movement
-        1.5
-      );
+      // 2. Text slides up from below the screen
+      tl.fromTo(textRef.current, { y: window.innerHeight, force3D: true }, { y: 0, duration: 4, ease: "none" }, 1.5);
 
       // 3. Short hold for text at the center
       tl.to({}, { duration: 2 }, 5.5);
 
       // 4. Text continues moving up and shrinking out of the way
-      tl.to(
-        textRef.current,
-        { 
-          y: -window.innerHeight * 0.5, // moving above the screen
-          scale: 0.5, 
-          opacity: 0, 
-          duration: 3, 
-          ease: "none",
-          force3D: true
-        },
-        7.5
-      );
+      tl.to(textRef.current, { y: -window.innerHeight * 0.5, scale: 0.5, opacity: 0, duration: 3, ease: "none", force3D: true }, 7.5);
 
       // 5. Swiper fades in smoothly
-      tl.fromTo(
-        swiperContainerRef.current,
-        { y: 80, autoAlpha: 0, scale: 0.95, force3D: true },
-        { y: 0, autoAlpha: 1, scale: 1, duration: 3, ease: "power2.out" },
-        9 // slightly overlaps text exit
-      );
+      tl.fromTo(swiperContainerRef.current, { y: 80, autoAlpha: 0, scale: 0.95, force3D: true }, { y: 0, autoAlpha: 1, scale: 1, duration: 3, ease: "power2.out" }, 9);
 
       // 6. Hold Swiper on screen until scroll finishes
       tl.to({}, { duration: 4 }, 12);
@@ -104,6 +80,7 @@ export default function SpeakerSection() {
     const swiperInstance = new Swiper(swiperDomRef.current, {
       modules: [EffectCoverflow, Pagination, Autoplay, Navigation, Keyboard],
       effect: "coverflow",
+      watchSlidesProgress: true,
       grabCursor: true,
       centeredSlides: true,
       slidesPerView: 1.5, // Mobile default
@@ -112,12 +89,12 @@ export default function SpeakerSection() {
         stretch: 0,
         depth: 100,
         modifier: 4,
-        slideShadows: true,
+        slideShadows: false,
       },
       loop: true,
       autoplay: {
-        delay: 3000,
-        disableOnInteraction: false,
+        delay: 5000,
+        disableOnInteraction: true,
         pauseOnMouseEnter: true,
       },
       pagination: {
@@ -146,18 +123,20 @@ export default function SpeakerSection() {
   return (
     <section 
       ref={sectionRef} 
-      className="relative w-full h-screen overflow-hidden bg-black z-[2]"
+      className="relative w-full h-[100dvh] lg:h-screen overflow-hidden bg-black z-[2] flex items-center justify-center"
     >
       {/* Background SVG layer */}
-      <div
-        className="bg-speaker-img absolute inset-0 w-full h-full will-change-transform"
-        style={{
-          backgroundImage: "url('/assets/Img/BG/BG-Speaker.svg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+        <Image
+          src="/assets/Img/PRIS_Higlight/PRIS_HighlightD1-38.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="bg-speaker-img object-cover will-change-transform"
+          style={{ transformOrigin: "center center" }}
+        />
+      </div>
 
       {/* Top Edge Gradient Blur (Blends with Welcome Section) */}
       <div className="absolute top-0 left-0 w-full h-32 md:h-48 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none z-[2]" />
@@ -170,7 +149,7 @@ export default function SpeakerSection() {
       />
 
       {/* Text Container */}
-      <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none">
+      <div className="absolute inset-0 z-[2] flex items-center justify-center pointer-events-none w-full">
         <h2
           ref={textRef}
           className="text-white text-[clamp(1.75rem,5vw,4rem)] font-bold uppercase tracking-widest text-center flex flex-col items-center gap-4 will-change-transform"
@@ -185,7 +164,7 @@ export default function SpeakerSection() {
       {/* Swiper Carousel Container (starts hidden via GSAP autoAlpha) */}
       <div 
         ref={swiperContainerRef}
-        className="absolute inset-0 z-[3] flex items-center justify-center px-4"
+        className="absolute inset-0 z-[3] flex items-center justify-center px-4 w-full"
         style={{ visibility: "hidden", opacity: 0, top: "10%" }} 
       >
         <div className="w-full max-w-6xl mx-auto h-[60vh] md:h-[65vh] relative">
@@ -198,7 +177,7 @@ export default function SpeakerSection() {
               {SPEAKERS_DATA.map((speaker) => (
                 <div 
                   key={speaker.id} 
-                  className="swiper-slide aspect-[3/4] rounded-2xl overflow-hidden"
+                  className="swiper-slide aspect-[3/4] rounded-2xl overflow-hidden will-change-transform"
                 >
                   {/* Speaker Card Design */}
                   <div className="relative w-full h-full group bg-[#0d1529] border border-white/10 rounded-2xl flex flex-col justify-end p-6 shadow-2xl">
@@ -206,12 +185,12 @@ export default function SpeakerSection() {
                     {/* Speaker Image */}
                     {speaker.image && (
                       <div className="absolute inset-0 z-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={speaker.image}
                           alt={speaker.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700"
+                          fill
+                          sizes="(max-width: 768px) 80vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700"
                         />
                       </div>
                     )}

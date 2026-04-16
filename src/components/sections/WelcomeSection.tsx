@@ -36,7 +36,12 @@ export default function WelcomeSection() {
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-          scrollTrigger: { trigger: ".welcome-header", start: "top 85%" },
+          force3D: true,
+          scrollTrigger: { 
+            trigger: ".welcome-header", 
+            start: "top 85%",
+            toggleActions: "play none none reverse"
+          },
         }
       );
 
@@ -50,9 +55,11 @@ export default function WelcomeSection() {
           duration: 0.8,
           stagger: 0.15,
           ease: "power3.out",
+          force3D: true,
           scrollTrigger: { 
             trigger: ".welcome-grid", 
-            start: "top 85%" 
+            start: "top 85%",
+            toggleActions: "play none none reverse"
           },
         }
       );
@@ -96,8 +103,6 @@ export default function WelcomeSection() {
                     alt={getName(person)}
                     fill
                     sizes="176px"
-                    priority
-                    quality={90}
                     className="object-cover"
                   />
                 ) : (

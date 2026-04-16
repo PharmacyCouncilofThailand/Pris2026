@@ -33,7 +33,8 @@ export default async function LocaleLayout({
               if(history.scrollRestoration) history.scrollRestoration="manual";
               window.scrollTo(0,0);
               
-              if (window.location.pathname === "/" || window.location.pathname === "/en" || window.location.pathname === "/th") {
+              const p = window.location.pathname.replace(/\\/$/, "");
+              if (p === "" || p === "/en" || p === "/th") {
                 document.body.classList.add("hero-playing");
               }
             `,

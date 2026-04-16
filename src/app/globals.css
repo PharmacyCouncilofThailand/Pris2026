@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -145,6 +145,7 @@ body.hero-playing header,
 body.hero-playing footer {
   opacity: 0 !important;
   pointer-events: none !important;
+  transition: none !important;
 }
 
 /* Hide sections below hero so they can't flash during the intro */

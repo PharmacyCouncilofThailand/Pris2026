@@ -27,6 +27,7 @@ export default function RegistrationCTASection() {
         duration: 1.5,
         stagger: 0.05,
         ease: "expo.out",
+        force3D: true,
         scrollTrigger: {
           trigger: textRef.current,
           start: "top 80%",
@@ -43,6 +44,7 @@ export default function RegistrationCTASection() {
         duration: 1.2,
         stagger: 0.1,
         ease: "power3.out",
+        force3D: true,
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top 75%",
@@ -59,6 +61,7 @@ export default function RegistrationCTASection() {
           scaleX: 1,
           duration: 1.5,
           ease: "power4.inOut",
+          force3D: true,
           transformOrigin: "left center",
           scrollTrigger: {
             trigger: line,
