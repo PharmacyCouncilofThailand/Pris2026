@@ -2,25 +2,25 @@ import { Organizer, Speaker } from "@/types";
 
 export const ORGANIZERS_DATA: Organizer[] = [
   {
-    name: "Mr. Preecha Bhandtivej",
+    name: "Mr. Preecha Phantuwecha",
     nameTh: "ภก.ปรีชา พันธุ์ติเวช",
-    position: "President\nPharmacy Council of Thailand",
+    position: "President\nThe Pharmacy Council of Thailand",
     positionTh: "นายกสภาเภสัชกรรม",
-    image: "/assets/Img/Welcome message/นายกสภาดภสัชกรรม.svg",
+    image: "/assets/Img/Welcome message/นายกสภาดภสัชกรรม_optimized.webp",
   },
   {
     name: "Assoc. Prof. Sunee Lertsinudom",
     nameTh: "รศ.ภญ.สุณี เลิศสินอุดม",
     position: "Secretary General\nPharmacy Council of Thailand",
     positionTh: "เลขาธิการสภาเภสัชกรรม",
-    image: "/assets/Img/Welcome message/อ.สุณี.svg",
+    image: "/assets/Img/Welcome message/อ.สุณี_optimized.webp",
   },
   {
-    name: "Prof. Dr. Cholpat Sukkasem",
+    name: "Prof. Dr. Chonlapat Sukasem",
     nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
     position: "Assistant Secretary General\nPharmacy Council of Thailand\n& PRIS 2026 Chair",
     positionTh: "ผู้ช่วยเลขาธิการ สภาเภสัชกรรม\nประธานจัดงาน PRIS 2026",
-    image: "/assets/Img/Welcome message/ประธานงานPris.svg",
+    image: "/assets/Img/Welcome message/ประธานงานPris_optimized.webp",
   }
 ];
 

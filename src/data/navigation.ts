@@ -18,10 +18,12 @@ export const navigationData: NavItem[] = [
     },
     {
         labelKey: "callForAbstracts",
-        children: [
-            { labelKey: "abstractGuideline", href: "/abstract-guidelines" },
-            { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
-        ],
+        href: "/call-for-abstracts",
+        // children temporarily hidden
+        // children: [
+        //     { labelKey: "abstractGuideline", href: "/abstract-guidelines" },
+        //     { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
+        // ],
     },
     {
         labelKey: "registration",

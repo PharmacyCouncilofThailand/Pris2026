@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
    ══════════════════════════════════════ */
 
 const advisors = [
-  { name: "Mr. Preecha Bhandtivej", position: "President of the Pharmacy Council of Thailand" },
+  { name: "Mr. Preecha Phantuwecha", position: "President of the Pharmacy Council of Thailand" },
 ];
 
 const orgCommittee = [
@@ -291,29 +291,37 @@ export default function AboutPrisPage() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="about-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("location")}</span>
+          <div className="overflow-hidden mb-6 flex justify-center">
+            <h4 className="about-hero-sub text-blue-600 tracking-[0.3em] uppercase text-xs md:text-sm font-semibold flex items-center gap-4">
+              <span className="w-8 h-px bg-blue-600/50" />
+              PRIS 2026
+              <span className="w-8 h-px bg-blue-600/50" />
+            </h4>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block about-hero-line">About</span>
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900 mb-8">
+            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+              <span className="block about-hero-line pr-[0.15em]">About</span>
             </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block about-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
+            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+              <span className="block about-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2 pr-[0.15em]">
                 PRIS 2026
               </span>
             </div>
           </h1>
+
+          <div className="overflow-hidden max-w-2xl px-4">
+            <p className="about-hero-sub text-gray-500 text-lg md:text-xl font-light leading-relaxed">
+              Pharmacy Research and Innovation Summit
+            </p>
+          </div>
         </div>
       </section>
 
       {/* ══════ WHAT IS PRIS ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-4xl mx-auto about-desc">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900">{t("whatIsTitle")}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900 pr-[0.15em]">{t("whatIsTitle")}</h2>
           <p 
             className="text-gray-500 text-base md:text-lg leading-[1.8] font-light"
             dangerouslySetInnerHTML={{ __html: t.raw("whatIsDesc") }}

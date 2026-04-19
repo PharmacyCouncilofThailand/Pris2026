@@ -86,7 +86,7 @@ export default function AbstractSubmission() {
   };
 
   return (
-    <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-gold selection:text-black overflow-x-hidden">
+    <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-gold selection:text-black overflow-x-hidden font-sans">
 
       
       {/* ─── Modern Research Studio Layout ─── */}
@@ -97,31 +97,15 @@ export default function AbstractSubmission() {
           <div className="mb-16 text-center space-y-6">
             <div className="flex items-center justify-center gap-3">
               <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-700">PRIS 2026</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.5em] text-blue-700">PRIS 2026</span>
               <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
             </div>
-            <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight leading-[0.9] text-slate-950">
+            <h1 className="text-5xl md:text-6xl font-bold uppercase tracking-tight leading-[0.9] text-slate-950">
               {t("title1")} <br className="hidden md:block" /> {t("title2")}
             </h1>
-            <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed pt-2">
-              {t("desc")}
-            </p>
           </div>
 
-          <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-16">
-            <div className="flex gap-4 items-start justify-center text-left max-w-3xl mx-auto">
-              <Info className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
-              <div>
-                <h4 className="text-sm font-bold text-blue-900 mb-1">Important Note</h4>
-                <p className="text-sm text-blue-700/80 leading-relaxed">
-                  Please double-check all author affiliations and the abstract structure before final submission.
-                </p>
-                <Link href="/abstract-guidelines" className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-2 inline-flex items-center gap-2 hover:text-blue-800 transition-colors">
-                  {t("warning")} <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-          </div>
+
 
           {/* Horizontal Stepper */}
           <div className="mb-16 relative w-full">
@@ -137,7 +121,7 @@ export default function AbstractSubmission() {
               {steps.map((step) => (
                 <div key={step.id} className="flex flex-col items-center gap-4 group bg-[#fafafa] px-2">
                   <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-500 border-2 relative z-10",
+                    "w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-semibold transition-all duration-500 border-2 relative z-10",
                     currentStep === step.id 
                       ? "bg-slate-950 border-slate-950 text-white shadow-xl scale-110" 
                       : currentStep > step.id 
@@ -148,13 +132,13 @@ export default function AbstractSubmission() {
                   </div>
                   <div className="flex flex-col items-center">
                     <span className={cn(
-                      "text-[9px] font-black uppercase tracking-widest mb-1",
+                      "text-[9px] font-semibold uppercase tracking-widest mb-1",
                       currentStep === step.id ? "text-orange-500" : "text-slate-300"
                     )}>
-                      Stage 0{step.id}
+                      {t("stage")} 0{step.id}
                     </span>
                     <span className={cn(
-                      "text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center max-w-[100px]",
+                      "text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-center max-w-[100px]",
                       currentStep === step.id ? "text-slate-900" : "text-slate-400"
                     )}>
                       {step.label}
@@ -186,19 +170,19 @@ export default function AbstractSubmission() {
                   {currentStep > 1 && (
                     <button 
                       onClick={handleBack}
-                      className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[3px] text-slate-400 hover:text-slate-950 transition-colors"
+                      className="group flex items-center gap-4 text-[10px] font-semibold uppercase tracking-[3px] text-slate-400 hover:text-slate-950 transition-colors"
                     >
                       <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                      Previous Phase
+                      {t("previousPhase")}
                     </button>
                   )}
                 </div>
                 
                 <button 
                   onClick={currentStep === 5 ? handleSubmit : handleNext}
-                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto"
+                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-semibold uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto"
                 >
-                  {currentStep === 5 ? "Submit Final Abstract" : "Proceed to Next Stage"}
+                  {currentStep === 5 ? t("submitFinalAbstract") : t("proceedToNextStage")}
                   <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -215,21 +199,21 @@ export default function AbstractSubmission() {
             <div className="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center mb-8">
               <CheckCircle className="w-12 h-12 text-emerald-500" />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight mb-4">
-              Submission Complete
+            <h2 className="text-3xl font-bold text-slate-900 uppercase tracking-tight mb-4">
+              {t("submissionComplete")}
             </h2>
-            <p className="text-lg text-slate-500 font-medium mb-3">
-              ส่ง Abstract เสร็จสิ้นแล้ว<br/>รอรับการอนุมัติผ่านทาง Email
+            <p className="text-lg text-slate-500 font-medium mb-3 whitespace-pre-line">
+              {t("successDesc").split('\\n').map((line, i) => <React.Fragment key={i}>{line}<br/></React.Fragment>)}
             </p>
-            <p className="text-xs font-bold text-slate-400 mb-10 px-6 uppercase tracking-widest">
-              Please wait for approval via Email.
+            <p className="text-xs font-medium text-slate-400 mb-10 px-6 uppercase tracking-widest pt-2">
+              {t("successDescEn")}
             </p>
             <Link 
               href="/"
               onClick={() => setIsSubmitted(false)}
-              className="px-10 py-5 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[10px] sm:text-[11px] hover:bg-gold hover:text-black shadow-lg transition-all block w-full sm:w-auto"
+              className="px-10 py-5 rounded-2xl bg-slate-950 text-white font-bold uppercase tracking-[4px] text-[10px] sm:text-[11px] hover:bg-gold hover:text-black shadow-lg transition-all block w-full sm:w-auto"
             >
-              Return to Homepage
+              {t("returnToHomepage")}
             </Link>
           </div>
         </div>
@@ -238,13 +222,17 @@ export default function AbstractSubmission() {
   );
 }
 
-// Sub-component: Step 1
 function Step1Author({ data, setFormData }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+  const t = useTranslations("abstractSubmission");
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    let newValue = value;
+    if (name === "phone") {
+      newValue = value.replace(/\D/g, "").slice(0, 10);
+    }
     setFormData((prev: any) => ({
       ...prev,
-      author: { ...prev.author, [name]: value }
+      author: { ...prev.author, [name]: newValue }
     }));
   };
 
@@ -252,21 +240,21 @@ function Step1Author({ data, setFormData }: { data: any, setFormData: React.Disp
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Presenting <span className="text-orange-500/80">Author</span></h2>
-          <p className="text-slate-500 font-medium text-lg italic">The primary voice of your research.</p>
+          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step1.title1")} <span className="text-orange-500/80">{t("step1.title2")}</span></h2>
+          <p className="text-slate-500 font-normal text-lg italic">{t("step1.subtitle")}</p>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <InputGroup label="First Name" name="firstName" value={data.firstName} onChange={handleChange} placeholder="e.g. John" />
-        <InputGroup label="Last Name" name="lastName" value={data.lastName} onChange={handleChange} placeholder="e.g. Doe" />
+        <InputGroup label={t("step1.firstName")} name="firstName" value={data.firstName} onChange={handleChange} placeholder={t("step1.firstNamePlaceholder")} />
+        <InputGroup label={t("step1.lastName")} name="lastName" value={data.lastName} onChange={handleChange} placeholder={t("step1.lastNamePlaceholder")} />
         <div className="md:col-span-2">
-          <InputGroup label="Email Address" name="email" value={data.email} onChange={handleChange} placeholder="john.doe@university.edu" type="email" />
+          <InputGroup label={t("step1.email")} name="email" value={data.email} onChange={handleChange} placeholder="john.doe@university.edu" type="email" />
         </div>
         <div className="md:col-span-2">
-          <InputGroup label="Affiliation / Institution" name="affiliation" value={data.affiliation} onChange={handleChange} placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University" />
+          <InputGroup label={t("step1.affiliation")} name="affiliation" value={data.affiliation} onChange={handleChange} placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University" />
         </div>
-        <InputGroup label="Phone Number" name="phone" value={data.phone} onChange={handleChange} placeholder="+66 XX XXX XXXX" />
+        <InputGroup label={t("step1.phone")} name="phone" value={data.phone} onChange={handleChange} placeholder={t("step1.phonePlaceholder")} type="tel" maxLength={10} />
       </div>
     </div>
   );
@@ -274,6 +262,7 @@ function Step1Author({ data, setFormData }: { data: any, setFormData: React.Disp
 
 // Sub-component: Step 2
 function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+  const t = useTranslations("abstractSubmission");
   const addAuthor = () => {
     setFormData((prev: any) => ({
       ...prev,
@@ -299,15 +288,15 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Co-<span className="text-orange-500/80">Authors</span></h2>
-          <p className="text-slate-500 font-medium text-lg italic">Include all contributors who made this possible.</p>
+          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step2.title1")}<span className="text-orange-500/80">{t("step2.title2")}</span></h2>
+          <p className="text-slate-500 font-normal text-lg italic">{t("step2.subtitle")}</p>
         </div>
         <button 
           onClick={addAuthor}
-          className="px-8 py-4 bg-slate-950 text-white rounded-xl hover:bg-blue-600 transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-[3px] shadow-xl"
+          className="px-8 py-4 bg-slate-950 text-white rounded-xl hover:bg-blue-600 transition-all flex items-center gap-3 font-semibold text-[10px] uppercase tracking-[3px] shadow-xl"
         >
           <Plus className="w-5 h-5" />
-          Add Co-Author
+          {t("buttons.addAuth")}
         </button>
       </div>
 
@@ -317,7 +306,7 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
             <div className="w-20 h-20 bg-blue-100/50 rounded-full flex items-center justify-center mx-auto mb-6">
               <Users className="w-10 h-10 text-blue-400" />
             </div>
-            <p className="text-blue-900/40 font-black uppercase tracking-[3px] text-xs">No co-authors added yet. (Optional)</p>
+            <p className="text-blue-900/40 font-medium uppercase tracking-[3px] text-xs">{t("step2.empty")}</p>
           </div>
         )}
         {list.map((author: any, idx: number) => (
@@ -329,13 +318,13 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
               <Trash2 className="w-5 h-5" />
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <InputGroup label="First Name" name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Jane" />
-              <InputGroup label="Last Name" name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Smith" />
+              <InputGroup label={t("step2.firstName")} name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder={t("step2.firstNamePlaceholder")} />
+              <InputGroup label={t("step2.lastName")} name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder={t("step2.lastNamePlaceholder")} />
               <div className="md:col-span-2">
-                <InputGroup label="Institution / Affiliation" name="affiliation" value={author.affiliation} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" />
+                <InputGroup label={t("step2.affiliation")} name="affiliation" value={author.affiliation} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" />
               </div>
               <div className="md:col-span-2">
-                <InputGroup label="Email Address (Contact)" name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" />
+                <InputGroup label={t("step2.email")} name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" />
               </div>
             </div>
           </div>
@@ -347,6 +336,7 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
 
 // Sub-component: Step 3
 function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+  const t = useTranslations("abstractSubmission");
   const locale = useLocale();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -359,45 +349,43 @@ function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dis
   return (
     <div className="space-y-12">
       <div>
-        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Abstract <span className="text-orange-500/80">Details</span></h2>
-        <p className="text-slate-500 font-medium text-lg italic">The identity and core focus of your work.</p>
+        <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step3.title1")} <span className="text-orange-500/80">{t("step3.title2")}</span></h2>
+        <p className="text-slate-500 font-normal text-lg italic">{t("step3.subtitle")}</p>
       </div>
       
       <div className="space-y-10">
-        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" />
+        <InputGroup label={t("step3.abstractTitle")} name="title" value={data.title} onChange={handleChange} placeholder={t("step3.abstractTitlePlaceholder")} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Submission Theme</label>
+            <label className="text-[10px] font-semibold text-gold uppercase tracking-[3px]">{t("step3.category")}</label>
             <select 
               name="category" 
               value={data.category} 
               onChange={handleChange}
-              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
+              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 appearance-none cursor-pointer shadow-sm"
             >
-              <option value="">{locale === "th" ? "เลือกหัวข้อ" : "Select Category"}</option>
+              <option value="">{t("step3.selectCategory")}</option>
               {abstractCategories.map(cat => <option key={cat.id} value={cat.title}>{locale === "th" && cat.titleTh ? cat.titleTh : cat.title}</option>)}
             </select>
           </div>
           
           <div className="flex flex-col gap-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Presentation Mode</label>
+            <label className="text-[10px] font-semibold text-gold uppercase tracking-[3px]">{t("step3.mode")}</label>
             <div className="flex gap-3">
               {['Oral', 'Poster'].map(type => {
                 let typeLabel = type;
-                if (locale === "th") {
-                  if (type === "Oral") typeLabel = "ปากเปล่า";
-                  if (type === "Poster") typeLabel = "โปสเตอร์";
-                }
+                if (type === "Oral") typeLabel = t("step3.oral");
+                if (type === "Poster") typeLabel = t("step3.poster");
                 return (
                   <button 
                     key={type}
                     onClick={() => handleChange({ target: { name: 'type', value: type } } as unknown as React.ChangeEvent<HTMLInputElement>)}
-                    className={`flex-1 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                    className={`flex-1 py-3 flex flex-col items-center justify-center gap-1 rounded-2xl border font-semibold text-[10px] uppercase tracking-[3px] transition-all leading-relaxed ${
                       data.type === type ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
                     }`}
                   >
-                    {typeLabel}
+                    {typeLabel.split('\n').map((line: string, i: number) => <span key={i} className="block">{line}</span>)}
                   </button>
                 );
               })}
@@ -405,7 +393,7 @@ function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dis
           </div>
         </div>
 
-        <InputGroup label="Key Terminologies (Semicolon separated)" name="keywords" value={data.keywords} onChange={handleChange} placeholder="e.g. Pharmacy; Clinical; Outcomes" />
+        <InputGroup label={t("step3.keywords")} name="keywords" value={data.keywords} onChange={handleChange} placeholder={t("step3.keywordsPlaceholder")} />
       </div>
     </div>
   );
@@ -413,6 +401,7 @@ function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dis
 
 // Sub-component: Step 4
 function Step4Content({ content, files, setFormData }: { content: any, files: File[], setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+  const t = useTranslations("abstractSubmission");
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
@@ -438,26 +427,25 @@ function Step4Content({ content, files, setFormData }: { content: any, files: Fi
   return (
     <div className="space-y-12">
       <div>
-        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Body & <span className="text-orange-500/80">File</span></h2>
-        <p className="text-slate-500 font-medium text-lg italic">Structure your abstract and provide the documentation.</p>
+        <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step4.title1")} <span className="text-orange-500/80">{t("step4.title2")}</span></h2>
+        <p className="text-slate-500 font-normal text-lg italic">{t("step4.subtitle")}</p>
       </div>
       
-      <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
-        {['Background', 'Objectives', 'Methods', 'Results', 'Conclusions'].map(section => (
+      <div className="space-y-10 max-h-[600px] overflow-y-auto p-1 pr-6 -m-1 custom-scrollbar">
+        {['Background', 'Objectives', 'Methods', 'Results', 'Conclusions'].map((section: any) => (
           <div key={section} className="space-y-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block">{section}</label>
+            <label className="text-[10px] font-semibold text-gold uppercase tracking-[3px] block">{t(`step4.${section.toLowerCase()}` as any)}</label>
             <textarea 
               name={section.toLowerCase()}
               value={content[section.toLowerCase()]}
               onChange={handleTextChange}
-              className="w-full px-6 py-6 bg-white border border-slate-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm"
-              placeholder={`Elaborate your ${section.toLowerCase()}...`}
+              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 min-h-[120px] resize-none leading-relaxed shadow-sm"
             />
           </div>
         ))}
         
         <div className="pt-10 border-t border-white/5">
-          <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
+          <label className="text-[10px] font-semibold text-gold uppercase tracking-[3px] block mb-6">{t("step4.documentLabel")}</label>
           <div className="relative group">
             <input 
               type="file" 
@@ -471,8 +459,8 @@ function Step4Content({ content, files, setFormData }: { content: any, files: Fi
                 <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                   <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
                 </div>
-                <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">Add Documents</p>
-                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">PDF Document Only (Max 5MB)</p>
+                <p className="text-sm font-semibold text-slate-400 mb-2 uppercase tracking-[3px]">{t("step4.addDoc")}</p>
+                <p className="text-[10px] text-slate-300 font-medium uppercase tracking-[2px]">{t("step4.docLimit")}</p>
               </div>
             </div>
           </div>
@@ -487,8 +475,8 @@ function Step4Content({ content, files, setFormData }: { content: any, files: Fi
                        <CheckCircle className="w-5 h-5 text-emerald-600" />
                      </div>
                      <div className="overflow-hidden">
-                       <p className="text-sm font-black text-emerald-950 truncate">{f.name}</p>
-                       <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">{(f.size / 1024 / 1024).toFixed(2)} MB</p>
+                       <p className="text-sm font-semibold text-emerald-950 truncate">{f.name}</p>
+                       <p className="text-[10px] text-emerald-600/60 font-medium uppercase tracking-[2px] mt-1">{(f.size / 1024 / 1024).toFixed(2)} MB</p>
                      </div>
                    </div>
                    <button 
@@ -509,14 +497,15 @@ function Step4Content({ content, files, setFormData }: { content: any, files: Fi
 
 // Sub-component: Step 5
 function Step5Review({ data }: { data: any }) {
+  const t = useTranslations("abstractSubmission");
   return (
     <div className="space-y-16">
       <div className="space-y-4">
-        <h2 className="text-4xl lg:text-7xl font-black text-slate-950 uppercase tracking-tighter leading-none">
-          Manuscript<br/>
-          <span className="text-blue-600/80">Verification</span>
+        <h2 className="text-4xl lg:text-7xl font-bold text-slate-950 uppercase tracking-tighter leading-none">
+          {t("step5.title1")}<br/>
+          <span className="text-blue-600/80">{t("step5.title2")}</span>
         </h2>
-        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Phaze 05 / Final Audit Protocol</p>
+        <p className="text-slate-400 font-medium uppercase tracking-[0.3em] text-xs">{t("step5.subtitle")}</p>
       </div>
       
       <div className="relative">
@@ -528,24 +517,22 @@ function Step5Review({ data }: { data: any }) {
           {/* Header Metadata Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pb-16 border-b border-slate-100">
             <div className="space-y-3">
-              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Category</span>
-              <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.category || "General Pharmacy"}</p>
+              <span className="text-[10px] font-semibold text-orange-500/60 uppercase tracking-[4px]">{t("step5.category")}</span>
+              <p className="text-xl font-semibold text-slate-900 uppercase">{data.abstract.category || t("step5.generalPharmacy")}</p>
             </div>
             <div className="space-y-3">
-              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Presentation</span>
-              <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.type || "Oral"} Mode</p>
-            </div>
-            <div className="space-y-3">
-              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Reference</span>
-              <p className="text-xl font-black text-slate-900 uppercase">PRIS-2026-TMP</p>
+              <span className="text-[10px] font-semibold text-orange-500/60 uppercase tracking-[4px]">{t("step5.presentation")}</span>
+              <p className="text-xl font-semibold text-slate-900 uppercase">
+                {data.abstract.type ? (data.abstract.type === "Oral" ? t("step3.oral") : t("step3.poster")) : t("step3.oral")}
+              </p>
             </div>
           </div>
 
           {/* Research Title Section */}
           <div className="space-y-8">
-            <span className="text-[10px] font-black text-blue-600/40 uppercase tracking-[6px] block">Full Research Title</span>
-            <h3 className="text-4xl md:text-6xl font-black text-slate-950 leading-[1.1] uppercase tracking-tight">
-              &quot;{data.abstract.title || "Untitled Research Submission"}&quot;
+            <span className="text-[10px] font-semibold text-blue-600/40 uppercase tracking-[6px] block">{t("step5.fullTitle")}</span>
+            <h3 className="text-4xl md:text-6xl font-bold text-slate-950 leading-[1.1] uppercase tracking-tight">
+              &quot;{data.abstract.title || t("step5.untitled")}&quot;
             </h3>
           </div>
 
@@ -553,34 +540,34 @@ function Step5Review({ data }: { data: any }) {
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-20">
             <div className="space-y-10">
               <div className="pb-4 border-b-2 border-slate-950 w-fit">
-                <span className="text-[10px] font-black text-slate-950 uppercase tracking-[4px]">Principal Investigator</span>
+                <span className="text-[10px] font-semibold text-slate-950 uppercase tracking-[4px]">{t("step5.pi")}</span>
               </div>
               <div className="space-y-4">
-                <p className="text-3xl font-black text-slate-950 uppercase leading-none">
+                <p className="text-3xl font-semibold text-slate-950 uppercase leading-none">
                   {data.author.firstName} {data.author.lastName}
                 </p>
                 <div className="space-y-2">
-                  <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">{data.author.affiliation}</p>
-                  <p className="text-xs text-blue-600/60 font-black tracking-widest">{data.author.email}</p>
+                  <p className="text-sm text-slate-500 font-medium uppercase tracking-wider">{data.author.affiliation}</p>
+                  <p className="text-xs text-blue-600/60 font-medium tracking-widest">{data.author.email}</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-10">
               <div className="pb-4 border-b border-slate-200 w-fit">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Supporting Contributors</span>
+                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[4px]">{t("step5.coauthors")}</span>
               </div>
               <div className="space-y-6">
                 {data.coAuthors.length === 0 ? (
-                  <p className="text-slate-300 italic font-medium">No additional authors identified.</p>
+                  <p className="text-slate-300 italic font-medium">{t("step5.noCoauthors")}</p>
                 ) : (
                   <div className="grid grid-cols-1 gap-6">
                     {data.coAuthors.map((ca: any, i: number) => (
                       <div key={i} className="flex items-start gap-4">
-                        <span className="text-[10px] font-black text-slate-300 pt-1">0{i+1}</span>
+                        <span className="text-[10px] font-semibold text-slate-300 pt-1">0{i+1}</span>
                         <div>
-                          <p className="text-sm font-black text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.affiliation}</p>
+                          <p className="text-sm font-semibold text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
+                          <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tight">{ca.affiliation}</p>
                         </div>
                       </div>
                     ))}
@@ -596,18 +583,18 @@ function Step5Review({ data }: { data: any }) {
               {/* Key Terminologies & Content Summary */}
               <div className="space-y-10">
                 <div className="pb-4 border-b border-slate-200 w-fit">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Abstract Content Overview</span>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[4px]">{t("step5.contentOverview")}</span>
                 </div>
                 <div className="space-y-6">
                   <div>
-                    <span className="text-[10px] items-center text-blue-600/60 uppercase tracking-[3px] font-black mb-2 block">Keywords</span>
-                    <p className="text-sm font-bold text-slate-900">{data.abstract.keywords || "None provided"}</p>
+                    <span className="text-[10px] items-center text-blue-600/60 uppercase tracking-[3px] font-semibold mb-2 block">{t("step5.keywords")}</span>
+                    <p className="text-sm font-medium text-slate-900">{data.abstract.keywords || t("step5.none")}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {['background', 'objectives', 'methods', 'results', 'conclusions'].map((section) => (
+                    {['background', 'objectives', 'methods', 'results', 'conclusions'].map((section: any) => (
                       <div key={section}>
-                        <span className="text-[9px] items-center text-slate-400 uppercase tracking-[3px] font-black mb-1 block">{section}</span>
-                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{data.content[section] || "None provided"}</p>
+                        <span className="text-[9px] items-center text-slate-400 uppercase tracking-[3px] font-semibold mb-1 block">{t(`step4.${section.toLowerCase()}` as any)}</span>
+                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{data.content[section] || t("step5.none")}</p>
                       </div>
                     ))}
                   </div>
@@ -617,7 +604,7 @@ function Step5Review({ data }: { data: any }) {
               {/* Attached Files Section aligned precisely with Supporting Contributors */}
               <div className="space-y-10 xl:pl-0 border-t xl:border-t-0 border-slate-100 pt-10 xl:pt-0">
                 <div className="pb-4 border-b border-slate-200 w-fit">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Attached Document(s)</span>
+                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-[4px]">{t("step5.attachedDocs")}</span>
                 </div>
                 {data.files && data.files.length > 0 ? (
                   <div className="space-y-4">
@@ -627,8 +614,8 @@ function Step5Review({ data }: { data: any }) {
                           <FileText className="w-5 h-5 text-emerald-600" />
                         </div>
                         <div className="overflow-hidden">
-                          <p className="text-sm font-black text-emerald-950 truncate">{f.name}</p>
-                          <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
+                          <p className="text-sm font-semibold text-emerald-950 truncate">{f.name}</p>
+                          <p className="text-[10px] text-emerald-600/60 font-medium uppercase tracking-[2px] mt-1">{t("step5.pdfDoc")}</p>
                         </div>
                       </div>
                     ))}
@@ -639,8 +626,8 @@ function Step5Review({ data }: { data: any }) {
                       <AlertCircle className="w-5 h-5 text-rose-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-rose-900">No Documents</p>
-                      <p className="text-[10px] text-rose-600 font-bold uppercase tracking-[2px] mt-1">Required</p>
+                      <p className="text-sm font-semibold text-rose-900">{t("step5.noDocs")}</p>
+                      <p className="text-[10px] text-rose-600 font-medium uppercase tracking-[2px] mt-1">{t("step5.required")}</p>
                     </div>
                   </div>
                 )}
@@ -655,17 +642,18 @@ function Step5Review({ data }: { data: any }) {
 }
 
 // Helper: Input Group
-function InputGroup({ label, placeholder, value, onChange, name, type = "text" }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string }) {
+function InputGroup({ label, placeholder, value, onChange, name, type = "text", maxLength }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string, maxLength?: number }) {
   return (
     <div className="flex flex-col gap-4">
-      <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">{label}</label>
+      <label className="text-[10px] font-semibold text-gold uppercase tracking-[3px]">{label}</label>
       <input 
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 placeholder:text-slate-200 placeholder:font-black placeholder:uppercase placeholder:tracking-[2px] shadow-sm"
+        maxLength={maxLength}
+        className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 placeholder:text-slate-300 placeholder:font-normal placeholder:uppercase placeholder:tracking-[2px] shadow-sm"
       />
     </div>
   );

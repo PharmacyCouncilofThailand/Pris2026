@@ -9,11 +9,11 @@ export const scheduleData: ScheduleDay[] = [
     events: [
       { 
         id: 1, 
-        time: "08:00 – 16:00", 
+        time: "08:00 – 09:00", 
         title: "Registration", 
-        titleTh: "ลงทะเบียน (Registration)", 
-        location: "Registration Desk",
-        locationTh: "จุดลงทะเบียน",
+        titleTh: "ลงทะเบียน", 
+        location: "IMPACT Challenger",
+        locationTh: "อิมแพ็ค ชาเลนเจอร์",
         type: "Registration",
         typeTh: "ลงทะเบียน",
         speakers: []
@@ -21,19 +21,20 @@ export const scheduleData: ScheduleDay[] = [
       { 
         id: 2, 
         time: "09:00 – 09:30", 
-        title: "Opening Ceremony by the Minister of Public Health", 
-        titleTh: "Opening Ceremony โดย รัฐมนตรีว่าการกระทรวงสาธารณสุข", 
-        description: "(Substitute: Permanent Secretary of MOPH / FDA Secretary-General / President of the Pharmacy Council)", 
-        descriptionTh: "(สำรอง: ปลัดกระทรวงสาธารณสุข / เลขาธิการ อย. / นายกสภาเภสัชกรรม)", 
+        title: "Opening Ceremony", 
+        titleTh: "Opening Ceremony", 
+        description: "Mr. Pattana Promphat The Minister of Public Health", 
+        descriptionTh: "นายพัฒนา พร้อมพัฒน์ รัฐมนตรีว่าการกระทรวงสาธารณสุข", 
         location: "Main Stage",
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Ceremony",
         typeTh: "พิธีเปิด",
         speakers: [
           {
-            name: "H.E. Minister of Public Health",
-            role: "Presiding Officer",
-            roleTh: "ประธานในพิธี",
+            name: "Mr. Pattana Promphat",
+            nameTh: "นายพัฒนา พร้อมพัฒน์",
+            role: "The Minister of Public Health",
+            roleTh: "รัฐมนตรีว่าการกระทรวงสาธารณสุข",
             image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
           }
         ]
@@ -161,11 +162,11 @@ export const scheduleData: ScheduleDay[] = [
     events: [
       { 
         id: 12, 
-        time: "08:00 – 16:00", 
+        time: "08:00 – 09:00", 
         title: "Registration", 
         titleTh: "ลงทะเบียน", 
-        location: "Registration Desk",
-        locationTh: "จุดลงทะเบียน",
+        location: "IMPACT Challenger",
+        locationTh: "อิมแพ็ค ชาเลนเจอร์",
         type: "Registration",
         typeTh: "ลงทะเบียน",
         speakers: []

@@ -41,24 +41,7 @@ export default function WelcomeMessagesPage() {
       const img = entry.querySelector(".speaker-img");
       const content = entry.querySelector(".speaker-content");
       
-      // Image Parallax Effect
-      if (img) {
-        gsap.fromTo(
-          img,
-          { y: -50, scale: 1.1 },
-          {
-            y: 50,
-            scale: 1,
-            ease: "none",
-            scrollTrigger: {
-              trigger: entry,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            }
-          }
-        );
-      }
+      // Image animation removed per user request
 
       // Content Fade & Slide up
       if (content) {
@@ -98,11 +81,11 @@ export default function WelcomeMessagesPage() {
         </div>
 
         <h1 className="text-5xl md:text-7xl lg:text-[7rem] font-black uppercase tracking-tighter leading-tight mb-8 flex flex-col items-center">
-          <div className="overflow-hidden py-2 -my-2">
-            <span className="block welcome-hero-line">{t("title1")}</span>
+          <div className="overflow-hidden py-2 -my-2 md:pl-2">
+            <span className="block welcome-hero-line pr-[0.15em]">{t("title1")}</span>
           </div>
-          <div className="overflow-hidden py-2 -my-2">
-            <span className="block welcome-hero-line pb-2">{t("title2")}</span>
+          <div className="overflow-hidden py-2 -my-2 md:pl-2">
+            <span className="block welcome-hero-line pb-2 pr-[0.15em]">{t("title2")}</span>
           </div>
         </h1>
 
@@ -130,7 +113,7 @@ export default function WelcomeMessagesPage() {
                   src={speaker.image}
                   alt={locale === "th" && (speaker as Record<string, any>).thaiName ? (speaker as Record<string, any>).thaiName : speaker.name}
                   fill
-                  className="speaker-img object-cover object-top transition-all duration-1000 scale-105"
+                  className="speaker-img object-cover object-top"
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   priority={index === 0}
                 />

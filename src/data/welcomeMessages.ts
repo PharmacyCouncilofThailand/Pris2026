@@ -1,9 +1,9 @@
 export const messagesData = [
   {
     id: "president",
-    name: "Mr. Preecha Bhandtivej",
+    name: "Mr. Preecha Phantuwecha",
     thaiName: "ภก.ปรีชา พันธุ์ติเวช",
-    role: "President, Pharmacy Council of Thailand",
+    role: "President,The Pharmacy Council of Thailand",
     thaiRole: "นายกสภาเภสัชกรรม",
     image: "/assets/Img/Welcome message/นายกสภาดภสัชกรรม.svg",
     quote: "A transformative era for clinical pharmacy practice awaits us as we gather for PRIS 2026.",
@@ -41,7 +41,7 @@ export const messagesData = [
   },
   {
     id: "chair",
-    name: "Prof. Dr. Cholpat Sukkasem",
+    name: "Prof. Dr. Chonlapat Sukasem",
     thaiName: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
     role: "Assistant Secretary General, Pharmacy Council of Thailand & PRIS 2026 Chair",
     thaiRole: "ผู้ช่วยเลขาธิการ สภาเภสัชกรรม ประธานจัดงาน PRIS 2026",

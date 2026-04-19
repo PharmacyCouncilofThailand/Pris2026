@@ -53,16 +53,13 @@ export default function RecentMemoriesSection() {
   return (
     <>
       <section className="relative bg-black text-white overflow-hidden">
-        {/* Theme background glows */}
-        <div className="absolute top-1/4 left-0 w-[600px] h-[600px] bg-blue-600/20 blur-[150px] rounded-full pointer-events-none opacity-50 translate-x-[-30%]" />
-        <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-orange-500/20 blur-[150px] rounded-full pointer-events-none opacity-50 translate-x-[30%]" />
 
         {/* Header removed — already shown in HighlightVideoSection above */}
 
         {/* Vertical Scrolling Gallery — 3 columns */}
-        <div className="relative h-[600px] sm:h-[700px] md:h-[800px] overflow-hidden z-10">
-          <div className="absolute top-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-b from-[#000000] via-[#000000]/80 to-transparent z-10 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 right-0 h-40 md:h-64 bg-gradient-to-t from-[#000000] via-[#000000]/90 to-transparent z-10 pointer-events-none" />
+        <div className="relative h-[800px] sm:h-[1000px] md:h-[1200px] overflow-hidden z-10">
+          <div className="absolute top-0 left-0 right-0 h-24 md:h-32 bg-gradient-to-b from-[#000000] via-[#000000]/80 to-transparent z-10 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-t from-[#000000] via-[#000000]/90 to-transparent z-10 pointer-events-none" />
 
 
           <div className="flex gap-3 sm:gap-4 md:gap-5 px-3 sm:px-4 md:px-8 h-full">
@@ -81,10 +78,9 @@ export default function RecentMemoriesSection() {
                       fill
                       quality={60}
                       sizes="33vw"
-                      className="object-cover transition-all duration-700 scale-[1.02] group-hover:scale-110"
+                      className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 pointer-events-none" />
-                    <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/0 md:group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
                   </div>
                 ))}
               </div>

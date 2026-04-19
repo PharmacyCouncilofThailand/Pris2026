@@ -245,7 +245,7 @@ export default function Header() {
           </div>
 
           {/* Mobile Navigation */}
-          <div className="xl:hidden flex items-center justify-end gap-2">
+          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
           {/* Mobile Language Switcher */}
           <button
             onClick={switchLocale}
@@ -267,13 +267,13 @@ export default function Header() {
           <Sheet>
             <SheetTrigger
               className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
+                "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
                 useDarkText
-                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
-                  : "text-white hover:bg-white/20 border border-white/20"
+                  ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
+                  : "text-white border border-white/20 hover:bg-white/20"
               )}
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle mobile menu</span>
             </SheetTrigger>
             <SheetContent side="right" className="bg-black/95 text-white border-l-gray-800 p-0 w-[300px]">

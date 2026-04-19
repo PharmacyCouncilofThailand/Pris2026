@@ -70,22 +70,30 @@ export default function RegistrationPolicies() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="policy-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("pretitle")}</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("pretitleSub")}</span>
+          <div className="overflow-hidden mb-6 flex justify-center">
+            <h4 className="policy-hero-sub text-blue-600 tracking-[0.3em] uppercase text-xs md:text-sm font-semibold flex items-center gap-4">
+              <span className="w-8 h-px bg-blue-600/50" />
+              {t("pretitle")}
+              <span className="w-8 h-px bg-blue-600/50" />
+            </h4>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
-            <div className="overflow-hidden">
-              <span className="block policy-hero-line">{t("title1")}</span>
+          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900 mb-8">
+            <div className="overflow-hidden md:pl-2">
+              <span className="block policy-hero-line pr-[0.15em]">{t("title1")}</span>
             </div>
-            <div className="overflow-hidden">
-              <span className="block policy-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500">
+            <div className="overflow-hidden md:pl-2">
+              <span className="block policy-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pr-[0.15em]">
                 {t("title2")}
               </span>
             </div>
           </h1>
+
+          <div className="overflow-hidden max-w-2xl px-4">
+            <p className="policy-hero-sub text-gray-500 text-lg md:text-xl font-light leading-relaxed">
+              {t("intro")}
+            </p>
+          </div>
         </div>
       </section>
 

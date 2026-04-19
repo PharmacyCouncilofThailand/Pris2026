@@ -36,6 +36,7 @@ export default function Hero() {
   const logoRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
+  const partnersRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const t = useTranslations("hero");
   const { isAuthenticated } = useAuth();
@@ -96,6 +97,7 @@ export default function Hero() {
         gsap.set(logoRef.current, { opacity: 1, y: 0, scale: 1 });
         gsap.set(countdownRef.current, { opacity: 1, y: 0 });
         gsap.set(buttonsRef.current, { opacity: 1, y: 0 });
+        gsap.set(partnersRef.current, { opacity: 1, y: 0 });
         heroCompleteRef.current = true;
         videoRef.current?.play().catch(() => {
           /* noop */
@@ -110,6 +112,7 @@ export default function Hero() {
       gsap.set(logoRef.current, { opacity: 0 });
       gsap.set(countdownRef.current, { opacity: 0, y: 30 });
       gsap.set(buttonsRef.current, { opacity: 0, y: 30 });
+      gsap.set(partnersRef.current, { opacity: 0, y: 20 });
       // Start video immediately so it shows through the text mask
       videoRef.current?.play().catch(() => { /* autoplay may be blocked */ });
 
@@ -173,14 +176,16 @@ export default function Hero() {
         tlAuto
           .to(logoRef.current, { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.0);
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.0)
+          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power3.out", duration: 0.8 }, 1.4);
       } else {
         // Desktop: Two-phase motion (syncs with the SVG mask scroll)
         tlAuto
           .to(logoRef.current, { opacity: 1, y: initialY, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
           .to(logoRef.current, { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.5);
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.5)
+          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.7 }, 1.9);
       }
 
       // Wheel-driven zoom control
@@ -265,11 +270,19 @@ export default function Hero() {
       ref={containerRef}
       className="relative w-full h-screen overflow-hidden bg-black flex justify-center items-center isolate"
     >
-      {/* Background Video */}
+      {/* Background: Static image on mobile, Video on desktop */}
+      <Image
+        src="/assets/Img/BG/BG-mobile-1080.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none lg:hidden"
+      />
       <video
         ref={videoRef}
         src="/assets/Img/BG/New BG 30fps.mp4"
-        className="absolute inset-0 w-full h-full object-cover transform-gpu opacity-90 z-0 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover transform-gpu opacity-90 z-0 pointer-events-none hidden lg:block"
         muted
         loop
         playsInline
@@ -284,7 +297,7 @@ export default function Hero() {
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
-            className="w-full max-w-[340px] md:max-w-[550px] h-auto md:drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            className="w-full max-w-[340px] md:max-w-[700px] h-auto"
             priority
           />
         </div>
@@ -305,25 +318,77 @@ export default function Hero() {
           <Link 
             href="/registration"
             onClick={handleRegisterClick}
-            className="group relative inline-flex items-center justify-center bg-white/[0.1] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.15] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
+            className="hero-register-btn"
           >
-            {/* Decorative gradient overlay matching countdown */}
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />
-
-            <span className="relative z-10 text-sm sm:text-base md:text-lg font-bold uppercase tracking-[0.2em] flex items-center gap-4">
+            <span className="text_button flex items-center gap-4">
               {t("registerNow")}
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-500 group-hover:translate-x-1">
-                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </div>
+              <span className="hero-register-btn__arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </span>
-
-            {/* Bottom glowing line matching countdown */}
-            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-100" />
-            
-            {/* Hover bottom glowing line intensify */}
-            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
         </div>
+
+        {/* ── Official Partners ── */}
+        <div 
+          ref={partnersRef}
+          className="mt-8 md:mt-10 z-[2] flex flex-col items-center w-full overflow-hidden"
+          style={{ opacity: 0 }}
+        >
+          <span className="text-white/50 text-[9px] md:text-[11px] font-semibold uppercase tracking-[0.3em] mb-3">
+            Official Partners
+          </span>
+          {/* Partner logos row — constrained width */}
+          <div className="relative w-full max-w-3xl mx-auto overflow-hidden py-3">
+            {/* Marquee Row */}
+            <div className="flex w-max animate-partner-scroll items-center will-change-transform transform-gpu">
+              {[...Array(3)].map((_, i) => (
+                <React.Fragment key={i}>
+                  {[
+                    { name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", scale: "scale-[1.4]" },
+                    { name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", scale: "scale-[1.5]" },
+                    { name: "Pharmacy Administration College", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", scale: "" },
+                    { name: "Consumer Protection Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยคุ้มครอง.png", scale: "scale-[1.4]" },
+                    { name: "Community Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png", scale: "" },
+                    { name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", scale: "" },
+                    { name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", scale: "" },
+                    { name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", scale: "scale-[1.4]" },
+                  ].map((partner, index) => (
+                    <div
+                      key={`partner-${i}-${index}`}
+                      className="mx-5 md:mx-8 flex items-center justify-center flex-shrink-0"
+                    >
+                      <div className="h-12 w-12 md:h-16 md:w-16 flex items-center justify-center">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={partner.logo}
+                          alt={partner.name}
+                          className={`object-contain w-full h-full opacity-90 ${partner.scale}`}
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes partner-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-33.333%, 0, 0); }
+          }
+          .animate-partner-scroll {
+            animation: partner-scroll 35s linear infinite;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .animate-partner-scroll {
+              animation: none;
+            }
+          }
+        `}} />
       </div>
 
       {/* SVG Mask Container */}

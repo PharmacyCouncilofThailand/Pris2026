@@ -24,7 +24,7 @@ function EventRow({ event, locale }: { event: any; locale: string }) {
     <div className="schedule-row group border-b border-white/10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12 relative hover:bg-white/[0.02] transition-colors duration-500">
       {/* Time & Type */}
       <div className="lg:w-1/4 flex-shrink-0 flex flex-row lg:flex-col justify-between lg:justify-start items-baseline lg:items-start gap-3 sm:gap-4">
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-light text-gold tracking-tight">
+        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gold tracking-tight">
           {event.time}
         </h3>
         <span className="px-2.5 sm:px-3 py-1 rounded-full border border-white/20 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-white/50">
@@ -70,7 +70,7 @@ function EventRow({ event, locale }: { event: any; locale: string }) {
                   </div>
                   <div>
                     <h5 className="font-bold text-sm text-white mb-0.5">
-                      {speaker.name}
+                      {locale === "th" && speaker.nameTh ? speaker.nameTh : speaker.name}
                     </h5>
                     <span className="text-[10px] md:text-xs text-gold uppercase tracking-wider block">
                       {locale === "th" && speaker.roleTh ? speaker.roleTh : speaker.role}
@@ -118,34 +118,38 @@ export default function EventScheduleSection() {
 
   useGSAP(
     () => {
-      // Animate Section Title
-      gsap.fromTo(
-        ".agenda-title",
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: "power4.out",
-          force3D: true,
-          scrollTrigger: { trigger: ".agenda-title", start: "top 80%" },
-        }
-      );
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        // Animate Section Title
+        gsap.fromTo(
+          ".agenda-title",
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power4.out",
+            force3D: true,
+            scrollTrigger: { trigger: ".agenda-title", start: "top 80%" },
+          }
+        );
 
-      // Animate Day Tabs
-      gsap.fromTo(
-        ".day-tab",
-        { opacity: 0, x: -20 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          force3D: true,
-          scrollTrigger: { trigger: ".day-tabs-container", start: "top 85%" },
-        }
-      );
+        // Animate Day Tabs
+        gsap.fromTo(
+          ".day-tab",
+          { opacity: 0, x: -20 },
+          {
+            opacity: 1,
+            x: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power3.out",
+            force3D: true,
+            scrollTrigger: { trigger: ".day-tabs-container", start: "top 85%" },
+          }
+        );
+      });
+      return () => mm.revert();
     },
     { scope: sectionRef }
   );
@@ -194,7 +198,6 @@ export default function EventScheduleSection() {
         {/* Header - Editorial Style */}
         <div className="mb-12 sm:mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 agenda-title">
             <SectionTitle
-              subtitle={t('sectionSubtitle')}
               title={t('sectionTitle')}
               align="left"
               theme="dark"

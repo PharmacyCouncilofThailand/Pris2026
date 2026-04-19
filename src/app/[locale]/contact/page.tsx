@@ -19,6 +19,15 @@ type PageCopy = {
   phoneDesc: string;
   addressLabel: string;
   addressValue: string;
+  formTitle1: string;
+  formTitle2: string;
+  formDesc: string;
+  formFirstName: string;
+  formLastName: string;
+  formEmail: string;
+  formSubject: string;
+  formMessage: string;
+  formSubmit: string;
 };
 
 export default function ContactPage() {
@@ -31,7 +40,7 @@ export default function ContactPage() {
           eyebrow: "การติดต่อ",
           title1: "Get in",
           title2: "Touch",
-          desc: "มีข้อสงสัยเกี่ยวกับการลงทะเบียน การส่งผลงาน หรือการสนับสนุน? ติดต่อทีมงาน PRIS 2026 ได้ตามชช่องทางด้านล่าง",
+          desc: "มีข้อสงสัยเกี่ยวกับการลงทะเบียน การส่งผลงาน หรือการสนับสนุน? ติดต่อทีมงาน PRIS 2026 ได้ตามช่องทางด้านล่าง",
           emailLabel: "อีเมล",
           emailValue: "pharthai@pharmacycouncil.org",
           emailDesc: "สำหรับข้อซักถามทั่วไป การส่งบทคัดย่อ และการสนับสนุน",
@@ -40,6 +49,15 @@ export default function ContactPage() {
           phoneDesc: "เวลาทำการ: จันทร์ - ศุกร์, 08:30 - 16:30 น.",
           addressLabel: "ที่อยู่สำนักงาน",
           addressValue: "สำนักงานเลขาธิการสภาเภสัชกรรม\nอาคารมหิตลาธิเบศร ชั้น 8\nกระทรวงสาธารณสุข ซอย 4\nถนนติวานนท์ อำเภอเมือง จังหวัดนนทบุรี 11000",
+          formTitle1: "ส่ง",
+          formTitle2: "ข้อความ.",
+          formDesc: "กรอกข้อมูลด้านล่าง แล้วทีมงานจะติดต่อกลับภายใน 24 ชั่วโมง",
+          formFirstName: "ชื่อ",
+          formLastName: "นามสกุล",
+          formEmail: "อีเมล",
+          formSubject: "หัวข้อข้อความ",
+          formMessage: "รายละเอียดข้อความ",
+          formSubmit: "ส่งข้อความ",
         }
       : {
           eyebrow: "Contact Us",
@@ -53,7 +71,16 @@ export default function ContactPage() {
           phoneValue: "02-590-2625",
           phoneDesc: "Mon-Fri, 08:30 AM - 04:30 PM (ICT)",
           addressLabel: "Office Address",
-          addressValue: "Office of the Secretary, Pharmacy Council of Thailand\nMahitala Dhibesra Building, 8th Floor\nMinistry of Public Health, 88/19 Moo 4\nTiwanon Road, Talad Khwan\nMueang, Nonthaburi 11000",
+          addressValue: "The Pharmacy Council of Thailand\nMahitalathibet Building, 8th Floor\nMinistry of Public Health, 88/19 Moo 4\nTiwanon Road, Talat Khwan\nMueang Nonthaburi, Nonthaburi 11000",
+          formTitle1: "Send",
+          formTitle2: "Inquiry.",
+          formDesc: "Fill out the details below, and our organizing team will get back to you within 24 hours.",
+          formFirstName: "First Name",
+          formLastName: "Last Name",
+          formEmail: "Email Address",
+          formSubject: "Subject",
+          formMessage: "Your Message",
+          formSubmit: "Submit Form",
         };
 
   useEffect(() => {
@@ -116,15 +143,7 @@ export default function ContactPage() {
             
             {/* Left: Huge typography & Info */}
             <div className="flex flex-col gap-6 md:sticky top-32 h-fit">
-              <div className="w-12 h-px bg-slate-900" />
-              <h2 className="text-5xl md:text-7xl lg:text-[5.5rem] font-black uppercase tracking-tighter leading-[0.85] text-slate-900">
-                Send <br /> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500 py-2 inline-block">Inquiry.</span>
-              </h2>
-              <p className="text-slate-500 font-light text-base max-w-sm mt-2 leading-relaxed">
-                Fill out the details below, and our organizing team will get back to you within 24 hours.
-              </p>
-
-              <div className="mt-8 pt-8 border-t border-slate-200 flex flex-col gap-6">
+              <div className="pt-2 flex flex-col gap-6">
                 <div>
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{copy.emailLabel}</h4>
                   <a href={`mailto:${copy.emailValue}`} className="text-base font-medium text-slate-900 hover:text-blue-600 transition-colors">
@@ -144,45 +163,46 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Right: Unconventional Form Fields */}
-            <form className="flex flex-col gap-8 lg:gap-10 pt-4" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-                <div className="relative group">
-                  <input type="text" id="firstName" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="First Name" />
-                  <label htmlFor="firstName" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">First Name</label>
-                </div>
-                
-                <div className="relative group">
-                  <input type="text" id="lastName" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="Last Name" />
-                  <label htmlFor="lastName" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Last Name</label>
-                </div>
-              </div>
-
-              <div className="relative group">
-                <input type="email" id="email" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="Email Address" />
-                <label htmlFor="email" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Email Address</label>
-              </div>
-
-              <div className="relative group">
-                <input type="text" id="subject" required className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent" placeholder="Subject" />
-                <label htmlFor="subject" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Subject</label>
-              </div>
-
-              <div className="relative group">
-                <textarea id="message" required rows={3} className="peer w-full bg-transparent border-0 border-b border-slate-300 py-3 text-xl font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-0 transition-all placeholder-transparent resize-none leading-relaxed" placeholder="Your Message" />
-                <label htmlFor="message" className="absolute left-0 -top-5 text-xs font-bold uppercase tracking-[0.15em] text-slate-400 transition-all peer-placeholder-shown:text-lg peer-placeholder-shown:text-slate-400 peer-placeholder-shown:font-medium peer-placeholder-shown:tracking-normal peer-placeholder-shown:top-3 peer-focus:-top-5 peer-focus:text-xs peer-focus:font-bold peer-focus:uppercase peer-focus:tracking-[0.15em] peer-focus:text-slate-900 cursor-text">Your Message</label>
-              </div>
-
-              <div className="pt-2">
-                <button type="submit" className="group relative inline-flex items-center justify-between gap-8 bg-slate-50 border border-slate-200 shadow-sm text-slate-900 px-10 py-5 rounded-full overflow-hidden hover:border-slate-900 hover:shadow-xl transition-all duration-500 w-full md:w-auto">
-                  <div className="absolute inset-0 bg-slate-900 scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-in-out" />
-                  <span className="relative z-10 text-xs font-bold uppercase tracking-[0.2em] group-hover:text-white transition-colors duration-500">Submit Form</span>
-                  <div className="relative z-10 w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center transition-colors duration-500">
-                    <ArrowUpRight className="w-4 h-4 text-white group-hover:scale-125 transition-transform duration-500" />
+            {/* Right: Standard Unified Form Fields */}
+            <div className="bg-white rounded-3xl p-8 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-fit">
+              <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex flex-col gap-3">
+                    <label htmlFor="firstName" className="text-[10px] font-semibold text-slate-500 uppercase tracking-[2px] ml-1">{copy.formFirstName}</label>
+                    <input type="text" id="firstName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 placeholder:text-slate-300" placeholder="e.g. John" />
                   </div>
-                </button>
-              </div>
-            </form>
+                  
+                  <div className="flex flex-col gap-3">
+                    <label htmlFor="lastName" className="text-[10px] font-semibold text-slate-500 uppercase tracking-[2px] ml-1">{copy.formLastName}</label>
+                    <input type="text" id="lastName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 placeholder:text-slate-300" placeholder="e.g. Doe" />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="email" className="text-[10px] font-semibold text-slate-500 uppercase tracking-[2px] ml-1">{copy.formEmail}</label>
+                  <input type="email" id="email" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 placeholder:text-slate-300" placeholder="you@example.com" />
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="subject" className="text-[10px] font-semibold text-slate-500 uppercase tracking-[2px] ml-1">{copy.formSubject}</label>
+                  <input type="text" id="subject" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 placeholder:text-slate-300" placeholder="How can we help?" />
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <label htmlFor="message" className="text-[10px] font-semibold text-slate-500 uppercase tracking-[2px] ml-1">{copy.formMessage}</label>
+                  <textarea id="message" required rows={4} className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-normal text-slate-900 placeholder:text-slate-300 resize-none leading-relaxed" placeholder="..." />
+                </div>
+
+                <div className="pt-4 mt-2">
+                  <button type="submit" className="group relative inline-flex items-center justify-between gap-8 bg-blue-600 text-white px-8 py-4 rounded-2xl overflow-hidden hover:bg-blue-700 hover:shadow-lg transition-all duration-300 w-full md:w-auto font-medium shadow-md shadow-blue-600/20">
+                    <span className="relative z-10 text-xs font-bold uppercase tracking-[0.15em]">{copy.formSubmit}</span>
+                    <div className="relative z-10 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors duration-300">
+                      <ArrowUpRight className="w-4 h-4 text-white group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       </section>

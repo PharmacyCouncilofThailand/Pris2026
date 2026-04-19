@@ -31,61 +31,65 @@ export default function PrisIntroSection() {
 
   useGSAP(
     () => {
-      // ── Title chars stagger (No scrub, simple play on scroll) ──
-      gsap.fromTo(
-        ".pris-char",
-        { y: "120%" },
-        {
-          y: "0%",
-          ease: "power3.out",
-          duration: 0.8,
-          stagger: 0.02,
-          force3D: true, // Make sure GPU acceleration is forced
-          scrollTrigger: { 
-            trigger: ".pris-title", 
-            start: "top 85%", 
-            toggleActions: "play none none reverse" // Removed aggressive mid-screen reversing
-          },
-        }
-      );
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        // ── Title chars stagger (No scrub, simple play on scroll) ──
+        gsap.fromTo(
+          ".pris-char",
+          { y: "120%" },
+          {
+            y: "0%",
+            ease: "power3.out",
+            duration: 0.8,
+            stagger: 0.02,
+            force3D: true, // Make sure GPU acceleration is forced
+            scrollTrigger: { 
+              trigger: ".pris-title", 
+              start: "top 85%", 
+              toggleActions: "play none none reverse" // Removed aggressive mid-screen reversing
+            },
+          }
+        );
 
-      // ── Body paragraphs (No scrub) ──
-      gsap.fromTo(
-        ".pris-body-line",
-        { y: "120%", opacity: 0 },
-        {
-          y: "0%",
-          opacity: 1,
-          ease: "power3.out",
-          duration: 1,
-          stagger: 0.1,
-          force3D: true,
-          scrollTrigger: { 
-            trigger: ".pris-body-wrap", 
-            start: "top 85%", 
-            toggleActions: "play none none reverse"
-          },
-        }
-      );
+        // ── Body paragraphs (No scrub) ──
+        gsap.fromTo(
+          ".pris-body-line",
+          { y: "120%", opacity: 0 },
+          {
+            y: "0%",
+            opacity: 1,
+            ease: "power3.out",
+            duration: 1,
+            stagger: 0.1,
+            force3D: true,
+            scrollTrigger: { 
+              trigger: ".pris-body-wrap", 
+              start: "top 85%", 
+              toggleActions: "play none none reverse"
+            },
+          }
+        );
 
-      // ── Stat Numbers Reveal ──
-      gsap.fromTo(
-        ".stat-number",
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          stagger: 0.2,
-          ease: "power3.out",
-          force3D: true,
-          scrollTrigger: {
-            trigger: ".pris-stats",
-            start: "top 85%",
-            toggleActions: "play none none reverse"
-          },
-        }
-      );
+        // ── Stat Numbers Reveal ──
+        gsap.fromTo(
+          ".stat-number",
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            force3D: true,
+            scrollTrigger: {
+              trigger: ".pris-stats",
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+          }
+        );
+      });
+      return () => mm.revert();
     },
     { scope: containerRef }
   );
@@ -101,9 +105,10 @@ export default function PrisIntroSection() {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] relative flex flex-col items-center text-center">
+        
         {/* ── TITLE ── */}
         <div className="pris-title overflow-hidden py-4 -my-4 mb-10 md:mb-16">
-          <h2 className="text-[clamp(3rem,8vw,10rem)] leading-none font-black tracking-tighter uppercase">
+          <h2 className="text-[clamp(3rem,8vw,10rem)] leading-none font-black tracking-tighter uppercase pr-[0.15em]">
             {titleSegments.map((char, i) => (
                 <span key={i} className="pris-char inline-block">
                   {char === " " ? "\u00A0" : char}

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
-import { MoveUpRight, Sparkles } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { MoveUpRight, Sparkles, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import RegistrationPolicyModal from "./RegistrationPolicyModal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -15,66 +16,68 @@ export default function RegistrationCTASection() {
   const t = useTranslations("registrationCTA");
   const containerRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useGSAP(() => {
-    // Premium entry animation for massive typography
-    gsap.fromTo(
-      ".char-anim",
-      { y: "100%", opacity: 0 },
-      {
-        y: "0%",
-        opacity: 1,
-        duration: 1.5,
-        stagger: 0.05,
-        ease: "expo.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: textRef.current,
-          start: "top 80%",
-        },
-      }
-    );
+    const mm = gsap.matchMedia();
 
-    gsap.fromTo(
-      ".fade-up",
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power3.out",
-        force3D: true,
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 75%",
-        },
-      }
-    );
-
-    // Highly engineered line drawing
-    gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
+    mm.add("(min-width: 768px)", () => {
+      // Premium entry animation for massive typography
       gsap.fromTo(
-        line,
-        { scaleX: 0 },
+        ".char-anim",
+        { y: "100%", opacity: 0 },
         {
-          scaleX: 1,
+          y: "0%",
+          opacity: 1,
           duration: 1.5,
-          ease: "power4.inOut",
+          stagger: 0.05,
+          ease: "expo.out",
           force3D: true,
-          transformOrigin: "left center",
           scrollTrigger: {
-            trigger: line,
-            start: "top 90%",
+            trigger: textRef.current,
+            start: "top 80%",
           },
         }
       );
+
+      gsap.fromTo(
+        ".fade-up",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power3.out",
+          force3D: true,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 75%",
+          },
+        }
+      );
+
+      // Highly engineered line drawing
+      gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
+        gsap.fromTo(
+          line,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            duration: 1.5,
+            ease: "power4.inOut",
+            force3D: true,
+            transformOrigin: "left center",
+            scrollTrigger: {
+              trigger: line,
+              start: "top 90%",
+            },
+          }
+        );
+      });
     });
 
-
-
-    // Sticky timeline effect (Desktop only) — ใช้ gsap.matchMedia() แทน ScrollTrigger.matchMedia() ที่ถูก Deprecated ใน GSAP 3.12+
-    const mm = gsap.matchMedia();
+    // Sticky timeline effect (Desktop only)
     mm.add("(min-width: 1024px)", () => {
       ScrollTrigger.create({
         trigger: ".timeline-container",
@@ -83,9 +86,9 @@ export default function RegistrationCTASection() {
         pin: ".timeline-title",
         pinSpacing: false,
       });
-      return () => {}; // cleanup
     });
 
+    return () => mm.revert(); // cleanup
   }, { scope: containerRef });
 
   return (
@@ -222,7 +225,7 @@ export default function RegistrationCTASection() {
         </div>
       </div>
 
-      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-24 md:my-40" />
+      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-20 md:my-32" />
 
       {/* Interactive Pricing Rows (Bespoke Table Layout) */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] pricing-wrapper">
@@ -316,13 +319,13 @@ export default function RegistrationCTASection() {
           </div>
         </div>
 
-        {/* Register CTA Button */}
-        <div className="mt-16 md:mt-20 flex justify-center fade-up">
+        {/* Register CTA Button & Payment Info */}
+        <div className="mt-16 md:mt-20 flex flex-col items-center fade-up gap-4">
           <a
             href="https://conference-web-tawny.vercel.app/events/mock-event-2025"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02]"
+            className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02] shadow-xl hover:shadow-[#0055FF]/20"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
             <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-[0.2em] flex items-center gap-6">
@@ -332,9 +335,28 @@ export default function RegistrationCTASection() {
               </div>
             </span>
           </a>
+
+          {/* Payment Method Note */}
+          <div className="flex items-center gap-2 text-black/50 mt-2">
+            <span className="text-[14px] font-medium">{t("paymentNote")}</span>
+          </div>
+        </div>
+
+        {/* Sleek Modal Trigger for Policies */}
+        <div className="mt-8 flex justify-center text-center fade-up">
+          <button 
+            className="text-[13px] text-black/40 hover:text-black underline underline-offset-4 decoration-black/20 hover:decoration-black transition-all"
+            onClick={() => setIsModalOpen(true)}
+          >
+            {t("cancelTitle")} &rarr;
+          </button>
         </div>
       </div>
 
+      <RegistrationPolicyModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 }

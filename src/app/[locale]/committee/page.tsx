@@ -25,7 +25,7 @@ interface CommitteeSection {
 }
 
 const advisorData: CommitteeMember[] = [
-  { name: "Mr. Preecha Bhandtivej", role: "President of the Pharmacy Council of Thailand" },
+  { name: "Mr. Preecha Phantuwecha", role: "President of the Pharmacy Council of Thailand" },
 ];
 
 const organizingCommitteeData: CommitteeMember[] = [

@@ -2,7 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 interface SectionTitleProps {
-  subtitle: string;
+  subtitle?: string;
   title: React.ReactNode;
   align?: "left" | "center" | "right";
   theme?: "light" | "dark";
@@ -28,22 +28,24 @@ export function SectionTitle({
         className
       )}
     >
-      <div className={cn("flex items-center gap-4 mb-4", align === "center" && "justify-center")}>
-        {align !== "left" && (
-          <span className={cn("w-12 h-px", isDark ? "bg-white/40" : "bg-gold/50")} />
-        )}
-        <span
-          className={cn(
-            "text-xs font-semibold tracking-[0.25em] uppercase",
-            isDark ? "text-white/70" : "text-gold/80"
+      {subtitle && (
+        <div className={cn("flex items-center gap-4 mb-4", align === "center" && "justify-center")}>
+          {align !== "left" && (
+            <span className={cn("w-12 h-px", isDark ? "bg-white/40" : "bg-gold/50")} />
           )}
-        >
-          {subtitle}
-        </span>
-        {align !== "right" && (
-          <span className={cn("w-12 h-px", isDark ? "bg-white/40" : "bg-gold/50")} />
-        )}
-      </div>
+          <span
+            className={cn(
+              "text-xs font-semibold tracking-[0.25em] uppercase",
+              isDark ? "text-white/70" : "text-gold/80"
+            )}
+          >
+            {subtitle}
+          </span>
+          {align !== "right" && (
+            <span className={cn("w-12 h-px", isDark ? "bg-white/40" : "bg-gold/50")} />
+          )}
+        </div>
+      )}
 
       <h2
         className={cn(

@@ -92,11 +92,11 @@ export default function SponsorshipPage() {
           </div>
 
           <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[6rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block sponsor-hero-line">{t("title1")}</span>
+            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+              <span className="block sponsor-hero-line pr-[0.15em]">{t("title1")}</span>
             </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block sponsor-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
+            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+              <span className="block sponsor-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2 pr-[0.15em]">
                 {t("title2")}
               </span>
             </div>
