@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
-import { MoveUpRight, Sparkles } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { MoveUpRight, Sparkles, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import RegistrationPolicyModal from "./RegistrationPolicyModal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -15,63 +16,68 @@ export default function RegistrationCTASection() {
   const t = useTranslations("registrationCTA");
   const containerRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useGSAP(() => {
-    // Premium entry animation for massive typography
-    gsap.fromTo(
-      ".char-anim",
-      { y: "100%", opacity: 0 },
-      {
-        y: "0%",
-        opacity: 1,
-        duration: 1.5,
-        stagger: 0.05,
-        ease: "expo.out",
-        scrollTrigger: {
-          trigger: textRef.current,
-          start: "top 80%",
-        },
-      }
-    );
+    const mm = gsap.matchMedia();
 
-    gsap.fromTo(
-      ".fade-up",
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 75%",
-        },
-      }
-    );
-
-    // Highly engineered line drawing
-    gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
+    mm.add("(min-width: 768px)", () => {
+      // Premium entry animation for massive typography
       gsap.fromTo(
-        line,
-        { scaleX: 0 },
+        ".char-anim",
+        { y: "100%", opacity: 0 },
         {
-          scaleX: 1,
+          y: "0%",
+          opacity: 1,
           duration: 1.5,
-          ease: "power4.inOut",
-          transformOrigin: "left center",
+          stagger: 0.05,
+          ease: "expo.out",
+          force3D: true,
           scrollTrigger: {
-            trigger: line,
-            start: "top 90%",
+            trigger: textRef.current,
+            start: "top 80%",
           },
         }
       );
+
+      gsap.fromTo(
+        ".fade-up",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power3.out",
+          force3D: true,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 75%",
+          },
+        }
+      );
+
+      // Highly engineered line drawing
+      gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
+        gsap.fromTo(
+          line,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            duration: 1.5,
+            ease: "power4.inOut",
+            force3D: true,
+            transformOrigin: "left center",
+            scrollTrigger: {
+              trigger: line,
+              start: "top 90%",
+            },
+          }
+        );
+      });
     });
 
-
-
-    // Sticky timeline effect (Desktop only) — ใช้ gsap.matchMedia() แทน ScrollTrigger.matchMedia() ที่ถูก Deprecated ใน GSAP 3.12+
-    const mm = gsap.matchMedia();
+    // Sticky timeline effect (Desktop only)
     mm.add("(min-width: 1024px)", () => {
       ScrollTrigger.create({
         trigger: ".timeline-container",
@@ -80,9 +86,9 @@ export default function RegistrationCTASection() {
         pin: ".timeline-title",
         pinSpacing: false,
       });
-      return () => {}; // cleanup
     });
 
+    return () => mm.revert(); // cleanup
   }, { scope: containerRef });
 
   return (
@@ -219,7 +225,7 @@ export default function RegistrationCTASection() {
         </div>
       </div>
 
-      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-24 md:my-40" />
+      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-20 md:my-32" />
 
       {/* Interactive Pricing Rows (Bespoke Table Layout) */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] pricing-wrapper">
@@ -313,25 +319,60 @@ export default function RegistrationCTASection() {
           </div>
         </div>
 
-        {/* Register CTA Button */}
-        <div className="mt-16 md:mt-20 flex justify-center fade-up">
+        {/* Register CTA Button & Payment Info */}
+        <div className="mt-16 md:mt-24 flex flex-col items-center fade-up gap-6">
           <a
             href="https://conference-web-tawny.vercel.app/events/mock-event-2025"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02]"
+            className="group relative inline-flex items-center justify-center gap-6 md:gap-8 text-white px-10 md:px-16 py-6 md:py-8 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] shadow-2xl hover:shadow-[0_0_60px_rgba(0,85,255,0.4)]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
-            <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-[0.2em] flex items-center gap-6">
+            {/* Animated gradient background — always visible */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
+            {/* Shimmer sweep */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
+            {/* Pulsing glow ring — always subtly visible */}
+            <div className="absolute inset-[-3px] rounded-full bg-gradient-to-r from-[#0055FF] to-[#FF5A00] opacity-40 group-hover:opacity-80 animate-pulse blur-sm transition-opacity duration-500 -z-10" />
+            
+            <span className="relative z-10 text-base md:text-xl font-black uppercase tracking-[0.25em]">
               {t("registerCollection")}
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
-                <MoveUpRight className="w-5 h-5" />
-              </div>
             </span>
+            <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 bg-white/20 group-hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:rotate-45 transition-all duration-500 border border-white/30">
+              <MoveUpRight className="w-6 h-6 md:w-7 md:h-7" />
+            </div>
           </a>
+
+          {/* Payment Method Note */}
+          <div className="flex items-center gap-2 text-black/50 mt-1">
+            <span className="text-sm md:text-base font-medium">{t("paymentNote")}</span>
+          </div>
         </div>
+
+        {/* Cancellations & Refund Policy — Prominent Link */}
+        <div className="mt-10 md:mt-14 flex justify-center text-center fade-up">
+          <button 
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl border-2 border-black/10 hover:border-[#0055FF]/40 bg-transparent hover:bg-[#0055FF]/5 transition-all duration-500"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <span className="text-base md:text-lg font-bold text-black/60 group-hover:text-[#0055FF] tracking-tight transition-colors duration-300">
+              {t("cancelTitle")}
+            </span>
+            <span className="text-[#0055FF] group-hover:translate-x-1 transition-transform duration-300 text-xl">&rarr;</span>
+          </button>
+        </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+        `}} />
       </div>
 
+      <RegistrationPolicyModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </section>
   );
 }

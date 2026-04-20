@@ -9,27 +9,39 @@ export const scheduleData: ScheduleDay[] = [
     events: [
       { 
         id: 1, 
-        time: "08:00 – 16:00", 
+        time: "08:00 – 09:00", 
         title: "Registration", 
-        titleTh: "ลงทะเบียน (Registration)", 
-        location: "Registration Desk",
-        locationTh: "จุดลงทะเบียน",
+        titleTh: "ลงทะเบียน", 
+        location: "IMPACT Challenger",
+        locationTh: "อิมแพ็ค ชาเลนเจอร์",
         type: "Registration",
         typeTh: "ลงทะเบียน",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
         id: 2, 
         time: "09:00 – 09:30", 
-        title: "Opening Ceremony by the Minister of Public Health", 
-        titleTh: "Opening Ceremony โดย รัฐมนตรีว่าการกระทรวงสาธารณสุข", 
-        description: "(Substitute: Permanent Secretary of MOPH / FDA Secretary-General / President of the Pharmacy Council)", 
-        descriptionTh: "(สำรอง: ปลัดกระทรวงสาธารณสุข / เลขาธิการ อย. / นายกสภาเภสัชกรรม)", 
+        title: "Opening Ceremony", 
+        titleTh: "Opening Ceremony", 
+        description: "Mr. Pattana Promphat The Minister of Public Health", 
+        descriptionTh: "นายพัฒนา พร้อมพัฒน์ รัฐมนตรีว่าการกระทรวงสาธารณสุข", 
         location: "Main Stage",
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Ceremony",
         typeTh: "พิธีเปิด",
-        speakers: []
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Mr. Pattana Promphat",
+            nameTh: "นายพัฒนา พร้อมพัฒน์",
+            role: "The Minister of Public Health",
+            roleTh: "รัฐมนตรีว่าการกระทรวงสาธารณสุข",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
       },
       { 
         id: 3, 
@@ -42,6 +54,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Lecture",
         typeTh: "บรรยายหลัก",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
         speakers: []
       },
       { 
@@ -53,19 +67,89 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "โถงนิทรรศการ",
         type: "Break",
         typeTh: "พักเบรค",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
-        id: 5, 
+        id: 501, 
         time: "11:00 – 12:00", 
-        title: "Parallel Sessions", 
-        titleTh: "Parallel Sessions", 
-        description: "Main Stage (Jupiter 4-7): Panel “Unlocking Pharmacy Profession Pain Points”\nRoom 1 (Jupiter 11): Young Pharmacist\nRoom 2 (Jupiter 12): Workshop: Professional Direction (Community)\nRoom 3 (Jupiter 13): Workshop: Professional Direction (Industrial)",
-        descriptionTh: "Main Stage: (Jupiter 4-7) Topic 1: เสวนา “ปลดล็อค Pain Point วิชาชีพเภสัชกรรม”\nRoom 1: (Jupiter11) Young Pharmacist (สนภท.)\nRoom 2: (Jupiter12) Workshop: ทิศทางวิชาชีพ (สายชุมชน)\nRoom 3: (Jupiter13) Workshop: ทิศทางวิชาชีพ (สายอุตสาหกรรม)", 
-        location: "Various Rooms", 
-        locationTh: "ตามห้องต่าง ๆ", 
+        title: "Panel “Unlocking Pharmacy Profession Pain Points”", 
+        titleTh: "เสวนา “ปลดล็อค Pain Point วิชาชีพเภสัชกรรม”", 
+        location: "Jupiter 4-7", 
+        locationTh: "Jupiter 4-7", 
         type: "Session",
         typeTh: "การประชุม",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Dr. Somchai",
+            nameTh: "นพ. สมชาย",
+            role: "Panelist",
+            roleTh: "ผู้ร่วมเสวนา",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          },
+          {
+            name: "Dr. Somsri",
+            nameTh: "พญ. สมศรี",
+            role: "Panelist",
+            roleTh: "ผู้ร่วมเสวนา",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          },
+          {
+            name: "Dr. Sompop",
+            nameTh: "นพ. สมภพ",
+            role: "Moderator",
+            roleTh: "ผู้ดำเนินรายการ",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          },
+          {
+            name: "Dr. Sompong",
+            nameTh: "นพ. สมพงษ์",
+            role: "Panelist",
+            roleTh: "ผู้ร่วมเสวนา",
+            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+          }
+        ]
+      },
+      { 
+        id: 502, 
+        time: "11:00 – 12:00", 
+        title: "Young Pharmacist", 
+        titleTh: "Young Pharmacist (สนภท.)", 
+        location: "Jupiter 11", 
+        locationTh: "Jupiter 11", 
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 1",
+        trackTh: "ห้อง 1",
+        speakers: []
+      },
+      { 
+        id: 503, 
+        time: "11:00 – 12:00", 
+        title: "Workshop: Professional Direction (Community)", 
+        titleTh: "Workshop: ทิศทางวิชาชีพ (สายชุมชน)", 
+        location: "Jupiter 12", 
+        locationTh: "Jupiter 12", 
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 2",
+        trackTh: "ห้อง 2",
+        speakers: []
+      },
+      { 
+        id: 504, 
+        time: "11:00 – 12:00", 
+        title: "Workshop: Professional Direction (Industrial)", 
+        titleTh: "Workshop: ทิศทางวิชาชีพ (สายอุตสาหกรรม)", 
+        location: "Jupiter 13", 
+        locationTh: "Jupiter 13", 
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 3",
+        trackTh: "ห้อง 3",
         speakers: []
       },
       { 
@@ -79,6 +163,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "ตามห้องต่าง ๆ",
         type: "Lunch",
         typeTh: "อาหารกลางวัน",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
@@ -92,6 +178,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "โถงนิทรรศการ และห้องประชุม",
         type: "Session",
         typeTh: "การประชุม",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
@@ -103,19 +191,60 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "โถงนิทรรศการ",
         type: "Break",
         typeTh: "พักเบรค",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
-        id: 9, 
+        id: 901, 
         time: "15:30 – 16:00", 
-        title: "Parallel Sessions", 
-        titleTh: "Parallel Sessions", 
-        description: "Main Stage: Corporate Symposium\nRooms 1-3: Student Presentation (Pharmaceutical Sciences)",
-        descriptionTh: "Main Stage: Corporate Symposium\nRooms 1-3: Student Presentation (Pharmaceutical Sciences)",
-        location: "Various Rooms",
-        locationTh: "ตามห้องต่าง ๆ",
+        title: "Corporate Symposium", 
+        titleTh: "Corporate Symposium", 
+        location: "Main Stage",
+        locationTh: "เวทีหลัก",
         type: "Session",
         typeTh: "การประชุม",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: []
+      },
+      { 
+        id: 902, 
+        time: "15:30 – 16:00", 
+        title: "Student Presentation (Pharmaceutical Sciences)", 
+        titleTh: "Student Presentation (Pharmaceutical Sciences)", 
+        location: "Rooms 1-3",
+        locationTh: "ห้อง 1-3",
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 1",
+        trackTh: "ห้อง 1",
+        speakers: []
+      },
+      { 
+        id: 903, 
+        time: "15:30 – 16:00", 
+        title: "Student Presentation (Pharmaceutical Sciences)", 
+        titleTh: "Student Presentation (Pharmaceutical Sciences)", 
+        location: "Rooms 1-3",
+        locationTh: "ห้อง 1-3",
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 2",
+        trackTh: "ห้อง 2",
+        speakers: []
+      },
+      { 
+        id: 904, 
+        time: "15:30 – 16:00", 
+        title: "Student Presentation (Pharmaceutical Sciences)", 
+        titleTh: "Student Presentation (Pharmaceutical Sciences)", 
+        location: "Rooms 1-3",
+        locationTh: "ห้อง 1-3",
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 3",
+        trackTh: "ห้อง 3",
         speakers: []
       },
       { 
@@ -129,6 +258,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Session",
         typeTh: "การประชุม",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
         speakers: []
       },
       { 
@@ -142,6 +273,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "แกรนด์ฟอยเยอร์",
         type: "Networking",
         typeTh: "พบปะสังสรรค์",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       }
     ],
@@ -154,13 +287,15 @@ export const scheduleData: ScheduleDay[] = [
     events: [
       { 
         id: 12, 
-        time: "08:00 – 16:00", 
+        time: "08:00 – 09:00", 
         title: "Registration", 
         titleTh: "ลงทะเบียน", 
-        location: "Registration Desk",
-        locationTh: "จุดลงทะเบียน",
+        location: "IMPACT Challenger",
+        locationTh: "อิมแพ็ค ชาเลนเจอร์",
         type: "Registration",
         typeTh: "ลงทะเบียน",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
@@ -174,6 +309,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Keynote",
         typeTh: "ปาฐกถา",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
         speakers: []
       },
       { 
@@ -187,6 +324,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Keynote",
         typeTh: "ปาฐกถา",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
         speakers: []
       },
       { 
@@ -198,19 +337,60 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "โถงนิทรรศการ",
         type: "Break",
         typeTh: "พักเบรค",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
-        id: 16, 
+        id: 1601, 
         time: "10:30 – 12:00", 
-        title: "Scientific & Networking Sessions", 
-        titleTh: "Scientific & Networking Sessions", 
-        description: "Main Stage:\nTopic 3: Advance and Innovation Pharmacy II\nTopic 4: Advance and Innovation Pharmacy III\nTopic 5: Advance and Innovation Pharmacy IV\nRoom 1: Networking (Education)\nRoom 2-3: Networking",
-        descriptionTh: "Main Stage:\nTopic 3: Advance and Innovation Pharmacy II\nTopic 4: Advance and Innovation Pharmacy III\nTopic 5: Advance and Innovation Pharmacy IV\nRoom 1: Networking (ด้านการศึกษา)\nRoom 2-3: Networking",
-        location: "Various Rooms",
-        locationTh: "ตามห้องต่าง ๆ",
+        title: "Advance and Innovation Pharmacy II-IV", 
+        titleTh: "Advance and Innovation Pharmacy II-IV", 
+        location: "Main Stage",
+        locationTh: "เวทีหลัก",
         type: "Session",
         typeTh: "การประชุม",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: []
+      },
+      { 
+        id: 1602, 
+        time: "10:30 – 12:00", 
+        title: "Networking (Education)", 
+        titleTh: "Networking (ด้านการศึกษา)", 
+        location: "Room 1",
+        locationTh: "ห้อง 1",
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 1",
+        trackTh: "ห้อง 1",
+        speakers: []
+      },
+      { 
+        id: 1603, 
+        time: "10:30 – 12:00", 
+        title: "Networking", 
+        titleTh: "Networking", 
+        location: "Room 2",
+        locationTh: "ห้อง 2",
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 2",
+        trackTh: "ห้อง 2",
+        speakers: []
+      },
+      { 
+        id: 1604, 
+        time: "10:30 – 12:00", 
+        title: "Networking", 
+        titleTh: "Networking", 
+        location: "Room 3",
+        locationTh: "ห้อง 3",
+        type: "Session",
+        typeTh: "การประชุม",
+        track: "Room 3",
+        trackTh: "ห้อง 3",
         speakers: []
       },
       { 
@@ -224,6 +404,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "ตามห้องต่าง ๆ",
         type: "Lunch",
         typeTh: "อาหารกลางวัน",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
@@ -237,6 +419,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "ห้องประชุม",
         type: "Session",
         typeTh: "การประชุม",
+        track: "Common",
+        trackTh: "ทั่วไป",
         speakers: []
       },
       { 
@@ -248,6 +432,8 @@ export const scheduleData: ScheduleDay[] = [
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Ceremony",
         typeTh: "พิธีมอบรางวัล",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
         speakers: []
       }
     ],

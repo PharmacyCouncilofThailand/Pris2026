@@ -122,11 +122,11 @@ export default function ApprovedAbstractsPage() {
 
           <h1 className="px-1 text-[2rem] font-black uppercase tracking-tighter leading-tight text-gray-900
                          sm:text-5xl md:text-7xl lg:text-[6rem]">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block hero-line">{copy.title1}</span>
+            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+              <span className="block hero-line pr-[0.15em]">{copy.title1}</span>
             </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-2">
+            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-2 pr-[0.15em]">
                 {copy.title2}
               </span>
             </div>

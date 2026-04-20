@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
+import PageHero from "@/components/sections/PageHero";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,7 +17,7 @@ if (typeof window !== "undefined") {
    ══════════════════════════════════════ */
 
 const advisors = [
-  { name: "Mr. Preecha Bhandtivej", position: "President of the Pharmacy Council of Thailand" },
+  { name: "Mr. Preecha Phantuwecha", position: "President of the Pharmacy Council of Thailand" },
 ];
 
 const orgCommittee = [
@@ -229,20 +230,6 @@ export default function AboutPrisPage() {
 
   useGSAP(() => {
     // ─── Hero entrance ───
-    gsap.from(".about-hero-line", {
-      yPercent: 110,
-      stagger: 0.12,
-      duration: 1.6,
-      ease: "power4.out",
-      delay: 0.15,
-    });
-    gsap.from(".about-hero-sub", {
-      opacity: 0,
-      y: 30,
-      duration: 1.2,
-      ease: "power3.out",
-      delay: 0.8,
-    });
 
     // ─── "What is PRIS" reveal on scroll ───
     gsap.fromTo(
@@ -285,35 +272,16 @@ export default function AboutPrisPage() {
     >
 
       {/* ══════ HERO ══════ */}
-      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
-        {/* decorative bg glows */}
-        <div className="absolute top-0 left-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="about-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("location")}</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block about-hero-line">About</span>
-            </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block about-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
-                PRIS 2026
-              </span>
-            </div>
-          </h1>
-        </div>
-      </section>
+      <PageHero
+        title1="About"
+        title2="PRIS 2026"
+        subtitle="Pharmacy Research and Innovation Summit"
+      />
 
       {/* ══════ WHAT IS PRIS ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-4xl mx-auto about-desc">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900">{t("whatIsTitle")}</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900 pr-[0.15em]">{t("whatIsTitle")}</h2>
           <p 
             className="text-gray-500 text-base md:text-lg leading-[1.8] font-light"
             dangerouslySetInnerHTML={{ __html: t.raw("whatIsDesc") }}
@@ -342,7 +310,7 @@ export default function AboutPrisPage() {
             <div className="border-t border-gray-200">
               {advisors.map((a, i) => (
                 <div key={i} className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200">
-                  <span className="text-gray-900 font-medium text-lg">{a.name}</span>
+                  <span className="text-gray-900 font-medium text-lg md:w-[60%]">{a.name}</span>
                   <span className="text-gray-400 text-sm">{a.position}</span>
                 </div>
               ))}

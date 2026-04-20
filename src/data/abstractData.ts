@@ -1,17 +1,9 @@
 export const abstractTimeline = [
   {
-    label: "Abstract Submission Round 1 Opens",
-    labelTh: "เปิดรับ Abstract รอบ 1",
-    date: "1 May 2026",
-    dateTh: "1 พฤษภาคม 2569",
-    status: "upcoming",
-    color: "blue",
-  },
-  {
-    label: "Abstract Submission Round 1 Closes",
-    labelTh: "ปิดรับ Abstract รอบ 1",
-    date: "10 June 2026",
-    dateTh: "10 มิถุนายน 2569",
+    label: "Abstract Submission Round 1",
+    labelTh: "Abstract รอบ 1",
+    date: "1 May - 10 June 2026",
+    dateTh: "1 พฤษภาคม 2569 - 10 มิถุนายน 2569",
     status: "upcoming",
     color: "blue",
   },
@@ -24,18 +16,10 @@ export const abstractTimeline = [
     color: "blue",
   },
   {
-    label: "Abstract Submission Round 2 Opens",
-    labelTh: "เปิดรับ Abstract รอบ 2",
-    date: "1 July 2026",
-    dateTh: "1 กรกฎาคม 2569",
-    status: "upcoming",
-    color: "blue",
-  },
-  {
-    label: "Abstract Submission Round 2 Closes",
-    labelTh: "ปิดรับ Abstract รอบ 2",
-    date: "31 August 2026",
-    dateTh: "31 สิงหาคม 2569",
+    label: "Abstract Submission Round 2",
+    labelTh: "Abstract รอบ 2",
+    date: "1 July - 31 August 2026",
+    dateTh: "1 กรกฎาคม 2569 - 31 สิงหาคม 2569",
     status: "upcoming",
     color: "blue",
   },
@@ -55,17 +39,11 @@ export const submissionGuidelines = {
 
   importantDates: [
     {
-      label: "Abstract submission round 1 opens",
-      labelTh: "เปิดรับ Abstract รอบ 1",
-      value: "1 May 2026",
-      valueTh: "1 พฤษภาคม 2569",
+      label: "Abstract Submission Round 1",
+      labelTh: "Abstract รอบ 1",
+      value: "1 May - 10 June 2026",
+      valueTh: "1 พฤษภาคม 2569 - 10 มิถุนายน 2569",
       highlight: true,
-    },
-    {
-      label: "Abstract submission round 1 closes",
-      labelTh: "ปิดรับ Abstract รอบ 1",
-      value: "10 June 2026",
-      valueTh: "10 มิถุนายน 2569",
     },
     {
       label: "Abstract submission round 1 result announcement",
@@ -74,16 +52,10 @@ export const submissionGuidelines = {
       valueTh: "20 มิถุนายน 2569",
     },
     {
-      label: "Abstract submission round 2 opens",
-      labelTh: "เปิดรับ Abstract รอบที่ 2",
-      value: "1 July 2026",
-      valueTh: "1 กรกฎาคม 2569",
-    },
-    {
-      label: "Abstract submission round 2 closes",
-      labelTh: "ปิดรับ Abstract รอบที่ 2",
-      value: "31 August 2026",
-      valueTh: "31 สิงหาคม 2569",
+      label: "Abstract submission round 2",
+      labelTh: "Abstract รอบที่ 2",
+      value: "1 July - 31 August 2026",
+      valueTh: "1 กรกฎาคม 2569 - 31 สิงหาคม 2569",
     },
   ],
   importantDatesReservationNote: "This consideration is reserved only for participants who submit an abstract in Round 1 and receive an approved abstract.",
@@ -106,8 +78,7 @@ export const submissionGuidelines = {
 
   generalInformation: [
     { label: "Presentation type", labelTh: "ประเภทการนำเสนอ (กรุณาเลือกหนึ่งประเภท)", value: "Poster presentation / Oral presentation", valueTh: "นำเสนอแบบโปสเตอร์ / นำเสนอแบบปากเปล่า" },
-    { label: "Language", labelTh: "ภาษาที่ใช้ในการนำเสนอ", value: "English", valueTh: "ภาษาอังกฤษเท่านั้น" },
-    { label: "Submission method", labelTh: "วิธีการส่งผลงาน", value: "Online submission system via the PRIS 2026 website only", valueTh: "ผ่านระบบออนไลน์ในเว็บไซต์ PRIS 2026 เท่านั้น" },
+    { label: "Language", labelTh: "ภาษาที่ใช้ในการนำเสนอ", value: "Thai", valueTh: "ภาษาไทยเท่านั้น" },
   ],
 
   abstractTopics: [
@@ -137,6 +108,8 @@ export const submissionGuidelines = {
     "Do NOT include references.",
     "Do NOT submit abstracts with typographical or grammatical errors.",
     "All abbreviations should be given in brackets after the first full use of the word.",
+    "Presentation type: Poster presentation / Oral presentation.",
+    "Language: Thai.",
   ],
   guidelinesTh: [
     "ต้องส่งบทคัดย่อผ่านระบบออนไลน์บนเว็บไซต์ PRIS 2026 เท่านั้น",
@@ -148,6 +121,8 @@ export const submissionGuidelines = {
     "ไม่จำเป็นต้องใส่เอกสารอ้างอิง",
     "บทคัดย่อต้องผ่านการตรวจสอบตัวสะกด ไวยากรณ์ และรูปแบบที่ถูกต้อง",
     "คำย่อทั้งหมดจะต้องระบุไว้ในวงเล็บหลังจากการใช้คำเต็มครั้งแรก",
+    "ประเภทการนำเสนอ (กรุณาเลือกหนึ่งประเภท): นำเสนอแบบโปสเตอร์ / นำเสนอแบบปากเปล่า",
+    "ภาษาที่ใช้ในการนำเสนอ: ภาษาไทยเท่านั้น",
   ],
   acknowledgementNote: "Notification of acceptance will be sent automatically to the abstract submitter only. Please contact the secretariat at pris2026@pharmacy.org if you do not receive the confirmation email.",
   acknowledgementNoteTh: "การแจ้งผลการพิจารณาจะถูกส่งให้ผู้ส่งรายงานเท่านั้น กรุณาติดต่อเลขาธิการที่ pris2026@pharmacy.org หากท่านไม่ได้รับอีเมลยืนยัน",

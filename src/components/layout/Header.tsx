@@ -90,6 +90,7 @@ export default function Header() {
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link
               href="/"
+              prefetch={true}
               className="relative flex items-center"
               onClick={() => {
                 if (typeof document !== "undefined") {
@@ -121,6 +122,7 @@ export default function Header() {
                       <NavigationMenuLink render={
                         <Link
                           href={item.href as LinkHref}
+                          prefetch={true}
                           className={cn(
                             navigationMenuTriggerStyle(),
                             "bg-transparent transition-colors",
@@ -153,6 +155,7 @@ export default function Header() {
                                 <NavigationMenuLink render={
                                   <Link
                                     href={(child.href || "#") as LinkHref}
+                                    prefetch={true}
                                     className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
                                     onClick={() => {
                                       if (typeof document !== "undefined") {
@@ -207,6 +210,7 @@ export default function Header() {
               {isLoggedIn ? (
                 <Link
                   href="/profile"
+                  prefetch={true}
                   className={cn(
                     "inline-flex h-10 items-center justify-center gap-2 rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
                     useDarkText
@@ -221,6 +225,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/login"
+                    prefetch={true}
                     className={cn(
                       "text-[12px] font-bold uppercase tracking-[0.15em] transition-colors duration-300",
                       useDarkText ? "text-slate-600 hover:text-blue-600" : "text-white/80 hover:text-white"
@@ -230,6 +235,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/signup"
+                    prefetch={true}
                     className={cn(
                       "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
                       useDarkText
@@ -245,7 +251,7 @@ export default function Header() {
           </div>
 
           {/* Mobile Navigation */}
-          <div className="xl:hidden flex items-center justify-end gap-2">
+          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
           {/* Mobile Language Switcher */}
           <button
             onClick={switchLocale}
@@ -267,13 +273,13 @@ export default function Header() {
           <Sheet>
             <SheetTrigger
               className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
+                "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
                 useDarkText
-                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
-                  : "text-white hover:bg-white/20 border border-white/20"
+                  ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
+                  : "text-white border border-white/20 hover:bg-white/20"
               )}
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle mobile menu</span>
             </SheetTrigger>
             <SheetContent side="right" className="bg-black/95 text-white border-l-gray-800 p-0 w-[300px]">
@@ -296,6 +302,7 @@ export default function Header() {
                         {item.href ? (
                           <Link
                             href={item.href as LinkHref}
+                            prefetch={true}
                             className="text-lg font-medium hover:text-gold block"
                           >
                             {t(item.labelKey as TranslationKey)}
@@ -311,6 +318,7 @@ export default function Header() {
                                 <li key={child.labelKey}>
                                   <Link
                                     href={(child.href || "#") as LinkHref}
+                                    prefetch={true}
                                     className="text-gray-300 hover:text-gold block py-1"
                                   >
                                     {t(child.labelKey as TranslationKey)}
@@ -330,6 +338,7 @@ export default function Header() {
                   {isLoggedIn ? (
                     <Link
                       href="/profile"
+                      prefetch={true}
                       className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
                     >
                       <User className="w-4 h-4" />
@@ -339,12 +348,14 @@ export default function Header() {
                     <>
                       <Link
                         href="/login"
+                        prefetch={true}
                         className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 rounded-full hover:bg-white/5 transition-colors"
                       >
                         Log in
                       </Link>
                       <Link
                         href="/signup"
+                        prefetch={true}
                         className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
                       >
                         Sign up

@@ -111,13 +111,13 @@ export default function GalleryPage() {
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.85] text-white">
-              <div className="overflow-hidden">
-                <span className="block gallery-hero-line">
+              <div className="overflow-hidden md:pl-2">
+                <span className="block gallery-hero-line pr-[0.15em]">
                   {locale === "th" ? "แกลเลอรี" : "Gallery"}
                 </span>
               </div>
-              <div className="overflow-hidden">
-                <span className="block gallery-hero-line text-transparent bg-clip-text bg-gradient-to-r from-gold via-orange-400 to-gold">
+              <div className="overflow-hidden md:pl-2">
+                <span className="block gallery-hero-line text-transparent bg-clip-text bg-gradient-to-r from-gold via-orange-400 to-gold pr-[0.15em]">
                   {locale === "th" ? "ภาพประทับใจ" : "Highlights"}
                 </span>
               </div>

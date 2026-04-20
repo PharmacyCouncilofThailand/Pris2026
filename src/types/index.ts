@@ -16,6 +16,7 @@ export interface Speaker {
 
 export interface EventSpeaker {
   name: string;
+  nameTh?: string;
   role: string;
   roleTh?: string;
   image: string;
@@ -32,6 +33,8 @@ export interface Event {
   locationTh: string;
   type: string;
   typeTh: string;
+  track?: string;
+  trackTh?: string;
   speakers: EventSpeaker[];
 }
 

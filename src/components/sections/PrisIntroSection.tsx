@@ -31,56 +31,65 @@ export default function PrisIntroSection() {
 
   useGSAP(
     () => {
-      // ── Title chars stagger (No scrub, simple play on scroll) ──
-      gsap.fromTo(
-        ".pris-char",
-        { y: "120%" },
-        {
-          y: "0%",
-          ease: "power3.out",
-          duration: 0.8,
-          stagger: 0.02,
-          scrollTrigger: { 
-            trigger: ".pris-title", 
-            start: "top 85%", 
-            toggleActions: "play reverse play reverse"
-          },
-        }
-      );
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        // ── Title chars stagger (No scrub, simple play on scroll) ──
+        gsap.fromTo(
+          ".pris-char",
+          { y: "120%" },
+          {
+            y: "0%",
+            ease: "power3.out",
+            duration: 0.8,
+            stagger: 0.02,
+            force3D: true, // Make sure GPU acceleration is forced
+            scrollTrigger: { 
+              trigger: ".pris-title", 
+              start: "top 85%", 
+              toggleActions: "play none none reverse" // Removed aggressive mid-screen reversing
+            },
+          }
+        );
 
-      // ── Body paragraphs (No scrub) ──
-      gsap.fromTo(
-        ".pris-body-line",
-        { y: "120%" },
-        {
-          y: "0%",
-          ease: "power3.out",
-          duration: 1,
-          stagger: 0.1,
-          scrollTrigger: { 
-            trigger: ".pris-body-wrap", 
-            start: "top 85%", 
-            toggleActions: "play reverse play reverse"
-          },
-        }
-      );
+        // ── Body paragraphs (No scrub) ──
+        gsap.fromTo(
+          ".pris-body-line",
+          { y: "120%", opacity: 0 },
+          {
+            y: "0%",
+            opacity: 1,
+            ease: "power3.out",
+            duration: 1,
+            stagger: 0.1,
+            force3D: true,
+            scrollTrigger: { 
+              trigger: ".pris-body-wrap", 
+              start: "top 85%", 
+              toggleActions: "play none none reverse"
+            },
+          }
+        );
 
-      // ── Stat Numbers Reveal ──
-      gsap.fromTo(
-        ".stat-number",
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          stagger: 0.2,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".pris-stats",
-            start: "top 85%",
-          },
-        }
-      );
+        // ── Stat Numbers Reveal ──
+        gsap.fromTo(
+          ".stat-number",
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            force3D: true,
+            scrollTrigger: {
+              trigger: ".pris-stats",
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+          }
+        );
+      });
+      return () => mm.revert();
     },
     { scope: containerRef }
   );
@@ -96,9 +105,10 @@ export default function PrisIntroSection() {
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-orange-500/[0.04] rounded-full blur-[140px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] relative flex flex-col items-center text-center">
+        
         {/* ── TITLE ── */}
         <div className="pris-title overflow-hidden py-4 -my-4 mb-10 md:mb-16">
-          <h2 className="text-[clamp(3rem,8vw,10rem)] leading-none font-black tracking-tighter uppercase">
+          <h2 className="text-[clamp(3rem,8vw,10rem)] leading-none font-black tracking-tighter uppercase pr-[0.15em]">
             {titleSegments.map((char, i) => (
                 <span key={i} className="pris-char inline-block">
                   {char === " " ? "\u00A0" : char}
@@ -210,25 +220,23 @@ export default function PrisIntroSection() {
             {/* Icon: Wine glasses / Networking */}
             <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
               <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
-                {/* Left glass */}
-                <path d="M22 18 Q22 32 30 36 L30 52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
-                <line x1="22" y1="18" x2="34" y2="18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                <path d="M34 18 Q34 32 30 36" stroke="currentColor" strokeWidth="1.6" fill="none"/>
-                <line x1="24" y1="52" x2="36" y2="52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                {/* Right glass */}
-                <path d="M46 18 Q46 32 50 36 L50 52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none"/>
-                <line x1="46" y1="18" x2="58" y2="18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                <path d="M58 18 Q58 32 50 36" stroke="currentColor" strokeWidth="1.6" fill="none"/>
-                <line x1="44" y1="52" x2="56" y2="52" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                {/* Clink sparkle lines */}
-                <line x1="37" y1="14" x2="43" y2="14" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
-                <line x1="40" y1="10" x2="40" y2="16" stroke="currentColor" strokeWidth="1.2" opacity="0.5"/>
+                {/* Board / Poster frame */}
+                <rect x="20" y="16" width="40" height="32" rx="2" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+                {/* Title line */}
+                <line x1="26" y1="24" x2="40" y2="24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                {/* Content lines inside poster */}
+                <line x1="26" y1="30" x2="54" y2="30" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+                <line x1="26" y1="36" x2="54" y2="36" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+                <line x1="26" y1="42" x2="46" y2="42" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+                {/* Stand legs */}
+                <line x1="28" y1="48" x2="24" y2="64" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                <line x1="52" y1="48" x2="56" y2="64" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                {/* Horizontal bar on stand */}
+                <line x1="26" y1="56" x2="54" y2="56" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
                 {/* Decorative dots around */}
-                <circle cx="14" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
-                <circle cx="66" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
-                <circle cx="40" cy="62" r="2" stroke="currentColor" strokeWidth="1" opacity="0.3"/>
-                <line x1="16" y1="30" x2="22" y2="25" stroke="currentColor" strokeWidth="0.8" opacity="0.2"/>
-                <line x1="64" y1="30" x2="58" y2="25" stroke="currentColor" strokeWidth="0.8" opacity="0.2"/>
+                <circle cx="14" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
+                <circle cx="66" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
+                <circle cx="40" cy="68" r="2" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
               </svg>
             </div>
 

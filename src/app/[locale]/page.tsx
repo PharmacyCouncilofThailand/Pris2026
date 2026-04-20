@@ -1,36 +1,16 @@
-"use client";
 
 import Hero from "@/components/sections/Hero";
 import StickyStackWrapper from "@/components/layout/StickyStackWrapper";
-import dynamic from "next/dynamic";
-
-const PrisIntroSection = dynamic(
-  () => import("@/components/sections/PrisIntroSection")
-);
-
-const WelcomeSection = dynamic(
-  () => import("@/components/sections/WelcomeSection")
-);
-
-const EventScheduleSection = dynamic(
-  () => import("@/components/sections/EventScheduleSection")
-);
-
-const SpeakerSection = dynamic(
-  () => import("@/components/sections/SpeakerSection")
-);
-
-const SponsorSection = dynamic(
-  () => import("@/components/sections/SponsorSection")
-);
-
-const HighlightVideoSection = dynamic(
-  () => import("@/components/sections/HighlightVideoSection")
-);
-
-const RecentMemoriesSection = dynamic(
-  () => import("@/components/sections/RecentMemoriesSection")
-);
+import {
+  PrisIntroSection,
+  WelcomeSection,
+  EventScheduleSection,
+  SpeakerSection,
+  SponsorSection,
+  HighlightVideoSection,
+  RecentMemoriesSection
+} from "@/components/sections/LazySections";
+import InViewWrapper from "@/components/layout/InViewWrapper";
 
 export default function Home() {
   return (
@@ -52,27 +32,37 @@ export default function Home() {
 
       {/* Speaker Section */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
-        <SpeakerSection />
+        <InViewWrapper minHeight="100vh">
+          <SpeakerSection />
+        </InViewWrapper>
       </div>
 
       {/* Event Schedule */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
-        <EventScheduleSection />
+        <InViewWrapper minHeight="800px">
+          <EventScheduleSection />
+        </InViewWrapper>
       </div>
 
       {/* Sponsor Marquee */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
-        <SponsorSection />
+        <InViewWrapper minHeight="400px">
+          <SponsorSection />
+        </InViewWrapper>
       </div>
 
       {/* Highlight Video */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
-        <HighlightVideoSection />
+        <InViewWrapper minHeight="600px">
+          <HighlightVideoSection />
+        </InViewWrapper>
       </div>
 
       {/* Recent Memories 2024 */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
-        <RecentMemoriesSection />
+        <InViewWrapper minHeight="800px">
+          <RecentMemoriesSection />
+        </InViewWrapper>
       </div>
 
 

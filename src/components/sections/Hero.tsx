@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MapPin, CalendarDays } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
 
@@ -34,8 +34,10 @@ export default function Hero() {
   const zoomTargetRef = useRef<SVGTSpanElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
+  const partnersRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const t = useTranslations("hero");
   const { isAuthenticated } = useAuth();
@@ -95,7 +97,9 @@ export default function Hero() {
         gsap.set(svgRef.current, { display: "none" });
         gsap.set(logoRef.current, { opacity: 1, y: 0, scale: 1 });
         gsap.set(countdownRef.current, { opacity: 1, y: 0 });
+        gsap.set(infoRef.current, { opacity: 1, y: 0 });
         gsap.set(buttonsRef.current, { opacity: 1, y: 0 });
+        gsap.set(partnersRef.current, { opacity: 1, y: 0 });
         heroCompleteRef.current = true;
         videoRef.current?.play().catch(() => {
           /* noop */
@@ -108,42 +112,23 @@ export default function Hero() {
       gsap.set(svgRef.current, { scale: 1, opacity: 1 });
       gsap.set(hintRef.current, { opacity: 0 });
       gsap.set(logoRef.current, { opacity: 0 });
+      gsap.set(infoRef.current, { opacity: 0, y: 30 });
       gsap.set(countdownRef.current, { opacity: 0, y: 30 });
       gsap.set(buttonsRef.current, { opacity: 0, y: 30 });
+      gsap.set(partnersRef.current, { opacity: 0, y: 20 });
       // Start video immediately so it shows through the text mask
       videoRef.current?.play().catch(() => { /* autoplay may be blocked */ });
 
-      // Phase 1 (Auto): Letters stagger in
-      // Wheel/touch listeners will be added AFTER letters finish
-      const addScrollListeners = () => {
-        window.addEventListener("wheel", handleWheel, { passive: false });
-        window.addEventListener("touchstart", handleTouchStart, { passive: true });
-        window.addEventListener("touchmove", handleTouchMove, { passive: false });
-      };
-
-      const maskLetters = svgRef.current.querySelectorAll(".mask-letter");
-      if (maskLetters.length) {
-        gsap.set(maskLetters, { fill: "white" });
-        gsap.to(maskLetters, {
-          fill: "black",
-          duration: 0.35,
-          stagger: 0.08,
-          ease: "power2.out",
-          delay: 0.4,
-          onComplete: () => {
-            gsap.to(hintRef.current, {
-              opacity: 1,
-              duration: 0.5,
-              ease: "power2.out",
-            });
-            // Now allow scrolling
-            addScrollListeners();
-          },
-        });
-      } else {
-        gsap.set(hintRef.current, { opacity: 1 });
-        addScrollListeners();
-      }
+      // Device settings
+      const isMobile = window.innerWidth <= 1024; // Treat tablets as mobile for scrolling performance
+      const { initialScale, initialY } = isMobile
+        ? HERO_CFG.mobile
+        : HERO_CFG.desktop;
+      gsap.set(logoRef.current, {
+        opacity: 0,
+        y: initialY,
+        scale: initialScale,
+      });
 
       // Calculate zoom origin (center of "S")
       const calcOrigin = () => {
@@ -158,20 +143,22 @@ export default function Hero() {
       calcOrigin();
       document.fonts?.ready.then(calcOrigin);
 
-      // Device settings
-      const isMobile = window.innerWidth <= 768;
-      const { initialScale, initialY } = isMobile
-        ? HERO_CFG.mobile
-        : HERO_CFG.desktop;
-      gsap.set(logoRef.current, {
-        opacity: 0,
-        y: initialY,
-        scale: initialScale,
-      });
-
-      // Phase 2 (Wheel-driven): Zoom through "S"
       // Lock scroll from the start; wheel events drive the animation
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
+      const preventKeyScroll = (e: KeyboardEvent) => {
+        if (['Space', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) {
+          e.preventDefault();
+        }
+      };
+      
+      const preventPostZoomWheel = (e: WheelEvent) => e.preventDefault();
+      const preventTouchMove = (e: TouchEvent | Event) => e.preventDefault();
+
+      // Block keyboard scrolling immediately
+      window.addEventListener("keydown", preventKeyScroll, { passive: false });
+      window.addEventListener("touchmove", preventTouchMove, { passive: false });
 
       const tlZoom = gsap.timeline({ paused: true });
       tlZoom
@@ -194,65 +181,53 @@ export default function Hero() {
         onComplete: () => {
           // Unlock scroll & show navbar
           document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          window.removeEventListener("keydown", preventKeyScroll);
+          window.removeEventListener("wheel", preventPostZoomWheel);
+          window.removeEventListener("touchmove", preventTouchMove);
           document.body.classList.remove("hero-playing");
           heroCompleteRef.current = true;
           markPlayed();
-          videoRef.current?.play().catch(() => {
-            /* noop */
-          });
+          videoRef.current?.play().catch(() => { /* noop */ });
           gsap.set(svgRef.current, { display: "none" });
         },
       });
-      tlAuto
-        .to(
-          logoRef.current,
-          {
-            opacity: 1,
-            y: initialY,
-            scale: initialScale,
-            ease: "power2.out",
-            duration: 0.8,
-          },
-          0,
-        )
-        .to(
-          logoRef.current,
-          { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6 },
-          1.0,
-        )
-        .fromTo(
-          countdownRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 },
-          1.3,
-        )
-        .fromTo(
-          buttonsRef.current,
-          { opacity: 0, y: 30 },
-          { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 },
-          1.5,
-        );
+      if (isMobile) {
+        // Mobile-optimized: Single smooth continuous push (avoids the 0.2s pause gap that looks like stutter)
+        tlAuto
+          .to(logoRef.current, { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
+          .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
+          .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
+          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power3.out", duration: 0.8 }, 1.0)
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.4);
+      } else {
+        // Desktop: Two-phase motion (syncs with the SVG mask scroll)
+        tlAuto
+          .to(logoRef.current, { opacity: 1, y: initialY, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
+          .to(logoRef.current, { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
+          .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
+          .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
+          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.7 }, 1.5)
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.9);
+      }
 
       // Wheel-driven zoom control
       let scrollAccum = 0;
-      // On mobile, require much less total scroll distance to finish the zoom
-      const maxScroll = window.innerHeight * (isMobile ? 0.35 : HERO_CFG.zoomScrollDistance);
+      const maxScroll = window.innerHeight * HERO_CFG.zoomScrollDistance;
       let autoTriggered = false;
 
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        if (autoTriggered) return; // Already triggered auto-play, ignore
+        if (autoTriggered) return; // Already triggered
 
-        // Accumulate scroll delta (clamp between 0 and max)
         scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + e.deltaY));
         const progress = scrollAccum / maxScroll;
         tlZoom.progress(progress);
 
-        // Trigger auto-play when zoom reaches threshold
         if (progress >= HERO_CFG.autoTriggerAt) {
           autoTriggered = true;
           window.removeEventListener("wheel", handleWheel);
-          // Finish zoom to 100% then play brand reveal
+          window.addEventListener("wheel", preventPostZoomWheel, { passive: false });
           gsap.to(tlZoom, {
             progress: 1,
             duration: 0.4,
@@ -262,43 +237,56 @@ export default function Hero() {
         }
       };
 
-      // Also handle touch for mobile
-      let touchStartY = 0;
-      const handleTouchStart = (e: TouchEvent) => {
-        touchStartY = e.touches[0].clientY;
+      const triggerAutoPlay = () => {
+        autoTriggered = true;
+        gsap.set(svgRef.current, { display: "none" });
+        gsap.set(hintRef.current, { display: "none" });
+        tlAuto.play();
       };
-      const handleTouchMove = (e: TouchEvent) => {
-        e.preventDefault();
-        if (autoTriggered) return;
-        
-        // Multiply touch delta by 2.5 to make single swipes more effective
-        const delta = (touchStartY - e.touches[0].clientY) * 2.5;
-        touchStartY = e.touches[0].clientY;
 
-        scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + delta));
-        const progress = scrollAccum / maxScroll;
-        tlZoom.progress(progress);
-
-        if (progress >= HERO_CFG.autoTriggerAt) {
-          autoTriggered = true;
-          window.removeEventListener("touchmove", handleTouchMove);
-          window.removeEventListener("touchstart", handleTouchStart);
-          gsap.to(tlZoom, {
-            progress: 1,
-            duration: 0.4,
-            ease: "power2.in",
-            onComplete: () => { tlAuto.play(); },
-          });
+      const bindInteractions = () => {
+        if (isMobile) {
+          triggerAutoPlay();
+        } else {
+          window.addEventListener("wheel", handleWheel, { passive: false });
         }
       };
+
+      // Phase 1 (Auto): Letters stagger in
+      const maskLetters = svgRef.current.querySelectorAll(".mask-letter");
+      if (isMobile) {
+        // Mobile optimization: Skip SVG Mask and Scroll Zoom entirely for performance
+        triggerAutoPlay();
+      } else if (maskLetters.length) {
+        gsap.set(maskLetters, { fill: "white" });
+        gsap.to(maskLetters, {
+          fill: "black",
+          duration: 0.35,
+          stagger: 0.08,
+          ease: "power2.out",
+          delay: 0.4,
+          onComplete: () => {
+            if (!isMobile) {
+              gsap.to(hintRef.current, { opacity: 1, duration: 0.5, ease: "power2.out" });
+            }
+            bindInteractions();
+          },
+        });
+      } else {
+        if (!isMobile) gsap.set(hintRef.current, { opacity: 1 });
+        bindInteractions();
+      }
 
       // NOTE: wheel/touch listeners are added in addScrollListeners()
       // after the letter stagger animation completes
 
       return () => {
         window.removeEventListener("wheel", handleWheel);
-        window.removeEventListener("touchstart", handleTouchStart);
-        window.removeEventListener("touchmove", handleTouchMove);
+        window.removeEventListener("wheel", preventPostZoomWheel);
+        window.removeEventListener("keydown", preventKeyScroll);
+        window.removeEventListener("touchmove", preventTouchMove);
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
         tlZoom.kill();
         tlAuto.kill();
       };
@@ -307,70 +295,178 @@ export default function Hero() {
   );
 
   return (
-    <section
+    <section 
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-black flex justify-center items-center isolate"
+      className="relative w-full min-h-[100svh] overflow-hidden bg-black flex flex-col justify-center items-center isolate"
     >
-      {/* Background Video */}
+      {/* Background: Static image on mobile, Video on desktop */}
+      <Image
+        src="/assets/Img/BG/BG-mobile-1080.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none lg:hidden"
+      />
       <video
         ref={videoRef}
-        src="/assets/Img/BG/30fps.mp4"
-        poster="/assets/Img/BG/BG-4500x2281.webp"
-        className="absolute inset-0 w-full h-full object-cover transform-gpu opacity-90 z-0 pointer-events-none"
+        src="/assets/Img/BG/New BG 30fps.mp4"
+        className="absolute inset-0 w-full h-full object-cover transform-gpu opacity-90 z-0 pointer-events-none hidden lg:block"
         muted
         loop
         playsInline
         preload="metadata"
       />
 
-      {/* Hero Content (Behind mask) */}
-      <div className="absolute inset-0 w-full h-full z-0 flex flex-col justify-center items-center pointer-events-auto">
-        <div ref={logoRef} className="mb-8 md:mb-10 z-[2]" style={{ opacity: 0 }}>
+      {/* Subtle vignette overlay for depth */}
+      <div className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)" }}
+      />
+
+      {/* Hero Content */}
+      <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
+
+        {/* Main Content Wrapper (Centered) */}
+        <div className="flex-1 w-full flex flex-col justify-center items-center py-2">
+
+        {/* Logo */}
+        <div
+          ref={logoRef}
+          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6"
+          style={{ opacity: 0 }}
+        >
           <Image
             src="/assets/Img/logo/Pris2026-logo.svg"
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
-            className="w-full max-w-[340px] md:max-w-[550px] h-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+            className="w-[85vw] max-w-[420px] md:max-w-[680px] h-auto drop-shadow-2xl"
             priority
           />
         </div>
 
+        {/* Thin divider */}
+        <div
+          ref={infoRef}
+          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4"
+          style={{ opacity: 0 }}
+        >
+          {/* Horizontal rule */}
+          <div className="w-24 h-px bg-white/20" />
+
+          {/* Date + Location — one clean row */}
+          <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-6 text-white/80 text-xs sm:text-sm tracking-widest uppercase font-medium text-center">
+            <span className="flex items-center gap-2">
+              <CalendarDays className="w-3.5 h-3.5 opacity-70 shrink-0" />
+              15 – 16 October 2025
+            </span>
+            <span className="flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 opacity-70 shrink-0" />
+              IMPACT Challenger, Bangkok
+            </span>
+          </div>
+
+          {/* Organizer — subtle, small */}
+          <p className="text-white/50 text-[10px] sm:text-xs tracking-[0.2em] uppercase text-center mt-1 md:mt-2">
+            Organized by The Pharmacy Council of Thailand
+          </p>
+        </div>
+
+        {/* Countdown */}
         <div
           ref={countdownRef}
-          className="w-full flex justify-center mb-8 z-[2]"
+          className="w-full flex justify-center mt-4 md:mt-6 mb-3 md:mb-5 z-[2]"
           style={{ opacity: 0 }}
         >
-          <Countdown />
+          <div className="scale-[0.88] md:scale-[0.95] origin-center">
+            <Countdown />
+          </div>
         </div>
 
+        {/* Register Button */}
         <div
           ref={buttonsRef}
-          className="flex flex-col md:flex-row gap-4 md:gap-5 z-[2] mt-4"
+          className="z-[2]"
           style={{ opacity: 0 }}
         >
-          <Link 
+          <Link
             href="/registration"
             onClick={handleRegisterClick}
-            className="group relative inline-flex items-center justify-center bg-white/[0.1] md:bg-white/[0.05] backdrop-blur-sm md:backdrop-blur-[20px] text-white border border-white/20 px-8 py-4 sm:px-10 sm:py-5 md:px-12 rounded-full overflow-hidden transition-all duration-500 hover:border-white/30 hover:bg-white/[0.1] hover:scale-[1.03] shadow-[0_12px_40px_rgba(0,85,255,0.15)]"
+            className="hero-register-btn"
           >
-            {/* Decorative gradient overlay matching countdown */}
-            <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />
-
-            <span className="relative z-10 text-sm sm:text-base md:text-lg font-bold uppercase tracking-[0.2em] flex items-center gap-4">
+            <span className="text_button flex items-center gap-4">
               {t("registerNow")}
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 group-hover:bg-white/20 rounded-full flex items-center justify-center transition-all duration-500 group-hover:translate-x-1">
-                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </div>
+              <span className="hero-register-btn__arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </span>
-
-            {/* Bottom glowing line matching countdown */}
-            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-100" />
-            
-            {/* Hover bottom glowing line intensify */}
-            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </Link>
         </div>
+        </div>
+
+        {/* ── Official Partners ── */}
+        <div
+          ref={partnersRef}
+          className="w-full flex justify-center mt-2 md:mt-4 flex-col items-center overflow-hidden pb-1"
+          style={{ opacity: 0 }}
+        >
+          {/* Subtle top border */}
+          <div className="w-full border-t border-white/8 mb-2 md:mb-3" />
+
+          <span className="text-white/40 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.35em] mb-2 md:mb-3">
+            Official Partners
+          </span>
+
+          {/* Partner logos marquee — no fade edges */}
+          <div className="relative w-full max-w-3xl mx-auto overflow-hidden">
+            <div className="flex w-max animate-partner-scroll items-center will-change-transform transform-gpu py-1">
+              {[...Array(3)].map((_, i) => (
+                <React.Fragment key={i}>
+                  {[
+                    { name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", scale: "scale-[1.4]" },
+                    { name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", scale: "scale-[1.5]" },
+                    { name: "Pharmacy Administration College", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", scale: "" },
+                    { name: "Consumer Protection Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยคุ้มครอง.png", scale: "scale-[1.4]" },
+                    { name: "Community Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png", scale: "" },
+                    { name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", scale: "" },
+                    { name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", scale: "" },
+                    { name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", scale: "scale-[1.4]" },
+                  ].map((partner, index) => (
+                    <div
+                      key={`partner-${i}-${index}`}
+                      className="mx-6 md:mx-9 flex items-center justify-center flex-shrink-0"
+                    >
+                      <div className="relative h-16 w-16 md:h-[65px] md:w-[65px] flex items-center justify-center">
+                        <Image
+                          src={partner.logo}
+                          alt={partner.name}
+                          fill
+                          sizes="80px"
+                          className={`object-contain ${partner.scale}`}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes partner-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-33.333%, 0, 0); }
+          }
+          .animate-partner-scroll {
+            animation: partner-scroll 35s linear infinite;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .animate-partner-scroll {
+              animation: none;
+            }
+          }
+        `}} />
       </div>
 
       {/* SVG Mask Container */}
@@ -429,9 +525,9 @@ export default function Hero() {
         className="absolute bottom-8 md:bottom-12 left-0 w-full flex flex-col items-center justify-center z-[2] transition-opacity duration-300"
         style={{ opacity: 0 }}
       >
-        <div className="flex flex-col items-center gap-4 text-black text-xs font-medium uppercase tracking-[4px]">
+        <div className="flex flex-col items-center gap-3 text-black text-[9px] font-medium uppercase tracking-[5px]">
           <span>{t('scrollDown')}</span>
-          <ChevronDown className="w-5 h-5 text-black animate-bounce" />
+          <ChevronDown className="w-4 h-4 text-black animate-bounce" />
         </div>
       </div>
     </section>
