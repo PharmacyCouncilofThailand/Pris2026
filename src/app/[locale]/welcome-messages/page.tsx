@@ -68,7 +68,7 @@ export default function WelcomeMessagesPage() {
               className={`speaker-entry relative w-full flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 md:gap-16 items-start group`}
             >
               {/* Image Side - Contained with rounded corners */}
-              <div className="w-full lg:w-5/12 aspect-[3/4] md:aspect-[4/5] relative overflow-hidden rounded-2xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-black/10">
+              <div className="speaker-img-container w-full lg:w-5/12 aspect-[3/4] md:aspect-[4/5] relative overflow-hidden rounded-2xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-black/10">
                 <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-700 z-10 pointer-events-none" />
                 <Image
                   src={speaker.image}
