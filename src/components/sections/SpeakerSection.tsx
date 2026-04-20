@@ -104,6 +104,7 @@ export default function SpeakerSection() {
         slideShadows: false,
       },
       loop: true,
+      // @ts-expect-error - Required to fix loop blank space issue but not in TS definition
       loopedSlides: 5,
       autoplay: {
         delay: 5000,

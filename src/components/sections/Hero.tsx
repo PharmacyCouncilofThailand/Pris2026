@@ -295,9 +295,9 @@ export default function Hero() {
   );
 
   return (
-    <section
+    <section 
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-black flex justify-center items-center isolate"
+      className="relative w-full min-h-[100svh] overflow-hidden bg-black flex flex-col justify-center items-center isolate"
     >
       {/* Background: Static image on mobile, Video on desktop */}
       <Image
@@ -324,12 +324,15 @@ export default function Hero() {
       />
 
       {/* Hero Content */}
-      <div className="absolute inset-0 w-full h-full z-0 flex flex-col justify-center items-center pointer-events-auto px-4">
+      <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
+
+        {/* Main Content Wrapper (Centered) */}
+        <div className="flex-1 w-full flex flex-col justify-center items-center py-2">
 
         {/* Logo */}
         <div
           ref={logoRef}
-          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-6 md:mb-8"
+          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6"
           style={{ opacity: 0 }}
         >
           <Image
@@ -337,7 +340,7 @@ export default function Hero() {
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
-            className="w-full max-w-[340px] md:max-w-[680px] h-auto drop-shadow-2xl"
+            className="w-[85vw] max-w-[420px] md:max-w-[680px] h-auto drop-shadow-2xl"
             priority
           />
         </div>
@@ -345,26 +348,26 @@ export default function Hero() {
         {/* Thin divider */}
         <div
           ref={infoRef}
-          className="z-[2] w-full max-w-xl flex flex-col items-center gap-4 md:gap-5"
+          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4"
           style={{ opacity: 0 }}
         >
           {/* Horizontal rule */}
           <div className="w-24 h-px bg-white/20" />
 
           {/* Date + Location — one clean row */}
-          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-5 text-white/75 text-[10px] sm:text-xs tracking-widest uppercase font-medium text-center">
-            <span className="flex items-center gap-1.5">
-              <CalendarDays className="w-3 h-3 opacity-60 shrink-0" />
+          <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-6 text-white/80 text-xs sm:text-sm tracking-widest uppercase font-medium text-center">
+            <span className="flex items-center gap-2">
+              <CalendarDays className="w-3.5 h-3.5 opacity-70 shrink-0" />
               15 – 16 October 2025
             </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-3 h-3 opacity-60 shrink-0" />
+            <span className="flex items-center gap-2">
+              <MapPin className="w-3.5 h-3.5 opacity-70 shrink-0" />
               IMPACT Challenger, Bangkok
             </span>
           </div>
 
           {/* Organizer — subtle, small */}
-          <p className="text-white/40 text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-center">
+          <p className="text-white/50 text-[10px] sm:text-xs tracking-[0.2em] uppercase text-center mt-1 md:mt-2">
             Organized by The Pharmacy Council of Thailand
           </p>
         </div>
@@ -372,10 +375,10 @@ export default function Hero() {
         {/* Countdown */}
         <div
           ref={countdownRef}
-          className="w-full flex justify-center mt-6 md:mt-8 mb-5 md:mb-7 z-[2]"
+          className="w-full flex justify-center mt-4 md:mt-6 mb-3 md:mb-5 z-[2]"
           style={{ opacity: 0 }}
         >
-          <div className="scale-[0.78] md:scale-[0.82] origin-center">
+          <div className="scale-[0.88] md:scale-[0.95] origin-center">
             <Countdown />
           </div>
         </div>
@@ -399,17 +402,18 @@ export default function Hero() {
             </span>
           </Link>
         </div>
+        </div>
 
         {/* ── Official Partners ── */}
         <div
           ref={partnersRef}
-          className="absolute bottom-0 left-0 right-0 z-[2] flex flex-col items-center w-full overflow-hidden pb-5 md:pb-7"
+          className="w-full flex justify-center mt-2 md:mt-4 flex-col items-center overflow-hidden pb-1"
           style={{ opacity: 0 }}
         >
           {/* Subtle top border */}
-          <div className="w-full border-t border-white/8 mb-4 md:mb-5" />
+          <div className="w-full border-t border-white/8 mb-2 md:mb-3" />
 
-          <span className="text-white/35 text-[8px] md:text-[9px] font-semibold uppercase tracking-[0.35em] mb-3.5">
+          <span className="text-white/40 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.35em] mb-2 md:mb-3">
             Official Partners
           </span>
 
@@ -432,13 +436,13 @@ export default function Hero() {
                       key={`partner-${i}-${index}`}
                       className="mx-6 md:mx-9 flex items-center justify-center flex-shrink-0"
                     >
-                      <div className="h-14 w-14 md:h-[60px] md:w-[60px] flex items-center justify-center">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                      <div className="relative h-16 w-16 md:h-[65px] md:w-[65px] flex items-center justify-center">
+                        <Image
                           src={partner.logo}
                           alt={partner.name}
-                          className={`object-contain w-full h-full ${partner.scale}`}
-                          loading="lazy"
+                          fill
+                          sizes="80px"
+                          className={`object-contain ${partner.scale}`}
                         />
                       </div>
                     </div>

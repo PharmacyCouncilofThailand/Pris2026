@@ -53,8 +53,8 @@ export default function SignUpTypePage() {
           </div>
 
           <div className="relative z-10 fade-in-element">
-            <h2 className="text-white text-6xl font-serif tracking-tight leading-[1.05] mb-6">
-              Join the<br />Evolution
+            <h2 className="text-white text-6xl font-bold tracking-tight leading-[1.05] mb-6">
+              PRIS 2026
             </h2>
             <p className="text-white/70 text-sm font-medium leading-relaxed max-w-sm">
               Create an account to securely access submissions, schedules, and personalized conference experiences.
@@ -86,14 +86,14 @@ export default function SignUpTypePage() {
                   alt="PRIS 2026 Logo"
                   width={140}
                   height={56}
-                  className="h-9 w-auto object-contain brightness-0"
+                  className="h-14 w-auto object-contain"
                   priority
                 />
               </Link>
             </div>
 
             <div className="text-center mb-12 fade-in-element">
-              <h1 className="text-4xl lg:text-[2.75rem] font-serif tracking-tight text-gray-900 mb-3 leading-tight">
+              <h1 className="text-4xl lg:text-[2.75rem] font-bold tracking-tight text-gray-900 mb-3 leading-tight">
                 Create Account
               </h1>
               <p className="text-sm font-medium text-gray-500">
@@ -121,7 +121,20 @@ export default function SignUpTypePage() {
               >
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">Pharmacist</h3>
-                  <p className="text-sm font-medium text-gray-500">For medical professionals</p>
+                  <p className="text-sm font-medium text-gray-500">For licensed pharmacists</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
+                   <div className="text-[10px] font-bold uppercase tracking-widest">Go</div>
+                </div>
+              </Link>
+
+              <Link 
+                href="/signup/healthcare" 
+                className="group flex items-center justify-between p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+              >
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">Healthcare Professional</h3>
+                  <p className="text-sm font-medium text-gray-500">For healthcare personnel</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
                    <div className="text-[10px] font-bold uppercase tracking-widest">Go</div>

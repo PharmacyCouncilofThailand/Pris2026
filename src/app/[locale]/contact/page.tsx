@@ -38,9 +38,9 @@ export default function ContactPage() {
   const copy: PageCopy =
     locale === "th"
       ? {
-          eyebrow: "การติดต่อ",
-          title1: "Get in",
-          title2: "Touch",
+          eyebrow: "ช่องทางการติดต่อ",
+          title1: "ติดต่อ",
+          title2: "พวกเรา",
           desc: "มีข้อสงสัยเกี่ยวกับการลงทะเบียน การส่งผลงาน หรือการสนับสนุน? ติดต่อทีมงาน PRIS 2026 ได้ตามช่องทางด้านล่าง",
           emailLabel: "อีเมล",
           emailValue: "pharthai@pharmacycouncil.org",
@@ -61,9 +61,9 @@ export default function ContactPage() {
           formSubmit: "ส่งข้อความ",
         }
       : {
-          eyebrow: "Contact Us",
-          title1: "Get in",
-          title2: "Touch",
+          eyebrow: "Get in Touch",
+          title1: "CONTACT",
+          title2: "US",
           desc: "Have a question about registration, abstract submission, or sponsorship? Reach out to the PRIS 2026 organizing team.",
           emailLabel: "Email Us",
           emailValue: "pharthai@pharmacycouncil.org",
@@ -94,7 +94,6 @@ export default function ContactPage() {
       className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden w-full relative"
     >
       <PageHero
-        eyebrowSub={copy.eyebrow}
         title1={copy.title1}
         title2={copy.title2}
         subtitle={copy.desc}

@@ -65,7 +65,7 @@ export default function WelcomeMessagesPage() {
           return (
             <div 
               key={speaker.id} 
-              className={`speaker-entry relative w-full flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 md:gap-16 items-center group`}
+              className={`speaker-entry relative w-full flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 md:gap-16 items-start group`}
             >
               {/* Image Side - Contained with rounded corners */}
               <div className="w-full lg:w-5/12 aspect-[3/4] md:aspect-[4/5] relative overflow-hidden rounded-2xl bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-black/10">
@@ -81,7 +81,7 @@ export default function WelcomeMessagesPage() {
               </div>
 
               {/* Content Side */}
-              <div className="w-full lg:w-7/12 flex flex-col justify-center relative py-8">
+              <div className="w-full lg:w-7/12 flex flex-col justify-start relative">
                 {/* Decorative background typography removed per user request */}
 
                 <div className="speaker-content relative z-10 w-full">
@@ -108,10 +108,7 @@ export default function WelcomeMessagesPage() {
                   </div>
 
                   {/* Elegant Signature Line */}
-                  <div className="mt-10 md:mt-12 pt-8 border-t border-black/10 flex items-center gap-4">
-                    <div className="w-12 h-px bg-black/20" />
-                    <span className="font-outfit text-black/40 uppercase tracking-[0.2em] text-[10px] md:text-xs">{t("signature")}</span>
-                  </div>
+                  
                 </div>
               </div>
             </div>

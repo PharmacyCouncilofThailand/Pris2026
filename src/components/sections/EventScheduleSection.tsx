@@ -256,13 +256,13 @@ export default function EventScheduleSection() {
         </div>
 
         {/* ─── The Ultimate Vertical Timeline ─── */}
-        <div ref={containerRef} className="w-full flex flex-col gap-16 md:gap-20">
+        <div ref={containerRef} className="w-full flex flex-col gap-10 md:gap-20">
           
           {timeGroups.length > 0 ? (
             timeGroups.map((group, groupIdx) => (
               <div 
                 key={groupIdx} 
-                className="timeline-row grid grid-cols-1 lg:grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr] gap-6 md:gap-10 lg:gap-16 pt-8 md:pt-0 relative"
+                className="timeline-row grid grid-cols-1 lg:grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr] gap-4 md:gap-10 lg:gap-16 pt-6 md:pt-0 relative"
               >
                 {/* Time Column (Sticky on Desktop) */}
                 <div className="relative">
@@ -272,15 +272,16 @@ export default function EventScheduleSection() {
                   <div className="lg:sticky lg:top-32 lg:py-2 flex items-center lg:items-start gap-4">
                      {/* Node dot (Desktop only) */}
                      <div className="hidden lg:block absolute right-[-44px] xl:right-[-36px] top-6 w-2 h-2 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,0.8)]"></div>
-                     <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-gold tracking-tighter">
-                       {group.time.split(" – ")[0]}
-                     </h3>
-                     {/* Show end time subtly if exists */}
-                     {group.time.split(" – ")[1] && (
-                        <span className="text-white/30 text-sm font-semibold mt-2 hidden lg:block">
-                          END {group.time.split(" – ")[1]}
-                        </span>
-                     )}
+                     <div className="flex flex-row items-baseline gap-2 text-gold">
+                       <span className="text-4xl md:text-5xl font-black tracking-tighter">
+                         {group.time.split(" – ")[0]}
+                       </span>
+                       {group.time.split(" – ")[1] && (
+                         <span className="text-2xl md:text-3xl font-bold opacity-60 tracking-tight whitespace-nowrap">
+                           – {group.time.split(" – ")[1]}
+                         </span>
+                       )}
+                     </div>
                   </div>
                 </div>
 

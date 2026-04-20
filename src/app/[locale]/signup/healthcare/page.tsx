@@ -6,39 +6,23 @@ import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { UploadCloud } from "lucide-react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || '';
 
-export default function StudentSignUpPage() {
+export default function HealthcareSignUpPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const router = useRouter();
   const { login } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-  const [studentLevel, setStudentLevel] = useState("");
-  const [isLevelOpen, setIsLevelOpen] = useState(false);
-  const levelRef = useRef<HTMLDivElement>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
   const [isLoading, setIsLoading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [selectedFileName, setSelectedFileName] = useState('');
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (levelRef.current && !levelRef.current.contains(e.target as Node)) {
-        setIsLevelOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useGSAP(() => {
@@ -122,7 +106,7 @@ export default function StudentSignUpPage() {
 
             <div className="text-center mb-10 fade-in-up">
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
-                Join as Student
+                Join as Healthcare Professional
               </h1>
               <p className="text-sm font-medium text-gray-500">
                 Please fill in your details to register your account
@@ -145,10 +129,6 @@ export default function StudentSignUpPage() {
                 toast.error('Passwords do not match.');
                 return;
               }
-              if (!studentLevel) {
-                toast.error('Please select a student level.');
-                return;
-              }
 
               setIsLoading(true);
               try {
@@ -157,7 +137,7 @@ export default function StudentSignUpPage() {
                 fd.append('lastName', lastName);
                 fd.append('email', email);
                 fd.append('password', password);
-                fd.append('accountType', studentLevel);
+                fd.append('accountType', 'medicalProfessional');
                 if (organization) fd.append('organization', organization);
                 if (phone) fd.append('phone', phone);
                 if (turnstileToken) fd.append('recaptchaToken', turnstileToken);
@@ -171,10 +151,6 @@ export default function StudentSignUpPage() {
                     fd.append('passportId', idInput);
                   }
                 }
-
-                // File upload
-                const file = fileRef.current?.files?.[0];
-                if (file) fd.append('verificationDoc', file);
 
                 const res = await fetch(`${API_URL}/auth/register`, {
                   method: 'POST',
@@ -190,14 +166,11 @@ export default function StudentSignUpPage() {
                   return;
                 }
 
-                if (data.user?.status === 'pending_approval') {
-                  router.push('/signup/pending');
-                } else {
-                  login(data.user, data.token);
-                  const urlParams = new URLSearchParams(window.location.search);
-                  const redirect = urlParams.get('redirect') || '/';
-                  router.push(redirect);
-                }
+                toast.success('Account created successfully!');
+                login(data.user, data.token);
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '/';
+                router.push(redirect);
               } catch {
                 toast.error('Network error. Please check your connection.');
                 turnstileRef.current?.reset();
@@ -263,69 +236,14 @@ export default function StudentSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="organization">
-                  University / Institution
+                  Organization / Affiliation
                 </label>
                 <input
                   type="text"
                   id="organization"
-                  placeholder="e.g. Chulalongkorn University"
+                  placeholder="Organization or Affiliation"
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                 />
-              </div>
-
-              <div className="relative" ref={levelRef}>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
-                  Student Level <span className="text-red-500">*</span>
-                </label>
-                <input type="hidden" name="studentLevel" value={studentLevel} required />
-                <button
-                  type="button"
-                  onClick={() => setIsLevelOpen(!isLevelOpen)}
-                  className={`w-full text-left bg-[#f8f9fc] border rounded-2xl py-3.5 px-5 text-sm font-medium outline-none transition-all flex items-center justify-between ${
-                    isLevelOpen ? "bg-white border-gray-200 ring-4 ring-gray-100" : "border-transparent"
-                  } ${studentLevel ? "text-gray-900" : "text-gray-400"}`}
-                >
-                  <span>{studentLevel === "undergraduateStudent" ? "Undergraduate" : studentLevel === "postgraduateStudent" ? "Postgraduate" : "Select student level"}</span>
-                  <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isLevelOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {isLevelOpen && (
-                  <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
-                    {[
-                      { value: "undergraduateStudent", label: "Undergraduate" },
-                      { value: "postgraduateStudent", label: "Postgraduate" },
-                    ].map((opt) => (
-                      <button
-                        key={opt.value}
-                        type="button"
-                        onClick={() => { setStudentLevel(opt.value); setIsLevelOpen(false); }}
-                        className={`w-full text-left px-5 py-3 text-sm font-medium transition-colors ${
-                          studentLevel === opt.value
-                            ? "bg-gray-900 text-white"
-                            : "text-gray-700 hover:bg-[#f8f9fc]"
-                        }`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* File Upload */}
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2">
-                  Student Verification Document (PDF, JPG, PNG) <span className="text-red-500">*</span>
-                </label>
-                <div className="relative group cursor-pointer">
-                  <input ref={fileRef} type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setSelectedFileName(e.target.files?.[0]?.name || '')} />
-                  <div className={`w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed rounded-2xl transition-all ${selectedFileName ? 'border-black bg-gray-50' : 'border-gray-300 bg-[#f8f9fc] group-hover:bg-gray-50 group-hover:border-black'}`}>
-                    <UploadCloud className={`w-5 h-5 transition-colors ${selectedFileName ? 'text-black' : 'text-gray-400 group-hover:text-black'}`} />
-                    <span className={`text-sm font-medium transition-colors truncate max-w-[80%] ${selectedFileName ? 'text-black' : 'text-gray-500 group-hover:text-black'}`}>{selectedFileName || 'Choose File'}</span>
-                  </div>
-                </div>
-                <p className="text-xs font-semibold text-gray-400 mt-2">{selectedFileName ? 'Click to change file' : 'Select student certificate or related document'}</p>
               </div>
 
               <div>
