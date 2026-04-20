@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import Image from "next/image";
 import { ChevronDown, MapPin } from "lucide-react";
 import gsap from "gsap";
@@ -11,116 +11,121 @@ import { Button } from "@/components/ui/button";
 import { scheduleData } from "@/data/scheduleData";
 import { useTranslations, useLocale } from "next-intl";
 import { SectionTitle } from "@/components/elements/SectionTitle";
-import { EventSpeaker } from "@/types";
+import { EventSpeaker, Event } from "@/types";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-function EventRow({ event, locale }: { event: any; locale: string }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+const TRACKS = [
+  { id: "All Tracks", label: "All Tracks", labelTh: "ทั้งหมด" },
+  { id: "Main Stage", label: "Main Stage", labelTh: "เวทีหลัก" },
+  { id: "Room 1", label: "Room 1", labelTh: "ห้อง 1" },
+  { id: "Room 2", label: "Room 2", labelTh: "ห้อง 2" },
+  { id: "Room 3", label: "Room 3", labelTh: "ห้อง 3" },
+];
+
+function getTrackColor(track?: string) {
+  switch (track) {
+    case "Main Stage": 
+      return { bg: "bg-amber-500/10", border: "border-amber-500/30", text: "text-amber-400", strip: "bg-amber-500" };
+    case "Room 1": 
+      return { bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-300", strip: "bg-blue-500" };
+    case "Room 2": 
+      return { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-300", strip: "bg-emerald-500" };
+    case "Room 3": 
+      return { bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-300", strip: "bg-purple-500" };
+    case "Common":
+    default: 
+      return { bg: "bg-white/5", border: "border-white/10", text: "text-white/60", strip: "bg-gold" };
+  }
+}
+
+function EventCard({ event, locale }: { event: Event; locale: string }) {
+  const tColors = getTrackColor(event.track);
+  const title = locale === 'th' && event.titleTh ? event.titleTh : event.title;
+  const description = locale === 'th' ? event.descriptionTh : event.description;
+  const location = locale === 'th' ? event.locationTh : event.location;
+  const type = locale === 'th' ? event.typeTh : event.type;
+  const trackName = locale === 'th' ? event.trackTh : event.track;
 
   return (
-    <div className="schedule-row group border-b border-white/10 py-8 sm:py-10 md:py-14 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-12 relative hover:bg-white/[0.02] transition-colors duration-500">
-      {/* Time & Type */}
-      <div className="lg:w-1/4 flex-shrink-0 flex flex-row lg:flex-col justify-between lg:justify-start items-baseline lg:items-start gap-3 sm:gap-4">
-        <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gold tracking-tight">
-          {event.time}
-        </h3>
-        <span className="px-2.5 sm:px-3 py-1 rounded-full border border-white/20 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-white/50">
-          {locale === "th" && event.typeTh ? event.typeTh : event.type}
-        </span>
-      </div>
+    <div className="group relative bg-[#0b1a4a]/40 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-[#0b1a4a]/60 hover:border-white/20 hover:shadow-[0_0_30px_rgba(212,175,55,0.05)] transition-all duration-500 overflow-hidden w-full">
+       {/* Left Color Strip Indicator */}
+       <div className={cn("absolute top-0 left-0 w-1.5 h-full transition-colors duration-500", tColors.strip)}></div>
+       
+       {/* Header Tags */}
+       <div className="flex flex-wrap items-center gap-3 mb-5">
+           {event.track !== "Common" && event.track && (
+             <span className={cn("px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border", tColors.bg, tColors.text, tColors.border)}>
+               {trackName}
+             </span>
+           )}
+           <span className="px-3 py-1 rounded-full text-[10px] md:text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] bg-white/5 border border-white/10">
+             {type}
+           </span>
+       </div>
 
-      {/* Event Content */}
-      <div className="lg:w-2/4 flex flex-col">
-        <h4 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4 leading-snug group-hover:text-gold transition-colors duration-300">
-          {locale === "th" && event.titleTh ? event.titleTh : event.title}
-        </h4>
-        {(locale === "th" ? event.descriptionTh : event.description) && (
-          <p className="text-white/60 text-base sm:text-lg font-light leading-relaxed mb-5 sm:mb-6 max-w-2xl whitespace-pre-wrap">
-            {locale === "th" ? event.descriptionTh : event.description}
+       {/* Title & Description */}
+       <h4 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 group-hover:text-gold transition-colors leading-snug lg:leading-tight pr-4">
+          {title}
+       </h4>
+       
+       {description && (
+          <p className="text-white/60 text-sm md:text-base font-light leading-relaxed mb-6 max-w-4xl whitespace-pre-wrap">
+             {description}
           </p>
-        )}
-        
-        <div className="flex items-center gap-2 text-sm text-white/40 uppercase tracking-widest mt-auto">
-          {locale === "th" && event.locationTh ? event.locationTh : event.location}
-        </div>
-      </div>
+       )}
 
-      {/* Speaker Slots (Supports Multiple Speakers) */}
-      <div className="lg:w-1/4 flex-shrink-0 flex flex-col gap-3">
-        {event.speakers && event.speakers.length > 0 ? (
-          <>
-            {event.speakers
-              .slice(0, isExpanded ? event.speakers.length : 2)
-              .map((speaker: EventSpeaker, idx: number) => (
-                <div 
-                  key={idx} 
-                  className="flex items-center gap-4 py-2 group/speaker transition-opacity duration-300 hover:opacity-80"
-                >
-                  <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden flex-shrink-0 border-2 border-transparent group-hover/speaker:border-white/20 transition-all duration-300">
-                    <Image 
-                      src={speaker.image} 
-                      alt={speaker.name}
-                      fill
-                      sizes="56px"
-                      className="object-cover transition-transform duration-500 group-hover/speaker:scale-110"
-                    />
-                  </div>
-                  <div>
-                    <h5 className="font-bold text-sm text-white mb-0.5">
-                      {locale === "th" && speaker.nameTh ? speaker.nameTh : speaker.name}
-                    </h5>
-                    <span className="text-[10px] md:text-xs text-gold uppercase tracking-wider block">
-                      {locale === "th" && speaker.roleTh ? speaker.roleTh : speaker.role}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            {event.speakers.length > 2 && (
-              <Button
-                variant="ghost"
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="mt-2 flex items-center justify-between gap-2 text-[10px] md:text-xs font-semibold uppercase tracking-widest text-gold hover:text-white transition-colors duration-300 w-full px-2 py-1 h-auto"
-              >
-                {isExpanded 
-                  ? (locale === "th" ? "แสดงน้อยลง" : "Show Less") 
-                  : `${locale === "th" ? "ดูวิทยากรทั้งหมด" : "View all"} ${event.speakers.length} ${locale === "th" ? "ท่าน" : "speakers"}`}
-                <ChevronDown 
-                  className={cn("w-4 h-4 transition-transform duration-300", isExpanded && "rotate-180")} 
-                />
-              </Button>
-            )}
-          </>
-        ) : (
-          <div className="h-full flex items-center justify-start">
-              {/* Empty slot placeholder */}
-          </div>
-        )}
-      </div>
+       <div className={cn(
+          "flex items-center gap-2 text-[10px] md:text-xs text-white/40 uppercase tracking-widest",
+          event.speakers && event.speakers.length > 0 ? "mb-6 border-b border-white/10 pb-6" : "mt-8"
+       )}>
+          <MapPin className="w-3.5 h-3.5" />
+          {location}
+       </div>
+
+       {/* Speakers (Always visible, clean grid layout) */}
+       {event.speakers && event.speakers.length > 0 && (
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-y-6 gap-x-8">
+             {event.speakers.map((sp, idx) => (
+                 <div key={idx} className="flex items-center gap-4 group/speaker">
+                    <div className="w-12 h-12 md:w-14 md:h-14 relative rounded-full overflow-hidden border-2 border-white/10 group-hover/speaker:border-white/40 transition-colors shrink-0">
+                       <Image src={sp.image} alt={sp.name} fill sizes="56px" className="object-cover" />
+                    </div>
+                    <div className="flex flex-col min-w-0 flex-1">
+                       <span className="font-bold text-sm md:text-base text-white truncate group-hover/speaker:text-gold transition-colors block">
+                          {locale === 'th' && sp.nameTh ? sp.nameTh : sp.name}
+                       </span>
+                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider truncate block mt-0.5">
+                          {locale === 'th' && sp.roleTh ? sp.roleTh : sp.role}
+                       </span>
+                    </div>
+                 </div>
+             ))}
+         </div>
+       )}
     </div>
-  );
+  )
 }
 
 export default function EventScheduleSection() {
   const t = useTranslations("schedule");
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState(0);
-  const [showAfternoon, setShowAfternoon] = useState(false);
+  const [activeTrack, setActiveTrack] = useState("All Tracks");
   const sectionRef = useRef<HTMLElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Reset afternoon toggle when tab changes
+  // Reset track when day changes
   React.useEffect(() => {
-    setShowAfternoon(false);
+    setActiveTrack("All Tracks");
   }, [activeTab]);
 
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(min-width: 768px)", () => {
-        // Animate Section Title
         gsap.fromTo(
           ".agenda-title",
           { opacity: 0, y: 50 },
@@ -133,70 +138,67 @@ export default function EventScheduleSection() {
             scrollTrigger: { trigger: ".agenda-title", start: "top 80%" },
           }
         );
-
-        // Animate Day Tabs
-        gsap.fromTo(
-          ".day-tab",
-          { opacity: 0, x: -20 },
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power3.out",
-            force3D: true,
-            scrollTrigger: { trigger: ".day-tabs-container", start: "top 85%" },
-          }
-        );
       });
       return () => mm.revert();
     },
     { scope: sectionRef }
   );
 
-  // Re-animate list when tab changes
+  // Re-animate the timeline block when data changes
   useGSAP(() => {
-    if (!listRef.current) return;
-    const items = listRef.current.querySelectorAll(".schedule-row");
+    if (!containerRef.current) return;
+    const items = containerRef.current.querySelectorAll(".timeline-row");
     
-    gsap.fromTo(
-      items,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.08,
-        ease: "power3.out",
-        force3D: true,
-      }
-    );
-  }, [activeTab]);
+    if (items.length > 0) {
+      gsap.fromTo(
+        items,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+          force3D: true,
+        }
+      );
+    }
+  }, [activeTab, activeTrack]);
 
   const currentDay = scheduleData[activeTab];
 
-  // Split events into morning and afternoon (starting 13:00 or later)
-  const splitIndex = currentDay.events.findIndex(e => {
-    // Try to handle different dash characters safely
-    const timeStr = e.time.replace("–", "-"); 
-    const startTimeStr = timeStr.split("-")[0].trim();
-    const startTimeHours = parseInt(startTimeStr.split(":")[0], 10);
-    return startTimeHours >= 13 && !isNaN(startTimeHours);
-  });
+  // Fltler events based on selected track
+  const filteredEvents = useMemo(() => {
+    return currentDay.events.filter(e => {
+      if (activeTrack === "All Tracks") return true;
+      if (e.track === "Common") return true; 
+      return e.track === activeTrack;
+    });
+  }, [currentDay, activeTrack]);
 
-  const actualSplitIndex = splitIndex === -1 ? currentDay.events.length : splitIndex;
-  const morningEvents = currentDay.events.slice(0, actualSplitIndex);
-  const afternoonEvents = currentDay.events.slice(actualSplitIndex);
+  // Group filtered events by time
+  const timeGroups = useMemo(() => {
+    const groups: { time: string, events: Event[] }[] = [];
+    filteredEvents.forEach(event => {
+      let group = groups.find(g => g.time === event.time);
+      if (!group) {
+        group = { time: event.time, events: [] };
+        groups.push(group);
+      }
+      group.events.push(event);
+    });
+    return groups;
+  }, [filteredEvents]);
 
   return (
     <section
       ref={sectionRef}
       className="relative py-24 md:py-40 bg-[linear-gradient(to_bottom,black_0%,#0b1a4a_35%,#451a03_65%,black_100%)] text-white overflow-hidden z-[2]"
     >
-      <div className="container mx-auto px-4 md:px-8 max-w-7xl relative z-[1]">
+      <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl relative z-[1]">
         
-        {/* Header - Editorial Style */}
-        <div className="mb-12 sm:mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 agenda-title">
+        {/* Header */}
+        <div className="mb-12 sm:mb-16 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 agenda-title">
             <SectionTitle
               title={t('sectionTitle')}
               align="left"
@@ -204,8 +206,8 @@ export default function EventScheduleSection() {
             />
         </div>
 
-        {/* ─── Day Selector (Mobile-First scrollable, Large typography) ─── */}
-        <div className="day-tabs-container flex overflow-x-auto sm:flex-wrap gap-6 sm:gap-8 md:gap-16 mb-10 md:mb-20 border-b border-white/10 pb-6 sm:pb-8 no-scrollbar">
+        {/* ─── Level 1 Navigation: Day Tabs ─── */}
+        <div className="day-tabs-container flex overflow-x-auto sm:flex-wrap gap-6 sm:gap-8 md:gap-16 pb-6 no-scrollbar">
           {scheduleData.map((day, index) => (
             <Button
               key={index}
@@ -235,42 +237,76 @@ export default function EventScheduleSection() {
           ))}
         </div>
 
-        {/* ─── Event List (Clean layout without confining cards) ─── */}
-        <div ref={listRef} className="flex flex-col">
-          {/* Morning Events */}
-          {morningEvents.map((event: any) => <EventRow key={event.id} event={event} locale={locale} />)}
+        {/* ─── Level 2 Navigation: Track Chips Filter ─── */}
+        <div className="flex overflow-x-auto gap-3 pb-8 mb-8 border-b border-white/10 no-scrollbar snap-x">
+          {TRACKS.map((track) => (
+            <button
+              key={track.id}
+              onClick={() => setActiveTrack(track.id)}
+              className={cn(
+                "snap-start whitespace-nowrap px-5 py-3 md:px-6 md:py-3.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 border flex-shrink-0",
+                activeTrack === track.id 
+                  ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" 
+                  : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white/80"
+              )}
+            >
+              {locale === 'th' ? track.labelTh : track.label}
+            </button>
+          ))}
+        </div>
 
-          {/* Toggle Button for Afternoon Events */}
-          {afternoonEvents.length > 0 && (
-            <div className="py-8 flex justify-center border-b border-white/10">
-              <Button
-                onClick={() => setShowAfternoon(!showAfternoon)}
-                variant="outline"
-                className="rounded-full px-8 py-6 bg-white/5 border-white/20 text-white hover:bg-white/10 hover:text-white border border-solid transition-all duration-300"
+        {/* ─── The Ultimate Vertical Timeline ─── */}
+        <div ref={containerRef} className="w-full flex flex-col gap-16 md:gap-20">
+          
+          {timeGroups.length > 0 ? (
+            timeGroups.map((group, groupIdx) => (
+              <div 
+                key={groupIdx} 
+                className="timeline-row grid grid-cols-1 lg:grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr] gap-6 md:gap-10 lg:gap-16 pt-8 md:pt-0 relative"
               >
-                <span className="text-sm uppercase tracking-widest font-semibold flex items-center gap-3">
-                  {locale === "th" ? "ตารางเวลาเพิ่มเติม" : "View More Schedule"}
-                  <ChevronDown className={cn("w-4 h-4 transition-transform duration-500", showAfternoon && "rotate-180")} />
-                </span>
-              </Button>
+                {/* Time Column (Sticky on Desktop) */}
+                <div className="relative">
+                  {/* Vertical Line Connector (Desktop only) */}
+                  <div className="hidden lg:block absolute right-[-40px] xl:right-[-32px] top-4 bottom-[-100px] w-px bg-gradient-to-b from-white/20 to-transparent"></div>
+                  
+                  <div className="lg:sticky lg:top-32 lg:py-2 flex items-center lg:items-start gap-4">
+                     {/* Node dot (Desktop only) */}
+                     <div className="hidden lg:block absolute right-[-44px] xl:right-[-36px] top-6 w-2 h-2 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,0.8)]"></div>
+                     <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-gold tracking-tighter">
+                       {group.time.split(" – ")[0]}
+                     </h3>
+                     {/* Show end time subtly if exists */}
+                     {group.time.split(" – ")[1] && (
+                        <span className="text-white/30 text-sm font-semibold mt-2 hidden lg:block">
+                          END {group.time.split(" – ")[1]}
+                        </span>
+                     )}
+                  </div>
+                </div>
+
+                {/* Cards Column */}
+                <div className="flex flex-col gap-6 md:gap-8">
+                  {group.events.map(event => (
+                    <EventCard key={event.id} event={event} locale={locale} />
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="py-32 flex flex-col items-center justify-center text-center opacity-50">
+              <div className="w-20 h-20 border-2 border-dashed border-white/20 rounded-full flex items-center justify-center mb-6">
+                 <MapPin className="w-8 h-8 text-white/40" />
+              </div>
+              <h4 className="text-2xl font-bold mb-2">No Active Sessions</h4>
+              <p className="max-w-md text-white/60">
+                {locale === 'th' 
+                  ? 'ไม่มีการจัดประชุมหรือกิจกรรมในห้องที่ท่านเลือกสำหรับวันนี้' 
+                  : 'There are no sessions scheduled in this room for the selected day.'}
+              </p>
             </div>
           )}
 
-          {/* Afternoon Events Accordion */}
-          <div 
-            className={cn(
-              "grid transition-all duration-700 ease-[cubic-bezier(0.87,0,0.13,1)]",
-              showAfternoon ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-            )}
-          >
-            <div className="overflow-hidden">
-              <div className="flex flex-col">
-                {afternoonEvents.map((event: any) => <EventRow key={event.id} event={event} locale={locale} />)}
-              </div>
-            </div>
-          </div>
         </div>
-
       </div>
     </section>
   );

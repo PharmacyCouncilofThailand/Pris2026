@@ -27,20 +27,23 @@ export const navigationData: NavItem[] = [
     },
     {
         labelKey: "registration",
-        children: [
-            { labelKey: "registrationInfo", href: "/registration" },
-            { labelKey: "policies", href: "/registration-policies" },
-        ],
+        href: "/registration",
+        // children temporarily hidden
+        // children: [
+        //     { labelKey: "registrationInfo", href: "/registration" },
+        //     { labelKey: "policies", href: "/registration-policies" },
+        // ],
     },
     {
         labelKey: "sponsorship",
         href: "/sponsorship",
     },
     {
-        labelKey: "more",
-        children: [
-            { labelKey: "gallery", href: "/gallery" },
-            { labelKey: "contact", href: "/contact" },
-        ],
+        labelKey: "gallery",
+        href: "/gallery",
+    },
+    {
+        labelKey: "contact",
+        href: "/contact",
     },
 ];

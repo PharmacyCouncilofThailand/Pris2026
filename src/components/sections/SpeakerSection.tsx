@@ -104,6 +104,7 @@ export default function SpeakerSection() {
         slideShadows: false,
       },
       loop: true,
+      loopedSlides: 5,
       autoplay: {
         delay: 5000,
         disableOnInteraction: true,
@@ -180,13 +181,13 @@ export default function SpeakerSection() {
             {/* Additional required wrapper */}
             <div className="swiper-wrapper">
               {/* Slides */}
-              {SPEAKERS_DATA.map((speaker) => (
+              {[...SPEAKERS_DATA, ...SPEAKERS_DATA.map(s => ({ ...s, id: s.id + '_clone' }))].map((speaker) => (
                 <div 
                   key={speaker.id} 
                   className="swiper-slide aspect-[3/4] rounded-2xl overflow-hidden will-change-transform"
                 >
                   {/* Speaker Card Design */}
-                  <div className="relative w-full h-full group bg-[#0d1529] border border-white/10 rounded-2xl flex flex-col justify-end p-6 shadow-2xl">
+                  <div className="relative w-full h-full group bg-[#0a0a0a] border border-white/10 rounded-2xl flex flex-col justify-end p-6 shadow-2xl">
                     
                     {/* Speaker Image */}
                     {speaker.image && (
@@ -196,13 +197,13 @@ export default function SpeakerSection() {
                           alt={speaker.name}
                           fill
                           sizes="(max-width: 768px) 80vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-105 transition-all duration-700"
+                          className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                         />
                       </div>
                     )}
 
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d1529]/60 to-[#0d1529] z-10" />
-                    <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/95 z-10 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gold/10 opacity-0 hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
                     
                     {/* Speaker Info */}
                     <div className="relative z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">

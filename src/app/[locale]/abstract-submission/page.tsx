@@ -22,6 +22,7 @@ import { abstractCategories } from "@/data/abstractData";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
+import PageHero from "@/components/sections/PageHero";
 
 export default function AbstractSubmission() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -94,16 +95,10 @@ export default function AbstractSubmission() {
         <div className="container mx-auto px-6 md:px-12 max-w-5xl">
           
           {/* Header Info */}
-          <div className="mb-16 text-center space-y-6">
-            <div className="flex items-center justify-center gap-3">
-              <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.5em] text-blue-700">PRIS 2026</span>
-              <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold uppercase tracking-tight leading-[0.9] text-slate-950">
-              {t("title1")} <br className="hidden md:block" /> {t("title2")}
-            </h1>
-          </div>
+          <PageHero
+            title1={t("title1")}
+            title2={t("title2")}
+          />
 
 
 

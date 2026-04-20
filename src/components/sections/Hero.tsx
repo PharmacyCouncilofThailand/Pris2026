@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MapPin, CalendarDays } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
 
@@ -34,6 +34,7 @@ export default function Hero() {
   const zoomTargetRef = useRef<SVGTSpanElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  const infoRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const partnersRef = useRef<HTMLDivElement>(null);
@@ -96,6 +97,7 @@ export default function Hero() {
         gsap.set(svgRef.current, { display: "none" });
         gsap.set(logoRef.current, { opacity: 1, y: 0, scale: 1 });
         gsap.set(countdownRef.current, { opacity: 1, y: 0 });
+        gsap.set(infoRef.current, { opacity: 1, y: 0 });
         gsap.set(buttonsRef.current, { opacity: 1, y: 0 });
         gsap.set(partnersRef.current, { opacity: 1, y: 0 });
         heroCompleteRef.current = true;
@@ -110,6 +112,7 @@ export default function Hero() {
       gsap.set(svgRef.current, { scale: 1, opacity: 1 });
       gsap.set(hintRef.current, { opacity: 0 });
       gsap.set(logoRef.current, { opacity: 0 });
+      gsap.set(infoRef.current, { opacity: 0, y: 30 });
       gsap.set(countdownRef.current, { opacity: 0, y: 30 });
       gsap.set(buttonsRef.current, { opacity: 0, y: 30 });
       gsap.set(partnersRef.current, { opacity: 0, y: 20 });
@@ -142,6 +145,20 @@ export default function Hero() {
 
       // Lock scroll from the start; wheel events drive the animation
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
+      const preventKeyScroll = (e: KeyboardEvent) => {
+        if (['Space', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) {
+          e.preventDefault();
+        }
+      };
+      
+      const preventPostZoomWheel = (e: WheelEvent) => e.preventDefault();
+      const preventTouchMove = (e: TouchEvent | Event) => e.preventDefault();
+
+      // Block keyboard scrolling immediately
+      window.addEventListener("keydown", preventKeyScroll, { passive: false });
+      window.addEventListener("touchmove", preventTouchMove, { passive: false });
 
       const tlZoom = gsap.timeline({ paused: true });
       tlZoom
@@ -164,6 +181,10 @@ export default function Hero() {
         onComplete: () => {
           // Unlock scroll & show navbar
           document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          window.removeEventListener("keydown", preventKeyScroll);
+          window.removeEventListener("wheel", preventPostZoomWheel);
+          window.removeEventListener("touchmove", preventTouchMove);
           document.body.classList.remove("hero-playing");
           heroCompleteRef.current = true;
           markPlayed();
@@ -175,17 +196,19 @@ export default function Hero() {
         // Mobile-optimized: Single smooth continuous push (avoids the 0.2s pause gap that looks like stutter)
         tlAuto
           .to(logoRef.current, { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
+          .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.0)
-          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power3.out", duration: 0.8 }, 1.4);
+          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power3.out", duration: 0.8 }, 1.0)
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.4);
       } else {
         // Desktop: Two-phase motion (syncs with the SVG mask scroll)
         tlAuto
           .to(logoRef.current, { opacity: 1, y: initialY, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
           .to(logoRef.current, { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
+          .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.5)
-          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.7 }, 1.9);
+          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.7 }, 1.5)
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.9);
       }
 
       // Wheel-driven zoom control
@@ -204,6 +227,7 @@ export default function Hero() {
         if (progress >= HERO_CFG.autoTriggerAt) {
           autoTriggered = true;
           window.removeEventListener("wheel", handleWheel);
+          window.addEventListener("wheel", preventPostZoomWheel, { passive: false });
           gsap.to(tlZoom, {
             progress: 1,
             duration: 0.4,
@@ -258,6 +282,11 @@ export default function Hero() {
 
       return () => {
         window.removeEventListener("wheel", handleWheel);
+        window.removeEventListener("wheel", preventPostZoomWheel);
+        window.removeEventListener("keydown", preventKeyScroll);
+        window.removeEventListener("touchmove", preventTouchMove);
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
         tlZoom.kill();
         tlAuto.kill();
       };
@@ -289,33 +318,75 @@ export default function Hero() {
         preload="metadata"
       />
 
-      {/* Hero Content (Behind mask) */}
-      <div className="absolute inset-0 w-full h-full z-0 flex flex-col justify-center items-center pointer-events-auto">
-        <div ref={logoRef} className="mb-8 md:mb-10 z-[2] will-change-transform transform-gpu" style={{ opacity: 0 }}>
+      {/* Subtle vignette overlay for depth */}
+      <div className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)" }}
+      />
+
+      {/* Hero Content */}
+      <div className="absolute inset-0 w-full h-full z-0 flex flex-col justify-center items-center pointer-events-auto px-4">
+
+        {/* Logo */}
+        <div
+          ref={logoRef}
+          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-6 md:mb-8"
+          style={{ opacity: 0 }}
+        >
           <Image
             src="/assets/Img/logo/Pris2026-logo.svg"
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
-            className="w-full max-w-[340px] md:max-w-[700px] h-auto"
+            className="w-full max-w-[340px] md:max-w-[680px] h-auto drop-shadow-2xl"
             priority
           />
         </div>
 
+        {/* Thin divider */}
         <div
-          ref={countdownRef}
-          className="w-full flex justify-center mb-8 z-[2]"
+          ref={infoRef}
+          className="z-[2] w-full max-w-xl flex flex-col items-center gap-4 md:gap-5"
           style={{ opacity: 0 }}
         >
-          <Countdown />
+          {/* Horizontal rule */}
+          <div className="w-24 h-px bg-white/20" />
+
+          {/* Date + Location — one clean row */}
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-5 text-white/75 text-[10px] sm:text-xs tracking-widest uppercase font-medium text-center">
+            <span className="flex items-center gap-1.5">
+              <CalendarDays className="w-3 h-3 opacity-60 shrink-0" />
+              15 – 16 October 2025
+            </span>
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-3 h-3 opacity-60 shrink-0" />
+              IMPACT Challenger, Bangkok
+            </span>
+          </div>
+
+          {/* Organizer — subtle, small */}
+          <p className="text-white/40 text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-center">
+            Organized by The Pharmacy Council of Thailand
+          </p>
         </div>
 
+        {/* Countdown */}
         <div
-          ref={buttonsRef}
-          className="flex flex-col md:flex-row gap-4 md:gap-5 z-[2] mt-4"
+          ref={countdownRef}
+          className="w-full flex justify-center mt-6 md:mt-8 mb-5 md:mb-7 z-[2]"
           style={{ opacity: 0 }}
         >
-          <Link 
+          <div className="scale-[0.78] md:scale-[0.82] origin-center">
+            <Countdown />
+          </div>
+        </div>
+
+        {/* Register Button */}
+        <div
+          ref={buttonsRef}
+          className="z-[2]"
+          style={{ opacity: 0 }}
+        >
+          <Link
             href="/registration"
             onClick={handleRegisterClick}
             className="hero-register-btn"
@@ -330,18 +401,21 @@ export default function Hero() {
         </div>
 
         {/* ── Official Partners ── */}
-        <div 
+        <div
           ref={partnersRef}
-          className="mt-8 md:mt-10 z-[2] flex flex-col items-center w-full overflow-hidden"
+          className="absolute bottom-0 left-0 right-0 z-[2] flex flex-col items-center w-full overflow-hidden pb-5 md:pb-7"
           style={{ opacity: 0 }}
         >
-          <span className="text-white/50 text-[9px] md:text-[11px] font-semibold uppercase tracking-[0.3em] mb-3">
+          {/* Subtle top border */}
+          <div className="w-full border-t border-white/8 mb-4 md:mb-5" />
+
+          <span className="text-white/35 text-[8px] md:text-[9px] font-semibold uppercase tracking-[0.35em] mb-3.5">
             Official Partners
           </span>
-          {/* Partner logos row — constrained width */}
-          <div className="relative w-full max-w-3xl mx-auto overflow-hidden py-3">
-            {/* Marquee Row */}
-            <div className="flex w-max animate-partner-scroll items-center will-change-transform transform-gpu">
+
+          {/* Partner logos marquee — no fade edges */}
+          <div className="relative w-full max-w-3xl mx-auto overflow-hidden">
+            <div className="flex w-max animate-partner-scroll items-center will-change-transform transform-gpu py-1">
               {[...Array(3)].map((_, i) => (
                 <React.Fragment key={i}>
                   {[
@@ -356,14 +430,14 @@ export default function Hero() {
                   ].map((partner, index) => (
                     <div
                       key={`partner-${i}-${index}`}
-                      className="mx-5 md:mx-8 flex items-center justify-center flex-shrink-0"
+                      className="mx-6 md:mx-9 flex items-center justify-center flex-shrink-0"
                     >
-                      <div className="h-12 w-12 md:h-16 md:w-16 flex items-center justify-center">
+                      <div className="h-14 w-14 md:h-[60px] md:w-[60px] flex items-center justify-center">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={partner.logo}
                           alt={partner.name}
-                          className={`object-contain w-full h-full opacity-90 ${partner.scale}`}
+                          className={`object-contain w-full h-full ${partner.scale}`}
                           loading="lazy"
                         />
                       </div>
@@ -447,9 +521,9 @@ export default function Hero() {
         className="absolute bottom-8 md:bottom-12 left-0 w-full flex flex-col items-center justify-center z-[2] transition-opacity duration-300"
         style={{ opacity: 0 }}
       >
-        <div className="flex flex-col items-center gap-4 text-black text-xs font-medium uppercase tracking-[4px]">
+        <div className="flex flex-col items-center gap-3 text-black text-[9px] font-medium uppercase tracking-[5px]">
           <span>{t('scrollDown')}</span>
-          <ChevronDown className="w-5 h-5 text-black animate-bounce" />
+          <ChevronDown className="w-4 h-4 text-black animate-bounce" />
         </div>
       </div>
     </section>

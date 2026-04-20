@@ -320,37 +320,53 @@ export default function RegistrationCTASection() {
         </div>
 
         {/* Register CTA Button & Payment Info */}
-        <div className="mt-16 md:mt-20 flex flex-col items-center fade-up gap-4">
+        <div className="mt-16 md:mt-24 flex flex-col items-center fade-up gap-6">
           <a
             href="https://conference-web-tawny.vercel.app/events/mock-event-2025"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02] shadow-xl hover:shadow-[#0055FF]/20"
+            className="group relative inline-flex items-center justify-center gap-6 md:gap-8 text-white px-10 md:px-16 py-6 md:py-8 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] shadow-2xl hover:shadow-[0_0_60px_rgba(0,85,255,0.4)]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
-            <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-[0.2em] flex items-center gap-6">
+            {/* Animated gradient background — always visible */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
+            {/* Shimmer sweep */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
+            {/* Pulsing glow ring — always subtly visible */}
+            <div className="absolute inset-[-3px] rounded-full bg-gradient-to-r from-[#0055FF] to-[#FF5A00] opacity-40 group-hover:opacity-80 animate-pulse blur-sm transition-opacity duration-500 -z-10" />
+            
+            <span className="relative z-10 text-base md:text-xl font-black uppercase tracking-[0.25em]">
               {t("registerCollection")}
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
-                <MoveUpRight className="w-5 h-5" />
-              </div>
             </span>
+            <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 bg-white/20 group-hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:rotate-45 transition-all duration-500 border border-white/30">
+              <MoveUpRight className="w-6 h-6 md:w-7 md:h-7" />
+            </div>
           </a>
 
           {/* Payment Method Note */}
-          <div className="flex items-center gap-2 text-black/50 mt-2">
-            <span className="text-[14px] font-medium">{t("paymentNote")}</span>
+          <div className="flex items-center gap-2 text-black/50 mt-1">
+            <span className="text-sm md:text-base font-medium">{t("paymentNote")}</span>
           </div>
         </div>
 
-        {/* Sleek Modal Trigger for Policies */}
-        <div className="mt-8 flex justify-center text-center fade-up">
+        {/* Cancellations & Refund Policy — Prominent Link */}
+        <div className="mt-10 md:mt-14 flex justify-center text-center fade-up">
           <button 
-            className="text-[13px] text-black/40 hover:text-black underline underline-offset-4 decoration-black/20 hover:decoration-black transition-all"
+            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl border-2 border-black/10 hover:border-[#0055FF]/40 bg-transparent hover:bg-[#0055FF]/5 transition-all duration-500"
             onClick={() => setIsModalOpen(true)}
           >
-            {t("cancelTitle")} &rarr;
+            <span className="text-base md:text-lg font-bold text-black/60 group-hover:text-[#0055FF] tracking-tight transition-colors duration-300">
+              {t("cancelTitle")}
+            </span>
+            <span className="text-[#0055FF] group-hover:translate-x-1 transition-transform duration-300 text-xl">&rarr;</span>
           </button>
         </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+        `}} />
       </div>
 
       <RegistrationPolicyModal 

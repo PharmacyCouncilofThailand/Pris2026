@@ -33,6 +33,8 @@ export interface Event {
   locationTh: string;
   type: string;
   typeTh: string;
+  track?: string;
+  trackTh?: string;
   speakers: EventSpeaker[];
 }
 

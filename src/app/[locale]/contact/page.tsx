@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useEffect, useRef } from "react";
+import PageHero from "@/components/sections/PageHero";
 
 type PageCopy = {
   eyebrow: string;
@@ -87,55 +88,19 @@ export default function ContactPage() {
     document.body.classList.remove("hero-playing");
   }, []);
 
-  useGSAP(() => {
-      gsap.from(".hero-line", {
-        yPercent: 110,
-        stagger: 0.12,
-        duration: 1.6,
-        ease: "power4.out",
-        delay: 0.15,
-      });
-      gsap.from(".hero-sub", {
-        opacity: 0,
-        y: 30,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 0.8,
-      });
-  }, { scope: pageRef });
-
   return (
     <main
       ref={pageRef}
-      className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900"
+      className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden w-full relative"
     >
-      <section className="relative px-6 pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden flex flex-col items-center">
-        {/* Glows */}
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-blue-500/[0.05] rounded-full blur-[120px] pointer-events-none md:w-[800px] md:h-[800px] md:blur-[180px]" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-orange-500/[0.04] rounded-full blur-[120px] pointer-events-none md:w-[600px] md:h-[600px] md:blur-[150px]" />
+      <PageHero
+        eyebrowSub={copy.eyebrow}
+        title1={copy.title1}
+        title2={copy.title2}
+        subtitle={copy.desc}
+      />
 
-        <div className="max-w-4xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="hero-sub flex items-center justify-center gap-3 mb-6 md:mb-8 md:gap-4">
-            <span className="h-px w-8 bg-orange-500 md:w-12" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500 md:text-xs">PRIS 2026</span>
-            <span className="text-gray-400 text-[10px] tracking-widest uppercase md:text-xs">— {copy.eyebrow}</span>
-          </div>
-
-          <h1 className="text-5xl font-black uppercase tracking-tighter leading-tight text-slate-900 sm:text-7xl md:text-8xl lg:text-[7rem]">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block hero-line text-black">{copy.title1}</span>
-            </div>
-            <div className="overflow-hidden py-2 -my-2 flex flex-col items-center">
-              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500 pb-2">
-                {copy.title2}
-              </span>
-            </div>
-          </h1>
-
-          <p className="hero-sub mt-6 max-w-xl text-sm text-slate-500 font-light leading-relaxed md:mt-10 md:text-lg">
-            {copy.desc}
-          </p>
-        </div>
+      <section className="relative px-6 pb-20 md:pb-32 overflow-hidden flex flex-col items-center">
 
         {/* ══════ EXPERIMENTAL FORM SECTION ══════ */}
         <div className="relative z-10 w-full max-w-6xl mx-auto mt-16 md:mt-24 mb-10 md:mb-20">
@@ -146,7 +111,7 @@ export default function ContactPage() {
               <div className="pt-2 flex flex-col gap-6">
                 <div>
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{copy.emailLabel}</h4>
-                  <a href={`mailto:${copy.emailValue}`} className="text-base font-medium text-slate-900 hover:text-blue-600 transition-colors">
+                  <a href={`mailto:${copy.emailValue}`} className="text-base font-medium text-slate-900 hover:text-blue-600 transition-colors break-all">
                     {copy.emailValue}
                   </a>
                 </div>
@@ -156,7 +121,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">{copy.addressLabel}</h4>
-                  <p className="text-sm font-medium text-slate-500 leading-relaxed whitespace-pre-line max-w-xs">
+                  <p className="text-sm font-medium text-slate-500 leading-relaxed whitespace-pre-line max-w-xs break-words">
                     {copy.addressValue}
                   </p>
                 </div>
