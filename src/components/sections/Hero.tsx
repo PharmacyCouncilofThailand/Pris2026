@@ -325,18 +325,7 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
 
-        {/* Countdown — placed above BG text */}
-        <div
-          ref={countdownRef}
-          className="w-full flex justify-center mt-2 md:mt-4 mb-3 z-[2]"
-          style={{ opacity: 0 }}
-        >
-          <div className="scale-[0.88] md:scale-[0.95] origin-center">
-            <Countdown />
-          </div>
-        </div>
-
-        {/* Main Content Wrapper (Pushed to bottom to avoid overlapping BG text) */}
+        {/* Main Content Wrapper */}
         <div className="flex-1 w-full flex flex-col justify-end items-center pb-4 md:pb-8">
 
         {/* Logo */}
@@ -382,6 +371,17 @@ export default function Hero() {
           </p>
         </div>
 
+        {/* Countdown — on Desktop stays at top due to md:mb-auto, on Mobile sits above button */}
+        <div
+          ref={countdownRef}
+          className="w-full flex justify-center mt-2 md:mt-4 mb-6 md:mb-auto z-[2]"
+          style={{ opacity: 0 }}
+        >
+          <div className="scale-[0.88] md:scale-[0.95] origin-center">
+            <Countdown />
+          </div>
+        </div>
+
         {/* Register Button */}
         <div
           ref={buttonsRef}
@@ -391,13 +391,16 @@ export default function Hero() {
           <Link
             href="/registration"
             onClick={handleRegisterClick}
-            className="hero-register-btn"
+            className="group relative inline-flex items-center gap-4 px-8 md:px-10 py-4 md:py-5 bg-gradient-to-br from-[#c86800] to-[#a04500] border border-[#ffb450]/40 rounded-full text-white shadow-[0_0_25px_rgba(255,120,0,0.3),0_0_60px_rgba(255,90,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:scale-105 hover:from-[#e07800] hover:to-[#b85000] hover:border-[#ffc864]/60 hover:shadow-[0_0_40px_rgba(255,120,0,0.5),0_0_80px_rgba(255,90,0,0.2),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all duration-300 overflow-hidden"
           >
-            <span className="text_button flex items-center gap-4">
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-[15%] w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#ffb450]/50 to-transparent rounded-sm transition-opacity"></div>
+            
+            <span className="relative z-10 text-[0.8125rem] sm:text-[0.9375rem] md:text-[1.0625rem] font-semibold tracking-[0.2em] uppercase text-white/90 group-hover:text-white transition-colors">
               {t("registerNow")}
-              <span className="hero-register-btn__arrow">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              </span>
+            </span>
+            <span className="relative z-10 flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 group-hover:bg-white/20 group-hover:translate-x-[3px] transition-all duration-300 text-white">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </span>
           </Link>
         </div>
@@ -406,7 +409,7 @@ export default function Hero() {
         {/* ── Official Partners ── */}
         <div
           ref={partnersRef}
-          className="w-full flex justify-center mt-2 md:mt-4 flex-col items-center overflow-hidden pb-1"
+          className="w-full flex justify-center mt-2 md:mt-4 flex-col items-center overflow-hidden pb-1 order-3"
           style={{ opacity: 0 }}
         >
           {/* Subtle top border */}
