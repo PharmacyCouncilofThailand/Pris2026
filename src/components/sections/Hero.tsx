@@ -325,7 +325,7 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
 
-        {/* Main Content Wrapper */}
+        {/* Main Content Wrapper (Pushed to bottom to avoid overlapping BG text) */}
         <div className="flex-1 w-full flex flex-col justify-end items-center pb-4 md:pb-8">
 
         {/* Logo */}
