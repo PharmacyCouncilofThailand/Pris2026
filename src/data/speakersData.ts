@@ -2,7 +2,7 @@ import { Organizer, Speaker } from "@/types";
 
 export const ORGANIZERS_DATA: Organizer[] = [
   {
-    name: "Pharm. Preecha Puntivech",
+    name: "R.Ph Preecha Bhandtivej",
     nameTh: "ภก.ปรีชา พันธุ์ติเวช",
     position: "President\nThe Pharmacy Council of Thailand",
     positionTh: "นายกสภาเภสัชกรรม",
