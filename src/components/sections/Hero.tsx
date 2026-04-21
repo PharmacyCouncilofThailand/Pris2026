@@ -325,17 +325,6 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
 
-        {/* Countdown — placed above BG text */}
-        <div
-          ref={countdownRef}
-          className="w-full flex justify-center mt-2 md:mt-4 mb-3 z-[2]"
-          style={{ opacity: 0 }}
-        >
-          <div className="scale-[0.88] md:scale-[0.95] origin-center">
-            <Countdown />
-          </div>
-        </div>
-
         {/* Main Content Wrapper (Pushed to bottom to avoid overlapping BG text) */}
         <div className="flex-1 w-full flex flex-col justify-end items-center pb-4 md:pb-8">
 
@@ -380,6 +369,17 @@ export default function Hero() {
           <p className="text-white/50 text-[10px] sm:text-xs tracking-[0.2em] uppercase text-center mt-1 md:mt-2">
             Organized by The Pharmacy Council of Thailand
           </p>
+        </div>
+
+        {/* Countdown — on Desktop stays at top due to md:mb-auto, on Mobile sits above button */}
+        <div
+          ref={countdownRef}
+          className="w-full flex justify-center mt-2 md:mt-4 mb-6 md:mb-auto z-[2]"
+          style={{ opacity: 0 }}
+        >
+          <div className="scale-[0.88] md:scale-[0.95] origin-center">
+            <Countdown />
+          </div>
         </div>
 
         {/* Register Button */}
