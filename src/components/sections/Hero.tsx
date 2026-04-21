@@ -38,7 +38,7 @@ export default function Hero() {
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
   const partnersRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+
   const t = useTranslations("hero");
   const { isAuthenticated } = useAuth();
 
@@ -101,9 +101,7 @@ export default function Hero() {
         gsap.set(buttonsRef.current, { opacity: 1, y: 0 });
         gsap.set(partnersRef.current, { opacity: 1, y: 0 });
         heroCompleteRef.current = true;
-        videoRef.current?.play().catch(() => {
-          /* noop */
-        });
+
         return;
       }
 
@@ -117,7 +115,7 @@ export default function Hero() {
       gsap.set(buttonsRef.current, { opacity: 0, y: 30 });
       gsap.set(partnersRef.current, { opacity: 0, y: 20 });
       // Start video immediately so it shows through the text mask
-      videoRef.current?.play().catch(() => { /* autoplay may be blocked */ });
+
 
       // Device settings
       const isMobile = window.innerWidth <= 1024; // Treat tablets as mobile for scrolling performance
@@ -188,7 +186,7 @@ export default function Hero() {
           document.body.classList.remove("hero-playing");
           heroCompleteRef.current = true;
           markPlayed();
-          videoRef.current?.play().catch(() => { /* noop */ });
+
           gsap.set(svgRef.current, { display: "none" });
         },
       });
@@ -299,23 +297,24 @@ export default function Hero() {
       ref={containerRef}
       className="relative w-full min-h-[100svh] overflow-hidden bg-black flex flex-col justify-center items-center isolate"
     >
-      {/* Background: Static image on mobile, Video on desktop */}
+      {/* Background: BG2M.webp for mobile, BG.webp for desktop */}
       <Image
-        src="/assets/Img/BG/BG-mobile-1080.webp"
+        src="/assets/Img/BG/BG2M.webp"
         alt=""
         fill
         priority
         sizes="100vw"
+        quality={90}
         className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none lg:hidden"
       />
-      <video
-        ref={videoRef}
-        src="/assets/Img/BG/New BG 30fps.mp4"
-        className="absolute inset-0 w-full h-full object-cover transform-gpu opacity-90 z-0 pointer-events-none hidden lg:block"
-        muted
-        loop
-        playsInline
-        preload="metadata"
+      <Image
+        src="/assets/Img/BG/BG.webp"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        quality={90}
+        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none hidden lg:block"
       />
 
       {/* Subtle vignette overlay for depth */}
@@ -326,13 +325,24 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
 
-        {/* Main Content Wrapper (Centered) */}
-        <div className="flex-1 w-full flex flex-col justify-center items-center py-2">
+        {/* Countdown — placed above BG text */}
+        <div
+          ref={countdownRef}
+          className="w-full flex justify-center mt-2 md:mt-4 mb-3 z-[2]"
+          style={{ opacity: 0 }}
+        >
+          <div className="scale-[0.88] md:scale-[0.95] origin-center">
+            <Countdown />
+          </div>
+        </div>
+
+        {/* Main Content Wrapper (Pushed to bottom to avoid overlapping BG text) */}
+        <div className="flex-1 w-full flex flex-col justify-end items-center pb-4 md:pb-8">
 
         {/* Logo */}
         <div
           ref={logoRef}
-          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6"
+          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6 hidden"
           style={{ opacity: 0 }}
         >
           <Image
@@ -348,7 +358,7 @@ export default function Hero() {
         {/* Thin divider */}
         <div
           ref={infoRef}
-          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4"
+          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4 hidden"
           style={{ opacity: 0 }}
         >
           {/* Horizontal rule */}
@@ -370,17 +380,6 @@ export default function Hero() {
           <p className="text-white/50 text-[10px] sm:text-xs tracking-[0.2em] uppercase text-center mt-1 md:mt-2">
             Organized by The Pharmacy Council of Thailand
           </p>
-        </div>
-
-        {/* Countdown */}
-        <div
-          ref={countdownRef}
-          className="w-full flex justify-center mt-4 md:mt-6 mb-3 md:mb-5 z-[2]"
-          style={{ opacity: 0 }}
-        >
-          <div className="scale-[0.88] md:scale-[0.95] origin-center">
-            <Countdown />
-          </div>
         </div>
 
         {/* Register Button */}
@@ -417,8 +416,8 @@ export default function Hero() {
             Official Partners
           </span>
 
-          {/* Partner logos marquee — no fade edges */}
-          <div className="relative w-full max-w-3xl mx-auto overflow-hidden">
+          {/* Partner logos marquee — full width edge-to-edge */}
+          <div className="relative w-full overflow-hidden">
             <div className="flex w-max animate-partner-scroll items-center will-change-transform transform-gpu py-1">
               {[...Array(3)].map((_, i) => (
                 <React.Fragment key={i}>
@@ -503,6 +502,19 @@ export default function Hero() {
             fill="white"
             mask="url(#textCutout)"
           />
+
+          {/* Solid black text to fill the cutout (no transparency) */}
+          <text
+            x="50%"
+            y="54%"
+            dominantBaseline="central"
+            textAnchor="middle"
+            className="font-black text-[13vw] sm:text-[11vw] md:text-[10vw] font-outfit tracking-tighter"
+            fill="black"
+            pointerEvents="none"
+          >
+            {"PRIS 2026"}
+          </text>
 
           {/* Invisible replica for measuring the "S" coordinate */}
           <text
