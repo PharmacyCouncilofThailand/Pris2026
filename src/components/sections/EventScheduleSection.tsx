@@ -94,10 +94,10 @@ function EventCard({ event, locale }: { event: Event; locale: string }) {
                        <Image src={sp.image} alt={sp.name} fill sizes="56px" className="object-cover" />
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                       <span className="font-bold text-sm md:text-base text-white truncate group-hover/speaker:text-gold transition-colors block">
+                       <span className="font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block whitespace-nowrap">
                           {locale === 'th' && sp.nameTh ? sp.nameTh : sp.name}
                        </span>
-                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider truncate block mt-0.5">
+                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider block mt-0.5 whitespace-nowrap">
                           {locale === 'th' && sp.roleTh ? sp.roleTh : sp.role}
                        </span>
                     </div>

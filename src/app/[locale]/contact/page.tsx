@@ -97,6 +97,7 @@ export default function ContactPage() {
         title1={copy.title1}
         title2={copy.title2}
         subtitle={copy.desc}
+        inlineTitle={locale === "en"}
       />
 
       <section className="relative px-6 pb-20 md:pb-32 overflow-hidden flex flex-col items-center">

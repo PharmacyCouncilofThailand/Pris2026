@@ -39,8 +39,8 @@ export default function WelcomeSection() {
             duration: 0.8,
             ease: "power3.out",
             force3D: true,
-            scrollTrigger: { 
-              trigger: ".welcome-header", 
+            scrollTrigger: {
+              trigger: ".welcome-header",
               start: "top 85%",
               toggleActions: "play none none reverse"
             },
@@ -58,8 +58,8 @@ export default function WelcomeSection() {
             stagger: 0.15,
             ease: "power3.out",
             force3D: true,
-            scrollTrigger: { 
-              trigger: ".welcome-grid", 
+            scrollTrigger: {
+              trigger: ".welcome-grid",
               start: "top 85%",
               toggleActions: "play none none reverse"
             },

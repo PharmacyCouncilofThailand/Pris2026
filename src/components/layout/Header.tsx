@@ -38,11 +38,17 @@ export default function Header() {
   type LinkHref = React.ComponentProps<typeof Link>["href"];
 
   React.useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const heroStillPlaying = document.body.classList.contains("hero-playing");
-      setIsScrolled(!heroStillPlaying && window.scrollY > 50);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const heroStillPlaying = document.body.classList.contains("hero-playing");
+        setIsScrolled(!heroStillPlaying && window.scrollY > 50);
+        ticking = false;
+      });
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -102,11 +108,11 @@ export default function Header() {
               }}
             >
               <Image
-                src="/assets/Img/logo/Pris2026-logo.svg"
+                src="/assets/Img/logo/LOGO1.png"
                 alt="Pris 2026 Logo"
-                width={120}
-                height={48}
-                className={cn("object-contain h-[32px] w-auto transition-all xl:h-[36px]", useDarkText && "brightness-0")}
+                width={200}
+                height={80}
+                className={cn("object-contain h-[40px] w-auto transition-all xl:h-[48px]", useDarkText && "brightness-0")}
                 priority
               />
             </Link>
@@ -126,7 +132,7 @@ export default function Header() {
                           className={cn(
                             navigationMenuTriggerStyle(),
                             "bg-transparent transition-colors",
-                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
+                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-orange-500"
                           )}
                           onClick={() => {
                             if (typeof document !== "undefined") {
@@ -144,7 +150,7 @@ export default function Header() {
                       <>
                         <NavigationMenuTrigger className={cn(
                           "bg-transparent transition-colors",
-                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
+                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-orange-500"
                         )}>
                           {t(item.labelKey as TranslationKey)}
                         </NavigationMenuTrigger>
@@ -287,11 +293,11 @@ export default function Header() {
               <div className="p-6 h-full flex flex-col">
                 <div className="mb-8 mt-4">
                   <Image
-                    src="/assets/Img/logo/Pris2026-logo.svg"
+                    src="/assets/Img/logo/LOGO1.png"
                     alt="Pris 2026 Logo"
-                    width={120}
-                    height={48}
-                    className="h-[45px] w-auto"
+                    width={200}
+                    height={80}
+                    className="h-[55px] w-auto"
                   />
                 </div>
 
@@ -303,13 +309,13 @@ export default function Header() {
                           <Link
                             href={item.href as LinkHref}
                             prefetch={true}
-                            className="text-lg font-medium hover:text-gold block"
+                            className="text-lg font-medium hover:text-orange-500 block"
                           >
                             {t(item.labelKey as TranslationKey)}
                           </Link>
                         ) : (
                           <details className="group">
-                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-gold">
+                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-orange-500">
                               {t(item.labelKey as TranslationKey)}
                               <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
                             </summary>
@@ -319,7 +325,7 @@ export default function Header() {
                                   <Link
                                     href={(child.href || "#") as LinkHref}
                                     prefetch={true}
-                                    className="text-gray-300 hover:text-gold block py-1"
+                                    className="text-gray-300 hover:text-orange-500 block py-1"
                                   >
                                     {t(child.labelKey as TranslationKey)}
                                   </Link>

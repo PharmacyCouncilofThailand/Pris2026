@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { MoveUpRight, Sparkles, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import RegistrationPolicyModal from "./RegistrationPolicyModal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,7 +15,6 @@ export default function RegistrationCTASection() {
   const t = useTranslations("registrationCTA");
   const containerRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -233,7 +231,12 @@ export default function RegistrationCTASection() {
           <h3 className="text-4xl md:text-6xl font-semibold tracking-tighter">
             {t.rich("tiersTitle", { br: () => <br/> })}
           </h3>
-          <p className="text-xs uppercase tracking-[0.2em] text-[#0055FF] font-bold mt-6 md:mt-0">{t("tiersSubtitle")}</p>
+          <div className="flex items-center gap-4 mt-8 md:mt-0">
+            <span className="w-8 md:w-16 h-[2px] bg-[#0055FF]"></span>
+            <p className="text-sm md:text-base uppercase tracking-[0.3em] text-[#0055FF] font-black">
+              {t("tiersSubtitle")}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col [perspective:1000px]">
@@ -319,6 +322,54 @@ export default function RegistrationCTASection() {
           </div>
         </div>
 
+        {/* Cancellations & Refund Policy Section - Avant-Garde Style */}
+        <div className="w-full mt-24 md:mt-32 fade-up">
+          <div className="flex flex-col lg:flex-row gap-16 lg:gap-8">
+            <div className="w-full lg:w-4/12 relative">
+              <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-6 flex items-center gap-3">
+                <span className="w-8 h-px bg-[#0055FF]"></span> {t("policyLabel")}
+              </p>
+              <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter leading-[0.9] break-words pr-8">
+                {t("cancelTitle")}
+              </h3>
+            </div>
+
+            <div className="w-full lg:w-7/12 lg:ml-auto flex flex-col gap-12 md:gap-16">
+              <div className="flex flex-col gap-6 text-lg md:text-xl text-black/60 font-light leading-relaxed">
+                 {t.raw("cancelItems").map((item: string, idx: number) => (
+                   <div key={idx} className="flex gap-6 items-start group">
+                     <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#0055FF] group-hover:text-[#FF5A00] transition-colors mt-2 w-8 shrink-0">{String(idx + 1).padStart(2, '0')}</span>
+                     <span>{item}</span>
+                   </div>
+                 ))}
+              </div>
+
+              {/* Avant-Garde Table / Rows */}
+              <div className="flex flex-col mt-4">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center pb-6 text-xs uppercase tracking-[0.2em] font-bold text-black/40 border-b border-black/15 gap-2">
+                  <span>{t("cancelTableTh1")}</span>
+                  <span className="sm:text-right">{t("cancelTableTh2")}</span>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center py-6 border-b border-black/15 group hover:bg-black/5 transition-all duration-300 -mx-4 px-4 rounded-xl cursor-default">
+                  <div className="text-lg md:text-xl font-medium mb-1 sm:mb-0 text-black/80">{t("cancelR1C1")}</div>
+                  <div className="text-xl md:text-2xl font-bold tracking-tighter text-black">{t("cancelR1C2")}</div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center py-6 border-b border-black/15 group hover:bg-black/5 transition-all duration-300 -mx-4 px-4 rounded-xl cursor-default">
+                  <div className="text-lg md:text-xl font-medium mb-1 sm:mb-0 text-black/80">{t("cancelR2C1")}</div>
+                  <div className="text-xl md:text-2xl font-bold tracking-tighter text-black">{t("cancelR2C2")}</div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center py-6 border-b border-black/15 group hover:bg-[#FF5A00]/5 transition-all duration-300 -mx-4 px-4 rounded-xl cursor-default">
+                  <div className="text-lg md:text-xl font-medium mb-1 sm:mb-0 text-black/80">{t("cancelR3C1")}</div>
+                  <div className="text-xl md:text-2xl font-bold tracking-tighter text-[#FF5A00]">{t("cancelR3C2")}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Register CTA Button & Payment Info */}
         <div className="mt-16 md:mt-24 flex flex-col items-center fade-up gap-6">
           <a
@@ -331,8 +382,7 @@ export default function RegistrationCTASection() {
             <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
             {/* Shimmer sweep */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
-            {/* Pulsing glow ring — always subtly visible */}
-            <div className="absolute inset-[-3px] rounded-full bg-gradient-to-r from-[#0055FF] to-[#FF5A00] opacity-40 group-hover:opacity-80 animate-pulse blur-sm transition-opacity duration-500 -z-10" />
+
             
             <span className="relative z-10 text-base md:text-xl font-black uppercase tracking-[0.25em]">
               {t("registerCollection")}
@@ -348,19 +398,6 @@ export default function RegistrationCTASection() {
           </div>
         </div>
 
-        {/* Cancellations & Refund Policy — Prominent Link */}
-        <div className="mt-10 md:mt-14 flex justify-center text-center fade-up">
-          <button 
-            className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl border-2 border-black/10 hover:border-[#0055FF]/40 bg-transparent hover:bg-[#0055FF]/5 transition-all duration-500"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <span className="text-base md:text-lg font-bold text-black/60 group-hover:text-[#0055FF] tracking-tight transition-colors duration-300">
-              {t("cancelTitle")}
-            </span>
-            <span className="text-[#0055FF] group-hover:translate-x-1 transition-transform duration-300 text-xl">&rarr;</span>
-          </button>
-        </div>
-
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes gradient-shift {
             0%, 100% { background-position: 0% 50%; }
@@ -368,11 +405,6 @@ export default function RegistrationCTASection() {
           }
         `}} />
       </div>
-
-      <RegistrationPolicyModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-      />
     </section>
   );
 }

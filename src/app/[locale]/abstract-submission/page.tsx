@@ -105,36 +105,36 @@ export default function AbstractSubmission() {
           {/* Horizontal Stepper */}
           <div className="mb-16 relative w-full">
             {/* Connecting Lines Base */}
-            <div className="absolute top-5 left-8 right-8 h-[2px] bg-slate-200 z-0"></div>
+            <div className="absolute top-7 left-7 right-7 h-[2px] bg-slate-200 z-0"></div>
             {/* Progress Fill */}
             <div 
-              className="absolute top-5 left-8 h-[2px] bg-slate-950 z-0 transition-all duration-500" 
-              style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 4rem + ${currentStep === 1 ? '4rem' : currentStep === steps.length ? '0rem' : '2rem'})` }}
+              className="absolute top-7 left-7 h-[2px] bg-slate-950 z-0 transition-all duration-500" 
+              style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 3.5rem + ${currentStep === 1 ? '3.5rem' : currentStep === steps.length ? '0rem' : '1.75rem'})` }}
             ></div>
             
             <div className="relative z-10 flex justify-between items-start">
               {steps.map((step) => (
-                <div key={step.id} className="flex flex-col items-center gap-4 group bg-[#fafafa] px-2">
+                <div key={step.id} className="flex flex-col items-center gap-4 group relative">
                   <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-semibold transition-all duration-500 border-2 relative z-10",
+                    "w-14 h-14 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-500 border-2 relative z-10",
                     currentStep === step.id 
                       ? "bg-slate-950 border-slate-950 text-white shadow-xl scale-110" 
                       : currentStep > step.id 
                         ? "bg-slate-950 border-slate-950 text-white" 
-                        : "bg-white border-slate-200 text-slate-300"
+                        : "bg-white border-slate-200 text-slate-400"
                   )}>
-                    {currentStep > step.id ? <CheckCircle className="w-4 h-4" /> : `0${step.id}`}
+                    {currentStep > step.id ? <CheckCircle className="w-6 h-6" /> : `0${step.id}`}
                   </div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center mt-2">
                     <span className={cn(
-                      "text-[9px] font-semibold uppercase tracking-widest mb-1",
-                      currentStep === step.id ? "text-orange-500" : "text-slate-300"
+                      "text-xs font-semibold uppercase tracking-widest mb-1",
+                      currentStep === step.id ? "text-orange-500" : "text-slate-400"
                     )}>
                       {t("stage")} 0{step.id}
                     </span>
                     <span className={cn(
-                      "text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-center max-w-[100px]",
-                      currentStep === step.id ? "text-slate-900" : "text-slate-400"
+                      "text-xs sm:text-sm font-semibold uppercase tracking-wider text-center max-w-[130px]",
+                      currentStep === step.id ? "text-slate-900" : "text-slate-500"
                     )}>
                       {step.label}
                     </span>
@@ -175,7 +175,7 @@ export default function AbstractSubmission() {
                 
                 <button 
                   onClick={currentStep === 5 ? handleSubmit : handleNext}
-                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-semibold uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto"
+                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-semibold uppercase tracking-[4px] text-[11px] hover:bg-orange-500 hover:text-white transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto"
                 >
                   {currentStep === 5 ? t("submitFinalAbstract") : t("proceedToNextStage")}
                   <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />
@@ -206,7 +206,7 @@ export default function AbstractSubmission() {
             <Link 
               href="/"
               onClick={() => setIsSubmitted(false)}
-              className="px-10 py-5 rounded-2xl bg-slate-950 text-white font-bold uppercase tracking-[4px] text-[10px] sm:text-[11px] hover:bg-gold hover:text-black shadow-lg transition-all block w-full sm:w-auto"
+              className="px-10 py-5 rounded-2xl bg-slate-950 text-white font-bold uppercase tracking-[4px] text-[10px] sm:text-[11px] hover:bg-orange-500 hover:text-white shadow-lg transition-all block w-full sm:w-auto"
             >
               {t("returnToHomepage")}
             </Link>
