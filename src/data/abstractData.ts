@@ -23,6 +23,14 @@ export const abstractTimeline = [
     status: "upcoming",
     color: "blue",
   },
+  {
+    label: "Abstract Submission Round 2 Result Announcement",
+    labelTh: "ประกาศผล Abstract รอบที่ 2",
+    date: "10 September 2026",
+    dateTh: "10 กันยายน 2569",
+    status: "upcoming",
+    color: "blue",
+  },
 ];
 export const abstractCategories = [
   { id: 1, title: "Clinical Pharmacy / Patient Care", titleTh: "เภสัชกรรมคลินิก / การดูแลผู้ป่วย" },
@@ -57,11 +65,17 @@ export const submissionGuidelines = {
       value: "1 July - 31 August 2026",
       valueTh: "1 กรกฎาคม 2569 - 31 สิงหาคม 2569",
     },
+    {
+      label: "Abstract submission round 2 result announcement",
+      labelTh: "ประกาศผล Abstract รอบที่ 2",
+      value: "10 September 2026",
+      valueTh: "10 กันยายน 2569",
+    },
   ],
   importantDatesReservationNote: "This consideration is reserved only for participants who submit an abstract in Round 1 and receive an approved abstract.",
   importantDatesReservationNoteTh: "หมายเหตุ: สิทธินี้จะมอบให้เฉพาะผู้ที่ส่งผลงานในรอบที่ 1 และได้รับการยืนยันผลการพิจารณา (Approved Abstracts) เป็นที่เรียบร้อยแล้วเท่านั้น",
-  presenterRegistrationNote: "If you submit your abstract during Round 1 (1 May - 10 June 2026) and your abstract is approved, you will still be eligible for the Early Bird registration rate of THB 1,250 even if approval is granted after the Early Bird period has ended.",
-  presenterRegistrationNoteTh: "สำหรับท่านที่ส่งบทคัดย่อ (Abstract) ภายในช่วงเวลา รอบที่ 1 คือวันที่ 1 พฤษภาคม – 10 มิถุนายน 2569 ท่านจะยังคงได้รับสิทธิ์ซื้อบัตรเข้างานในราคา Early Bird 1,250 บาท แม้จะพ้นกำหนดช่วงเวลาดังกล่าวไปแล้ว หากบทคัดย่อของท่านได้รับการอนุมัติให้เข้าร่วมนำเสนอผลงาน",
+  presenterRegistrationNote: "Authors whose Round 1 abstracts are approved will receive the Early Bird registration rate (THB 1,250) even if the approval is granted after the Early Bird period ends.",
+  presenterRegistrationNoteTh: "ผู้ส่งบทคัดย่อในรอบที่ 1 และได้รับการอนุมัติ จะได้รับสิทธิ์ลงทะเบียนในราคา Early Bird (1,250 บาท) แม้ว่าจะพ้นช่วงเวลาดังกล่าวไปแล้ว",
   presenterRegistrationNoteSegments: [
     { text: "If you " },
     { text: "submit your abstract during Round 1", accent: true },
@@ -109,7 +123,7 @@ export const submissionGuidelines = {
     "Do NOT submit abstracts with typographical or grammatical errors.",
     "All abbreviations should be given in brackets after the first full use of the word.",
     "Presentation type: Poster presentation / Oral presentation.",
-    "Language: Thai.",
+    "Language: Thai",
   ],
   guidelinesTh: [
     "ต้องส่งบทคัดย่อผ่านระบบออนไลน์บนเว็บไซต์ PRIS 2026 เท่านั้น",

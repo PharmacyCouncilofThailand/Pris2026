@@ -297,9 +297,9 @@ export default function Hero() {
       ref={containerRef}
       className="relative w-full min-h-[100svh] overflow-hidden bg-black flex flex-col justify-center items-center isolate"
     >
-      {/* Background: BG2M.webp for mobile, BG.webp for desktop */}
+      {/* Background: BG2Monly.webp for mobile, BGonly.webp for desktop */}
       <Image
-        src="/assets/Img/BG/BG2M.webp"
+        src="/assets/Img/BG/BG2Monly.webp"
         alt=""
         fill
         priority
@@ -308,7 +308,7 @@ export default function Hero() {
         className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none lg:hidden"
       />
       <Image
-        src="/assets/Img/BG/BG.webp"
+        src="/assets/Img/BG/BGonly.webp"
         alt=""
         fill
         priority
@@ -323,19 +323,19 @@ export default function Hero() {
       />
 
       {/* Hero Content */}
-      <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[80px] md:pt-[100px] pb-2 text-center">
+      <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[130px] md:pt-[160px] pb-2 text-center">
 
-        {/* Main Content Wrapper (Pushed to bottom to avoid overlapping BG text) */}
-        <div className="flex-1 w-full flex flex-col justify-end items-center pb-4 md:pb-8">
+        {/* Main Content Wrapper (Centered) */}
+        <div className="flex-1 w-full flex flex-col justify-center items-center pb-4 md:pb-8 mt-12 md:mt-20">
 
         {/* Logo */}
         <div
           ref={logoRef}
-          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6 hidden"
+          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6"
           style={{ opacity: 0 }}
         >
           <Image
-            src="/assets/Img/logo/Pris2026-logo.svg"
+            src="/assets/Img/logo/LOGO1.png"
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
@@ -347,21 +347,21 @@ export default function Hero() {
         {/* Thin divider */}
         <div
           ref={infoRef}
-          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4 hidden"
+          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4"
           style={{ opacity: 0 }}
         >
           {/* Horizontal rule */}
           <div className="w-24 h-px bg-white/20" />
 
-          {/* Date + Location — one clean row */}
-          <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-6 text-white/80 text-xs sm:text-sm tracking-widest uppercase font-medium text-center">
+          {/* Date + Location */}
+          <div className="flex flex-col items-center gap-2.5 sm:gap-3 text-white/80 text-xs sm:text-sm tracking-widest uppercase font-medium text-center">
             <span className="flex items-center gap-2">
               <CalendarDays className="w-3.5 h-3.5 opacity-70 shrink-0" />
               15 – 16 October 2025
             </span>
             <span className="flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 opacity-70 shrink-0" />
-              IMPACT Challenger, Bangkok
+              IMPACT Challenger, Muang Thong Thani
             </span>
           </div>
 
@@ -391,15 +391,25 @@ export default function Hero() {
           <Link
             href="/registration"
             onClick={handleRegisterClick}
-            className="group relative inline-flex items-center gap-4 px-8 md:px-10 py-4 md:py-5 bg-gradient-to-br from-[#c86800] to-[#a04500] border border-[#ffb450]/40 rounded-full text-white shadow-[0_0_25px_rgba(255,120,0,0.3),0_0_60px_rgba(255,90,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)] hover:scale-105 hover:from-[#e07800] hover:to-[#b85000] hover:border-[#ffc864]/60 hover:shadow-[0_0_40px_rgba(255,120,0,0.5),0_0_80px_rgba(255,90,0,0.2),inset_0_1px_0_rgba(255,255,255,0.2)] transition-all duration-300 overflow-hidden"
+            className="group relative inline-flex items-center gap-4 px-10 md:px-14 py-5 md:py-6 rounded-full text-white transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] z-10"
           >
-            {/* Bottom accent line */}
-            <div className="absolute bottom-0 left-[15%] w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#ffb450]/50 to-transparent rounded-sm transition-opacity"></div>
+            {/* Outer pulsing glow (GPU accelerated) */}
+            <div className="absolute inset-[-6px] rounded-full bg-gradient-to-r from-[#ff7300] to-[#ffb74d] blur-md opacity-30 group-hover:opacity-70 animate-[gentle-pulse_3s_ease-in-out_infinite] -z-10" />
+
+            {/* Main Button Background with border */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#ff7300] to-[#e65c00] border border-[#ffb74d]/40 rounded-full shadow-[0_0_25px_rgba(255,115,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:from-[#ff8c00] group-hover:to-[#ff7300] group-hover:border-[#ffd54f]/60 transition-all duration-500 -z-10 overflow-hidden">
+              
+              {/* Continuous shimmer sweep */}
+              <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer-sweep_3.5s_infinite_ease-in-out]" />
+              
+              {/* Bottom accent line for 3D depth */}
+              <div className="absolute bottom-0 left-[15%] w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#ffb74d]/70 to-transparent rounded-sm" />
+            </div>
             
-            <span className="relative z-10 text-[0.8125rem] sm:text-[0.9375rem] md:text-[1.0625rem] font-semibold tracking-[0.2em] uppercase text-white/90 group-hover:text-white transition-colors">
+            <span className="relative z-10 text-[0.9375rem] sm:text-[1.0625rem] md:text-[1.15rem] font-bold tracking-[0.2em] uppercase text-white/90 group-hover:text-white transition-colors">
               {t("registerNow")}
             </span>
-            <span className="relative z-10 flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 group-hover:bg-white/20 group-hover:translate-x-[3px] transition-all duration-300 text-white">
+            <span className="relative z-10 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 group-hover:bg-white/25 group-hover:translate-x-[4px] transition-all duration-300 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </span>
           </Link>
@@ -433,6 +443,7 @@ export default function Hero() {
                     { name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", scale: "" },
                     { name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", scale: "" },
                     { name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", scale: "scale-[1.4]" },
+                    { name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png", scale: "scale-[0.85]" },
                   ].map((partner, index) => (
                     <div
                       key={`partner-${i}-${index}`}
@@ -463,8 +474,16 @@ export default function Hero() {
           .animate-partner-scroll {
             animation: partner-scroll 35s linear infinite;
           }
+          @keyframes shimmer-sweep {
+            0% { transform: translate3d(-200%, 0, 0) skewX(-25deg); }
+            100% { transform: translate3d(300%, 0, 0) skewX(-25deg); }
+          }
+          @keyframes gentle-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.03); }
+          }
           @media (prefers-reduced-motion: reduce) {
-            .animate-partner-scroll {
+            .animate-partner-scroll, .animate-\\[shimmer-sweep_3\\.5s_infinite_ease-in-out\\], .animate-\\[gentle-pulse_3s_ease-in-out_infinite\\] {
               animation: none;
             }
           }

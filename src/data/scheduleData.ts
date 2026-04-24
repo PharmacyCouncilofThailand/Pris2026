@@ -7,11 +7,11 @@ export const scheduleData: ScheduleDay[] = [
     date: "October 15, 2026",
     dateTh: "15 ตุลาคม 2569",
     events: [
-      { 
-        id: 1, 
-        time: "08:00 – 09:00", 
-        title: "Registration", 
-        titleTh: "ลงทะเบียน", 
+      {
+        id: 1,
+        time: "08:00 – 09:00",
+        title: "Registration",
+        titleTh: "ลงทะเบียน",
         location: "IMPACT Challenger",
         locationTh: "อิมแพ็ค ชาเลนเจอร์",
         type: "Registration",
@@ -20,13 +20,13 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 2, 
-        time: "09:00 – 09:30", 
-        title: "Opening Ceremony", 
-        titleTh: "Opening Ceremony", 
-        description: "Mr. Pattana Promphat The Minister of Public Health", 
-        descriptionTh: "นายพัฒนา พร้อมพัฒน์ รัฐมนตรีว่าการกระทรวงสาธารณสุข", 
+      {
+        id: 2,
+        time: "09:00 – 09:30",
+        title: "Opening Ceremony",
+        titleTh: "Opening Ceremony",
+        description: "Professional Advancement",
+        descriptionTh: "ความก้าวหน้าทางวิชาชีพ",
         location: "Main Stage",
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Ceremony",
@@ -39,15 +39,15 @@ export const scheduleData: ScheduleDay[] = [
             nameTh: "นายพัฒนา พร้อมพัฒน์",
             role: "The Minister of Public Health",
             roleTh: "รัฐมนตรีว่าการกระทรวงสาธารณสุข",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+            image: "/assets/Img/Speaker Event Schedule/Mr. Pattana Promphat.jpg"
           }
         ]
       },
-      { 
-        id: 3, 
-        time: "09:30 – 10:30", 
-        title: "Plenary Lecture", 
-        titleTh: "Plenary Lecture", 
+      {
+        id: 3,
+        time: "09:30 – 10:30",
+        title: "Plenary Lecture",
+        titleTh: "Plenary Lecture",
         description: '“Transforming Pharmacy Practice Under Ministry of Public Health Policies”',
         descriptionTh: "“พลิกโฉมงานเภสัชกรรมภายใต้นโยบายกระทรวงสาธารณสุข”",
         location: "Main Stage",
@@ -58,11 +58,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "เวทีหลัก",
         speakers: []
       },
-      { 
-        id: 4, 
-        time: "10:30 – 11:00", 
-        title: "Coffee Break & Poster/Exhibition Viewing", 
-        titleTh: "Coffee Break & Poster/Exhibition Viewing", 
+      {
+        id: 4,
+        time: "10:30 – 11:00",
+        title: "Coffee Break & Poster/Exhibition Viewing",
+        titleTh: "Coffee Break & Poster/Exhibition Viewing",
         location: "Exhibition Hall",
         locationTh: "โถงนิทรรศการ",
         type: "Break",
@@ -71,13 +71,13 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 501, 
-        time: "11:00 – 12:00", 
-        title: "Panel “Unlocking Pharmacy Profession Pain Points”", 
-        titleTh: "เสวนา “ปลดล็อค Pain Point วิชาชีพเภสัชกรรม”", 
-        location: "Jupiter 4-7", 
-        locationTh: "Jupiter 4-7", 
+      {
+        id: 501,
+        time: "11:00 – 12:00",
+        title: "Panel “Unlocking Pharmacy Profession Pain Points”",
+        titleTh: "เสวนา “ปลดล็อค Pain Point วิชาชีพเภสัชกรรม”",
+        location: "Jupiter 4-7",
+        locationTh: "Jupiter 4-7",
         type: "Session",
         typeTh: "การประชุม",
         track: "Main Stage",
@@ -113,50 +113,50 @@ export const scheduleData: ScheduleDay[] = [
           }
         ]
       },
-      { 
-        id: 502, 
-        time: "11:00 – 12:00", 
-        title: "Young Pharmacist", 
-        titleTh: "Young Pharmacist (สนภท.)", 
-        location: "Jupiter 11", 
-        locationTh: "Jupiter 11", 
+      {
+        id: 502,
+        time: "11:00 – 12:00",
+        title: "Young Pharmacist",
+        titleTh: "Young Pharmacist (สนภท.)",
+        location: "Jupiter 11",
+        locationTh: "Jupiter 11",
         type: "Session",
         typeTh: "การประชุม",
         track: "Room 1",
         trackTh: "ห้อง 1",
         speakers: []
       },
-      { 
-        id: 503, 
-        time: "11:00 – 12:00", 
-        title: "Workshop: Professional Direction (Community)", 
-        titleTh: "Workshop: ทิศทางวิชาชีพ (สายชุมชน)", 
-        location: "Jupiter 12", 
-        locationTh: "Jupiter 12", 
+      {
+        id: 503,
+        time: "11:00 – 12:00",
+        title: "Workshop: Professional Direction (Community)",
+        titleTh: "Workshop: ทิศทางวิชาชีพ (สายชุมชน)",
+        location: "Jupiter 12",
+        locationTh: "Jupiter 12",
         type: "Session",
         typeTh: "การประชุม",
         track: "Room 2",
         trackTh: "ห้อง 2",
         speakers: []
       },
-      { 
-        id: 504, 
-        time: "11:00 – 12:00", 
-        title: "Workshop: Professional Direction (Industrial)", 
-        titleTh: "Workshop: ทิศทางวิชาชีพ (สายอุตสาหกรรม)", 
-        location: "Jupiter 13", 
-        locationTh: "Jupiter 13", 
+      {
+        id: 504,
+        time: "11:00 – 12:00",
+        title: "Workshop: Professional Direction (Industrial)",
+        titleTh: "Workshop: ทิศทางวิชาชีพ (สายอุตสาหกรรม)",
+        location: "Jupiter 13",
+        locationTh: "Jupiter 13",
         type: "Session",
         typeTh: "การประชุม",
         track: "Room 3",
         trackTh: "ห้อง 3",
         speakers: []
       },
-      { 
-        id: 6, 
-        time: "12:00 – 13:00", 
-        title: "Lunch Symposium Sessions", 
-        titleTh: "Lunch Symposium Sessions", 
+      {
+        id: 6,
+        time: "12:00 – 13:00",
+        title: "Lunch Symposium Sessions",
+        titleTh: "Lunch Symposium Sessions",
         description: "Session 1 (12:00 – 12:30)\nSession 2 (12:30 – 13:00)",
         descriptionTh: "Session 1 (12:00 – 12:30)\nSession 2 (12:30 – 13:00)",
         location: "Various Rooms",
@@ -167,11 +167,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 7, 
-        time: "13:00 – 15:00", 
-        title: "Scientific Sessions & Exhibition", 
-        titleTh: "Scientific Sessions & Exhibition", 
+      {
+        id: 7,
+        time: "13:00 – 15:00",
+        title: "Scientific Sessions & Exhibition",
+        titleTh: "Scientific Sessions & Exhibition",
         description: "Poster & Booth Exhibition\nOral Presentation I-IV (4 Parallel Rooms, 6 presentations/session, 15 min each)",
         descriptionTh: "Poster & Booth Exhibition\nOral Presentation I-IV (4 Parallel Rooms, 6 presentations/session, 15 min each)",
         location: "Exhibition Hall & Meeting Rooms",
@@ -182,11 +182,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 8, 
-        time: "15:00 – 15:30", 
-        title: "Coffee Break", 
-        titleTh: "Coffee Break", 
+      {
+        id: 8,
+        time: "15:00 – 15:30",
+        title: "Coffee Break",
+        titleTh: "Coffee Break",
         location: "Exhibition Hall",
         locationTh: "โถงนิทรรศการ",
         type: "Break",
@@ -195,11 +195,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 901, 
-        time: "15:30 – 16:00", 
-        title: "Corporate Symposium", 
-        titleTh: "Corporate Symposium", 
+      {
+        id: 901,
+        time: "15:30 – 16:00",
+        title: "Corporate Symposium",
+        titleTh: "Corporate Symposium",
         location: "Main Stage",
         locationTh: "เวทีหลัก",
         type: "Session",
@@ -208,11 +208,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "เวทีหลัก",
         speakers: []
       },
-      { 
-        id: 902, 
-        time: "15:30 – 16:00", 
-        title: "Student Presentation (Pharmaceutical Sciences)", 
-        titleTh: "Student Presentation (Pharmaceutical Sciences)", 
+      {
+        id: 902,
+        time: "15:30 – 16:00",
+        title: "Student Presentation (Pharmaceutical Sciences)",
+        titleTh: "Student Presentation (Pharmaceutical Sciences)",
         location: "Rooms 1-3",
         locationTh: "ห้อง 1-3",
         type: "Session",
@@ -221,11 +221,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ห้อง 1",
         speakers: []
       },
-      { 
-        id: 903, 
-        time: "15:30 – 16:00", 
-        title: "Student Presentation (Pharmaceutical Sciences)", 
-        titleTh: "Student Presentation (Pharmaceutical Sciences)", 
+      {
+        id: 903,
+        time: "15:30 – 16:00",
+        title: "Student Presentation (Pharmaceutical Sciences)",
+        titleTh: "Student Presentation (Pharmaceutical Sciences)",
         location: "Rooms 1-3",
         locationTh: "ห้อง 1-3",
         type: "Session",
@@ -234,11 +234,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ห้อง 2",
         speakers: []
       },
-      { 
-        id: 904, 
-        time: "15:30 – 16:00", 
-        title: "Student Presentation (Pharmaceutical Sciences)", 
-        titleTh: "Student Presentation (Pharmaceutical Sciences)", 
+      {
+        id: 904,
+        time: "15:30 – 16:00",
+        title: "Student Presentation (Pharmaceutical Sciences)",
+        titleTh: "Student Presentation (Pharmaceutical Sciences)",
         location: "Rooms 1-3",
         locationTh: "ห้อง 1-3",
         type: "Session",
@@ -247,11 +247,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ห้อง 3",
         speakers: []
       },
-      { 
-        id: 10, 
-        time: "16:00 – 16:30", 
-        title: "Organizational Report", 
-        titleTh: "Organizational Report", 
+      {
+        id: 10,
+        time: "16:00 – 16:30",
+        title: "Organizational Report",
+        titleTh: "Organizational Report",
         description: "(Pharmacy Council and Royal College of Pharmacy)",
         descriptionTh: "(สภาเภสัชกรรม และราชวิทยาลัย)",
         location: "Main Stage",
@@ -262,11 +262,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "เวทีหลัก",
         speakers: []
       },
-      { 
-        id: 11, 
-        time: "16:30 – 18:00", 
-        title: "Welcome Reception & Networking", 
-        titleTh: "Welcome Reception & Networking", 
+      {
+        id: 11,
+        time: "16:30 – 18:00",
+        title: "Welcome Reception & Networking",
+        titleTh: "Welcome Reception & Networking",
         description: "Includes Awarding of Certificates and Diplomas",
         descriptionTh: "พร้อมพิธีมอบประกาศนียบัตร และวุฒิบัตร",
         location: "Grand Foyer",
@@ -285,11 +285,11 @@ export const scheduleData: ScheduleDay[] = [
     date: "October 16, 2026",
     dateTh: "16 ตุลาคม 2569",
     events: [
-      { 
-        id: 12, 
-        time: "08:00 – 09:00", 
-        title: "Registration", 
-        titleTh: "ลงทะเบียน", 
+      {
+        id: 12,
+        time: "08:00 – 09:00",
+        title: "Registration",
+        titleTh: "ลงทะเบียน",
         location: "IMPACT Challenger",
         locationTh: "อิมแพ็ค ชาเลนเจอร์",
         type: "Registration",
@@ -298,11 +298,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 13, 
-        time: "09:00 – 09:30", 
-        title: "Keynote Lecture 1", 
-        titleTh: "Keynote Lecture 1", 
+      {
+        id: 13,
+        time: "09:00 – 09:30",
+        title: "Keynote Lecture 1",
+        titleTh: "Keynote Lecture 1",
         description: '“AI in Pharmacy Practice”',
         descriptionTh: "“AI กับงานเภสัชกรรม”",
         location: "Main Stage",
@@ -313,11 +313,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "เวทีหลัก",
         speakers: []
       },
-      { 
-        id: 14, 
-        time: "09:30 – 10:00", 
-        title: "Keynote Lecture 2", 
-        titleTh: "Keynote Lecture 2", 
+      {
+        id: 14,
+        time: "09:30 – 10:00",
+        title: "Keynote Lecture 2",
+        titleTh: "Keynote Lecture 2",
         description: '“Advance and Innovation Pharmacy I”',
         descriptionTh: "“Advance and Innovation Pharmacy I”",
         location: "Main Stage",
@@ -328,11 +328,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "เวทีหลัก",
         speakers: []
       },
-      { 
-        id: 15, 
-        time: "10:00 – 10:30", 
-        title: "Coffee Break & Poster Viewing", 
-        titleTh: "พักรับประทานอาหารว่าง และเยี่ยมชมนิทรรศการโปสเตอร์", 
+      {
+        id: 15,
+        time: "10:00 – 10:30",
+        title: "Coffee Break & Poster Viewing",
+        titleTh: "พักรับประทานอาหารว่าง และเยี่ยมชมนิทรรศการโปสเตอร์",
         location: "Exhibition Hall",
         locationTh: "โถงนิทรรศการ",
         type: "Break",
@@ -341,11 +341,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 1601, 
-        time: "10:30 – 12:00", 
-        title: "Advance and Innovation Pharmacy II-IV", 
-        titleTh: "Advance and Innovation Pharmacy II-IV", 
+      {
+        id: 1601,
+        time: "10:30 – 12:00",
+        title: "Advance and Innovation Pharmacy II-IV",
+        titleTh: "Advance and Innovation Pharmacy II-IV",
         location: "Main Stage",
         locationTh: "เวทีหลัก",
         type: "Session",
@@ -354,11 +354,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "เวทีหลัก",
         speakers: []
       },
-      { 
-        id: 1602, 
-        time: "10:30 – 12:00", 
-        title: "Networking (Education)", 
-        titleTh: "Networking (ด้านการศึกษา)", 
+      {
+        id: 1602,
+        time: "10:30 – 12:00",
+        title: "Networking (Education)",
+        titleTh: "Networking (ด้านการศึกษา)",
         location: "Room 1",
         locationTh: "ห้อง 1",
         type: "Session",
@@ -367,11 +367,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ห้อง 1",
         speakers: []
       },
-      { 
-        id: 1603, 
-        time: "10:30 – 12:00", 
-        title: "Networking", 
-        titleTh: "Networking", 
+      {
+        id: 1603,
+        time: "10:30 – 12:00",
+        title: "Networking",
+        titleTh: "Networking",
         location: "Room 2",
         locationTh: "ห้อง 2",
         type: "Session",
@@ -380,11 +380,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ห้อง 2",
         speakers: []
       },
-      { 
-        id: 1604, 
-        time: "10:30 – 12:00", 
-        title: "Networking", 
-        titleTh: "Networking", 
+      {
+        id: 1604,
+        time: "10:30 – 12:00",
+        title: "Networking",
+        titleTh: "Networking",
         location: "Room 3",
         locationTh: "ห้อง 3",
         type: "Session",
@@ -393,11 +393,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ห้อง 3",
         speakers: []
       },
-      { 
-        id: 17, 
-        time: "12:00 – 13:00", 
-        title: "Lunch Symposium Sessions", 
-        titleTh: "Lunch Symposium Sessions", 
+      {
+        id: 17,
+        time: "12:00 – 13:00",
+        title: "Lunch Symposium Sessions",
+        titleTh: "Lunch Symposium Sessions",
         description: "Session 3 (12:00 – 12:30)\nSession 4 (12:30 – 13:00)",
         descriptionTh: "Session 3 (12:00 – 12:30)\nSession 4 (12:30 – 13:00)",
         location: "Various Rooms",
@@ -408,11 +408,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 18, 
-        time: "13:00 – 16:30", 
-        title: "Scientific Sessions", 
-        titleTh: "Scientific Sessions", 
+      {
+        id: 18,
+        time: "13:00 – 16:30",
+        title: "Scientific Sessions",
+        titleTh: "Scientific Sessions",
         description: "Oral Presentation V-VIII (Parallel Sessions)\nStudent Presentation (Pharm Care / Pharm Science)",
         descriptionTh: "Oral Presentation V-VIII (Parallel Sessions)\nStudent Presentation (Pharm Care / Pharm Science)",
         location: "Meeting Rooms",
@@ -423,11 +423,11 @@ export const scheduleData: ScheduleDay[] = [
         trackTh: "ทั่วไป",
         speakers: []
       },
-      { 
-        id: 19, 
-        time: "17:00", 
-        title: "Award Ceremony", 
-        titleTh: "Award Ceremony", 
+      {
+        id: 19,
+        time: "17:00",
+        title: "Award Ceremony",
+        titleTh: "Award Ceremony",
         location: "Main Stage",
         locationTh: "เวทีห้องประชุมใหญ่",
         type: "Ceremony",

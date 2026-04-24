@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useLocale, useTranslations } from "next-intl";
+import CountUp from "@/components/ui/CountUp";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,7 +17,7 @@ export default function PrisIntroSection() {
   const locale = useLocale();
   const containerRef = useRef<HTMLElement>(null);
 
-  const titleSegments = (() => {
+  const titleSegments = useMemo(() => {
     const title = t("title");
 
     if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
@@ -27,7 +28,7 @@ export default function PrisIntroSection() {
     }
 
     return Array.from(title);
-  })();
+  }, [t, locale]);
 
   useGSAP(
     () => {
@@ -70,24 +71,6 @@ export default function PrisIntroSection() {
           }
         );
 
-        // ── Stat Numbers Reveal ──
-        gsap.fromTo(
-          ".stat-number",
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1.2,
-            stagger: 0.2,
-            ease: "power3.out",
-            force3D: true,
-            scrollTrigger: {
-              trigger: ".pris-stats",
-              start: "top 85%",
-              toggleActions: "play none none reverse"
-            },
-          }
-        );
       });
       return () => mm.revert();
     },
@@ -107,7 +90,7 @@ export default function PrisIntroSection() {
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] relative flex flex-col items-center text-center">
         
         {/* ── TITLE ── */}
-        <div className="pris-title overflow-hidden py-4 -my-4 mb-10 md:mb-16">
+        <div className="pris-title overflow-hidden py-4 -my-4 mb-10 md:mb-16 will-change-transform transform-gpu">
           <h2 className="text-[clamp(3rem,8vw,10rem)] leading-none font-black tracking-tighter uppercase pr-[0.15em]">
             {titleSegments.map((char, i) => (
                 <span key={i} className="pris-char inline-block">
@@ -118,7 +101,7 @@ export default function PrisIntroSection() {
         </div>
 
         {/* ── BODY: Centered Editorial ── */}
-        <div className="pris-body-wrap max-w-4xl mx-auto flex flex-col gap-6 lg:gap-10 mb-16 md:mb-20">
+        <div className="pris-body-wrap max-w-4xl mx-auto flex flex-col gap-6 lg:gap-10 mb-16 md:mb-20 will-change-transform transform-gpu">
           <div className="overflow-hidden py-2 -my-2 flex justify-center">
             <p
               className="pris-body-line text-xl md:text-2xl lg:text-3xl font-light leading-[1.6] tracking-tight text-black/80 inline-block"
@@ -140,7 +123,7 @@ export default function PrisIntroSection() {
             <p
               className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
-              {t("stat1Value")}
+              <CountUp text={t("stat1Value")} duration={2500} />
             </p>
 
             {/* Icon: Network/People */}
@@ -179,7 +162,7 @@ export default function PrisIntroSection() {
             <p
               className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
-              {t("stat2Value")}
+              <CountUp text={t("stat2Value")} duration={1500} />
             </p>
 
             {/* Icon: Exhibition Booth */}
@@ -214,7 +197,7 @@ export default function PrisIntroSection() {
             <p
               className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
             >
-              {t("stat3Value")}
+              <CountUp text={t("stat3Value")} duration={1000} />
             </p>
 
             {/* Icon: Wine glasses / Networking */}

@@ -45,42 +45,43 @@ export default function RecentMemoriesSection() {
     };
   }, [lightboxIndex, closeLightbox, goNext, goPrev]);
 
-  // Duplicate each column for seamless infinite scroll (2x is enough)
+  // Duplicate each column for seamless infinite scroll (2x)
   const col1Items = [...column1, ...column1];
   const col2Items = [...column2, ...column2];
   const col3Items = [...column3, ...column3];
 
+  // On mobile we show 2 columns, on md+ we show 3
+  // Column 3 is hidden on mobile and shown on md+
   return (
     <>
       <section className="relative bg-black text-white overflow-hidden">
 
-        {/* Header removed — already shown in HighlightVideoSection above */}
+        {/* Vertical Scrolling Gallery — uniform grid */}
+        <div className="memories-gallery relative h-[600px] sm:h-[800px] md:h-[1000px] lg:h-[1100px] overflow-hidden z-10">
+          {/* Top fade */}
+          <div className="absolute top-0 left-0 right-0 h-20 sm:h-24 md:h-32 bg-gradient-to-b from-black via-black/80 to-transparent z-10 pointer-events-none" />
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 md:h-48 bg-gradient-to-t from-black via-black/90 to-transparent z-10 pointer-events-none" />
 
-        {/* Vertical Scrolling Gallery — 3 columns */}
-        <div className="relative h-[800px] sm:h-[1000px] md:h-[1200px] overflow-hidden z-10">
-          <div className="absolute top-0 left-0 right-0 h-24 md:h-32 bg-gradient-to-b from-[#000000] via-[#000000]/80 to-transparent z-10 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 right-0 h-32 md:h-48 bg-gradient-to-t from-[#000000] via-[#000000]/90 to-transparent z-10 pointer-events-none" />
-
-
-          <div className="flex gap-3 sm:gap-4 md:gap-5 px-3 sm:px-4 md:px-8 h-full">
+          <div className="flex gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4 md:px-8 h-full">
             {/* Column 1 — scrolls UP */}
             <div className="flex-1 overflow-hidden relative">
-              <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 animate-scroll-up">
+              <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up">
                 {col1Items.map((src, i) => (
                   <div
                     key={`c1-${i}`}
-                    className="relative w-full aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0 bg-black"
+                    className="memories-card relative w-full aspect-[4/3] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0 bg-neutral-900"
                     onClick={() => openLightbox(src)}
                   >
                     <Image
                       src={src}
-                      alt={`PRIS 2024 Memory`}
+                      alt="PRIS 2024 Memory"
                       fill
                       quality={60}
-                      sizes="33vw"
-                      className="object-cover"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-black/0 md:group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
                   </div>
                 ))}
               </div>
@@ -88,47 +89,47 @@ export default function RecentMemoriesSection() {
 
             {/* Column 2 — scrolls DOWN */}
             <div className="flex-1 overflow-hidden relative">
-              <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 animate-scroll-down">
+              <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-down">
                 {col2Items.map((src, i) => (
                   <div
                     key={`c2-${i}`}
-                    className="relative w-full aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0 bg-black"
+                    className="memories-card relative w-full aspect-[4/3] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0 bg-neutral-900"
                     onClick={() => openLightbox(src)}
                   >
                     <Image
                       src={src}
-                      alt={`PRIS 2024 Memory`}
+                      alt="PRIS 2024 Memory"
                       fill
                       quality={60}
-                      sizes="33vw"
-                      className="object-cover transition-all duration-700 scale-[1.02] group-hover:scale-110"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 33vw"
+                      className="object-cover transition-transform duration-700 ease-out scale-[1.01] group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 pointer-events-none" />
-                    <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 pointer-events-none" />
+                    <div className="absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Column 3 — scrolls UP */}
-            <div className="flex-1 overflow-hidden relative">
-              <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 animate-scroll-up-slow">
+            {/* Column 3 — scrolls UP (hidden on mobile, visible on md+) */}
+            <div className="hidden md:flex flex-1 overflow-hidden relative">
+              <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up-slow w-full">
                 {col3Items.map((src, i) => (
                   <div
                     key={`c3-${i}`}
-                    className="relative w-full aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0 bg-black"
+                    className="memories-card relative w-full aspect-[4/3] rounded-lg sm:rounded-xl md:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0 bg-neutral-900"
                     onClick={() => openLightbox(src)}
                   >
                     <Image
                       src={src}
-                      alt={`PRIS 2024 Memory`}
+                      alt="PRIS 2024 Memory"
                       fill
                       quality={60}
                       sizes="33vw"
-                      className="object-cover transition-all duration-700 scale-[1.02] group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 ease-out scale-[1.01] group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 pointer-events-none" />
-                    <div className="absolute inset-0 rounded-xl sm:rounded-2xl border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 pointer-events-none" />
+                    <div className="absolute inset-0 rounded-lg sm:rounded-xl md:rounded-2xl border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                   </div>
                 ))}
               </div>

@@ -74,15 +74,9 @@ export default function AbstractTimeline() {
         </div>
 
         {/* Requirements Box */}
-        <div className="mt-12 md:mt-16 rounded-3xl border border-slate-200 bg-white p-6 md:p-8 shadow-[0_2px_20px_rgb(0,0,0,0.03)]">
-          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-            {reviewNoteTitle}
-          </p>
-          <p className="text-[0.9rem] leading-relaxed text-slate-600 mb-5">
+        <div className={`mt-12 md:mt-16 border-l-4 border-red-500 bg-red-50 p-6 rounded-r-lg ${locale === "th" ? "w-fit overflow-x-auto max-w-full" : "max-w-4xl"}`}>
+          <p className={`text-red-700 text-sm md:text-base font-medium ${locale === "th" ? "whitespace-nowrap" : ""}`}>
             {reviewNote}
-          </p>
-          <p className="text-[0.9rem] font-bold text-red-600">
-            {reservationNote}
           </p>
         </div>
       </div>

@@ -49,7 +49,7 @@ export default function CallForAbstractsPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/abstract-submission"
-              className="bg-blue-600 text-white font-bold px-8 py-4 text-center uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
+              className="bg-blue-600 text-white font-bold px-8 py-4 rounded-full text-center uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
             >
               {t("submitAbstract")}
             </Link>

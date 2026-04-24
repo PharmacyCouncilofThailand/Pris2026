@@ -17,6 +17,8 @@ interface PageHeroProps {
   subtitle?: string;
   /** Use dark theme (for pages like committee) */
   dark?: boolean;
+  /** Place title1 and title2 on the same line */
+  inlineTitle?: boolean;
 }
 
 export default function PageHero({
@@ -26,6 +28,7 @@ export default function PageHero({
   title2,
   subtitle,
   dark = false,
+  inlineTitle = false,
 }: PageHeroProps) {
   const heroRef = useRef<HTMLElement>(null!);
 
@@ -37,6 +40,7 @@ export default function PageHero({
         duration: 1.6,
         ease: "power4.out",
         delay: 0.15,
+        force3D: true,
       });
       gsap.from(".page-hero-sub", {
         opacity: 0,
@@ -44,6 +48,7 @@ export default function PageHero({
         duration: 1.2,
         ease: "power3.out",
         delay: 0.8,
+        force3D: true,
       });
     },
     { scope: heroRef }
@@ -91,15 +96,15 @@ export default function PageHero({
 
         {/* Title */}
         <h1
-          className={`text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8`}
+          className={`text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 ${inlineTitle ? 'flex flex-row justify-center gap-x-3 md:gap-x-6' : ''}`}
         >
           <div className="overflow-hidden py-2 -my-2 md:pl-2">
-            <span className="block page-hero-line pr-[0.15em]">{title1}</span>
+            <span className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line pr-[0.15em]`}>{title1}</span>
           </div>
           {title2 && (
             <div className="overflow-hidden py-2 -my-2 md:pl-2">
               <span
-                className={`block page-hero-line text-transparent bg-clip-text bg-gradient-to-r ${gradientFrom} pb-2 pr-[0.15em]`}
+                className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line text-transparent bg-clip-text bg-gradient-to-r ${gradientFrom} pb-2 pr-[0.15em]`}
               >
                 {title2}
               </span>
