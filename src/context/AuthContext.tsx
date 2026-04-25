@@ -3,11 +3,21 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { logger } from '@/lib/logger';
 
 interface User {
+    id?: number;
     firstName: string;
     lastName: string;
     email: string;
-    affiliation?: string;
+    role?: string;
+    status?: string;
+    country?: string;
+    delegateType?: string;
+    isThai?: boolean;
+    idCard?: string;
     phone?: string;
+    institution?: string;
+    university?: string;
+    pharmacyLicenseId?: string;
+    name?: string;
 }
 
 interface AuthContextType {

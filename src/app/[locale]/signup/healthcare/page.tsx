@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || '';
 
-export default function PharmacistSignUpPage() {
+export default function HealthcareSignUpPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const router = useRouter();
   const { login } = useAuth();
@@ -106,7 +106,7 @@ export default function PharmacistSignUpPage() {
 
             <div className="text-center mb-10 fade-in-up">
               <h1 className="text-3xl lg:text-4xl font-serif tracking-tight text-gray-900 mb-3 leading-tight">
-                Join as Pharmacist
+                Join as Healthcare Professional
               </h1>
               <p className="text-sm font-medium text-gray-500">
                 Please fill in your details to register your account
@@ -119,7 +119,6 @@ export default function PharmacistSignUpPage() {
               const firstName = (form.elements.namedItem('firstName') as HTMLInputElement).value;
               const lastName = (form.elements.namedItem('lastName') as HTMLInputElement).value;
               const idInput = (form.elements.namedItem('idCard') as HTMLInputElement).value;
-              const pharmacyLicenseId = (form.elements.namedItem('licenseNumber') as HTMLInputElement).value;
               const email = (form.elements.namedItem('email') as HTMLInputElement).value;
               const organization = (form.elements.namedItem('organization') as HTMLInputElement).value;
               const phone = (form.elements.namedItem('phone') as HTMLInputElement).value;
@@ -138,8 +137,7 @@ export default function PharmacistSignUpPage() {
                 fd.append('lastName', lastName);
                 fd.append('email', email);
                 fd.append('password', password);
-                fd.append('accountType', 'pharmacist');
-                fd.append('pharmacyLicenseId', pharmacyLicenseId);
+                fd.append('accountType', 'medicalProfessional');
                 if (organization) fd.append('organization', organization);
                 if (phone) fd.append('phone', phone);
                 if (turnstileToken) fd.append('recaptchaToken', turnstileToken);
@@ -218,19 +216,6 @@ export default function PharmacistSignUpPage() {
                   id="idCard"
                   placeholder="e.g. 1234567890123 or AB1234567"
                   maxLength={13}
-                  className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="licenseNumber">
-                  Pharmacy License Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="licenseNumber"
-                  placeholder="Enter license number"
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   required
                 />

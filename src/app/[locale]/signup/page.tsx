@@ -121,7 +121,20 @@ export default function SignUpTypePage() {
               >
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">Pharmacist</h3>
-                  <p className="text-sm font-medium text-gray-500">For medical professionals</p>
+                  <p className="text-sm font-medium text-gray-500">For licensed pharmacists</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
+                   <div className="text-[10px] font-bold uppercase tracking-widest">Go</div>
+                </div>
+              </Link>
+
+              <Link 
+                href="/signup/healthcare" 
+                className="group flex items-center justify-between p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+              >
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">Healthcare Professional</h3>
+                  <p className="text-sm font-medium text-gray-500">For healthcare personnel</p>
                 </div>
                 <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
                    <div className="text-[10px] font-bold uppercase tracking-widest">Go</div>

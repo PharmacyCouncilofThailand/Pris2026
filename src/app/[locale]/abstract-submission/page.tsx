@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Link } from "@/i18n/routing";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { 
   User, 
@@ -15,33 +15,66 @@ import {
   Info,
   Plus,
   Trash2,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { abstractCategories } from "@/data/abstractData";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
+import toast from "react-hot-toast";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
+const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "";
+
+interface CategoryOption {
+  id: number;
+  name: string;
+}
 
 export default function AbstractSubmission() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [trackingId, setTrackingId] = useState("");
+  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [showErrors, setShowErrors] = useState(false);
   const t = useTranslations("abstractSubmission");
-  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+  const { user, isAuthenticated, token } = useAuth();
   
+  // Login guard — redirect if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login?redirect=/abstract-submission");
+    }
+  }, [isAuthenticated, router]);
+
+  // Fetch categories from API
+  useEffect(() => {
+    if (EVENT_CODE) {
+      fetch(`${API_URL}/api/events/${EVENT_CODE}/abstract-categories`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.categories) setCategories(data.categories);
+        })
+        .catch(() => { /* silently fail, categories will be empty */ });
+    }
+  }, []);
+
   // Form State
   const [formData, setFormData] = useState({
     author: { firstName: "", lastName: "", email: "", affiliation: "", phone: "" },
-    coAuthors: [] as { firstName: string, lastName: string, affiliation: string, email: string }[],
+    coAuthors: [] as { firstName: string, lastName: string, institution: string, email: string }[],
     abstract: { title: "", category: "", type: "", keywords: "" },
-    content: { background: "", objectives: "", methods: "", results: "", conclusions: "" },
-    files: [] as File[]
+    content: { background: "", objective: "", methods: "", results: "", conclusion: "" },
+    file: null as File | null
   });
 
   // Autofill user data when logged in
   useEffect(() => {
     if (isAuthenticated && user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(prev => ({
         ...prev,
         author: {
@@ -49,7 +82,7 @@ export default function AbstractSubmission() {
           firstName: user.firstName || prev.author.firstName,
           lastName: user.lastName || prev.author.lastName,
           email: user.email || prev.author.email,
-          affiliation: user.affiliation || prev.author.affiliation,
+          affiliation: user.institution || prev.author.affiliation,
           phone: user.phone || prev.author.phone,
         }
       }));
@@ -72,7 +105,47 @@ export default function AbstractSubmission() {
     );
   }, [currentStep]);
 
+  // Don't render form until authenticated
+  if (!isAuthenticated) {
+    return (
+      <main className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+      </main>
+    );
+  }
+
   const handleNext = () => {
+    // Validate Step 3: title, category, type, keywords are required
+    if (currentStep === 3) {
+      const { title, category, type, keywords } = formData.abstract;
+      const missing: string[] = [];
+      if (!title.trim()) missing.push('Title');
+      if (!category.trim()) missing.push('Submission Theme');
+      if (!type.trim()) missing.push('Presentation Mode');
+      if (!keywords.trim()) missing.push('Keywords');
+      if (missing.length > 0) {
+        setShowErrors(true);
+        toast.error(`Please fill in all required fields: ${missing.join(', ')}`);
+        return;
+      }
+    }
+    // Validate Step 4: all content sections must have at least 1 word
+    if (currentStep === 4) {
+      const sections = ['background', 'objective', 'methods', 'results', 'conclusion'];
+      const emptyFields = sections.filter(k => !(formData.content as any)[k]?.trim());
+      if (emptyFields.length > 0) {
+        setShowErrors(true);
+        toast.error(`Please fill in all required sections: ${emptyFields.join(', ')}`);
+        return;
+      }
+      const totalText = sections.map(k => (formData.content as any)[k] || '').join(' ');
+      const totalWords = totalText.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
+      if (totalWords > 250) {
+        toast.error(`Total word count (${totalWords}) exceeds the 250-word limit.`);
+        return;
+      }
+    }
+    setShowErrors(false);
     if (currentStep < 5) setCurrentStep(currentStep + 1);
   };
 
@@ -80,9 +153,54 @@ export default function AbstractSubmission() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = () => {
-    // Perform submission logic here.
-    setIsSubmitted(true);
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const fd = new FormData();
+      fd.append("firstName", formData.author.firstName);
+      fd.append("lastName", formData.author.lastName);
+      fd.append("email", formData.author.email);
+      fd.append("affiliation", formData.author.affiliation);
+      if (formData.author.phone) fd.append("phone", formData.author.phone);
+      fd.append("title", formData.abstract.title);
+      fd.append("category", formData.abstract.category);
+      fd.append("presentationType", formData.abstract.type.toLowerCase());
+      fd.append("keywords", formData.abstract.keywords);
+      fd.append("background", formData.content.background);
+      fd.append("objective", formData.content.objective);
+      fd.append("methods", formData.content.methods);
+      fd.append("results", formData.content.results);
+      fd.append("conclusion", formData.content.conclusion);
+      if (EVENT_CODE) fd.append("eventCode", EVENT_CODE);
+      if (formData.coAuthors.length > 0) {
+        fd.append("coAuthors", JSON.stringify(formData.coAuthors));
+      }
+      if (formData.file) {
+        fd.append("abstractFile", formData.file);
+      }
+
+      const res = await fetch(`${API_URL}/api/abstracts/submit`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setSubmitError(data.error || "Submission failed. Please try again.");
+        return;
+      }
+
+      setTrackingId(data.abstract?.trackingId || "");
+      setIsSubmitted(true);
+    } catch {
+      setSubmitError("Network error. Please check your connection and try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -175,8 +293,8 @@ export default function AbstractSubmission() {
               <div className="step-content">
                 {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} />}
                 {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} />}
-                {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} />}
-                {currentStep === 4 && <Step4Content content={formData.content} files={formData.files} setFormData={setFormData} />}
+                {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} categories={categories} showErrors={showErrors} />}
+                {currentStep === 4 && <Step4Content content={formData.content} file={formData.file} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 5 && <Step5Review data={formData} />}
               </div>
 
@@ -194,12 +312,20 @@ export default function AbstractSubmission() {
                   )}
                 </div>
                 
+                {submitError && (
+                  <div className="w-full md:w-auto px-6 py-4 bg-rose-50 border border-rose-200 rounded-2xl text-sm text-rose-700 font-bold">
+                    {submitError}
+                  </div>
+                )}
                 <button 
                   onClick={currentStep === 5 ? handleSubmit : handleNext}
-                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto"
+                  disabled={isSubmitting}
+                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {currentStep === 5 ? "Submit Final Abstract" : "Proceed to Next Stage"}
-                  <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />
+                  {isSubmitting ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
+                  ) : currentStep === 5 ? "Submit Final Abstract" : "Proceed to Next Stage"}
+                  {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
                 </button>
               </div>
             </div>
@@ -218,6 +344,12 @@ export default function AbstractSubmission() {
             <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight mb-4">
               Submission Complete
             </h2>
+            {trackingId && (
+              <div className="bg-slate-50 rounded-2xl px-6 py-4 mb-4">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-1">Tracking ID</p>
+                <p className="text-2xl font-black text-slate-900">{trackingId}</p>
+              </div>
+            )}
             <p className="text-lg text-slate-500 font-medium mb-3">
               ส่ง Abstract เสร็จสิ้นแล้ว<br/>รอรับการอนุมัติผ่านทาง Email
             </p>
@@ -277,7 +409,7 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
   const addAuthor = () => {
     setFormData((prev: any) => ({
       ...prev,
-      coAuthors: [...prev.coAuthors, { firstName: "", lastName: "", affiliation: "", email: "" }]
+      coAuthors: [...prev.coAuthors, { firstName: "", lastName: "", institution: "", email: "" }]
     }));
   };
 
@@ -332,7 +464,7 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
               <InputGroup label="First Name" name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Jane" />
               <InputGroup label="Last Name" name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Smith" />
               <div className="md:col-span-2">
-                <InputGroup label="Institution / Affiliation" name="affiliation" value={author.affiliation} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" />
+                <InputGroup label="Institution / Affiliation" name="institution" value={author.institution} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" />
               </div>
               <div className="md:col-span-2">
                 <InputGroup label="Email Address (Contact)" name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" />
@@ -346,8 +478,21 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
 }
 
 // Sub-component: Step 3
-function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+function Step3Details({ data, setFormData, categories, showErrors }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>>, categories: CategoryOption[], showErrors: boolean }) {
   const locale = useLocale();
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
+        setIsCategoryOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
@@ -356,32 +501,64 @@ function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dis
     }));
   };
 
+  const selectCategory = (name: string) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      abstract: { ...prev.abstract, category: name }
+    }));
+    setIsCategoryOpen(false);
+  };
+
   return (
     <div className="space-y-12">
       <div>
         <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Abstract <span className="text-orange-500/80">Details</span></h2>
         <p className="text-slate-500 font-medium text-lg italic">The identity and core focus of your work.</p>
+        <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> indicates a required field</p>
       </div>
       
       <div className="space-y-10">
-        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" />
+        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" required error={showErrors && !data.title.trim()} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Submission Theme</label>
-            <select 
-              name="category" 
-              value={data.category} 
-              onChange={handleChange}
-              className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 appearance-none cursor-pointer shadow-sm"
-            >
-              <option value="">{locale === "th" ? "เลือกหัวข้อ" : "Select Category"}</option>
-              {abstractCategories.map(cat => <option key={cat.id} value={cat.title}>{locale === "th" && cat.titleTh ? cat.titleTh : cat.title}</option>)}
-            </select>
+            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Submission Theme <span className="text-rose-500">*</span></label>
+            <div className="relative" ref={categoryRef}>
+              <button
+                type="button"
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+                className={`w-full text-left px-6 py-5 bg-white border rounded-2xl text-sm font-bold outline-none transition-all flex items-center justify-between shadow-sm ${
+                  isCategoryOpen ? "border-blue-500 ring-2 ring-blue-500/20" : showErrors && !data.category ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"
+                } ${data.category ? "text-slate-900" : "text-slate-400"}`}
+              >
+                <span>{data.category || (locale === "th" ? "เลือกหัวข้อ" : "Select Category")}</span>
+                <svg className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isCategoryOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {isCategoryOpen && (
+                <div className="absolute z-50 mt-2 w-full bg-white border border-slate-200 rounded-2xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150 max-h-60 overflow-y-auto">
+                  {categories.map((cat: CategoryOption) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => selectCategory(cat.name)}
+                      className={`w-full text-left px-5 py-3.5 text-sm font-medium transition-colors ${
+                        data.category === cat.name
+                          ? "bg-slate-900 text-white"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="flex flex-col gap-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Presentation Mode</label>
+            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Presentation Mode <span className="text-rose-500">*</span></label>
             <div className="flex gap-3">
               {['Oral', 'Poster'].map(type => {
                 let typeLabel = type;
@@ -394,7 +571,7 @@ function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dis
                     key={type}
                     onClick={() => handleChange({ target: { name: 'type', value: type } } as unknown as React.ChangeEvent<HTMLInputElement>)}
                     className={`flex-1 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[3px] transition-all ${
-                      data.type === type ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
+                      data.type === type ? "bg-blue-600 text-white border-blue-600 shadow-md" : showErrors && !data.type ? "bg-white text-slate-400 border-rose-400 ring-2 ring-rose-100" : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
                     }`}
                   >
                     {typeLabel}
@@ -405,14 +582,14 @@ function Step3Details({ data, setFormData }: { data: any, setFormData: React.Dis
           </div>
         </div>
 
-        <InputGroup label="Key Terminologies (Semicolon separated)" name="keywords" value={data.keywords} onChange={handleChange} placeholder="e.g. Pharmacy; Clinical; Outcomes" />
+        <InputGroup label="Key Terminologies (Semicolon separated)" name="keywords" value={data.keywords} onChange={handleChange} placeholder="e.g. Pharmacy; Clinical; Outcomes" required error={showErrors && !data.keywords.trim()} />
       </div>
     </div>
   );
 }
 
 // Sub-component: Step 4
-function Step4Content({ content, files, setFormData }: { content: any, files: File[], setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+function Step4Content({ content, file, setFormData, showErrors }: { content: any, file: File | null, setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
@@ -422,83 +599,112 @@ function Step4Content({ content, files, setFormData }: { content: any, files: Fi
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(e.target.files || []);
-    if (selectedFiles.length > 0) {
-      setFormData((prev: any) => ({ ...prev, files: [...prev.files, ...selectedFiles] }));
-    }
+    const selected = e.target.files?.[0] || null;
+    setFormData((prev: any) => ({ ...prev, file: selected }));
   };
 
-  const removeFile = (index: number) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      files: prev.files.filter((_: any, i: number) => i !== index)
-    }));
+  const removeFile = () => {
+    setFormData((prev: any) => ({ ...prev, file: null }));
   };
+
+  // Word count helper
+  const countWords = (text: string) => text.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
+
+  // Per-section word counts
+  const sectionWordCounts: Record<string, number> = {};
+  ['background', 'objective', 'methods', 'results', 'conclusion'].forEach(k => {
+    sectionWordCounts[k] = countWords(content[k] || '');
+  });
+
+  // Total word count across all sections
+  const totalWords = Object.values(sectionWordCounts).reduce((a, b) => a + b, 0);
+  const wordPercent = Math.min((totalWords / 250) * 100, 100);
+
+  const sections = [
+    { key: 'background', label: 'Background' },
+    { key: 'objective', label: 'Objective' },
+    { key: 'methods', label: 'Methods' },
+    { key: 'results', label: 'Results' },
+    { key: 'conclusion', label: 'Conclusion' },
+  ];
 
   return (
     <div className="space-y-12">
-      <div>
-        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Body & <span className="text-orange-500/80">File</span></h2>
-        <p className="text-slate-500 font-medium text-lg italic">Structure your abstract and provide the documentation.</p>
+      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+        <div>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">Body & <span className="text-orange-500/80">File</span></h2>
+          <p className="text-slate-500 font-medium text-lg italic">Structure your abstract and provide the documentation.</p>
+          <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> indicates a required field</p>
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <div className={`px-5 py-3 rounded-2xl text-sm font-black ${totalWords > 250 ? 'bg-rose-50 text-rose-600' : totalWords >= 200 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-500'}`}>
+            {totalWords} / 250 words
+          </div>
+          <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-all duration-300 ${totalWords > 250 ? 'bg-rose-500' : totalWords >= 200 ? 'bg-amber-400' : 'bg-emerald-400'}`}
+              style={{ width: `${wordPercent}%` }}
+            />
+          </div>
+        </div>
       </div>
       
       <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
-        {['Background', 'Objectives', 'Methods', 'Results', 'Conclusions'].map(section => (
-          <div key={section} className="space-y-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block">{section}</label>
+        {sections.map(section => (
+          <div key={section.key} className="space-y-4">
+            <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block">{section.label} <span className="text-rose-500">*</span></label>
             <textarea 
-              name={section.toLowerCase()}
-              value={content[section.toLowerCase()]}
+              name={section.key}
+              value={content[section.key]}
               onChange={handleTextChange}
-              className="w-full px-6 py-6 bg-white border border-slate-200 rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm"
-              placeholder={`Elaborate your ${section.toLowerCase()}...`}
+              className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${showErrors && !content[section.key]?.trim() ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
+              placeholder={`Elaborate your ${section.label.toLowerCase()}...`}
             />
+            <div className="flex justify-end">
+              <span className="text-[10px] font-bold text-slate-400 tracking-wide">
+                {sectionWordCounts[section.key]} {sectionWordCounts[section.key] === 1 ? 'word' : 'words'}
+              </span>
+            </div>
           </div>
         ))}
         
         <div className="pt-10 border-t border-white/5">
           <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
-          <div className="relative group">
-            <input 
-              type="file" 
-              accept=".pdf"
-              multiple
-              className="absolute inset-0 opacity-0 cursor-pointer z-10"
-              onChange={handleFileChange}
-            />
-            <div className="p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white border-slate-200 group-hover:border-gold group-hover:bg-gold/5">
-              <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
+          {!file ? (
+            <div className="relative group">
+              <input 
+                type="file" 
+                accept=".pdf"
+                className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                onChange={handleFileChange}
+              />
+              <div className="p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white border-slate-200 group-hover:border-gold group-hover:bg-gold/5">
+                <div className="flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
+                  </div>
+                  <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">Upload Document</p>
+                  <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">PDF Document Only (Max 30MB)</p>
                 </div>
-                <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">Add Documents</p>
-                <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">PDF Document Only (Max 5MB)</p>
               </div>
             </div>
-          </div>
-          
-          {/* List of Uploaded Files */}
-          {files && files.length > 0 && (
-            <div className="mt-8 space-y-4">
-               {files.map((f: File, idx: number) => (
-                 <div key={idx} className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
-                   <div className="flex items-center gap-4 overflow-hidden">
-                     <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                       <CheckCircle className="w-5 h-5 text-emerald-600" />
-                     </div>
-                     <div className="overflow-hidden">
-                       <p className="text-sm font-black text-emerald-950 truncate">{f.name}</p>
-                       <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">{(f.size / 1024 / 1024).toFixed(2)} MB</p>
-                     </div>
-                   </div>
-                   <button 
-                     onClick={() => removeFile(idx)} 
-                     className="p-3 bg-white hover:bg-rose-50 rounded-xl text-slate-300 hover:text-rose-500 transition-colors shadow-sm"
-                   >
-                     <Trash2 className="w-5 h-5" />
-                   </button>
-                 </div>
-               ))}
+          ) : (
+            <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4 overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                  <CheckCircle className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-sm font-black text-emerald-950 truncate">{file.name}</p>
+                  <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                </div>
+              </div>
+              <button 
+                onClick={removeFile} 
+                className="p-3 bg-white hover:bg-rose-50 rounded-xl text-slate-300 hover:text-rose-500 transition-colors shadow-sm"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
           )}
         </div>
@@ -516,7 +722,7 @@ function Step5Review({ data }: { data: any }) {
           Manuscript<br/>
           <span className="text-blue-600/80">Verification</span>
         </h2>
-        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Phaze 05 / Final Audit Protocol</p>
+        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Phase 05 / Final Audit Protocol</p>
       </div>
       
       <div className="relative">
@@ -580,7 +786,7 @@ function Step5Review({ data }: { data: any }) {
                         <span className="text-[10px] font-black text-slate-300 pt-1">0{i+1}</span>
                         <div>
                           <p className="text-sm font-black text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.affiliation}</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.institution}</p>
                         </div>
                       </div>
                     ))}
@@ -604,7 +810,7 @@ function Step5Review({ data }: { data: any }) {
                     <p className="text-sm font-bold text-slate-900">{data.abstract.keywords || "None provided"}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {['background', 'objectives', 'methods', 'results', 'conclusions'].map((section) => (
+                    {['background', 'objective', 'methods', 'results', 'conclusion'].map((section) => (
                       <div key={section}>
                         <span className="text-[9px] items-center text-slate-400 uppercase tracking-[3px] font-black mb-1 block">{section}</span>
                         <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{data.content[section] || "None provided"}</p>
@@ -619,19 +825,15 @@ function Step5Review({ data }: { data: any }) {
                 <div className="pb-4 border-b border-slate-200 w-fit">
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Attached Document(s)</span>
                 </div>
-                {data.files && data.files.length > 0 ? (
-                  <div className="space-y-4">
-                    {data.files.map((f: File, idx: number) => (
-                      <div key={idx} className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                          <FileText className="w-5 h-5 text-emerald-600" />
-                        </div>
-                        <div className="overflow-hidden">
-                          <p className="text-sm font-black text-emerald-950 truncate">{f.name}</p>
-                          <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
-                        </div>
-                      </div>
-                    ))}
+                {data.file ? (
+                  <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-black text-emerald-950 truncate">{data.file.name}</p>
+                      <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
+                    </div>
                   </div>
                 ) : (
                   <div className="p-6 bg-rose-50 rounded-2xl border border-rose-100 flex items-start gap-4">
@@ -655,17 +857,17 @@ function Step5Review({ data }: { data: any }) {
 }
 
 // Helper: Input Group
-function InputGroup({ label, placeholder, value, onChange, name, type = "text" }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string }) {
+function InputGroup({ label, placeholder, value, onChange, name, type = "text", required = false, error = false }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string, required?: boolean, error?: boolean }) {
   return (
     <div className="flex flex-col gap-4">
-      <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">{label}</label>
+      <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">{label} {required && <span className="text-rose-500">*</span>}</label>
       <input 
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full px-6 py-5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 placeholder:text-slate-200 placeholder:font-black placeholder:uppercase placeholder:tracking-[2px] shadow-sm"
+        className={`w-full px-6 py-5 bg-white border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 placeholder:text-slate-200 placeholder:font-black placeholder:uppercase placeholder:tracking-[2px] shadow-sm ${error ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
       />
     </div>
   );

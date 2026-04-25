@@ -1,16 +1,26 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import toast from "react-hot-toast";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export default function LoginPage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const router = useRouter();
   const { login } = useAuth();
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
+  const [isLoading, setIsLoading] = useState(false);
+  const [pendingModal, setPendingModal] = useState(false);
+  const [rejectedModal, setRejectedModal] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
@@ -104,14 +114,52 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <form className="space-y-6 fade-in-element" onSubmit={(e) => { 
-              e.preventDefault(); 
+            <form className="space-y-6 fade-in-element" onSubmit={async (e) => { 
+              e.preventDefault();
+              setIsLoading(true);
               const form = e.target as HTMLFormElement;
               const email = (form.elements.namedItem('email') as HTMLInputElement).value;
-              login({ firstName: "Demo", lastName: "User", email: email }, "demo-token");
-              const urlParams = new URLSearchParams(window.location.search);
-              const redirect = urlParams.get('redirect') || '/';
-              router.push(redirect); 
+              const password = (form.elements.namedItem('password') as HTMLInputElement).value;
+              const rememberMe = (form.elements.namedItem('rememberMe') as HTMLInputElement).checked;
+
+              try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email,
+                    password,
+                    recaptchaToken: turnstileToken || undefined,
+                  }),
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                  if (data.error === 'ACCOUNT_PENDING') {
+                    setPendingModal(true);
+                  } else if (data.error === 'ACCOUNT_REJECTED') {
+                    setRejectedModal(data.rejectionReason || '');
+                  } else {
+                    toast.error(data.error || 'Login failed. Please try again.');
+                  }
+                  turnstileRef.current?.reset();
+                  setTurnstileToken(null);
+                  return;
+                }
+
+                toast.success('Login successful!');
+                login(data.user, data.token, rememberMe);
+                const urlParams = new URLSearchParams(window.location.search);
+                const redirect = urlParams.get('redirect') || '/';
+                router.push(redirect);
+              } catch {
+                toast.error('Network error. Please check your connection.');
+                turnstileRef.current?.reset();
+                setTurnstileToken(null);
+              } finally {
+                setIsLoading(false);
+              }
             }}>
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="email">
@@ -142,7 +190,9 @@ export default function LoginPage() {
               <div className="flex flex-wrap items-center justify-between gap-4 pt-1 pb-2">
                 <label className="flex items-center gap-3 cursor-pointer group">
                   <input 
-                    type="checkbox" 
+                    type="checkbox"
+                    name="rememberMe"
+                    defaultChecked
                     className="w-4 h-4 rounded-[4px] border-gray-300 text-black focus:ring-black cursor-pointer transition-colors checked:border-black" 
                   />
                   <span className="text-sm font-bold text-gray-600 group-hover:text-black transition-colors select-none">
@@ -154,12 +204,26 @@ export default function LoginPage() {
                 </Link>
               </div>
 
+              {/* Cloudflare Turnstile */}
+              {turnstileSiteKey && (
+              <div className="flex justify-start">
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={turnstileSiteKey}
+                  onSuccess={(token) => setTurnstileToken(token)}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => setTurnstileToken(null)}
+                />
+              </div>
+              )}
+
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full bg-black hover:bg-gray-900 text-white font-bold text-base py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10"
+                  disabled={isLoading}
+                  className="w-full bg-black hover:bg-gray-900 text-white font-bold text-base py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  Sign In
+                  {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
               </div>
             </form>
@@ -175,6 +239,65 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      {/* Pending Approval Modal */}
+      {pendingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 lg:p-10 max-w-md w-full shadow-2xl text-center">
+            <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-amber-50 flex items-center justify-center">
+              <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-serif font-bold text-gray-900 mb-3">Account Pending Approval</h3>
+            <p className="text-sm font-medium text-gray-500 leading-relaxed mb-6">
+              Your account is currently under review by our admin team. You will receive an email notification once your account has been approved.
+            </p>
+            <div className="bg-[#f8f9fc] rounded-2xl p-4 mb-6">
+              <p className="text-xs font-medium text-gray-500">
+                This process usually takes <span className="font-bold text-gray-900">5-7 business days</span>
+              </p>
+            </div>
+            <button
+              onClick={() => setPendingModal(false)}
+              className="w-full bg-black hover:bg-gray-900 text-white font-bold text-sm py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Rejected Account Modal */}
+      {rejectedModal !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl p-8 lg:p-10 max-w-md w-full shadow-2xl text-center">
+            <div className="w-16 h-16 mx-auto mb-5 rounded-full bg-red-50 flex items-center justify-center">
+              <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-serif font-bold text-gray-900 mb-3">Account Rejected</h3>
+            <p className="text-sm font-medium text-gray-500 leading-relaxed mb-4">
+              Your account registration has been rejected by the admin team.
+            </p>
+            {rejectedModal && (
+              <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mb-6 text-left">
+                <p className="text-xs font-bold text-red-800 mb-1">Reason:</p>
+                <p className="text-sm font-medium text-red-700">{rejectedModal}</p>
+              </div>
+            )}
+            <p className="text-xs font-medium text-gray-400 mb-6">
+              If you believe this is an error, please contact our support team.
+            </p>
+            <button
+              onClick={() => setRejectedModal(null)}
+              className="w-full bg-black hover:bg-gray-900 text-white font-bold text-sm py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
