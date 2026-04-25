@@ -139,15 +139,15 @@
     ],
     "cancelTableTh1": "Deadline",
     "cancelTableTh2": "Refund Rate",
-    "cancelR1C1": "Before 30 April 2026",
+    "cancelR1C1": "Before 31 July 2026",
     "cancelR1C2": "75% of registration fee",
-    "cancelR2C1": "1 – 31 May 2026",
+    "cancelR2C1": "1 – 31 August 2026",
     "cancelR2C2": "40% of registration fee",
-    "cancelR3C1": "After 31 May 2026",
+    "cancelR3C1": "After 31 August 2026",
     "cancelR3C2": "No refund",
     "cancelDownloadBtn": "Refund Request Form Coming Soon",
     "paymentNote": "We accept Credit Card and PromptPay / QR Code",
-    "finePrintTerms": "* Cancellation Policy: 75% refund before 30 April 2026, 40% before 31 May 2026, and no refund after 31 May 2026. Automatic confirmation and official receipt will be sent via email upon successful payment."
+    "finePrintTerms": "* Cancellation Policy: 75% refund before 31 July 2026, 40% before 31 August 2026, and no refund after 31 August 2026. Automatic confirmation and official receipt will be sent via email upon successful payment."
   },
   "countdown": {
     "days": "Days",
@@ -162,9 +162,9 @@
     "whatIsDesc": "PRIS, or the <span class='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span>, is a national pharmacy and innovation academic conference organized to unite pharmacists from all fields academia, hospitals, community pharmacy, marketing, and the industrial sector. It focuses on the exchange of knowledge in research and pharmaceutical innovation, with the goal of <span class='text-orange-600 font-medium'>Pharmacy research & innovation driving sustainable healthcare</span> to keep pace with the changes in the modern healthcare world.",
     "orgTeam": "Organizing Team",
     "committee": "Committee",
-    "advisors": "Advisors",
+    "advisors": "Honorary Chairman",
     "orgCommittee": "Organizing Committee",
-    "subcommittees": "Subcommittees"
+    "subcommittees": "Evaluation and Award Committee for PRIS 2026"
   },
   "cfa": {
     "title1": "Call for",
@@ -408,7 +408,7 @@
     "profession": "Profession",
     "createBtn": "Create Account",
     "creating": "Creating...",
-    "loginSideText": "You can achieve significant breakthroughs when you connect, explore, and commit to the vision of PRIS 2026.",
+    "loginSideText": "15 – 16 October 2025 IMPACT Challenger, Muang Thong Thani",
     "signupSideText": "Create an account to securely access submissions, schedules, and personalized conference experiences.",
     "accountPending": "Account Pending Approval",
     "accountPendingDesc": "Your account is currently under review by our admin team. You will receive an email notification once your account has been approved.",

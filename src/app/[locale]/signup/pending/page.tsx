@@ -2,16 +2,17 @@
 
 import React, { useEffect, useTransition } from "react";
 import Image from "next/image";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link, useRouter, usePathname } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
 export default function PendingApprovalPage() {
   const locale = useLocale();
+  const pathname = usePathname();
   const router = useRouter();
   const [isPendingLang, startTransitionLang] = useTransition();
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
-      router.replace(window.location.pathname, { locale: nextLocale });
+      router.replace(pathname, { locale: nextLocale });
     });
   };
   const t = useTranslations("auth");

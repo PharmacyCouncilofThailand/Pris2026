@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState , useTransition } from "react";
 import Image from "next/image";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link, useRouter, usePathname } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { UploadCloud } from "lucide-react";
@@ -14,15 +14,16 @@ const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || '';
 
 export default function StudentSignUpPage() {
   const locale = useLocale();
+  const pathname = usePathname();
   const [isPendingLang, startTransitionLang] = useTransition();
+  const router = useRouter();
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
-      router.replace(window.location.pathname, { locale: nextLocale });
+      router.replace(pathname, { locale: nextLocale });
     });
   };
   const t = useTranslations("auth");
-    const router = useRouter();
   const { login } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [studentLevel, setStudentLevel] = useState("");
@@ -71,7 +72,7 @@ export default function StudentSignUpPage() {
         <div className="hidden lg:flex w-[40%] xl:w-[45%] relative bg-[#08111f] rounded-[2rem] overflow-hidden flex-col justify-between p-12">
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-110 opacity-90"
-            style={{ backgroundImage: "url('/assets/Img/Pris%202026%20bg%20login.svg')" }}
+            style={{ backgroundImage: "url('/assets/Img/BG/BG-no.webp')" }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
           
@@ -86,14 +87,7 @@ export default function StudentSignUpPage() {
             </Link>
           </div>
 
-          <div className="relative z-10 fade-in-up">
-            <h2 className="text-white text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
-              PRIS 2026
-            </h2>
-            <p className="text-white/70 text-sm font-medium leading-relaxed max-w-sm">
-              Discover breakthroughs and connect with leading minds by joining PRIS 2026.
-            </p>
-          </div>
+
         </div>
 
         {/* Form Right Side */}

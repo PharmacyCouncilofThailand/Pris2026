@@ -19,7 +19,7 @@ export const ORGANIZERS_DATA: Organizer[] = [
     name: "Prof. Dr. Chonlapat Sukasem",
     nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
     position: "Chair of the PRIS 2026 Organizing Committee\nThe Pharmacy Council of Thailand",
-    positionTh: "ประธานจัดงาน PRIS 2026",
+    positionTh: "ประธานคณะกรรมการจัดงาน PRIS 2026",
     image: "/assets/Img/Welcome message/ประธานงานPris_optimized.webp",
   }
 ];

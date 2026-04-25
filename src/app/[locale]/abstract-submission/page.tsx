@@ -23,6 +23,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
 import toast from "react-hot-toast";
+import PageHero from "@/components/sections/PageHero";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "";
@@ -212,19 +213,12 @@ export default function AbstractSubmission() {
         <div className="container mx-auto px-6 md:px-12 max-w-5xl">
           
           {/* Header Info */}
-          <div className="mb-16 text-center space-y-6">
-            <div className="flex items-center justify-center gap-3">
-              <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
-              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-blue-700">PRIS 2026</span>
-              <span className="w-12 h-[3px] bg-blue-600 rounded-full" />
-            </div>
-            <h1 className="text-5xl md:text-6xl font-black uppercase tracking-tight leading-[0.9] text-slate-950">
-              {t("title1")} <br className="hidden md:block" /> {t("title2")}
-            </h1>
-            <p className="text-slate-500 font-medium text-lg max-w-2xl mx-auto leading-relaxed pt-2">
-              {t("desc")}
-            </p>
-          </div>
+          <PageHero
+            title1={t("title1")}
+            title2={t("title2")}
+            subtitle={t("desc")}
+          />
+
 
           <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-16">
             <div className="flex gap-4 items-start justify-center text-left max-w-3xl mx-auto">
