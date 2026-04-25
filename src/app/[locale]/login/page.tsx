@@ -11,7 +11,9 @@ import toast from "react-hot-toast";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export default function LoginPage() {
+  const router = useRouter();
   const locale = useLocale();
+  const t = useTranslations("auth");
   const [isPendingLang, startTransitionLang] = useTransition();
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
@@ -19,8 +21,6 @@ export default function LoginPage() {
       router.replace(window.location.pathname, { locale: nextLocale });
     });
   };
-  const t = useTranslations("auth");
-    const router = useRouter();
   const { login } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
