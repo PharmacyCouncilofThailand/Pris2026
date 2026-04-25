@@ -40,11 +40,11 @@ export default function Footer() {
           <div className="lg:col-span-4 flex flex-col">
             <Link href="/" prefetch={true} className="inline-block mb-6">
               <Image
-                src="/assets/Img/sponsors/logo สภา.jpg"
+                src="/assets/Img/logo/logo-pharmacy.png"
                 alt="Pharmacy Council Logo"
-                width={80}
-                height={80}
-                className="h-auto w-[65px] brightness-90 hover:brightness-100 transition-all duration-300"
+                width={800}
+                height={800}
+                className="h-auto w-[250px] brightness-90 hover:brightness-100 transition-all duration-300"
               />
             </Link>
 
