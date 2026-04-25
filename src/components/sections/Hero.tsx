@@ -218,6 +218,9 @@ export default function Hero() {
         e.preventDefault();
         if (autoTriggered) return; // Already triggered
 
+        // Kill any pending fade-in of hintRef to prevent conflict with tlZoom
+        gsap.killTweensOf(hintRef.current, "opacity");
+
         scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + e.deltaY));
         const progress = scrollAccum / maxScroll;
         tlZoom.progress(progress);
@@ -230,13 +233,17 @@ export default function Hero() {
             progress: 1,
             duration: 0.4,
             ease: "power2.in",
-            onComplete: () => { tlAuto.play(); },
+            onComplete: () => { 
+              gsap.set(hintRef.current, { display: "none" });
+              tlAuto.play(); 
+            },
           });
         }
       };
 
       const triggerAutoPlay = () => {
         autoTriggered = true;
+        gsap.killTweensOf(hintRef.current);
         gsap.set(svgRef.current, { display: "none" });
         gsap.set(hintRef.current, { display: "none" });
         tlAuto.play();
@@ -264,12 +271,14 @@ export default function Hero() {
           ease: "power2.out",
           delay: 0.4,
           onComplete: () => {
-            if (!isMobile) {
-              gsap.to(hintRef.current, { opacity: 1, duration: 0.5, ease: "power2.out" });
-            }
             bindInteractions();
           },
         });
+        
+        // Show scroll down hint earlier, independent of mask animation completion
+        if (!isMobile) {
+          gsap.to(hintRef.current, { opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.out" });
+        }
       } else {
         if (!isMobile) gsap.set(hintRef.current, { opacity: 1 });
         bindInteractions();
@@ -500,6 +509,10 @@ export default function Hero() {
           height="100%"
         >
           <defs>
+            <linearGradient id="prisGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0055FF" />
+              <stop offset="100%" stopColor="#FF5A00" />
+            </linearGradient>
             <mask id="textCutout">
               <rect width="100%" height="100%" fill="white" />
               <text
@@ -525,18 +538,20 @@ export default function Hero() {
             mask="url(#textCutout)"
           />
 
-          {/* Solid black text to fill the cutout (no transparency) */}
+          {/* Gradient text to fill the cutout instead of video (per user request) */}
           <text
             x="50%"
             y="54%"
             dominantBaseline="central"
             textAnchor="middle"
             className="font-black text-[13vw] sm:text-[11vw] md:text-[10vw] font-outfit tracking-tighter"
-            fill="black"
+            fill="url(#prisGradient)"
             pointerEvents="none"
           >
             {"PRIS 2026"}
           </text>
+
+
 
           {/* Invisible replica for measuring the "S" coordinate */}
           <text
