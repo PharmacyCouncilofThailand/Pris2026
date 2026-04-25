@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState , useTransition } from "react";
 import Image from "next/image";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link, useRouter, usePathname } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
@@ -12,15 +12,16 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export default function LoginPage() {
   const locale = useLocale();
+  const pathname = usePathname();
   const [isPendingLang, startTransitionLang] = useTransition();
+  const router = useRouter();
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
-      router.replace(window.location.pathname, { locale: nextLocale });
+      router.replace(pathname, { locale: nextLocale });
     });
   };
   const t = useTranslations("auth");
-    const router = useRouter();
   const { login } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
@@ -55,8 +56,8 @@ export default function LoginPage() {
         {/* Abstract Background Left Side */}
         <div className="hidden lg:flex w-1/2 relative bg-[#08111f] rounded-[2rem] overflow-hidden flex-col justify-between p-12">
           <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-110 opacity-90"
-            style={{ backgroundImage: "url('/assets/Img/Pris%202026%20bg%20login.svg')" }}
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[30s] hover:scale-105 opacity-90"
+            style={{ backgroundImage: "url('/assets/Img/BG/BG2Monly.webp')" }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
           
@@ -75,7 +76,7 @@ export default function LoginPage() {
             <h2 className="text-white text-6xl font-bold tracking-tight leading-[1.05] mb-6">
               PRIS 2026
             </h2>
-            <p className="text-white/70 text-sm font-medium leading-relaxed max-w-sm">
+            <p className="text-white/70 text-sm font-medium leading-relaxed max-w-[500px]">
               {t("loginSideText")}
             </p>
           </div>

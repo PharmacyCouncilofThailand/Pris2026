@@ -98,6 +98,7 @@ export default function AbstractSubmission() {
           <PageHero
             title1={t("title1")}
             title2={t("title2")}
+            subtitle={t("desc")}
           />
 
 
