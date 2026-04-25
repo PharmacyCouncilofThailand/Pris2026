@@ -13,6 +13,7 @@ if (typeof window !== "undefined") {
 }
 
 import { useTranslations, useLocale } from "next-intl";
+import PageHero from "@/components/sections/PageHero";
 
 export default function RegistrationPolicies() {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -20,21 +21,7 @@ export default function RegistrationPolicies() {
   const locale = useLocale();
 
   useGSAP(() => {
-    // Hero text reveal
-    gsap.from(".policy-hero-line", {
-      yPercent: 110,
-      stagger: 0.12,
-      duration: 1.6,
-      ease: "power4.out",
-      delay: 0.15,
-    });
-    gsap.from(".policy-hero-sub", {
-      opacity: 0,
-      y: 20,
-      duration: 1,
-      ease: "power3.out",
-      delay: 0.6,
-    });
+
 
     // Content blocks fade in
     const blocks = pageRef.current?.querySelectorAll(".content-block");
@@ -64,30 +51,11 @@ export default function RegistrationPolicies() {
 
 
       {/* ══════ HERO ══════ */}
-      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
-        {/* decorative bg glows */}
-        <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="policy-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("pretitle")}</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("pretitleSub")}</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.85] text-gray-900">
-            <div className="overflow-hidden">
-              <span className="block policy-hero-line">{t("title1")}</span>
-            </div>
-            <div className="overflow-hidden">
-              <span className="block policy-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500">
-                {t("title2")}
-              </span>
-            </div>
-          </h1>
-        </div>
-      </section>
+      <PageHero
+        title1={t("title1")}
+        title2={t("title2")}
+        subtitle={t("intro")}
+      />
 
       {/* ══════ INTRO ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">

@@ -46,31 +46,30 @@ export default function Countdown({ className }: CountdownProps) {
 
   const timeParts = getPartsOfTimeDuration(timeDif);
 
+  const units = [
+    { value: timeParts.days, label: t("days") },
+    { value: timeParts.hours, label: t("hours") },
+    { value: timeParts.minutes, label: t("minutes") },
+    { value: timeParts.seconds, label: t("seconds") },
+  ];
+
   return (
-    <div className={cn("flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-5", className)}>
-      <TimeUnit value={timeParts.days} label={t("days")} />
-      <TimeUnit value={timeParts.hours} label={t("hours")} />
-      <TimeUnit value={timeParts.minutes} label={t("minutes")} />
+    <div className={cn("inline-flex items-center", className)}>
+      {units.map((unit, i) => (
+        <div key={unit.label} className="flex items-center">
+          <div className="flex flex-col items-center px-4 sm:px-5 md:px-7">
+            <span className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tabular-nums tracking-tight leading-none">
+              {String(unit.value).padStart(2, "0")}
+            </span>
+            <span className="text-[9px] sm:text-[10px] md:text-xs text-white/40 uppercase tracking-[0.2em] font-medium mt-1.5">
+              {unit.label}
+            </span>
+          </div>
+          {i < units.length - 1 && (
+            <div className="w-px h-10 sm:h-12 md:h-14 bg-white/20" />
+          )}
+        </div>
+      ))}
     </div>
   );
 }
-
-const TimeUnit = ({ value, label }: { value: number; label: string }) => (
-  <div className="relative flex flex-col items-center justify-center p-3.5 md:py-5 md:px-7 min-w-[80px] md:min-w-[110px] rounded-xl md:rounded-2xl border border-white/20 bg-white/[0.1] md:bg-white/[0.05] backdrop-blur-sm md:backdrop-blur-[20px] shadow-[0_12px_40px_rgba(0,85,255,0.15)] overflow-hidden">
-    
-    {/* Decorative gradient overlay (permanent) */}
-    <div className="absolute inset-0 bg-gradient-to-b from-blue-500/10 to-transparent opacity-100 pointer-events-none" />
-    
-    <div className="relative z-10 flex flex-col items-center">
-      <span className="text-4xl sm:text-5xl md:text-[3.25rem] font-bold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/70 tracking-tight tabular-nums drop-shadow-sm mb-1 md:mb-1.5">
-        {String(value).padStart(2, "0")}
-      </span>
-      <span className="text-[10px] sm:text-[11px] md:text-xs text-blue-300 uppercase tracking-[0.15em] font-medium">
-        {label}
-      </span>
-    </div>
-    
-    {/* Bottom glowing line (permanent) */}
-    <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-100" />
-  </div>
-);

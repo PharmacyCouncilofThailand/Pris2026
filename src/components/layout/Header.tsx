@@ -38,11 +38,17 @@ export default function Header() {
   type LinkHref = React.ComponentProps<typeof Link>["href"];
 
   React.useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const heroStillPlaying = document.body.classList.contains("hero-playing");
-      setIsScrolled(!heroStillPlaying && window.scrollY > 50);
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const heroStillPlaying = document.body.classList.contains("hero-playing");
+        setIsScrolled(!heroStillPlaying && window.scrollY > 50);
+        ticking = false;
+      });
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -90,6 +96,7 @@ export default function Header() {
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link
               href="/"
+              prefetch={true}
               className="relative flex items-center"
               onClick={() => {
                 if (typeof document !== "undefined") {
@@ -101,11 +108,11 @@ export default function Header() {
               }}
             >
               <Image
-                src="/assets/Img/logo/Pris2026-logo.svg"
+                src="/assets/Img/logo/LOGO1.png"
                 alt="Pris 2026 Logo"
-                width={120}
-                height={48}
-                className={cn("object-contain h-[32px] w-auto transition-all xl:h-[36px]", useDarkText && "brightness-0")}
+                width={200}
+                height={80}
+                className={cn("object-contain h-[40px] w-auto transition-all xl:h-[48px]", useDarkText && "brightness-0")}
                 priority
               />
             </Link>
@@ -121,10 +128,11 @@ export default function Header() {
                       <NavigationMenuLink render={
                         <Link
                           href={item.href as LinkHref}
+                          prefetch={true}
                           className={cn(
                             navigationMenuTriggerStyle(),
                             "bg-transparent transition-colors",
-                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
+                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-orange-500"
                           )}
                           onClick={() => {
                             if (typeof document !== "undefined") {
@@ -142,7 +150,7 @@ export default function Header() {
                       <>
                         <NavigationMenuTrigger className={cn(
                           "bg-transparent transition-colors",
-                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-gold"
+                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-orange-500"
                         )}>
                           {t(item.labelKey as TranslationKey)}
                         </NavigationMenuTrigger>
@@ -153,6 +161,7 @@ export default function Header() {
                                 <NavigationMenuLink render={
                                   <Link
                                     href={(child.href || "#") as LinkHref}
+                                    prefetch={true}
                                     className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
                                     onClick={() => {
                                       if (typeof document !== "undefined") {
@@ -207,6 +216,7 @@ export default function Header() {
               {isLoggedIn ? (
                 <Link
                   href="/profile"
+                  prefetch={true}
                   className={cn(
                     "inline-flex h-10 items-center justify-center gap-2 rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
                     useDarkText
@@ -221,6 +231,7 @@ export default function Header() {
                 <>
                   <Link
                     href="/login"
+                    prefetch={true}
                     className={cn(
                       "text-[12px] font-bold uppercase tracking-[0.15em] transition-colors duration-300",
                       useDarkText ? "text-slate-600 hover:text-blue-600" : "text-white/80 hover:text-white"
@@ -230,6 +241,7 @@ export default function Header() {
                   </Link>
                   <Link
                     href="/signup"
+                    prefetch={true}
                     className={cn(
                       "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
                       useDarkText
@@ -245,7 +257,7 @@ export default function Header() {
           </div>
 
           {/* Mobile Navigation */}
-          <div className="xl:hidden flex items-center justify-end gap-2">
+          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
           {/* Mobile Language Switcher */}
           <button
             onClick={switchLocale}
@@ -267,13 +279,13 @@ export default function Header() {
           <Sheet>
             <SheetTrigger
               className={cn(
-                buttonVariants({ variant: "ghost", size: "icon" }),
+                "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
                 useDarkText
-                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
-                  : "text-white hover:bg-white/20 border border-white/20"
+                  ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
+                  : "text-white border border-white/20 hover:bg-white/20"
               )}
             >
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle mobile menu</span>
             </SheetTrigger>
             <SheetContent side="right" className="bg-black/95 text-white border-l-gray-800 p-0 w-[300px]">
@@ -281,11 +293,11 @@ export default function Header() {
               <div className="p-6 h-full flex flex-col">
                 <div className="mb-8 mt-4">
                   <Image
-                    src="/assets/Img/logo/Pris2026-logo.svg"
+                    src="/assets/Img/logo/LOGO1.png"
                     alt="Pris 2026 Logo"
-                    width={120}
-                    height={48}
-                    className="h-[45px] w-auto"
+                    width={200}
+                    height={80}
+                    className="h-[55px] w-auto"
                   />
                 </div>
 
@@ -296,13 +308,14 @@ export default function Header() {
                         {item.href ? (
                           <Link
                             href={item.href as LinkHref}
-                            className="text-lg font-medium hover:text-gold block"
+                            prefetch={true}
+                            className="text-lg font-medium hover:text-orange-500 block"
                           >
                             {t(item.labelKey as TranslationKey)}
                           </Link>
                         ) : (
                           <details className="group">
-                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-gold">
+                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-orange-500">
                               {t(item.labelKey as TranslationKey)}
                               <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
                             </summary>
@@ -311,7 +324,8 @@ export default function Header() {
                                 <li key={child.labelKey}>
                                   <Link
                                     href={(child.href || "#") as LinkHref}
-                                    className="text-gray-300 hover:text-gold block py-1"
+                                    prefetch={true}
+                                    className="text-gray-300 hover:text-orange-500 block py-1"
                                   >
                                     {t(child.labelKey as TranslationKey)}
                                   </Link>
@@ -330,6 +344,7 @@ export default function Header() {
                   {isLoggedIn ? (
                     <Link
                       href="/profile"
+                      prefetch={true}
                       className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
                     >
                       <User className="w-4 h-4" />
@@ -339,12 +354,14 @@ export default function Header() {
                     <>
                       <Link
                         href="/login"
+                        prefetch={true}
                         className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 rounded-full hover:bg-white/5 transition-colors"
                       >
                         Log in
                       </Link>
                       <Link
                         href="/signup"
+                        prefetch={true}
                         className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
                       >
                         Sign up

@@ -5,7 +5,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
+import PageHero from "@/components/sections/PageHero";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,37 +17,25 @@ if (typeof window !== "undefined") {
    ══════════════════════════════════════ */
 
 const advisors = [
-  { name: "Mr. Preecha Bhandtivej", position: "President of the Pharmacy Council of Thailand" },
+  { 
+    name: "Preecha Bhandtivej (R.PH.)", 
+    nameTh: "ภก.ปรีชา พันธุ์ติเวช", 
+    position: "President of the Pharmacy Council of Thailand",
+    positionTh: "นายกสภาเภสัชกรรม"
+  },
 ];
 
 const orgCommittee = [
-  { name: "Assoc. Prof. Dr. Wichai Santimaleeworagun", role: "Chairman" },
-  { name: "Asst. Prof. Dr. Chotirat Nakaranurack", role: "Vice Chairman" },
-  { name: "Dr. Noppadon Atjimathira", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Sunee Lertsinudom", role: "Vice Chairman" },
-  { name: "Miss Chanakit Imbumrung", role: "Vice Chairman" },
-  { name: "Miss Chomchanok Pumsaydon", role: "Vice Chairman" },
-  { name: "Mr. Aphinan Watcharaphichart", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Preecha Montakantikul", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Weerachai Chaijamorn", role: "Vice Chairman" },
-  { name: "Dr. Suvit Teerakulchon", role: "Vice Chairman" },
-  { name: "Mr. Komsan Sotangkur", role: "Vice Chairman" },
-  { name: "Ms. Penthipha Kaewketthong", role: "Vice Chairman" },
-  { name: "Prof. Dr. Pornsak Sriamornsak", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Wanna Sriwiriyanupap", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Narisa Kamkaen", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Satit Puttipipatkhachorn", role: "Vice Chairman" },
-  { name: "Asst. Prof. Dr. Surasit Lochid-amnuay", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Korn Sornlertlamvanich", role: "Vice Chairman" },
-  { name: "Prof. Dr. Chonlaphat Sukasem", role: "Vice Chairman" },
-  { name: "Asst. Prof. Dr. Thanompong Sathienluckana", role: "Vice Chairman" },
-  { name: "Asst. Prof. Dr. Weerayuth Saelim", role: "Secretary" },
-  { name: "Mr. Jesada Chantharaprasert", role: "Assistant Secretary" },
-  { name: "Acting Sub Lt. Piyawat Jarusit", role: "Assistant Secretary" },
-  { name: "Miss Pinchaya Toprayoon", role: "Assistant Secretary" },
-  { name: "Mr. Chanayus Jittamornchai", role: "Assistant Secretary" },
-  { name: "Mr. Thanaphat Kitcharoen", role: "Assistant Secretary" },
-  { name: "Miss Sirarat Rattanachai", role: "Assistant Secretary" },
+  { name: "Dr. Suvit Teerakulchon", nameTh: "ดร.ภก.สุวิทย์ ธีรกุลชน", role: "Advisor", roleTh: "ที่ปรึกษา" },
+  { name: "Assoc. Prof. Sunee Lertsinudom", nameTh: "รศ.ภญ.สุณี เลิศสินอุดม", role: "Advisor", roleTh: "ที่ปรึกษา" },
+  { name: "Prof. Dr. Chonlaphat Sukasem", nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม", role: "Chairman", roleTh: "ประธาน" },
+  { name: "Mr. Teerawit Bumrungsri", nameTh: "ภก.ธีรวิทย์ บำรุงศรี", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Mr. Pornpitak Komsin", nameTh: "ภก.พรพิทักษ์ กอมสิน", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Miss Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Miss Chomsanang Pumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Mr. Aphinan Watcharaphichart", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
+  { name: "Mr. Thanaphat Kitcharoen", nameTh: "นายธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "Mr. Pongsakorn Somdee", nameTh: "นายพงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
 ];
 
 interface SubMember { name: string; affiliation: string }
@@ -203,16 +192,7 @@ function SubcommitteeCard({ group, index }: { group: SubGroup; index: number }) 
    ══════════════════════════════════════ */
 
 function rolePill(role: string) {
-  switch (role) {
-    case "Chairman":
-      return "text-orange-600 font-semibold";
-    case "Secretary":
-      return "text-emerald-600 font-semibold";
-    case "Assistant Secretary":
-      return "text-gray-400";
-    default:
-      return "text-gray-400";
-  }
+  return "text-gray-500";
 }
 
 /* ══════════════════════════════════════
@@ -222,6 +202,7 @@ function rolePill(role: string) {
 export default function AboutPrisPage() {
   const pageRef = useRef<HTMLElement>(null!);
   const t = useTranslations("about");
+  const locale = useLocale();
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
@@ -229,27 +210,13 @@ export default function AboutPrisPage() {
 
   useGSAP(() => {
     // ─── Hero entrance ───
-    gsap.from(".about-hero-line", {
-      yPercent: 110,
-      stagger: 0.12,
-      duration: 1.6,
-      ease: "power4.out",
-      delay: 0.15,
-    });
-    gsap.from(".about-hero-sub", {
-      opacity: 0,
-      y: 30,
-      duration: 1.2,
-      ease: "power3.out",
-      delay: 0.8,
-    });
 
     // ─── "What is PRIS" reveal on scroll ───
     gsap.fromTo(
       ".about-desc",
       { opacity: 0, y: 60 },
       {
-        opacity: 1, y: 0, duration: 1.2, ease: "power3.out",
+        opacity: 1, y: 0, duration: 1.2, ease: "power3.out", force3D: true,
         scrollTrigger: { trigger: ".about-desc", start: "top 80%" },
       }
     );
@@ -260,7 +227,7 @@ export default function AboutPrisPage() {
       gsap.fromTo(el,
         { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
+          opacity: 1, y: 0, duration: 0.9, ease: "power3.out", force3D: true,
           scrollTrigger: { trigger: el, start: "top 85%" },
         }
       );
@@ -271,7 +238,7 @@ export default function AboutPrisPage() {
     gsap.fromTo(rows,
       { opacity: 0, y: 15 },
       {
-        opacity: 1, y: 0, stagger: 0.03, duration: 0.5, ease: "power2.out",
+        opacity: 1, y: 0, stagger: 0.03, duration: 0.5, ease: "power2.out", force3D: true,
         scrollTrigger: { trigger: ".org-table", start: "top 85%" },
       }
     );
@@ -285,35 +252,16 @@ export default function AboutPrisPage() {
     >
 
       {/* ══════ HERO ══════ */}
-      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
-        {/* decorative bg glows */}
-        <div className="absolute top-0 left-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="about-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("location")}</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block about-hero-line">About</span>
-            </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block about-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
-                PRIS 2026
-              </span>
-            </div>
-          </h1>
-        </div>
-      </section>
+      <PageHero
+        title1="About"
+        title2="PRIS 2026"
+        subtitle="Pharmacy Research and Innovation Summit"
+      />
 
       {/* ══════ WHAT IS PRIS ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
-        <div className="max-w-4xl mx-auto about-desc">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900">{t("whatIsTitle")}</h2>
+        <div className="max-w-4xl mx-auto about-desc will-change-transform transform-gpu">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900 pr-[0.15em]">{t("whatIsTitle")}</h2>
           <p 
             className="text-gray-500 text-base md:text-lg leading-[1.8] font-light"
             dangerouslySetInnerHTML={{ __html: t.raw("whatIsDesc") }}
@@ -342,8 +290,8 @@ export default function AboutPrisPage() {
             <div className="border-t border-gray-200">
               {advisors.map((a, i) => (
                 <div key={i} className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200">
-                  <span className="text-gray-900 font-medium text-lg">{a.name}</span>
-                  <span className="text-gray-400 text-sm">{a.position}</span>
+                  <span className="text-gray-900 font-medium text-lg md:w-[60%]">{locale === 'th' ? a.nameTh : a.name}</span>
+                  <span className="text-gray-400 text-sm">{locale === 'th' ? a.positionTh : a.position}</span>
                 </div>
               ))}
             </div>
@@ -360,15 +308,15 @@ export default function AboutPrisPage() {
                   key={i}
                   className="org-row flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-4 border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
                 >
-                  <span className="text-gray-800 text-sm md:text-base md:w-[60%]">{m.name}</span>
-                  <span className={`text-sm ${rolePill(m.role)}`}>{m.role}</span>
+                  <span className="text-gray-800 text-sm md:text-base md:w-[60%]">{locale === 'th' ? m.nameTh : m.name}</span>
+                  <span className={`text-sm ${rolePill(m.role)}`}>{locale === 'th' ? m.roleTh : m.role}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* ── Subcommittees (Accordion) ── */}
-          <div className="committee-block">
+          {/* <div className="committee-block">
             <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">
               {t("subcommittees")}
             </h3>
@@ -377,7 +325,7 @@ export default function AboutPrisPage() {
                 <SubcommitteeCard key={idx} group={group} index={idx} />
               ))}
             </div>
-          </div>
+          </div> */}
 
         </div>
       </section>

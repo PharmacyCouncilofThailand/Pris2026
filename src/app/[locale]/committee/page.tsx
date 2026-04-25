@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Users, Award, BookOpen, Wallet, Megaphone, MapPin, Presentation, HandshakeIcon, FileSearch } from "lucide-react";
+import PageHero from "@/components/sections/PageHero";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -25,7 +26,7 @@ interface CommitteeSection {
 }
 
 const advisorData: CommitteeMember[] = [
-  { name: "Mr. Preecha Bhandtivej", role: "President of the Pharmacy Council of Thailand" },
+  { name: "Mr. Preecha Phantuwecha", role: "President of the Pharmacy Council of Thailand" },
 ];
 
 const organizingCommitteeData: CommitteeMember[] = [
@@ -180,12 +181,7 @@ export default function CommitteePage() {
   }, []);
 
   useGSAP(() => {
-    // Hero text entrance
-    gsap.fromTo(
-      ".committee-hero-text",
-      { opacity: 0, y: 80 },
-      { opacity: 1, y: 0, duration: 1.4, ease: "power4.out", stagger: 0.15 }
-    );
+    // Hero text entrance handled by PageHero component
 
     // Section cards entrance
     const cards = gsap.utils.toArray(".committee-card") as HTMLElement[];
@@ -241,21 +237,11 @@ export default function CommitteePage() {
       </div>
 
       {/* ═══ Hero Header ═══ */}
-      <section className="relative pt-40 md:pt-56 pb-16 md:pb-24 px-6 md:px-12 flex flex-col items-center justify-center text-center">
-        <h4 className="committee-hero-text text-gold tracking-[0.3em] uppercase text-xs md:text-sm font-semibold mb-6 flex items-center gap-4">
-          <span className="w-8 h-px bg-gold/50" />
-          PRIS 2026
-          <span className="w-8 h-px bg-gold/50" />
-        </h4>
-        <h1 className="committee-hero-text text-5xl md:text-7xl lg:text-[7rem] font-black uppercase tracking-tighter leading-none mb-8">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/60">
-            Committee
-          </span>
-        </h1>
-        <p className="committee-hero-text text-white/50 max-w-2xl text-lg md:text-xl font-light leading-relaxed">
-          Meet the dedicated team of professionals organizing the 2nd Pharmacy Research and Innovation Summit.
-        </p>
-      </section>
+      <PageHero
+        dark
+        title1="Committee"
+        subtitle="Meet the dedicated team of professionals organizing the 2nd Pharmacy Research and Innovation Summit."
+      />
 
       <div className="container mx-auto px-4 md:px-8 max-w-7xl pb-32 relative z-10 space-y-16 md:space-y-20">
 

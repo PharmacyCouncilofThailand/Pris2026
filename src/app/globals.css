@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -145,6 +145,7 @@ body.hero-playing header,
 body.hero-playing footer {
   opacity: 0 !important;
   pointer-events: none !important;
+  transition: none !important;
 }
 
 /* Hide sections below hero so they can't flash during the intro */
@@ -168,4 +169,139 @@ body.hero-playing main > div:not(:first-child) {
   --angle: 0deg;
   background: conic-gradient(from var(--angle), #FF5A00, #0055FF, #FF5A00, #0055FF, #FF5A00);
   animation: border-spin 4s linear infinite;
+}
+
+/* ── Hero Register Button ── */
+.hero-register-btn {
+  --btn-transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2.25rem;
+  background: linear-gradient(135deg, #c86800 0%, #a04500 100%);
+  border: 1px solid rgba(255, 180, 80, 0.4);
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow:
+    0 0 25px rgba(255, 120, 0, 0.3),
+    0 0 60px rgba(255, 90, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: transform var(--btn-transition), border-color var(--btn-transition), box-shadow var(--btn-transition), background var(--btn-transition);
+  overflow: hidden;
+  animation: hero-btn-pulse 3s ease-in-out infinite;
+}
+
+@keyframes hero-btn-pulse {
+  0%, 100% { box-shadow: 0 0 25px rgba(255, 120, 0, 0.3), 0 0 60px rgba(255, 90, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.15); }
+  50% { box-shadow: 0 0 35px rgba(255, 120, 0, 0.45), 0 0 80px rgba(255, 90, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2); }
+}
+
+/* Bottom accent line */
+.hero-register-btn::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 15%;
+  width: 70%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 180, 80, 0.5), transparent);
+  border-radius: 1px;
+  z-index: 3;
+  transition: opacity var(--btn-transition);
+}
+
+/* Shimmer sweep */
+.hero-register-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
+  border-radius: inherit;
+  z-index: 1;
+  animation: hero-btn-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes hero-btn-shimmer {
+  0%, 100% { left: -100%; }
+  50% { left: 150%; }
+}
+
+.hero-register-btn:hover {
+  border-color: rgba(255, 200, 100, 0.6);
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #e07800 0%, #b85000 100%);
+  box-shadow:
+    0 0 40px rgba(255, 120, 0, 0.5),
+    0 0 80px rgba(255, 90, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: none;
+}
+
+.hero-register-btn:active {
+  transform: scale(0.98);
+}
+
+/* Arrow icon */
+.hero-register-btn__arrow {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-register-btn:hover .hero-register-btn__arrow {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(3px);
+}
+
+/* Button text */
+.hero-register-btn .text_button {
+  position: relative;
+  z-index: 10;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  transition: color var(--btn-transition);
+}
+
+.hero-register-btn:hover .text_button {
+  color: rgba(255, 255, 255, 1);
+}
+
+@media (min-width: 640px) {
+  .hero-register-btn {
+    padding: 1rem 2.5rem;
+  }
+  .hero-register-btn .text_button {
+    font-size: 0.9375rem;
+  }
+  .hero-register-btn__arrow {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+@media (min-width: 768px) {
+  .hero-register-btn .text_button {
+    font-size: 1.0625rem;
+  }
 }

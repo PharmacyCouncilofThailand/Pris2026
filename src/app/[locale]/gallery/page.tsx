@@ -111,13 +111,13 @@ export default function GalleryPage() {
             </div>
 
             <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.85] text-white">
-              <div className="overflow-hidden">
-                <span className="block gallery-hero-line">
+              <div className="overflow-hidden md:pl-2">
+                <span className="block gallery-hero-line pr-[0.15em]">
                   {locale === "th" ? "แกลเลอรี" : "Gallery"}
                 </span>
               </div>
-              <div className="overflow-hidden">
-                <span className="block gallery-hero-line text-transparent bg-clip-text bg-gradient-to-r from-gold via-orange-400 to-gold">
+              <div className="overflow-hidden md:pl-2">
+                <span className="block gallery-hero-line text-transparent bg-clip-text bg-gradient-to-r from-gold via-orange-400 to-gold pr-[0.15em]">
                   {locale === "th" ? "ภาพประทับใจ" : "Highlights"}
                 </span>
               </div>
@@ -146,28 +146,27 @@ export default function GalleryPage() {
           </div>
         </section>
 
-        {/* ══════ MASONRY GALLERY ══════ */}
+        {/* ══════ UNIFORM GALLERY GRID ══════ */}
         <section className="relative px-4 md:px-8 pb-32 md:pb-44">
-          <div className="max-w-7xl mx-auto columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4">
+          <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
             {images.map((src, idx) => (
               <div
                 key={idx}
-                className="gallery-item relative mb-3 md:mb-4 break-inside-avoid rounded-xl overflow-hidden cursor-pointer group"
+                className="gallery-item relative aspect-[4/3] rounded-lg sm:rounded-xl overflow-hidden cursor-pointer group bg-neutral-900"
                 onClick={() => openLightbox(idx)}
               >
                 <Image
                   src={src}
                   alt={`PRIS 2025 - ${idx + 1}`}
-                  width={600}
-                  height={400}
-                  sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                  className="w-full h-auto object-cover transition-all duration-700 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500" />
-                <div className="absolute inset-0 rounded-xl border border-white/0 group-hover:border-white/20 transition-all duration-500" />
+                <div className="absolute inset-0 rounded-lg sm:rounded-xl border border-white/0 group-hover:border-white/20 transition-all duration-500" />
                 {/* Image index badge */}
-                <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md text-white/60 text-[10px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 tracking-widest">
+                <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 bg-black/60 backdrop-blur-md text-white/60 text-[10px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 tracking-widest">
                   {idx + 1} / {images.length}
                 </div>
               </div>

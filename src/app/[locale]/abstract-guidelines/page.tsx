@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { useTranslations, useLocale } from "next-intl";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import PageHero from "@/components/sections/PageHero";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -33,21 +34,7 @@ export default function DetailedGuidelines() {
   }, []);
 
   useGSAP(() => {
-    // Hero lines reveal
-    gsap.from(".guide-hero-line", {
-      yPercent: 110,
-      stagger: 0.12,
-      duration: 1.6,
-      ease: "power4.out",
-      delay: 0.15,
-    });
-    gsap.from(".guide-hero-sub", {
-      opacity: 0,
-      y: 20,
-      duration: 1,
-      ease: "power3.out",
-      delay: 0.6,
-    });
+
 
     // Content blocks fade in
     const blocks = pageRef.current?.querySelectorAll(".content-block");
@@ -77,36 +64,12 @@ export default function DetailedGuidelines() {
 
 
       {/* ══════ HERO ══════ */}
-      <section className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center">
-        {/* decorative bg glows */}
-        <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="guide-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">PRIS 2026</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("heroSub")}</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block guide-hero-line">{t("title1")}</span>
-            </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block guide-hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-2">
-                {t("title2")}
-              </span>
-            </div>
-          </h1>
-
-          <div className="guide-hero-sub max-w-2xl mx-auto mt-8 px-4">
-            <p className="text-gray-500 text-lg md:text-xl font-light leading-relaxed">
-              {t("desc")}
-            </p>
-          </div>
-        </div>
-      </section>
+      <PageHero
+        eyebrowSub={t("heroSub")}
+        title1={t("title1")}
+        title2={t("title2")}
+        subtitle={t("desc")}
+      />
 
       {/* INTRO */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">

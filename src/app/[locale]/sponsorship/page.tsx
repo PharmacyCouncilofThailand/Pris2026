@@ -10,22 +10,37 @@ if (typeof window !== "undefined") {
 }
 
 import { useTranslations } from "next-intl";
+import PageHero from "@/components/sections/PageHero";
 
-// ข้อมูลสปอนเซอร์แบบแบ่งตามระดับ (Sponsor Tiers) เพื่อจัด Layout
-const sponsorTiers = [
+const organizedByLogos = [
+  { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png" },
+  { id: 2, name: "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png" },
+];
+
+const partnerLogos = [
+  { id: 3, name: "วิทยาลัยเภสัชบำบัด", logo: "/assets/Img/sponsors/วิทยาลัยบำบัด 2.png" },
+  { id: 4, name: "วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png" },
+  { id: 5, name: "วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png" },
+  { id: 6, name: "วิทยาลัยเภสัชกรรมชุมชน", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png" },
+  { id: 7, name: "วิทยาลัยคุ้มครอง", logo: "/assets/Img/sponsors/วิทยาลัยคุ้นครอง 2.png" },
+  { id: 8, name: "วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png" },
+  { id: 9, name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png" },
+];
+
+const mockupSponsors = [
   {
     tier: "Platinum Sponsors",
     sponsors: [
-      { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png" },
-      { id: 2, name: "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png" },
+      { id: 101, name: "Google", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
+      { id: 102, name: "Microsoft", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
     ]
   },
   {
     tier: "Gold Sponsors",
     sponsors: [
-      { id: 3, name: "Google", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
-      { id: 4, name: "Microsoft", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
-      { id: 5, name: "Amazon", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
+      { id: 103, name: "Amazon", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
+      { id: 104, name: "Meta", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" },
+      { id: 105, name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" },
     ]
   }
 ];
@@ -35,21 +50,7 @@ export default function SponsorshipPage() {
   const t = useTranslations("sponsorship");
 
   useGSAP(() => {
-    // Hero text reveal
-    gsap.from(".sponsor-hero-line", {
-      yPercent: 110,
-      stagger: 0.12,
-      duration: 1.6,
-      ease: "power4.out",
-      delay: 0.15,
-    });
-    gsap.from(".sponsor-hero-sub", {
-      opacity: 0,
-      y: 20,
-      duration: 1,
-      ease: "power3.out",
-      delay: 0.6,
-    });
+
 
     // Sponsor blocks fade in
     const blocks = pageRef.current?.querySelectorAll(".content-block");
@@ -79,78 +80,100 @@ export default function SponsorshipPage() {
 
 
       {/* ══════ HERO ══════ */}
-      <section className="relative pt-36 md:pt-48 pb-12 md:pb-16 px-6 md:px-12 flex flex-col justify-end items-center text-center">
-        {/* decorative bg glows */}
-        <div className="absolute top-0 right-1/4 w-[700px] h-[700px] bg-blue-500/[0.06] rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-orange-500/[0.06] rounded-full blur-[150px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="sponsor-hero-sub flex items-center gap-4 mb-8">
-            <span className="w-12 h-px bg-blue-600" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("pretitle")}</span>
-            <span className="text-gray-300 text-[10px] tracking-widest uppercase">— {t("pretitleSub")}</span>
-          </div>
-
-          <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[6rem] font-black uppercase tracking-tighter leading-tight text-gray-900">
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block sponsor-hero-line">{t("title1")}</span>
-            </div>
-            <div className="overflow-hidden py-2 -my-2">
-              <span className="block sponsor-hero-line text-transparent bg-clip-text bg-gradient-to-r from-orange-500 via-blue-500 to-blue-700 pb-2">
-                {t("title2")}
-              </span>
-            </div>
-          </h1>
-        </div>
-      </section>
-
-      {/* ══════ INTRO ══════ */}
-      <section className="relative px-6 md:px-12 pb-12 md:pb-16">
-        <div className="max-w-4xl mx-auto content-block text-center border-t border-b border-gray-200 py-8 md:py-10">
-          <p className="text-gray-500 text-base md:text-lg leading-[1.8] font-light max-w-2xl mx-auto">
-            {t("intro")}
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title1={t("title1")}
+        title2={t("title2")}
+        subtitle={t("intro")}
+      />
 
       {/* ══════ SPONSOR LOGOS ══════ */}
-      <section className="relative px-6 md:px-12 pb-12 md:pb-16">
+      <section className="relative px-6 md:px-12 pb-12 md:pb-16 pt-8">
         <div className="max-w-6xl mx-auto">
           
-          <div className="text-center mb-10 md:mb-14 content-block">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
-              PARTNER
-            </h2>
+          {/* Organized By */}
+          <div className="content-block mb-24">
+            <div className="flex flex-col items-center text-center mb-10 md:mb-14">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37] pb-4 border-b border-gray-200">
+                ORGANIZED BY
+              </h2>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
+              {organizedByLogos.map((sponsor) => (
+                <div 
+                  key={sponsor.id} 
+                  className="relative flex items-center justify-center w-40 h-32 md:w-56 md:h-40"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    className="object-contain w-full h-full max-w-[100%] max-h-[100%]"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
-          {sponsorTiers.map((tierData, index) => (
-            <div key={index} className="content-block mb-14 last:mb-0">
-              <div className="flex flex-col items-center text-center mb-8">
-                <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gray-400 mb-4">
-                  {t("tierLabel")} {String(index + 1).padStart(2, "0")}
-                </span>
-                <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-6 pb-4 border-b border-gray-200">
-                  {tierData.tier}
-                </h2>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
-                {tierData.sponsors.map((sponsor) => (
-                  <div 
-                    key={sponsor.id} 
-                    className="relative flex items-center justify-center w-40 h-24 md:w-56 md:h-32"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={sponsor.logo}
-                      alt={sponsor.name}
-                      className="object-contain w-full h-full max-w-[80%] max-h-[80%]"
-                    />
-                  </div>
-                ))}
-              </div>
+          {/* Partner */}
+          <div className="content-block mb-24">
+            <div className="flex flex-col items-center text-center mb-10 md:mb-14">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37] pb-4 border-b border-gray-200">
+                PARTNER
+              </h2>
             </div>
-          ))}
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+              {partnerLogos.map((sponsor) => (
+                <div 
+                  key={sponsor.id} 
+                  className="relative flex items-center justify-center w-32 h-24 md:w-48 md:h-32"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    className="object-contain w-full h-full max-w-[90%] max-h-[90%]"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mockup Sponsors */}
+          <div className="content-block mb-14">
+            <div className="text-center mb-10 md:mb-14">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
+                SPONSOR
+              </h2>
+            </div>
+            {mockupSponsors.map((tierData, index) => (
+              <div key={index} className="mb-14 last:mb-0">
+                <div className="flex flex-col items-center text-center mb-8">
+                  <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gray-400 mb-4">
+                    {t("tierLabel")} {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-6 pb-4 border-b border-gray-200">
+                    {tierData.tier}
+                  </h2>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
+                  {tierData.sponsors.map((sponsor) => (
+                    <div 
+                      key={sponsor.id} 
+                      className="relative flex items-center justify-center w-40 h-24 md:w-56 md:h-32"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={sponsor.logo}
+                        alt={sponsor.name}
+                        className="object-contain w-full h-full max-w-[80%] max-h-[80%]"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
 
         </div>
       </section>
@@ -174,7 +197,7 @@ export default function SponsorshipPage() {
               href="https://sponsor-wine.vercel.app/"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-900 text-white font-bold px-10 py-4 text-center uppercase tracking-widest text-sm hover:bg-gray-800 transition-colors"
+              className="bg-gray-900 text-white rounded-full font-bold px-12 md:px-16 py-5 md:py-6 text-center uppercase tracking-widest text-base md:text-lg hover:bg-gray-800 transition-all duration-300"
             >
               {t("cta.btn")}
             </a>

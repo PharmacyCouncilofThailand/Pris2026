@@ -23,19 +23,29 @@ export default function StickyStackWrapper({
     () => {
       if (!wrapperRef.current || !innerRef.current) return;
 
-      // Use GSAP pin to hold the section in place while the next section slides over
-      gsap.to(innerRef.current, {
-        scale: 0.85,
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: wrapperRef.current,
-          start: "top top",
-          end: "+=100%", // Pin for a full viewport height
-          pin: true,
-          pinSpacing: false, // Prevents pushing down the next section, allowing it to slide over
-          scrub: true,
-        },
+      const mm = gsap.matchMedia();
+
+      mm.add("(min-width: 1025px)", () => {
+        // Use GSAP pin to hold the section in place while the next section slides over
+        const tl = gsap.to(innerRef.current, {
+          scale: 0.85,
+          opacity: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: wrapperRef.current,
+            start: "top top",
+            end: "+=100%", // Pin for a full viewport height
+            pin: true,
+            pinSpacing: false, // Prevents pushing down the next section, allowing it to slide over
+            scrub: true,
+          },
+        });
+        return () => tl.kill();
+      });
+
+      mm.add("(max-width: 1024px)", () => {
+         // Mobile: natural scroll, no pinning or scaling down
+         gsap.set(innerRef.current, { scale: 1, opacity: 1 });
       });
     },
     { scope: wrapperRef }

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { MoveUpRight, Sparkles } from "lucide-react";
+import { MoveUpRight, Sparkles, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -17,61 +17,65 @@ export default function RegistrationCTASection() {
   const textRef = useRef<HTMLHeadingElement>(null);
 
   useGSAP(() => {
-    // Premium entry animation for massive typography
-    gsap.fromTo(
-      ".char-anim",
-      { y: "100%", opacity: 0 },
-      {
-        y: "0%",
-        opacity: 1,
-        duration: 1.5,
-        stagger: 0.05,
-        ease: "expo.out",
-        scrollTrigger: {
-          trigger: textRef.current,
-          start: "top 80%",
-        },
-      }
-    );
+    const mm = gsap.matchMedia();
 
-    gsap.fromTo(
-      ".fade-up",
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 75%",
-        },
-      }
-    );
-
-    // Highly engineered line drawing
-    gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
+    mm.add("(min-width: 768px)", () => {
+      // Premium entry animation for massive typography
       gsap.fromTo(
-        line,
-        { scaleX: 0 },
+        ".char-anim",
+        { y: "100%", opacity: 0 },
         {
-          scaleX: 1,
+          y: "0%",
+          opacity: 1,
           duration: 1.5,
-          ease: "power4.inOut",
-          transformOrigin: "left center",
+          stagger: 0.05,
+          ease: "expo.out",
+          force3D: true,
           scrollTrigger: {
-            trigger: line,
-            start: "top 90%",
+            trigger: textRef.current,
+            start: "top 80%",
           },
         }
       );
+
+      gsap.fromTo(
+        ".fade-up",
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power3.out",
+          force3D: true,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 75%",
+          },
+        }
+      );
+
+      // Highly engineered line drawing
+      gsap.utils.toArray<HTMLElement>(".draw-line-premium").forEach((line) => {
+        gsap.fromTo(
+          line,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            duration: 1.5,
+            ease: "power4.inOut",
+            force3D: true,
+            transformOrigin: "left center",
+            scrollTrigger: {
+              trigger: line,
+              start: "top 90%",
+            },
+          }
+        );
+      });
     });
 
-
-
-    // Sticky timeline effect (Desktop only) — ใช้ gsap.matchMedia() แทน ScrollTrigger.matchMedia() ที่ถูก Deprecated ใน GSAP 3.12+
-    const mm = gsap.matchMedia();
+    // Sticky timeline effect (Desktop only)
     mm.add("(min-width: 1024px)", () => {
       ScrollTrigger.create({
         trigger: ".timeline-container",
@@ -80,9 +84,9 @@ export default function RegistrationCTASection() {
         pin: ".timeline-title",
         pinSpacing: false,
       });
-      return () => {}; // cleanup
     });
 
+    return () => mm.revert(); // cleanup
   }, { scope: containerRef });
 
   return (
@@ -219,7 +223,7 @@ export default function RegistrationCTASection() {
         </div>
       </div>
 
-      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-24 md:my-40" />
+      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-20 md:my-32" />
 
       {/* Interactive Pricing Rows (Bespoke Table Layout) */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] pricing-wrapper">
@@ -227,7 +231,12 @@ export default function RegistrationCTASection() {
           <h3 className="text-4xl md:text-6xl font-semibold tracking-tighter">
             {t.rich("tiersTitle", { br: () => <br/> })}
           </h3>
-          <p className="text-xs uppercase tracking-[0.2em] text-[#0055FF] font-bold mt-6 md:mt-0">{t("tiersSubtitle")}</p>
+          <div className="flex items-center gap-4 mt-8 md:mt-0">
+            <span className="w-8 md:w-16 h-[2px] bg-[#0055FF]"></span>
+            <p className="text-sm md:text-base uppercase tracking-[0.3em] text-[#0055FF] font-black">
+              {t("tiersSubtitle")}
+            </p>
+          </div>
         </div>
 
         <div className="flex flex-col [perspective:1000px]">
@@ -313,25 +322,89 @@ export default function RegistrationCTASection() {
           </div>
         </div>
 
-        {/* Register CTA Button */}
-        <div className="mt-16 md:mt-20 flex justify-center fade-up">
+        {/* Cancellations & Refund Policy Section - Avant-Garde Style */}
+        <div className="w-full mt-24 md:mt-32 fade-up">
+          <div className="flex flex-col lg:flex-row gap-16 lg:gap-8">
+            <div className="w-full lg:w-4/12 relative">
+              <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-6 flex items-center gap-3">
+                <span className="w-8 h-px bg-[#0055FF]"></span> {t("policyLabel")}
+              </p>
+              <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter leading-[0.9] break-words pr-8">
+                {t("cancelTitle")}
+              </h3>
+            </div>
+
+            <div className="w-full lg:w-7/12 lg:ml-auto flex flex-col gap-12 md:gap-16">
+              <div className="flex flex-col gap-6 text-lg md:text-xl text-black/60 font-light leading-relaxed">
+                 {t.raw("cancelItems").map((item: string, idx: number) => (
+                   <div key={idx} className="flex gap-6 items-start group">
+                     <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#0055FF] group-hover:text-[#FF5A00] transition-colors mt-2 w-8 shrink-0">{String(idx + 1).padStart(2, '0')}</span>
+                     <span>{item}</span>
+                   </div>
+                 ))}
+              </div>
+
+              {/* Avant-Garde Table / Rows */}
+              <div className="flex flex-col mt-4">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center pb-6 text-xs uppercase tracking-[0.2em] font-bold text-black/40 border-b border-black/15 gap-2">
+                  <span>{t("cancelTableTh1")}</span>
+                  <span className="sm:text-right">{t("cancelTableTh2")}</span>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center py-6 border-b border-black/15 group hover:bg-black/5 transition-all duration-300 -mx-4 px-4 rounded-xl cursor-default">
+                  <div className="text-lg md:text-xl font-medium mb-1 sm:mb-0 text-black/80">{t("cancelR1C1")}</div>
+                  <div className="text-xl md:text-2xl font-bold tracking-tighter text-black">{t("cancelR1C2")}</div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center py-6 border-b border-black/15 group hover:bg-black/5 transition-all duration-300 -mx-4 px-4 rounded-xl cursor-default">
+                  <div className="text-lg md:text-xl font-medium mb-1 sm:mb-0 text-black/80">{t("cancelR2C1")}</div>
+                  <div className="text-xl md:text-2xl font-bold tracking-tighter text-black">{t("cancelR2C2")}</div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center py-6 border-b border-black/15 group hover:bg-[#FF5A00]/5 transition-all duration-300 -mx-4 px-4 rounded-xl cursor-default">
+                  <div className="text-lg md:text-xl font-medium mb-1 sm:mb-0 text-black/80">{t("cancelR3C1")}</div>
+                  <div className="text-xl md:text-2xl font-bold tracking-tighter text-[#FF5A00]">{t("cancelR3C2")}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Register CTA Button & Payment Info */}
+        <div className="mt-16 md:mt-24 flex flex-col items-center fade-up gap-6">
           <a
             href="https://conference-web-tawny.vercel.app/events/mock-event-2025"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-between bg-black text-white px-8 md:px-12 py-6 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02]"
+            className="group relative inline-flex items-center justify-center gap-6 md:gap-8 text-white px-10 md:px-16 py-6 md:py-8 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] shadow-2xl hover:shadow-[0_0_60px_rgba(0,85,255,0.4)]"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FF5A00] to-[#0055FF] opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-full" />
-            <span className="relative z-10 text-sm md:text-base font-bold uppercase tracking-[0.2em] flex items-center gap-6">
-              {t("registerCollection")}
-              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center group-hover:rotate-45 transition-transform duration-500">
-                <MoveUpRight className="w-5 h-5" />
-              </div>
-            </span>
-          </a>
-        </div>
-      </div>
+            {/* Animated gradient background — always visible */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
+            {/* Shimmer sweep */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
 
+            
+            <span className="relative z-10 text-base md:text-xl font-black uppercase tracking-[0.25em]">
+              {t("registerCollection")}
+            </span>
+            <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 bg-white/20 group-hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:rotate-45 transition-all duration-500 border border-white/30">
+              <MoveUpRight className="w-6 h-6 md:w-7 md:h-7" />
+            </div>
+          </a>
+
+          {/* Payment Method Note */}
+          <div className="flex items-center gap-2 text-black/50 mt-1">
+            <span className="text-sm md:text-base font-medium">{t("paymentNote")}</span>
+          </div>
+        </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+        `}} />
+      </div>
     </section>
   );
 }

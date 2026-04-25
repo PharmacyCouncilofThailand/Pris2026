@@ -27,35 +27,46 @@ export default function WelcomeSection() {
 
   useGSAP(
     () => {
-      // Animate header
-      gsap.fromTo(
-        ".welcome-header",
-        { opacity: 0, y: 20 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: { trigger: ".welcome-header", start: "top 85%" },
-        }
-      );
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        // Animate header
+        gsap.fromTo(
+          ".welcome-header",
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power3.out",
+            force3D: true,
+            scrollTrigger: {
+              trigger: ".welcome-header",
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+          }
+        );
 
-      // Animate cards as a staggered group when the grid comes into view
-      gsap.fromTo(
-        ".speaker-card",
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.15,
-          ease: "power3.out",
-          scrollTrigger: { 
-            trigger: ".welcome-grid", 
-            start: "top 85%" 
-          },
-        }
-      );
+        // Animate cards as a staggered group when the grid comes into view
+        gsap.fromTo(
+          ".speaker-card",
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power3.out",
+            force3D: true,
+            scrollTrigger: {
+              trigger: ".welcome-grid",
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            },
+          }
+        );
+      });
+      return () => mm.revert();
     },
     { scope: containerRef }
   );
@@ -96,8 +107,6 @@ export default function WelcomeSection() {
                     alt={getName(person)}
                     fill
                     sizes="176px"
-                    priority
-                    quality={90}
                     className="object-cover"
                   />
                 ) : (

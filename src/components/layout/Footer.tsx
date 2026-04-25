@@ -38,7 +38,7 @@ export default function Footer() {
 
           {/* Brand & Address (Col Span 4) */}
           <div className="lg:col-span-4 flex flex-col">
-            <Link href="/" className="inline-block mb-6">
+            <Link href="/" prefetch={true} className="inline-block mb-6">
               <Image
                 src="/assets/Img/sponsors/logo สภา.jpg"
                 alt="Pharmacy Council Logo"
@@ -72,6 +72,7 @@ export default function Footer() {
                   <Link
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     href={link.href as any}
+                    prefetch={true}
                     className="text-zinc-400 hover:text-white transition-colors duration-300 text-sm font-light inline-flex items-center group"
                   >
                     <span className="w-0 h-px bg-[#D4AF37] mr-0 group-hover:w-3 group-hover:mr-3 transition-all duration-300 ease-out" />
@@ -136,7 +137,7 @@ export default function Footer() {
             </h3>
             <div className="grid grid-cols-3 gap-2">
               {galleryThumbs.map((src, idx) => (
-                <Link key={idx} href="/gallery" className="block">
+                <Link key={idx} href="/gallery" prefetch={true} className="block">
                   <div className="relative aspect-square rounded-lg overflow-hidden group">
                     <Image
                       src={src}
