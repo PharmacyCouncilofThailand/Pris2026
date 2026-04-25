@@ -72,7 +72,7 @@ export default function StudentSignUpPage() {
         <div className="hidden lg:flex w-[40%] xl:w-[45%] relative bg-[#08111f] rounded-[2rem] overflow-hidden flex-col justify-between p-12">
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-110 opacity-90"
-            style={{ backgroundImage: "url('/assets/Img/BG/BG2Monly.webp')" }}
+            style={{ backgroundImage: "url('/assets/Img/BG/BG-no.webp')" }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
           
@@ -87,14 +87,7 @@ export default function StudentSignUpPage() {
             </Link>
           </div>
 
-          <div className="relative z-10 fade-in-up">
-            <h2 className="text-white text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
-              PRIS 2026
-            </h2>
-            <p className="text-white/70 text-sm font-medium leading-relaxed max-w-[500px]">
-              {t("loginSideText")}
-            </p>
-          </div>
+
         </div>
 
         {/* Form Right Side */}
