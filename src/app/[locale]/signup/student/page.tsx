@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState , useTransition } from "react";
 import Image from "next/image";
-import { Link, useRouter } from "@/i18n/routing";
+import { Link, useRouter, usePathname } from "@/i18n/routing";
+import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { UploadCloud } from "lucide-react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
@@ -14,8 +13,17 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || '';
 
 export default function StudentSignUpPage() {
-  const containerRef = useRef<HTMLDivElement>(null!);
+  const locale = useLocale();
+  const pathname = usePathname();
+  const [isPendingLang, startTransitionLang] = useTransition();
   const router = useRouter();
+  const switchLocale = () => {
+    const nextLocale = locale === "en" ? "th" : "en";
+    startTransitionLang(() => {
+      router.replace(pathname, { locale: nextLocale });
+    });
+  };
+  const t = useTranslations("auth");
   const { login } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [studentLevel, setStudentLevel] = useState("");
@@ -41,31 +49,30 @@ export default function StudentSignUpPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useGSAP(() => {
-      gsap.fromTo(
-        ".fade-in-up",
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          stagger: 0.1,
-          ease: "power3.out",
-        }
-      );
-  }, { scope: containerRef });
+  
 
   return (
     <main className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 lg:p-8 font-sans selection:bg-black selection:text-white pt-24 lg:pt-8 relative z-40">
+      {/* Floating Language Switcher */}
+      <div className="absolute top-6 right-6 z-50">
+        <button
+          onClick={switchLocale}
+          disabled={isPendingLang}
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-gray-100 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-black transition-all disabled:opacity-50"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          {locale === "en" ? "TH" : "EN"}
+        </button>
+      </div>
       <div 
-        ref={containerRef}
+        
         className="w-full max-w-[1240px] bg-white rounded-[1.5rem] lg:rounded-[2.5rem] p-2 lg:p-3 shadow-[0_20px_80px_rgba(0,0,0,0.06)] flex gap-4 min-h-[85vh] lg:min-h-[760px] relative z-10"
       >
         {/* Abstract Background Left Side */}
         <div className="hidden lg:flex w-[40%] xl:w-[45%] relative bg-[#08111f] rounded-[2rem] overflow-hidden flex-col justify-between p-12">
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[30s] hover:scale-110 opacity-90"
-            style={{ backgroundImage: "url('/assets/Img/Pris%202026%20bg%20login.svg')" }}
+            style={{ backgroundImage: "url('/assets/Img/BG/BG-no.webp')" }}
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
           
@@ -76,18 +83,11 @@ export default function StudentSignUpPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
               </div>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold">Back</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold">{t("back")}</span>
             </Link>
           </div>
 
-          <div className="relative z-10 fade-in-up">
-            <h2 className="text-white text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] mb-6">
-              PRIS 2026
-            </h2>
-            <p className="text-white/70 text-sm font-medium leading-relaxed max-w-sm">
-              Discover breakthroughs and connect with leading minds by joining PRIS 2026.
-            </p>
-          </div>
+
         </div>
 
         {/* Form Right Side */}
@@ -102,7 +102,7 @@ export default function StudentSignUpPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
                 </div>
-                <span className="text-[11px] uppercase tracking-widest font-bold">Back</span>
+                <span className="text-[11px] uppercase tracking-widest font-bold">{t("back")}</span>
               </Link>
             </div>
 
@@ -110,11 +110,11 @@ export default function StudentSignUpPage() {
             <div className="flex justify-center mb-10 fade-in-up">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
                 <Image
-                  src="/assets/Img/logo/Pris2026-logo.svg"
+                  src="/assets/Img/logo/LOGO1.png"
                   alt="PRIS 2026 Logo"
-                  width={140}
-                  height={56}
-                  className="h-14 w-auto object-contain"
+                  width={200}
+                  height={80}
+                  className="h-[55px] w-auto object-contain brightness-0"
                   priority
                 />
               </Link>
@@ -122,10 +122,10 @@ export default function StudentSignUpPage() {
 
             <div className="text-center mb-10 fade-in-up">
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
-                Join as Student
+                {t("joinAsStudent")}
               </h1>
               <p className="text-sm font-medium text-gray-500">
-                Please fill in your details to register your account
+                {t("fillDetails")}
               </p>
             </div>
 
@@ -210,7 +210,7 @@ export default function StudentSignUpPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="firstName">
-                    First Name <span className="text-red-500">*</span>
+                    {t("firstName")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -222,7 +222,7 @@ export default function StudentSignUpPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="lastName">
-                    Last Name <span className="text-red-500">*</span>
+                    {t("lastName")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -236,7 +236,7 @@ export default function StudentSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="idCard">
-                  National ID / Passport Number <span className="text-red-500">*</span>
+                  {t("nationalId")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -250,12 +250,12 @@ export default function StudentSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="email">
-                  Email Address <span className="text-red-500">*</span>
+                  {t("emailAddress")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
                   id="email"
-                  placeholder="Enter your email"
+                  placeholder={t("emailPlaceholder")}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   required
                 />
@@ -263,7 +263,7 @@ export default function StudentSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="organization">
-                  University / Institution
+                  {t("organization")}
                 </label>
                 <input
                   type="text"
@@ -275,7 +275,7 @@ export default function StudentSignUpPage() {
 
               <div className="relative" ref={levelRef}>
                 <label className="block text-sm font-bold text-gray-900 mb-2">
-                  Student Level <span className="text-red-500">*</span>
+                  {t("studentLevel")} <span className="text-red-500">*</span>
                 </label>
                 <input type="hidden" name="studentLevel" value={studentLevel} required />
                 <button
@@ -285,7 +285,7 @@ export default function StudentSignUpPage() {
                     isLevelOpen ? "bg-white border-gray-200 ring-4 ring-gray-100" : "border-transparent"
                   } ${studentLevel ? "text-gray-900" : "text-gray-400"}`}
                 >
-                  <span>{studentLevel === "undergraduateStudent" ? "Undergraduate" : studentLevel === "postgraduateStudent" ? "Postgraduate" : "Select student level"}</span>
+                  <span>{studentLevel === "undergraduateStudent" ? t("undergrad") : studentLevel === "postgraduateStudent" ? t("postgrad") : t("selectLevel")}</span>
                   <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isLevelOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -293,8 +293,8 @@ export default function StudentSignUpPage() {
                 {isLevelOpen && (
                   <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
                     {[
-                      { value: "undergraduateStudent", label: "Undergraduate" },
-                      { value: "postgraduateStudent", label: "Postgraduate" },
+                      { value: "undergraduateStudent", label: t("undergrad") },
+                      { value: "postgraduateStudent", label: t("postgrad") },
                     ].map((opt) => (
                       <button
                         key={opt.value}
@@ -322,15 +322,15 @@ export default function StudentSignUpPage() {
                   <input ref={fileRef} type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setSelectedFileName(e.target.files?.[0]?.name || '')} />
                   <div className={`w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed rounded-2xl transition-all ${selectedFileName ? 'border-black bg-gray-50' : 'border-gray-300 bg-[#f8f9fc] group-hover:bg-gray-50 group-hover:border-black'}`}>
                     <UploadCloud className={`w-5 h-5 transition-colors ${selectedFileName ? 'text-black' : 'text-gray-400 group-hover:text-black'}`} />
-                    <span className={`text-sm font-medium transition-colors truncate max-w-[80%] ${selectedFileName ? 'text-black' : 'text-gray-500 group-hover:text-black'}`}>{selectedFileName || 'Choose File'}</span>
+                    <span className={`text-sm font-medium transition-colors truncate max-w-[80%] ${selectedFileName ? 'text-black' : 'text-gray-500 group-hover:text-black'}`}>{selectedFileName || t("chooseFile")}</span>
                   </div>
                 </div>
-                <p className="text-xs font-semibold text-gray-400 mt-2">{selectedFileName ? 'Click to change file' : 'Select student certificate or related document'}</p>
+                <p className="text-xs font-semibold text-gray-400 mt-2">{selectedFileName ? t("clickToChange") : t("selectDoc")}</p>
               </div>
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="phone">
-                  Phone Number
+                  {t("phoneNumber")}
                 </label>
                 <div className="flex">
                   <div className="flex items-center justify-center px-4 rounded-l-2xl border border-transparent bg-gray-100 text-gray-700 text-sm font-bold">
@@ -362,7 +362,7 @@ export default function StudentSignUpPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="confirmPassword">
-                    Confirm Password <span className="text-red-500">*</span>
+                    {t("confirmPassword")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="password"
@@ -396,7 +396,7 @@ export default function StudentSignUpPage() {
                     required
                   />
                   <span className="text-sm font-medium text-gray-500 group-hover:text-gray-900 transition-colors select-none">
-                    I agree to the <Link href="#" className="font-bold text-gray-900 hover:underline">Terms of Service</Link> and <Link href="#" className="font-bold text-gray-900 hover:underline">Privacy Policy</Link>
+                    {t("iAgree")} <Link href="#" className="font-bold text-gray-900 hover:underline">{t("tos")}</Link> {t("and")} <Link href="#" className="font-bold text-gray-900 hover:underline">{t("privacy")}</Link>
                   </span>
                 </label>
               </div>
@@ -408,14 +408,13 @@ export default function StudentSignUpPage() {
                   disabled={isLoading}
                   className="w-full bg-black hover:bg-gray-900 text-white font-bold text-base py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  {isLoading ? 'Creating Account...' : 'Create Account'}
+                  {isLoading ? t("creatingAcc") : t("createBtn")}
                 </button>
               </div>
 
               {/* Sign In Link */}
               <div className="text-center">
-                <p className="text-sm font-medium text-gray-500">
-                  Already have an account?{" "}
+                <p className="text-sm font-medium text-gray-500">{t("alreadyHaveAccount")} {" "}
                   <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
                     Sign In
                   </Link>

@@ -39,8 +39,8 @@ export default function WelcomeSection() {
             duration: 0.8,
             ease: "power3.out",
             force3D: true,
-            scrollTrigger: { 
-              trigger: ".welcome-header", 
+            scrollTrigger: {
+              trigger: ".welcome-header",
               start: "top 85%",
               toggleActions: "play none none reverse"
             },
@@ -58,8 +58,8 @@ export default function WelcomeSection() {
             stagger: 0.15,
             ease: "power3.out",
             force3D: true,
-            scrollTrigger: { 
-              trigger: ".welcome-grid", 
+            scrollTrigger: {
+              trigger: ".welcome-grid",
               start: "top 85%",
               toggleActions: "play none none reverse"
             },
@@ -93,7 +93,7 @@ export default function WelcomeSection() {
         />
 
         {/* Speakers in one row */}
-        <div className="welcome-grid grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-5xl mx-auto">
+        <div className="welcome-grid grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 max-w-6xl mx-auto px-4 md:px-0">
           {ORGANIZERS_DATA.map((person, index) => (
             <div
               key={index}
@@ -125,7 +125,7 @@ export default function WelcomeSection() {
               </h3>
 
               {/* Position */}
-              <p className="text-sm text-black/50 leading-relaxed max-w-[240px] whitespace-pre-line">
+              <p className="text-xs md:text-sm text-black/50 leading-relaxed w-full px-1 whitespace-pre md:whitespace-pre">
                 {getPosition(person)}
               </p>
             </div>

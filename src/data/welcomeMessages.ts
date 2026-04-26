@@ -1,9 +1,9 @@
 export const messagesData = [
   {
     id: "president",
-    name: "R.Ph Preecha Bhandtivej",
+    name: "Preecha Bhandtivej(R.Ph)",
     thaiName: "ภก.ปรีชา พันธุ์ติเวช",
-    role: "President The Pharmacy Council of Thailand",
+    role: "President, The Pharmacy Council of Thailand",
     thaiRole: "นายกสภาเภสัชกรรม",
     image: "/assets/Img/Welcome message/นายกสภาดภสัชกรรม.svg",
     quote: "A transformative era for clinical pharmacy practice awaits us as we gather for PRIS 2026.",
@@ -23,7 +23,7 @@ export const messagesData = [
     id: "secretary",
     name: "Assoc. Prof. Sunee Lertsinudom",
     thaiName: "รศ.ภญ.สุณี เลิศสินอุดม",
-    role: "Secretary General, Pharmacy Council of Thailand",
+    role: "Secretary General, The Pharmacy Council of Thailand",
     thaiRole: "เลขาธิการสภาเภสัชกรรม",
     image: "/assets/Img/Welcome message/อ.สุณี.svg",
     quote: "Empowering our profession through collaborative research, unwavering dedication, and shared vision.",
@@ -43,18 +43,18 @@ export const messagesData = [
     id: "chair",
     name: "Prof. Dr. Chonlapat Sukasem",
     thaiName: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
-    role: "Assistant Secretary General Pharmacy Council of Thailand",
-    thaiRole: "ผู้ช่วยเลขาธิการ สภาเภสัชกรรม",
+    role: "Chair of the PRIS 2026 Organizing Committee, The Pharmacy Council of Thailand",
+    thaiRole: "ประธานคณะกรรมการจัดงาน PRIS 2026",
     image: "/assets/Img/Welcome message/ประธานงานPris.svg",
     quote: "PRIS 2026 is where ideas converge, innovations emerge, and the future of pharmacy takes shape.",
-    thaiQuote: "PRIS 2026 คือที่ที่ความคิดมาบรรจบ นวัตกรรมเกิดขึ้น และอนาคตของเภสัชกรรมถูกกำหนด",
+    thaiQuote: "PRIS 2026 คือเวทีที่ความคิดมาบรรจบ นวัตกรรมเกิดขึ้น และอนาคตของเภสัชกรรมถูกกำหนด",
     message: [
       "As the Chair of PRIS 2026, I am delighted to extend a warm welcome to all participants, speakers, and partners joining us for this landmark event.",
       "Our team has worked tirelessly to curate a program that reflects the most pressing challenges and exciting opportunities in pharmacy research and innovation today.",
       "I encourage every attendee to immerse themselves fully in the sessions, workshops, and networking opportunities. Together, let us shape a brighter future for pharmacy and healthcare."
     ],
     thaiMessage: [
-      "ในฐานะประธานจัดงาน PRIS 2026 ผมรู้สึกยินดีเป็นอย่างยิ่งที่ได้ต้อนรับผู้เข้าร่วมงาน วิทยากร และพันธมิตรทุกท่านที่มาร่วมงานสำคัญครั้งนี้",
+      "ในฐานะประธานคณะกรรมการจัดงาน PRIS 2026 ผมรู้สึกยินดีเป็นอย่างยิ่งที่ได้ต้อนรับผู้เข้าร่วมงาน วิทยากร และพันธมิตรทุกท่านที่มาร่วมงานสำคัญครั้งนี้",
       "ทีมงานของเราได้ทุ่มเทอย่างเต็มที่ในการคัดสรรโปรแกรมที่สะท้อนถึงความท้าทายที่สำคัญที่สุดและโอกาสที่น่าตื่นเต้นในด้านการวิจัยและนวัตกรรมทางเภสัชกรรมในปัจจุบัน",
       "ผมขอเชิญชวนผู้เข้าร่วมงานทุกท่านให้ดื่มด่ำกับเซสชัน เวิร์กชอป และโอกาสในการสร้างเครือข่ายอย่างเต็มที่ ร่วมกันสร้างอนาคตที่สดใสยิ่งขึ้นของเภสัชกรรมและการดูแลสุขภาพ"
     ]

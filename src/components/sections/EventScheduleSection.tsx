@@ -87,17 +87,17 @@ function EventCard({ event, locale }: { event: Event; locale: string }) {
 
        {/* Speakers (Always visible, clean grid layout) */}
        {event.speakers && event.speakers.length > 0 && (
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-y-6 gap-x-8">
+         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
              {event.speakers.map((sp, idx) => (
                  <div key={idx} className="flex items-center gap-4 group/speaker">
                     <div className="w-12 h-12 md:w-14 md:h-14 relative rounded-full overflow-hidden border-2 border-white/10 group-hover/speaker:border-white/40 transition-colors shrink-0">
                        <Image src={sp.image} alt={sp.name} fill sizes="56px" className="object-cover" />
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                       <span className="font-bold text-sm md:text-base text-white truncate group-hover/speaker:text-gold transition-colors block">
+                       <span className="font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block whitespace-nowrap">
                           {locale === 'th' && sp.nameTh ? sp.nameTh : sp.name}
                        </span>
-                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider truncate block mt-0.5">
+                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider block mt-0.5 whitespace-nowrap">
                           {locale === 'th' && sp.roleTh ? sp.roleTh : sp.role}
                        </span>
                     </div>

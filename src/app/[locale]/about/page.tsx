@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronDown } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import PageHero from "@/components/sections/PageHero";
 
 if (typeof window !== "undefined") {
@@ -17,132 +17,101 @@ if (typeof window !== "undefined") {
    ══════════════════════════════════════ */
 
 const advisors = [
-  { name: "Mr. Preecha Phantuwecha", position: "President of the Pharmacy Council of Thailand" },
+  {
+    name: "Preecha Bhandtivej (R.PH.)",
+    nameTh: "ภก.ปรีชา พันธุ์ติเวช",
+    position: "President of the Pharmacy Council of Thailand",
+    positionTh: "นายกสภาเภสัชกรรม"
+  },
 ];
 
 const orgCommittee = [
-  { name: "Assoc. Prof. Dr. Wichai Santimaleeworagun", role: "Chairman" },
-  { name: "Asst. Prof. Dr. Chotirat Nakaranurack", role: "Vice Chairman" },
-  { name: "Dr. Noppadon Atjimathira", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Sunee Lertsinudom", role: "Vice Chairman" },
-  { name: "Miss Chanakit Imbumrung", role: "Vice Chairman" },
-  { name: "Miss Chomchanok Pumsaydon", role: "Vice Chairman" },
-  { name: "Mr. Aphinan Watcharaphichart", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Preecha Montakantikul", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Weerachai Chaijamorn", role: "Vice Chairman" },
-  { name: "Dr. Suvit Teerakulchon", role: "Vice Chairman" },
-  { name: "Mr. Komsan Sotangkur", role: "Vice Chairman" },
-  { name: "Ms. Penthipha Kaewketthong", role: "Vice Chairman" },
-  { name: "Prof. Dr. Pornsak Sriamornsak", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Wanna Sriwiriyanupap", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Narisa Kamkaen", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Satit Puttipipatkhachorn", role: "Vice Chairman" },
-  { name: "Asst. Prof. Dr. Surasit Lochid-amnuay", role: "Vice Chairman" },
-  { name: "Assoc. Prof. Dr. Korn Sornlertlamvanich", role: "Vice Chairman" },
-  { name: "Prof. Dr. Chonlaphat Sukasem", role: "Vice Chairman" },
-  { name: "Asst. Prof. Dr. Thanompong Sathienluckana", role: "Vice Chairman" },
-  { name: "Asst. Prof. Dr. Weerayuth Saelim", role: "Secretary" },
-  { name: "Mr. Jesada Chantharaprasert", role: "Assistant Secretary" },
-  { name: "Acting Sub Lt. Piyawat Jarusit", role: "Assistant Secretary" },
-  { name: "Miss Pinchaya Toprayoon", role: "Assistant Secretary" },
-  { name: "Mr. Chanayus Jittamornchai", role: "Assistant Secretary" },
-  { name: "Mr. Thanaphat Kitcharoen", role: "Assistant Secretary" },
-  { name: "Miss Sirarat Rattanachai", role: "Assistant Secretary" },
+  { name: "Prof. Dr. Chonlaphat Sukasem", nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม", role: "Chair of the PRIS 2026 Organizing Committee", roleTh: "ประธานคณะกรรมการจัดงาน PRIS 2026" },
+  { name: "Dr. Suwit Teerakulchon", nameTh: "ดร.ภก.สุวิทย์ ธีรกุลชน", role: "Advisor", roleTh: "ที่ปรึกษา" },
+  { name: "Assoc. Prof. Sunee Lertsinudom", nameTh: "รศ.ภญ.สุณี เลิศสินอุดม", role: "Advisor", roleTh: "ที่ปรึกษา" },
+  { name: "Pharm. Teerawit Bamrungsri", nameTh: "ภก.ธีรวิทย์ บำรุงศรี", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Pornpitak Komsin", nameTh: "ภก.พรพิทักษ์ กอมสิน", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Chomkanang Phumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Apinan Watcharapichat", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
+  { name: "Mr. Thanaphat Kitcharoen", nameTh: "นายธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "Mr. Pongsakorn Somdee", nameTh: "นายพงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
 ];
 
-interface SubMember { name: string; affiliation: string }
-interface SubGroup { title: string; members: SubMember[] }
+interface SubMember { name: string; nameTh: string; }
+interface SubGroup { title: string; titleTh: string; members: SubMember[] }
 
 const subcommittees: SubGroup[] = [
   {
-    title: "Academic Conference Organizing",
+    title: "College of Pharmacotherapy",
+    titleTh: "วิทยาลัยเภสัชบำบัด",
     members: [
-      { name: "Assoc. Prof. Dr. Wichai Santimaleeworagun", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Asst. Prof. Dr. Thanompong Sathienluckana", affiliation: "Faculty of Pharmacy, Siam University" },
-      { name: "Asst. Prof. Dr. Chotirat Nakaranurack", affiliation: "Faculty of Pharmaceutical Sciences, Chulalongkorn University" },
-      { name: "Assoc. Prof. Dr. Weerachai Chaijamorn", affiliation: "Faculty of Pharmaceutical Sciences, Chulalongkorn University" },
-      { name: "Assoc. Prof. Dr. Preecha Montakantikul", affiliation: "Faculty of Pharmacy, Mahidol University" },
-      { name: "Asst. Prof. Dr. Orawan Sae-Lim", affiliation: "Faculty of Pharmaceutical Sciences, Prince of Songkla University" },
-      { name: "Asst. Prof. Dr. Yotsaya Kunlamas", affiliation: "Faculty of Pharmaceutical Sciences, Chulalongkorn University" },
-      { name: "Dr. Thitinun Raknoo", affiliation: "Department of Pharmacy, Suratthani Hospital" },
-      { name: "Dr. Nint Polruang", affiliation: "Department of Pharmacy, Khon Kaen Hospital" },
-      { name: "Dr. Thanawat Chattaweelarp", affiliation: "Faculty of Pharmacy, Payap University" },
-      { name: "Dr. Neeracha Phon-in", affiliation: "Department of Pharmacy, Songklanagarind Hospital" },
-      { name: "Asst. Prof. Dr. Tuanthon Boonlue", affiliation: "Faculty of Pharmaceutical Sciences, Ubon Ratchathani University" },
-      { name: "Miss Pinchaya Toprayoon", affiliation: "Pharmacy Council of Thailand" },
+      { name: "Dr. Usasiri Srisakul", nameTh: "ดร.ภญ.อุษาศิริ ศรีสกุล" },
+      { name: "Dr. Sutee Limcharoen", nameTh: "ดร.ภก.สุธีร์ ลิ้มเจริญ" },
+      { name: "Dr. Ploylarp Lertvipapath", nameTh: "ดร.ภญ.พลอยลาภ เลิศวิภาภัทร" },
     ],
   },
   {
-    title: "Academic Writing",
+    title: "College of Consumer Protection in Pharmacy and Health",
+    titleTh: "วิทยาลัยการคุ้มครองผู้บริโภคด้านยาและสุขภาพ",
     members: [
-      { name: "Assoc. Prof. Dr. Wichai Santimaleeworagun", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Asst. Prof. Dr. Suthinee Taesottikul", affiliation: "Faculty of Pharmacy, Chiang Mai University" },
-      { name: "Asst. Prof. Dr. Sirima Sitaruno", affiliation: "Faculty of Pharmaceutical Sciences, Prince of Songkla University" },
-      { name: "Asst. Prof. Dr. Daraporn Rungprai", affiliation: "Faculty of Pharmacy, Silpakorn University" },
+      { name: "Assoc. Prof. Dr. Wanna Sriwiriyanupap", nameTh: "รศ.ดร.ภญ.วรรณา ศรีวิริยานุภาพ" },
+      { name: "Ph.D. Chidchanok Ruengorn", nameTh: "อ.ดร.ภญ.ชิดชนก เรือนก้อน" },
+      { name: "Assist. Prof. Dr. Roungtiva Muenpa", nameTh: "ผศ(พิเศษ)ดร.ภญ.รุ่งทิวา หมื่นปา" },
     ],
   },
   {
-    title: "Finance, Fundraising, and Sponsorship",
+    title: "College of Herbal Pharmacy",
+    titleTh: "วิทยาลัยเภสัชกรรมสมุนไพร",
     members: [
-      { name: "Asst. Prof. Dr. Warunsuda Sripakdee", affiliation: "Faculty of Pharmaceutical Sciences, Prince of Songkla University" },
-      { name: "Miss Chanakit Imbumrung", affiliation: "Treasurer of the Pharmacy Council of Thailand" },
-      { name: "Asst. Prof. Dr. Weerayuth Saelim", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Mr. Chanayus Jittaamornchai", affiliation: "Pharmacy Council of Thailand" },
+      { name: "Assoc. Prof. Dr. Prasob-orn Rinthong", nameTh: "รศ.ดร.ภญ.ประสบอร รินทอง" },
+      { name: "Dr. Phakakrong Kwankhao", nameTh: "ดร.ภญ.ผกากรอง ขวัญข้าว" },
+      { name: "Assistant Professor Dr. Wudtichai Wisuitiprot", nameTh: "ผศ.ดร.ภก.วุฒิชัย วิสุทธิพรต" },
     ],
   },
   {
-    title: "Registration and Public Relations",
+    title: "College of Industrial Pharmacy",
+    titleTh: "วิทยาลัยเภสัชกรรมอุตสาหการ",
     members: [
-      { name: "Assoc. Prof. Sunee Lertsinudom", affiliation: "Faculty of Pharmaceutical Sciences, Khon Kaen University" },
-      { name: "Mr. Aphinan Watcharaphichart", affiliation: "Assistant Secretary-General of the Pharmacy Council of Thailand" },
-      { name: "Miss Chomchanok Pumsaydon", affiliation: "Faculty of Pharmaceutical Sciences, Naresuan University" },
-      { name: "Dr. Supanun Pungcharoenkijkul", affiliation: "Department of Pharmacy, Nopparat Rajathanee Hospital" },
-      { name: "Dr. Pannee Leelawattanachai", affiliation: "College of Pharmacy, Rangsit University" },
-      { name: "Asst. Prof. Dr. Tuanthon Boonlue", affiliation: "Faculty of Pharmaceutical Sciences, Ubon Ratchathani University" },
-      { name: "Mr. Thanaphat Kitcharoen", affiliation: "Pharmacy Council of Thailand" },
+      { name: "Assoc. Prof. Dr. Somlak Kongmuang", nameTh: "รศ.ดร.ภก.สมลักษณ์ คงเมือง" },
+      { name: "Assoc. Prof. Dr. Kwunchit Oungbho", nameTh: "รศ.ดร.ภญ.ขวัญจิต อึ๊งโพธิ์" },
+      { name: "Assist. Prof. Dr. Narueporn Sutanthavibul", nameTh: "ผศ.ดร.ภญ.นฤพร สุตัณฑวิบูลย์" },
     ],
   },
   {
-    title: "Venue, Accommodation, and Logistics",
+    title: "College of Community Pharmacy",
+    titleTh: "วิทยาลัยเภสัชกรรมชุมชน",
     members: [
-      { name: "Asst. Prof. Dr. Sirichai Chusiri", affiliation: "Faculty of Pharmaceutical Sciences, Chulalongkorn University" },
-      { name: "Asst. Prof. Dr. Suthan Chanthawong", affiliation: "Faculty of Pharmaceutical Sciences, Khon Kaen University" },
-      { name: "Miss Sirarat Rattana", affiliation: "Pharmacy Council of Thailand" },
+      { name: "Assist. Prof. Dr. Surasit Lochid-amnuay", nameTh: "ผศ.ดร.ภก.สุรสิทธิ์ ล้อจิตรอำนวย" },
+      { name: "Chaiwat Limprasert", nameTh: "ภก.ชัยวัฒน์ ลิ้มประเสริฐ" },
+      { name: "Associate Professor Wannakon Chuemongkon", nameTh: "รศ.ภญ.วรรณคล เชื้อมงคล" },
     ],
   },
   {
-    title: "Ceremony and Audio-Visual",
+    title: "College of Pharmacy Administration",
+    titleTh: "วิทยาลัยการบริหารเภสัชกิจ",
     members: [
-      { name: "Asst. Prof. Dr. Chotirat Nakaranurack", affiliation: "Faculty of Pharmaceutical Sciences, Chulalongkorn University" },
-      { name: "Asst. Prof. Dr. Juthathip Suphanklang", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Assoc. Prof. Dr. Pornwalai Boonmuang", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Asst. Prof. Dr. Jatapat Hemapanpairoa", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Asst. Prof. Dr. Weerayuth Saelim", affiliation: "Faculty of Pharmacy, Silpakorn University" },
-      { name: "Acting Sub Lt. Piyawat Jarusit", affiliation: "Pharmacy Council of Thailand" },
+      { name: "Associate Professor Korn Sornlertlumvanich", nameTh: "รศ.ดร.ภก.กร ศรล้ำเลิศวาณิช" },
+      { name: "Assoc Prof Nusaraporn Kessomboon, PhD", nameTh: "รศ.ดร.ภญ.นุศราพร เกษสมบูรณ์" },
+      { name: "Assoc Prof Hathaikan Chowwanapoonpohn, PhD", nameTh: "รศ.ดร.ภญ.หทัยกาญจน์ เชาวนพูนผล" },
     ],
   },
   {
-    title: "Reception",
+    title: "College of Pharmacogenomics and Precision Medicine",
+    titleTh: "วิทยาลัยเภสัชพันธุศาสตร์และการแพทย์แม่นยํา",
     members: [
-      { name: "Asst. Prof. Dr. Manit Sae-teaw", affiliation: "Faculty of Pharmaceutical Sciences, Khon Kaen University" },
-      { name: "Asst. Prof. Dr. Sirichai Chusiri", affiliation: "Faculty of Pharmaceutical Sciences, Chulalongkorn University" },
-      { name: "Asst. Prof. Dr. Pitchaya Dilokpattanamongkol", affiliation: "Faculty of Pharmacy, Mahidol University" },
-      { name: "Mr. Jesada Jantharaprasert", affiliation: "Pharmacy Council of Thailand" },
+      { name: "Assoc. Prof. Dr. Nontaya Nakkam", nameTh: "รศ.ดร.ภญ.นนทญา นาคคำ" },
+      { name: "Assist. Prof. Dr. Teerapat Majam", nameTh: "ผศ.ดร.ภก.ธีรภัทร์ มาแจ่ม" },
+      { name: "Assist. Prof. Dr. Varalee Yodsurang", nameTh: "ผศ.ดร.ภญ.วราลี ยอดสุรางค์" },
     ],
   },
   {
-    title: "Abstract Review",
+    title: "Digital Pharmacy",
+    titleTh: "สาขาเภสัชกรรมดิจิทัล",
     members: [
-      { name: "Asst. Prof. Dr. Thanompong Sathienlackana", affiliation: "Faculty of Pharmacy, Siam University" },
-      { name: "Dr. Thitinun Raknoo", affiliation: "Department of Pharmacy, Suratthani Hospital" },
-      { name: "Dr. Neeracha Phon-in", affiliation: "Department of Pharmacy, Songklanagarind Hospital" },
-      { name: "Dr. Usasiri Srisakul", affiliation: "Faculty of Pharmacy, Siam University" },
-      { name: "Dr. Ploylarp Lertvipapath", affiliation: "Department of Pharmacy, Siriraj Hospital, Mahidol University" },
-      { name: "Dr. Taniya Charoensareerat", affiliation: "Faculty of Pharmacy, Siam University" },
-      { name: "Dr. Busaya Kulabusaya", affiliation: "Department of Pharmaceutical Care, Siriraj Hospital, Mahidol University" },
-      { name: "Dr. Kittika Yampayon", affiliation: "Department of Pharmacy, Siriraj Hospital, Mahidol University" },
-      { name: "Dr. Thitipon Yaowaluk", affiliation: "Department of Pharmacy, Siriraj Hospital, Mahidol University" },
-      { name: "Mrs. Anusara Kraunual", affiliation: "Department of Pharmacy, Somdet Chaopraya Institute of Psychiatry" },
+      { name: "Dr. Samart Jamrat", nameTh: "อ.ดร.ภก.สามารถ จำรัส" },
+      { name: "Isara Kaewkhum", nameTh: "ภก.อิศรา แก้วคำ" },
+      { name: "Sakda Tianpaisan", nameTh: "ภก.ศักดา เธียรไพศาล" },
     ],
   },
 ];
@@ -151,7 +120,7 @@ const subcommittees: SubGroup[] = [
    COLLAPSIBLE SUB-COMMITTEE CARD
    ══════════════════════════════════════ */
 
-function SubcommitteeCard({ group, index }: { group: SubGroup; index: number }) {
+function SubcommitteeCard({ group, index, locale }: { group: SubGroup; index: number; locale: string }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -165,7 +134,7 @@ function SubcommitteeCard({ group, index }: { group: SubGroup; index: number }) 
             {String(index + 1).padStart(2, "0")}
           </span>
           <span className="text-gray-700 font-medium text-sm md:text-base group-hover:text-gray-900 transition-colors duration-300">
-            {group.title}
+            {locale === 'th' ? group.titleTh : group.title}
           </span>
         </div>
         <div className="flex items-center gap-3">
@@ -177,9 +146,8 @@ function SubcommitteeCard({ group, index }: { group: SubGroup; index: number }) 
       </button>
 
       <div
-        className={`grid transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          open ? "grid-rows-[1fr] opacity-100 pb-6" : "grid-rows-[0fr] opacity-0"
-        }`}
+        className={`grid transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? "grid-rows-[1fr] opacity-100 pb-6" : "grid-rows-[0fr] opacity-0"
+          }`}
       >
         <div className="overflow-hidden">
           <div className="pl-10 space-y-0">
@@ -188,8 +156,7 @@ function SubcommitteeCard({ group, index }: { group: SubGroup; index: number }) 
                 key={i}
                 className="flex flex-col md:flex-row md:items-baseline gap-0.5 md:gap-6 py-2.5 border-b border-gray-100 last:border-b-0"
               >
-                <span className="text-gray-700 text-sm flex-shrink-0 md:w-[40%]">{m.name}</span>
-                <span className="text-gray-400 text-xs md:text-sm">{m.affiliation}</span>
+                <span className="text-gray-700 text-sm flex-shrink-0 md:w-full">{locale === 'th' ? m.nameTh : m.name}</span>
               </div>
             ))}
           </div>
@@ -204,16 +171,7 @@ function SubcommitteeCard({ group, index }: { group: SubGroup; index: number }) 
    ══════════════════════════════════════ */
 
 function rolePill(role: string) {
-  switch (role) {
-    case "Chairman":
-      return "text-orange-600 font-semibold";
-    case "Secretary":
-      return "text-emerald-600 font-semibold";
-    case "Assistant Secretary":
-      return "text-gray-400";
-    default:
-      return "text-gray-400";
-  }
+  return "text-gray-500";
 }
 
 /* ══════════════════════════════════════
@@ -223,6 +181,7 @@ function rolePill(role: string) {
 export default function AboutPrisPage() {
   const pageRef = useRef<HTMLElement>(null!);
   const t = useTranslations("about");
+  const locale = useLocale();
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
@@ -236,7 +195,7 @@ export default function AboutPrisPage() {
       ".about-desc",
       { opacity: 0, y: 60 },
       {
-        opacity: 1, y: 0, duration: 1.2, ease: "power3.out",
+        opacity: 1, y: 0, duration: 1.2, ease: "power3.out", force3D: true,
         scrollTrigger: { trigger: ".about-desc", start: "top 80%" },
       }
     );
@@ -247,7 +206,7 @@ export default function AboutPrisPage() {
       gsap.fromTo(el,
         { opacity: 0, y: 40 },
         {
-          opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
+          opacity: 1, y: 0, duration: 0.9, ease: "power3.out", force3D: true,
           scrollTrigger: { trigger: el, start: "top 85%" },
         }
       );
@@ -258,7 +217,7 @@ export default function AboutPrisPage() {
     gsap.fromTo(rows,
       { opacity: 0, y: 15 },
       {
-        opacity: 1, y: 0, stagger: 0.03, duration: 0.5, ease: "power2.out",
+        opacity: 1, y: 0, stagger: 0.03, duration: 0.5, ease: "power2.out", force3D: true,
         scrollTrigger: { trigger: ".org-table", start: "top 85%" },
       }
     );
@@ -280,9 +239,9 @@ export default function AboutPrisPage() {
 
       {/* ══════ WHAT IS PRIS ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
-        <div className="max-w-4xl mx-auto about-desc">
+        <div className="max-w-4xl mx-auto about-desc will-change-transform transform-gpu">
           <h2 className="text-2xl md:text-3xl font-bold mb-8 tracking-tight text-gray-900 pr-[0.15em]">{t("whatIsTitle")}</h2>
-          <p 
+          <p
             className="text-gray-500 text-base md:text-lg leading-[1.8] font-light"
             dangerouslySetInnerHTML={{ __html: t.raw("whatIsDesc") }}
           />
@@ -310,8 +269,8 @@ export default function AboutPrisPage() {
             <div className="border-t border-gray-200">
               {advisors.map((a, i) => (
                 <div key={i} className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200">
-                  <span className="text-gray-900 font-medium text-lg md:w-[60%]">{a.name}</span>
-                  <span className="text-gray-400 text-sm">{a.position}</span>
+                  <span className="text-gray-900 font-medium text-lg md:w-[60%]">{locale === 'th' ? a.nameTh : a.name}</span>
+                  <span className="text-gray-400 text-sm">{locale === 'th' ? a.positionTh : a.position}</span>
                 </div>
               ))}
             </div>
@@ -328,8 +287,8 @@ export default function AboutPrisPage() {
                   key={i}
                   className="org-row flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-4 border-b border-gray-100 hover:bg-gray-50/60 transition-colors"
                 >
-                  <span className="text-gray-800 text-sm md:text-base md:w-[60%]">{m.name}</span>
-                  <span className={`text-sm ${rolePill(m.role)}`}>{m.role}</span>
+                  <span className="text-gray-800 text-sm md:text-base md:w-[60%]">{locale === 'th' ? m.nameTh : m.name}</span>
+                  <span className={`text-sm ${rolePill(m.role)}`}>{locale === 'th' ? m.roleTh : m.role}</span>
                 </div>
               ))}
             </div>
@@ -342,7 +301,7 @@ export default function AboutPrisPage() {
             </h3>
             <div className="border-t border-gray-200">
               {subcommittees.map((group, idx) => (
-                <SubcommitteeCard key={idx} group={group} index={idx} />
+                <SubcommitteeCard key={idx} group={group} index={idx} locale={locale} />
               ))}
             </div>
           </div>
