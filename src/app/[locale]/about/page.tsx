@@ -33,9 +33,9 @@ const orgCommittee = [
   { name: "Pharm. Pornpitak Komsin", nameTh: "ภก.พรพิทักษ์ กอมสิน", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Chomkanang Phumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
-  { name: "Pharm. Apinan Watcharapichat", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
+  { name: "Pharm. Apinan Watcharaphichart", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
   { name: "Mr. Thanaphat Kitcharoen", nameTh: "นายธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
-  { name: "Mr. Pongsakorn Somdee", nameTh: "นายพงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "Mr. Pongsakon Somdee", nameTh: "นายพงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
 ];
 
 interface SubMember { name: string; nameTh: string; }
