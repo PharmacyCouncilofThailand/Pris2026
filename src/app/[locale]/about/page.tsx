@@ -18,7 +18,7 @@ if (typeof window !== "undefined") {
 
 const advisors = [
   {
-    name: "Preecha Bhandtivej (R.PH.)",
+    name: "Preecha Bhandtivej R.PH.",
     nameTh: "ภก.ปรีชา พันธุ์ติเวช",
     position: "President of the Pharmacy Council of Thailand",
     positionTh: "นายกสภาเภสัชกรรม"
@@ -34,8 +34,8 @@ const orgCommittee = [
   { name: "Pharm. Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Chomkanang Phumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Apinan Watcharaphichart", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
-  { name: "Mr. Thanaphat Kitcharoen", nameTh: "นายธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
-  { name: "Mr. Pongsakon Somdee", nameTh: "นายพงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "R.Ph. Thanaphat Kitcharoen", nameTh: "ภก.ธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "R.Ph. Pongsakon Somdee", nameTh: "ภก.พงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
 ];
 
 interface SubMember { name: string; nameTh: string; }
