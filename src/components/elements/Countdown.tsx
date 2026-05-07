@@ -18,8 +18,8 @@ const getPartsOfTimeDuration = (duration: number) => {
   return { days, hours, minutes, seconds };
 };
 
-// Pris 2026 Conference Date: October 16, 2026 at 9:00 AM Bangkok time
-const CONFERENCE_DATE = new Date("2026-10-16T09:00:00+07:00").getTime();
+// Pris 2026 Conference Date: October 29, 2026 at 9:00 AM Bangkok time
+const CONFERENCE_DATE = new Date("2026-10-29T09:00:00+07:00").getTime();
 
 interface CountdownProps {
   className?: string;

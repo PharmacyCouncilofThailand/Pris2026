@@ -4,16 +4,16 @@ export const scheduleData: ScheduleDay[] = [
   {
     day: "Day 1",
     dayTh: "วันที่ 1",
-    date: "October 15, 2026",
-    dateTh: "15 ตุลาคม 2569",
+    date: "October 29, 2026",
+    dateTh: "29 ตุลาคม 2569",
     events: [
       {
         id: 1,
-        time: "08:00 – 09:00",
+        time: "08:00 – 16:00",
         title: "Registration",
         titleTh: "ลงทะเบียน",
-        location: "IMPACT Challenger",
-        locationTh: "อิมแพ็ค ชาเลนเจอร์",
+        location: "Registration Counter",
+        locationTh: "Registration Counter",
         type: "Registration",
         typeTh: "ลงทะเบียน",
         track: "Common",
@@ -24,22 +24,25 @@ export const scheduleData: ScheduleDay[] = [
         id: 2,
         time: "09:00 – 09:30",
         title: "Opening Ceremony",
-        titleTh: "Opening Ceremony",
-        description: "Professional Advancement",
-        descriptionTh: "ความก้าวหน้าทางวิชาชีพ",
+        titleTh: "พิธีเปิดการประชุม",
         location: "Main Stage",
-        locationTh: "เวทีห้องประชุมใหญ่",
+        locationTh: "Main Stage",
         type: "Ceremony",
-        typeTh: "พิธีเปิด",
+        typeTh: "พิธีการบนเวที",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
         speakers: [
           {
-            name: "Mr. Pattana Promphat",
-            nameTh: "นายพัฒนา พร้อมพัฒน์",
-            role: "The Minister of Public Health",
-            roleTh: "รัฐมนตรีว่าการกระทรวงสาธารณสุข",
-            image: "/assets/Img/Speaker Event Schedule/Mr. Pattana Promphat.jpg"
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฏิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
           }
         ]
       },
@@ -48,250 +51,306 @@ export const scheduleData: ScheduleDay[] = [
         time: "09:30 – 10:30",
         title: "Plenary Lecture",
         titleTh: "Plenary Lecture",
-        description: '“Transforming Pharmacy Practice Under Ministry of Public Health Policies”',
-        descriptionTh: "“พลิกโฉมงานเภสัชกรรมภายใต้นโยบายกระทรวงสาธารณสุข”",
         location: "Main Stage",
-        locationTh: "เวทีห้องประชุมใหญ่",
+        locationTh: "Main Stage",
         type: "Lecture",
-        typeTh: "บรรยายหลัก",
+        typeTh: "บรรยายและซักถาม",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
-        speakers: []
+        speakers: [
+          {
+            name: "President of Pharmacy Council",
+            nameTh: "นายกสภาเภสัชกรรม"
+          },
+          {
+            name: "Secretary-General of Pharmacy Council",
+            nameTh: "เลขาธิการสภาเภสัชกรรม"
+          }
+        ]
       },
       {
         id: 4,
         time: "10:30 – 11:00",
-        title: "Coffee Break & Poster/Exhibition Viewing",
-        titleTh: "Coffee Break & Poster/Exhibition Viewing",
-        location: "Exhibition Hall",
-        locationTh: "โถงนิทรรศการ",
+        title: "Break / Exhibition Viewing",
+        titleTh: "พัก / เยี่ยมชมนิทรรศการ",
+        location: "Exhibition Area",
+        locationTh: "Exhibition Area",
         type: "Break",
-        typeTh: "พักเบรค",
+        typeTh: "Break",
         track: "Common",
         trackTh: "ทั่วไป",
         speakers: []
       },
       {
         id: 501,
-        time: "11:00 – 12:00",
-        title: "Panel “Unlocking Pharmacy Profession Pain Points”",
-        titleTh: "เสวนา “ปลดล็อค Pain Point วิชาชีพเภสัชกรรม”",
-        location: "Jupiter 4-7",
-        locationTh: "Jupiter 4-7",
+        time: "11:00 – 11:50",
+        title: "Panel Discussion: Unlocking Pharmacy Profession Pain Points",
+        titleTh: "เสวนา “ปลดล็อค Painpoint วิชาชีพเภสัชกรรม”",
+        location: "Main Stage",
+        locationTh: "Main Stage",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
         speakers: [
           {
-            name: "Dr. Somchai",
-            nameTh: "นพ. สมชาย",
-            role: "Panelist",
-            roleTh: "ผู้ร่วมเสวนา",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          },
-          {
-            name: "Dr. Somsri",
-            nameTh: "พญ. สมศรี",
-            role: "Panelist",
-            roleTh: "ผู้ร่วมเสวนา",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
-          },
-          {
-            name: "Dr. Sompop",
-            nameTh: "นพ. สมภพ",
+            name: "Pharm. Teerawit Bamrungsri",
+            nameTh: "ภก.ธีรวิทย์ บำรุงศรี",
             role: "Moderator",
-            roleTh: "ผู้ดำเนินรายการ",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+            roleTh: "ผู้ดำเนินรายการ"
           },
           {
-            name: "Dr. Sompong",
-            nameTh: "นพ. สมพงษ์",
+            name: "Representative from Pharmacy Council",
+            nameTh: "ตัวแทนจากสภาเภสัชกรรม",
             role: "Panelist",
-            roleTh: "ผู้ร่วมเสวนา",
-            image: "/assets/Img/Welcome message/Mr. Preecha Bhandtivej.jpg"
+            roleTh: "ผู้ร่วมเสวนา"
+          },
+          {
+            name: "Representative from College",
+            nameTh: "ตัวแทนจากวิทยาลัย",
+            role: "Panelist",
+            roleTh: "ผู้ร่วมเสวนา"
           }
         ]
       },
       {
         id: 502,
-        time: "11:00 – 12:00",
-        title: "Young Pharmacist",
-        titleTh: "Young Pharmacist (สนภท.)",
-        location: "Jupiter 11",
-        locationTh: "Jupiter 11",
+        time: "11:00 – 11:50",
+        title: "Young Pharmacist – The Future is Now",
+        titleTh: "Young Pharmacist – The Future is Now",
+        location: "Breakout Room 1",
+        locationTh: "ห้องย่อย 1",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Room 1",
         trackTh: "ห้อง 1",
         speakers: []
       },
       {
         id: 503,
-        time: "11:00 – 12:00",
-        title: "Workshop: Professional Direction (Community)",
-        titleTh: "Workshop: ทิศทางวิชาชีพ (สายชุมชน)",
-        location: "Jupiter 12",
-        locationTh: "Jupiter 12",
+        time: "11:00 – 11:50",
+        title: "Advanced Pharmaceutical Services in Community Pharmacies for Sustainability",
+        titleTh: "Advanced Pharmaceutical Services in Community Pharmacies for Sustainability",
+        location: "Breakout Room 2",
+        locationTh: "ห้องย่อย 2",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Room 2",
         trackTh: "ห้อง 2",
         speakers: []
       },
       {
         id: 504,
-        time: "11:00 – 12:00",
-        title: "Workshop: Professional Direction (Industrial)",
-        titleTh: "Workshop: ทิศทางวิชาชีพ (สายอุตสาหกรรม)",
-        location: "Jupiter 13",
-        locationTh: "Jupiter 13",
+        time: "11:00 – 11:50",
+        title: "The Role of Pharmacists in Developing the Pharmaceutical Industry from Thai Herbs",
+        titleTh: "บทบาทเภสัชกรกับการพัฒนาอุตสาหกรรมยาจากสมุนไพรไทย",
+        location: "Breakout Room 3",
+        locationTh: "ห้องย่อย 3",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Room 3",
         trackTh: "ห้อง 3",
         speakers: []
       },
       {
-        id: 6,
-        time: "12:00 – 13:00",
-        title: "Lunch Symposium Sessions",
-        titleTh: "Lunch Symposium Sessions",
-        description: "Session 1 (12:00 – 12:30)\nSession 2 (12:30 – 13:00)",
-        descriptionTh: "Session 1 (12:00 – 12:30)\nSession 2 (12:30 – 13:00)",
-        location: "Various Rooms",
-        locationTh: "ตามห้องต่าง ๆ",
+        id: 601,
+        time: "12:00 – 12:30",
+        title: "Lunch Symposium 1",
+        titleTh: "Lunch Symposium 1",
+        location: "Main Stage",
+        locationTh: "Main Stage",
         type: "Lunch",
-        typeTh: "อาหารกลางวัน",
-        track: "Common",
-        trackTh: "ทั่วไป",
-        speakers: []
+        typeTh: "บรรยายและซักถาม",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
+      },
+      {
+        id: 602,
+        time: "12:30 – 13:00",
+        title: "Lunch Symposium 2",
+        titleTh: "Lunch Symposium 2",
+        location: "Main Stage",
+        locationTh: "Main Stage",
+        type: "Lunch",
+        typeTh: "บรรยายและซักถาม",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฏิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       },
       {
         id: 7,
-        time: "13:00 – 15:00",
-        title: "Scientific Sessions & Exhibition",
-        titleTh: "Scientific Sessions & Exhibition",
-        description: "Poster & Booth Exhibition\nOral Presentation I-IV (4 Parallel Rooms, 6 presentations/session, 15 min each)",
-        descriptionTh: "Poster & Booth Exhibition\nOral Presentation I-IV (4 Parallel Rooms, 6 presentations/session, 15 min each)",
-        location: "Exhibition Hall & Meeting Rooms",
-        locationTh: "โถงนิทรรศการ และห้องประชุม",
+        time: "13:00 – 14:00",
+        title: "Poster Presentation I–IV",
+        titleTh: "Poster Presentation I–IV",
+        location: "Foyer & Exhibition Hall",
+        locationTh: "Foyer & Exhibition Hall",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "นำเสนอผลงาน",
         track: "Common",
         trackTh: "ทั่วไป",
-        speakers: []
+        speakers: [
+          {
+            name: "Review Committee",
+            nameTh: "กรรมการพิจารณาผลงาน"
+          }
+        ]
       },
       {
         id: 8,
-        time: "15:00 – 15:30",
-        title: "Coffee Break",
-        titleTh: "Coffee Break",
-        location: "Exhibition Hall",
-        locationTh: "โถงนิทรรศการ",
-        type: "Break",
-        typeTh: "พักเบรค",
+        time: "13:30 – 15:00",
+        title: "Oral Presentation I–IV",
+        titleTh: "Oral Presentation I–IV",
+        location: "Main Stage / Breakout Rooms",
+        locationTh: "Main Stage / Breakout Rooms",
+        type: "Session",
+        typeTh: "นำเสนอผลงาน",
         track: "Common",
         trackTh: "ทั่วไป",
-        speakers: []
+        speakers: [
+          {
+            name: "Review Committee",
+            nameTh: "กรรมการพิจารณาผลงาน"
+          }
+        ]
       },
       {
-        id: 901,
+        id: 9,
+        time: "15:00 – 15:30",
+        title: "Coffee Break / Student Presentation I",
+        titleTh: "Coffee Break / Student Presentation I",
+        location: "Breakout Rooms",
+        locationTh: "Breakout Rooms",
+        type: "Session",
+        typeTh: "นำเสนอผลงาน",
+        track: "Common",
+        trackTh: "ทั่วไป",
+        speakers: [
+          {
+            name: "Review Committee",
+            nameTh: "กรรมการพิจารณาผลงาน"
+          }
+        ]
+      },
+      {
+        id: 10,
         time: "15:30 – 16:00",
         title: "Corporate Symposium",
         titleTh: "Corporate Symposium",
         location: "Main Stage",
-        locationTh: "เวทีหลัก",
+        locationTh: "Main Stage",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "บรรยายและซักถาม",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
-        speakers: []
-      },
-      {
-        id: 902,
-        time: "15:30 – 16:00",
-        title: "Student Presentation (Pharmaceutical Sciences)",
-        titleTh: "Student Presentation (Pharmaceutical Sciences)",
-        location: "Rooms 1-3",
-        locationTh: "ห้อง 1-3",
-        type: "Session",
-        typeTh: "การประชุม",
-        track: "Room 1",
-        trackTh: "ห้อง 1",
-        speakers: []
-      },
-      {
-        id: 903,
-        time: "15:30 – 16:00",
-        title: "Student Presentation (Pharmaceutical Sciences)",
-        titleTh: "Student Presentation (Pharmaceutical Sciences)",
-        location: "Rooms 1-3",
-        locationTh: "ห้อง 1-3",
-        type: "Session",
-        typeTh: "การประชุม",
-        track: "Room 2",
-        trackTh: "ห้อง 2",
-        speakers: []
-      },
-      {
-        id: 904,
-        time: "15:30 – 16:00",
-        title: "Student Presentation (Pharmaceutical Sciences)",
-        titleTh: "Student Presentation (Pharmaceutical Sciences)",
-        location: "Rooms 1-3",
-        locationTh: "ห้อง 1-3",
-        type: "Session",
-        typeTh: "การประชุม",
-        track: "Room 3",
-        trackTh: "ห้อง 3",
-        speakers: []
-      },
-      {
-        id: 10,
-        time: "16:00 – 16:30",
-        title: "Organizational Report",
-        titleTh: "Organizational Report",
-        description: "(Pharmacy Council and Royal College of Pharmacy)",
-        descriptionTh: "(สภาเภสัชกรรม และราชวิทยาลัย)",
-        location: "Main Stage",
-        locationTh: "เวทีห้องประชุมใหญ่",
-        type: "Session",
-        typeTh: "การประชุม",
-        track: "Main Stage",
-        trackTh: "เวทีหลัก",
-        speakers: []
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       },
       {
         id: 11,
-        time: "16:30 – 18:00",
-        title: "Welcome Reception & Networking",
-        titleTh: "Welcome Reception & Networking",
-        description: "Includes Awarding of Certificates and Diplomas",
-        descriptionTh: "พร้อมพิธีมอบประกาศนียบัตร และวุฒิบัตร",
-        location: "Grand Foyer",
-        locationTh: "แกรนด์ฟอยเยอร์",
+        time: "16:00 – 17:00",
+        title: "Putting our strategy into action",
+        titleTh: "Putting our strategy into action",
+        location: "Main Stage",
+        locationTh: "Main Stage",
+        type: "Session",
+        typeTh: "เสวนา",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
+      },
+      {
+        id: 12,
+        time: "17:00 – 18:30",
+        title: "Welcome Reception / Networking / Certificate Ceremony",
+        titleTh: "Welcome Reception / Networking / พิธีมอบประกาศนียบัตร",
+        location: "Main Stage",
+        locationTh: "Main Stage",
         type: "Networking",
-        typeTh: "พบปะสังสรรค์",
-        track: "Common",
-        trackTh: "ทั่วไป",
-        speakers: []
+        typeTh: "พิธีการบนเวที",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       }
     ],
   },
   {
     day: "Day 2",
     dayTh: "วันที่ 2",
-    date: "October 16, 2026",
-    dateTh: "16 ตุลาคม 2569",
+    date: "October 30, 2026",
+    dateTh: "30 ตุลาคม 2569",
     events: [
       {
-        id: 12,
-        time: "08:00 – 09:00",
+        id: 13,
+        time: "08:00 – 16:00",
         title: "Registration",
         titleTh: "ลงทะเบียน",
-        location: "IMPACT Challenger",
-        locationTh: "อิมแพ็ค ชาเลนเจอร์",
+        location: "Registration Area",
+        locationTh: "Registration Area",
         type: "Registration",
         typeTh: "ลงทะเบียน",
         track: "Common",
@@ -299,143 +358,281 @@ export const scheduleData: ScheduleDay[] = [
         speakers: []
       },
       {
-        id: 13,
-        time: "09:00 – 09:30",
-        title: "Keynote Lecture 1",
-        titleTh: "Keynote Lecture 1",
-        description: '“AI in Pharmacy Practice”',
-        descriptionTh: "“AI กับงานเภสัชกรรม”",
-        location: "Main Stage",
-        locationTh: "เวทีห้องประชุมใหญ่",
-        type: "Keynote",
-        typeTh: "ปาฐกถา",
-        track: "Main Stage",
-        trackTh: "เวทีหลัก",
-        speakers: []
-      },
-      {
         id: 14,
-        time: "09:30 – 10:00",
-        title: "Keynote Lecture 2",
-        titleTh: "Keynote Lecture 2",
-        description: '“Advance and Innovation Pharmacy I”',
-        descriptionTh: "“Advance and Innovation Pharmacy I”",
+        time: "09:00 – 09:45",
+        title: "Future of Pharmacy in Sustainable Healthcare",
+        titleTh: "Future of Pharmacy in Sustainable Healthcare",
         location: "Main Stage",
-        locationTh: "เวทีห้องประชุมใหญ่",
-        type: "Keynote",
-        typeTh: "ปาฐกถา",
+        locationTh: "Main Stage",
+        type: "Lecture",
+        typeTh: "บรรยาย",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
-        speakers: []
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       },
       {
         id: 15,
-        time: "10:00 – 10:30",
-        title: "Coffee Break & Poster Viewing",
-        titleTh: "พักรับประทานอาหารว่าง และเยี่ยมชมนิทรรศการโปสเตอร์",
+        time: "09:45 – 10:30",
+        title: "Will AI Replace Pharmacist",
+        titleTh: "Will AI Replace Pharmacist",
+        location: "Main Stage",
+        locationTh: "Main Stage",
+        type: "Session",
+        typeTh: "เสวนา",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Apinan Watcharaphichart",
+            nameTh: "ภก.อภินันท์ วัชราภิชาต",
+            role: "Moderator",
+            roleTh: "ผู้ดำเนินรายการ"
+          }
+        ]
+      },
+      {
+        id: 16,
+        time: "10:30 – 11:00",
+        title: "Break / Posters & Booths Viewing",
+        titleTh: "พัก / เยี่ยมชม Posters & Booths",
         location: "Exhibition Hall",
-        locationTh: "โถงนิทรรศการ",
+        locationTh: "Exhibition Hall",
         type: "Break",
-        typeTh: "พักเบรค",
+        typeTh: "Break",
         track: "Common",
         trackTh: "ทั่วไป",
         speakers: []
       },
       {
-        id: 1601,
-        time: "10:30 – 12:00",
-        title: "Advance and Innovation Pharmacy II-IV",
-        titleTh: "Advance and Innovation Pharmacy II-IV",
+        id: 1701,
+        time: "11:00 – 11:50",
+        title: "Sustainable Development in Pharmacy: The Next Chapter",
+        titleTh: "Sustainable Development in Pharmacy: The Next Chapter",
         location: "Main Stage",
-        locationTh: "เวทีหลัก",
+        locationTh: "Main Stage",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
-        speakers: []
+        speakers: [
+          {
+            name: "Pharm. Preecha Montakantikul",
+            nameTh: "ภก. ปรีชา มนทกานติกุล",
+            role: "Moderator",
+            roleTh: "ผู้ดำเนินรายการ"
+          }
+        ]
       },
       {
-        id: 1602,
-        time: "10:30 – 12:00",
-        title: "Networking (Education)",
-        titleTh: "Networking (ด้านการศึกษา)",
-        location: "Room 1",
-        locationTh: "ห้อง 1",
+        id: 1702,
+        time: "11:00 – 11:50",
+        title: "Advancing Hospital Pharmacy Practice Through New Competences",
+        titleTh: "Advancing Hospital Pharmacy Practice Through New Competences",
+        location: "Breakout Room 1",
+        locationTh: "ห้องย่อย 1",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Room 1",
         trackTh: "ห้อง 1",
         speakers: []
       },
       {
-        id: 1603,
-        time: "10:30 – 12:00",
-        title: "Networking",
-        titleTh: "Networking",
-        location: "Room 2",
-        locationTh: "ห้อง 2",
+        id: 1703,
+        time: "11:00 – 11:50",
+        title: "Essential Guide to Manuscript Writing for Pharmacist",
+        titleTh: "Essential Guide to Manuscript Writing for Pharmacist",
+        location: "Breakout Room 2",
+        locationTh: "ห้องย่อย 2",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Room 2",
         trackTh: "ห้อง 2",
         speakers: []
       },
       {
-        id: 1604,
-        time: "10:30 – 12:00",
-        title: "Networking",
-        titleTh: "Networking",
-        location: "Room 3",
-        locationTh: "ห้อง 3",
+        id: 1704,
+        time: "11:00 – 11:50",
+        title: "Strengthening Health Consumer Protection & Sustainable Growth",
+        titleTh: "Strengthening Health Consumer Protection & Sustainable Growth",
+        location: "Breakout Room 3",
+        locationTh: "ห้องย่อย 3",
         type: "Session",
-        typeTh: "การประชุม",
+        typeTh: "เสวนา",
         track: "Room 3",
         trackTh: "ห้อง 3",
         speakers: []
       },
       {
-        id: 17,
-        time: "12:00 – 13:00",
-        title: "Lunch Symposium Sessions",
-        titleTh: "Lunch Symposium Sessions",
-        description: "Session 3 (12:00 – 12:30)\nSession 4 (12:30 – 13:00)",
-        descriptionTh: "Session 3 (12:00 – 12:30)\nSession 4 (12:30 – 13:00)",
-        location: "Various Rooms",
-        locationTh: "ตามห้องต่าง ๆ",
+        id: 1801,
+        time: "12:00 – 12:30",
+        title: "Lunch Symposium 3",
+        titleTh: "Lunch Symposium 3",
+        location: "Main Stage",
+        locationTh: "Main Stage",
         type: "Lunch",
-        typeTh: "อาหารกลางวัน",
-        track: "Common",
-        trackTh: "ทั่วไป",
-        speakers: []
+        typeTh: "บรรยาย",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       },
       {
-        id: 18,
-        time: "13:00 – 16:30",
-        title: "Scientific Sessions",
-        titleTh: "Scientific Sessions",
-        description: "Oral Presentation V-VIII (Parallel Sessions)\nStudent Presentation (Pharm Care / Pharm Science)",
-        descriptionTh: "Oral Presentation V-VIII (Parallel Sessions)\nStudent Presentation (Pharm Care / Pharm Science)",
-        location: "Meeting Rooms",
-        locationTh: "ห้องประชุม",
-        type: "Session",
-        typeTh: "การประชุม",
-        track: "Common",
-        trackTh: "ทั่วไป",
-        speakers: []
+        id: 1802,
+        time: "12:30 – 13:00",
+        title: "Lunch Symposium 4",
+        titleTh: "Lunch Symposium 4",
+        location: "Main Stage",
+        locationTh: "Main Stage",
+        type: "Lunch",
+        typeTh: "บรรยาย",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       },
       {
         id: 19,
-        time: "17:00",
-        title: "Award Ceremony",
-        titleTh: "Award Ceremony",
+        time: "13:00 – 14:00",
+        title: "Poster Presentation",
+        titleTh: "Poster Presentation",
+        location: "Foyer & Exhibition Hall",
+        locationTh: "Foyer & Exhibition Hall",
+        type: "Session",
+        typeTh: "นำเสนอผลงาน",
+        track: "Common",
+        trackTh: "ทั่วไป",
+        speakers: [
+          {
+            name: "Review Committee",
+            nameTh: "กรรมการพิจารณาผลงาน"
+          }
+        ]
+      },
+      {
+        id: 20,
+        time: "13:30 – 15:00",
+        title: "Oral Presentation",
+        titleTh: "Oral Presentation",
+        location: "Main Stage / Breakout Rooms",
+        locationTh: "Main Stage / Breakout Rooms",
+        type: "Session",
+        typeTh: "นำเสนอผลงาน",
+        track: "Common",
+        trackTh: "ทั่วไป",
+        speakers: [
+          {
+            name: "Review Committee",
+            nameTh: "กรรมการพิจารณาผลงาน"
+          }
+        ]
+      },
+      {
+        id: 21,
+        time: "15:00 – 15:30",
+        title: "Coffee Break / Student Presentation II",
+        titleTh: "Coffee Break / Student Presentation II",
+        location: "Breakout Rooms",
+        locationTh: "Breakout Rooms",
+        type: "Session",
+        typeTh: "นำเสนอผลงาน",
+        track: "Common",
+        trackTh: "ทั่วไป",
+        speakers: [
+          {
+            name: "Review Committee",
+            nameTh: "กรรมการพิจารณาผลงาน"
+          }
+        ]
+      },
+      {
+        id: 22,
+        time: "15:30 – 16:00",
+        title: "Corporate Symposium",
+        titleTh: "Corporate Symposium",
         location: "Main Stage",
-        locationTh: "เวทีห้องประชุมใหญ่",
-        type: "Ceremony",
-        typeTh: "พิธีมอบรางวัล",
+        locationTh: "Main Stage",
+        type: "Session",
+        typeTh: "บรรยายและซักถาม",
         track: "Main Stage",
         trackTh: "เวทีหลัก",
-        speakers: []
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
+      },
+      {
+        id: 23,
+        time: "16:00 – 17:00",
+        title: "Award Ceremony and Closing",
+        titleTh: "พิธีมอบรางวัล และปิดการประชุม",
+        location: "Main Stage",
+        locationTh: "Main Stage",
+        type: "Ceremony",
+        typeTh: "พิธีการ",
+        track: "Main Stage",
+        trackTh: "เวทีหลัก",
+        speakers: [
+          {
+            name: "Pharm. Chomkanang Phumsaidorn",
+            nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร",
+            role: "MC",
+            roleTh: "พิธีกร"
+          },
+          {
+            name: "Pharm. Krit Wattanathum",
+            nameTh: "ภก. กฤษฎิ์ วัฒนธรรม",
+            role: "MC",
+            roleTh: "พิธีกร"
+          }
+        ]
       }
-    ],
-  },
+    ]
+  }
 ];

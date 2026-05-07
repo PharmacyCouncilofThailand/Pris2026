@@ -74,8 +74,8 @@
     "downloadPdf": "Download PDF Schedule",
     "day1": "Day 1",
     "day2": "Day 2",
-    "date1": "October 15, 2026",
-    "date2": "October 16, 2026"
+    "date1": "October 29, 2026",
+    "date2": "October 30, 2026"
   },
   "highlightVideo": {
     "title": "Recent Memories",
@@ -96,7 +96,7 @@
     "description": "A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br class='hidden md:block' /><strong class='font-semibold text-black'>Experience the future of pharmacy.</strong>",
     "needToKnow": "Need to Know",
     "criticalDates": "Special Offer",
-    "periodEarly": "May 1 – Jun 30, 2026",
+    "periodEarly": "May 15 – Jun 30, 2026",
     "titleEarly": "Early Bird Registration",
     "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
     "periodRegular": "Jul 1 - Sep 30, 2026",
@@ -220,7 +220,7 @@
   "abstractSubmission": {
     "title1": "Submission",
     "title2": "Portal",
-    "desc": "Please ensure your abstract adheres strictly to the PRIS 2026 formatting guidelines. Submissions exceeding 250 words will not be accepted.",
+    "desc": "Please ensure your abstract adheres strictly to the PRIS 2026 formatting guidelines. Submissions exceeding 300 words will not be accepted.",
     "warning": "Read Full Guidelines",
     "steps": {
       "step1": "Presenting Author",
@@ -286,6 +286,7 @@
       "title1": "Body &",
       "title2": "File",
       "subtitle": "Structure your abstract and provide the documentation.",
+      "maxWords": "Maximum 300 words allowed.",
       "background": "Background",
       "objectives": "Objectives",
       "methods": "Methods",
@@ -408,7 +409,7 @@
     "profession": "Profession",
     "createBtn": "Create Account",
     "creating": "Creating...",
-    "loginSideText": "15 – 16 October 2025 IMPACT Challenger, Muang Thong Thani",
+    "loginSideText": "29 – 30 October 2026 IMPACT Challenger, Muang Thong Thani",
     "signupSideText": "Create an account to securely access submissions, schedules, and personalized conference experiences.",
     "accountPending": "Account Pending Approval",
     "accountPendingDesc": "Your account is currently under review by our admin team. You will receive an email notification once your account has been approved.",

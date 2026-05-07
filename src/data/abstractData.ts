@@ -2,8 +2,8 @@ export const abstractTimeline = [
   {
     label: "Abstract Submission Round 1",
     labelTh: "Abstract รอบ 1",
-    date: "1 May - 10 June 2026",
-    dateTh: "1 พฤษภาคม 2569 - 10 มิถุนายน 2569",
+    date: "15 May - 10 June 2026",
+    dateTh: "15 พฤษภาคม 2569 - 10 มิถุนายน 2569",
     status: "upcoming",
     color: "blue",
   },
@@ -49,8 +49,8 @@ export const submissionGuidelines = {
     {
       label: "Abstract Submission Round 1",
       labelTh: "Abstract รอบ 1",
-      value: "1 May - 10 June 2026",
-      valueTh: "1 พฤษภาคม 2569 - 10 มิถุนายน 2569",
+      value: "15 May - 10 June 2026",
+      valueTh: "15 พฤษภาคม 2569 - 10 มิถุนายน 2569",
       highlight: true,
     },
     {
@@ -79,13 +79,13 @@ export const submissionGuidelines = {
   presenterRegistrationNoteSegments: [
     { text: "If you " },
     { text: "submit your abstract during Round 1", accent: true },
-    { text: " (1 May - 10 June 2026) and your abstract " },
+    { text: " (15 May - 10 June 2026) and your abstract " },
     { text: "must be approved only", accent: true },
     { text: ", you will still be eligible for the Early Bird registration rate of THB 1,250 even if approval is granted after the Early Bird period has ended." },
   ],
   presenterRegistrationNoteSegmentsTh: [
     { text: "สำหรับท่านที่ส่งบทคัดย่อ (Abstract) ภายในช่วงเวลา " },
-    { text: "รอบที่ 1 คือวันที่ 1 พฤษภาคม – 10 มิถุนายน 2569", accent: true },
+    { text: "รอบที่ 1 คือวันที่ 15 พฤษภาคม – 10 มิถุนายน 2569", accent: true },
     { text: " ท่านจะยังคงได้รับสิทธิ์ซื้อบัตรเข้างานในราคา Early Bird 1,250 บาท แม้จะพ้นกำหนดช่วงเวลาดังกล่าวไปแล้ว " },
     { text: "หากบทคัดย่อของท่านได้รับการอนุมัติให้เข้าร่วมนำเสนอผลงาน", accent: true },
   ],
@@ -116,7 +116,7 @@ export const submissionGuidelines = {
     "Abstracts must be submitted online via the PRIS 2026 website only.",
     "Abstracts must contain original work that has not previously been reported.",
     "Only the presenting author may submit the abstract.",
-    "The abstract MUST NOT exceed 250 words, excluding the title, authors and affiliations.",
+    "The abstract MUST NOT exceed 300 words, excluding the title, authors and affiliations.",
     "Full papers are NOT required.",
     "Abstracts that describe plans for a study or state \"results will be presented\" will NOT be accepted.",
     "Do NOT include references.",
@@ -129,7 +129,7 @@ export const submissionGuidelines = {
     "ต้องส่งบทคัดย่อผ่านระบบออนไลน์บนเว็บไซต์ PRIS 2026 เท่านั้น",
     "บทคัดย่อต้องเป็นผลงานดั้งเดิมที่ยังไม่เคยนำเสนอที่ใดมาก่อน",
     "ผู้นำเสนอผลงานเท่านั้นที่สามารถเป็นผู้ส่งบทคัดย่อได้",
-    "ความยาวบทคัดย่อต้องไม่เกิน 250 คำ (ไม่รวมชื่อเรื่อง ชื่อผู้นิพนธ์ และสถานที่ทำงาน)",
+    "ความยาวบทคัดย่อต้องไม่เกิน 300 คำ (ไม่รวมชื่อเรื่อง ชื่อผู้นิพนธ์ และสถานที่ทำงาน)",
     "ไม่จำเป็นต้องส่งผลงานฉบับเต็ม",
     "ขอสงวนสิทธิ์ไม่รับพิจารณาบทคัดย่อที่มีเพียงแผนการดำเนินงาน หรือระบุว่า 'จะนำเสนอผลในภายหลัง'",
     "ไม่จำเป็นต้องใส่เอกสารอ้างอิง",
@@ -155,8 +155,8 @@ export const submissionGuidelines = {
     { title: "Conclusions", titleTh: "สรุปผลการศึกษา", desc: "Clinical or research implications", descTh: "นัยยะทางคลินิกหรือการวิจัย" },
   ],
 
-  maxWordLimit: "250 words (excluding title, authors and affiliation)",
-  maxWordLimitTh: "250 คำ (ไม่รวมชื่อเรื่อง ผู้นิพนธ์ และสังกัด)",
+  maxWordLimit: "300 words (excluding title, authors and affiliation)",
+  maxWordLimitTh: "300 คำ (ไม่รวมชื่อเรื่อง ผู้นิพนธ์ และสังกัด)",
 
   formatting: [
     "Font: Times New Roman or Arial",
