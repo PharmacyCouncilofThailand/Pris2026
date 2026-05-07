@@ -366,7 +366,7 @@ export default function Hero() {
           <div className="flex flex-col items-center gap-2.5 sm:gap-3 text-white/80 text-xs sm:text-sm tracking-widest uppercase font-medium text-center">
             <span className="flex items-center gap-2">
               <CalendarDays className="w-3.5 h-3.5 opacity-70 shrink-0" />
-              15 – 16 October 2025
+              29 – 30 October 2026
             </span>
             <span className="flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 opacity-70 shrink-0" />

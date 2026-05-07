@@ -2,13 +2,16 @@
 
 import React, { useRef } from "react";
 
-// Sponsors (Partners / Tech Logos)
 const sponsorsRow = [
-  { id: 1, name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg", twClass: "opacity-70" },
-  { id: 2, name: "Google", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg", twClass: "opacity-80" },
-  { id: 3, name: "Microsoft", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg", twClass: "opacity-80" },
-  { id: 4, name: "Amazon", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg", twClass: "opacity-70 brightness-0 invert" },
-  { id: 5, name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/3/31/Apple_logo_white.svg", twClass: "opacity-70" },
+  { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", twClass: "scale-[1.2]" },
+  { id: 2, name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", twClass: "scale-[1.25]" },
+  { id: 3, name: "Pharmacy Administration College", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", twClass: "" },
+  { id: 4, name: "Consumer Protection Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยคุ้มครอง.png", twClass: "scale-[1.2]" },
+  { id: 5, name: "Community Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png", twClass: "" },
+  { id: 6, name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", twClass: "" },
+  { id: 7, name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", twClass: "" },
+  { id: 8, name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", twClass: "scale-[1.2]" },
+  { id: 9, name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png", twClass: "scale-[0.85]" },
 ];
 
 export default function SponsorSection() {
@@ -40,7 +43,7 @@ export default function SponsorSection() {
         <div className="absolute inset-y-0 right-0 w-16 md:w-40 bg-gradient-to-l from-black to-transparent z-30 pointer-events-none" />
 
         {/* Sponsor logos — GPU-accelerated scroll */}
-        <div className="flex w-max animate-sponsor-scroll items-center will-change-transform transform-gpu">
+        <div className="flex w-max animate-sponsor-scroll items-center will-change-transform transform-gpu py-4 md:py-6">
           {marqueeRow.map((sponsor, index) => (
             <div
               key={`r-${sponsor.id}-${index}`}

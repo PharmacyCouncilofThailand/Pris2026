@@ -18,7 +18,7 @@ if (typeof window !== "undefined") {
 
 const advisors = [
   {
-    name: "Preecha Bhandtivej (R.PH.)",
+    name: "Preecha Bhandtivej R.PH.",
     nameTh: "ภก.ปรีชา พันธุ์ติเวช",
     position: "President of the Pharmacy Council of Thailand",
     positionTh: "นายกสภาเภสัชกรรม"
@@ -27,15 +27,15 @@ const advisors = [
 
 const orgCommittee = [
   { name: "Prof. Dr. Chonlaphat Sukasem", nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม", role: "Chair of the PRIS 2026 Organizing Committee", roleTh: "ประธานคณะกรรมการจัดงาน PRIS 2026" },
-  { name: "Dr. Suvit Teerakulchon", nameTh: "ดร.ภก.สุวิทย์ ธีรกุลชน", role: "Advisor", roleTh: "ที่ปรึกษา" },
+  { name: "Dr. Suwit Teerakulchon", nameTh: "ดร.ภก.สุวิทย์ ธีรกุลชน", role: "Advisor", roleTh: "ที่ปรึกษา" },
   { name: "Assoc. Prof. Sunee Lertsinudom", nameTh: "รศ.ภญ.สุณี เลิศสินอุดม", role: "Advisor", roleTh: "ที่ปรึกษา" },
-  { name: "Mr. Teerawit Bumrungsri", nameTh: "ภก.ธีรวิทย์ บำรุงศรี", role: "Committee Member", roleTh: "ผู้ทำงาน" },
-  { name: "Mr. Pornpitak Komsin", nameTh: "ภก.พรพิทักษ์ กอมสิน", role: "Committee Member", roleTh: "ผู้ทำงาน" },
-  { name: "Miss Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
-  { name: "Miss Chomsanang Pumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
-  { name: "Mr. Aphinan Watcharaphichart", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
-  { name: "Mr. Thanaphat Kitcharoen", nameTh: "นายธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
-  { name: "Mr. Pongsakorn Somdee", nameTh: "นายพงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "Pharm. Teerawit Bamrungsri", nameTh: "ภก.ธีรวิทย์ บำรุงศรี", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Pornpitak Komsin", nameTh: "ภก.พรพิทักษ์ กอมสิน", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Chomkanang Phumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Apinan Watcharaphichart", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
+  { name: "R.Ph. Thanaphat Kitcharoen", nameTh: "ภก.ธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
+  { name: "R.Ph. Pongsakon Somdee", nameTh: "ภก.พงศกร สมดี", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
 ];
 
 interface SubMember { name: string; nameTh: string; }
@@ -55,8 +55,8 @@ const subcommittees: SubGroup[] = [
     title: "College of Consumer Protection in Pharmacy and Health",
     titleTh: "วิทยาลัยการคุ้มครองผู้บริโภคด้านยาและสุขภาพ",
     members: [
-      { name: "Assoc. Prof. Dr. Wanna Sriviriyanupap", nameTh: "รศ.ดร.ภญ.วรรณา ศรีวิริยานุภาพ" },
-      { name: "Chidchanok Ruengorn, Ph.D.", nameTh: "อ.ดร.ภญ.ชิดชนก เรือนก้อน" },
+      { name: "Assoc. Prof. Dr. Wanna Sriwiriyanupap", nameTh: "รศ.ดร.ภญ.วรรณา ศรีวิริยานุภาพ" },
+      { name: "Ph.D. Chidchanok Ruengorn", nameTh: "อ.ดร.ภญ.ชิดชนก เรือนก้อน" },
       { name: "Assist. Prof. Dr. Roungtiva Muenpa", nameTh: "ผศ(พิเศษ)ดร.ภญ.รุ่งทิวา หมื่นปา" },
     ],
   },
