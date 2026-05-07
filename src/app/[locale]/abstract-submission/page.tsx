@@ -420,11 +420,27 @@ function Step4Content({ content, files, setFormData }: { content: any, files: Fi
     }));
   };
 
+  const getTotalWords = () => {
+    const allText = `${content.background || ''} ${content.objectives || ''} ${content.methods || ''} ${content.results || ''} ${content.conclusions || ''}`;
+    return allText.trim().split(/\s+/).filter((word) => word.length > 0).length;
+  };
+
+  const currentWords = getTotalWords();
+  const isOverLimit = currentWords > 300;
+
   return (
     <div className="space-y-12">
       <div>
         <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step4.title1")} <span className="text-orange-500/80">{t("step4.title2")}</span></h2>
         <p className="text-slate-500 font-normal text-lg italic">{t("step4.subtitle")}</p>
+        <div className="flex items-center gap-4 mt-3">
+          <div className={cn(
+            "text-[11px] font-bold uppercase tracking-[2px] px-4 py-1.5 rounded-full transition-colors",
+            isOverLimit ? "bg-rose-100 text-rose-600" : "bg-emerald-100 text-emerald-600"
+          )}>
+            {currentWords} / 300 Words
+          </div>
+        </div>
       </div>
       
       <div className="space-y-10 max-h-[600px] overflow-y-auto p-1 pr-6 -m-1 custom-scrollbar">

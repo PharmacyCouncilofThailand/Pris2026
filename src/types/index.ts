@@ -17,9 +17,9 @@ export interface Speaker {
 export interface EventSpeaker {
   name: string;
   nameTh?: string;
-  role: string;
+  role?: string;
   roleTh?: string;
-  image: string;
+  image?: string;
 }
 
 export interface Event {
