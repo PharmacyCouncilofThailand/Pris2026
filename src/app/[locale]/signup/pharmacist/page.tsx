@@ -23,7 +23,7 @@ export default function PharmacistSignUpPage() {
     });
   };
   const t = useTranslations("auth");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
@@ -32,6 +32,13 @@ export default function PharmacistSignUpPage() {
   useEffect(() => {
     document.body.classList.remove("hero-playing");
   }, []);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/');
+    }
+  }, [isAuthenticated, router]);
 
   
 
@@ -165,6 +172,12 @@ export default function PharmacistSignUpPage() {
                   toast.error(data.error || 'Registration failed. Please try again.');
                   turnstileRef.current?.reset();
                   setTurnstileToken(null);
+                  return;
+                }
+
+                // Defensive: handle pending_approval if backend policy changes
+                if (data.user?.status === 'pending_approval') {
+                  router.push('/signup/pending');
                   return;
                 }
 

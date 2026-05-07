@@ -24,7 +24,7 @@ export default function StudentSignUpPage() {
     });
   };
   const t = useTranslations("auth");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [studentLevel, setStudentLevel] = useState("");
   const [isLevelOpen, setIsLevelOpen] = useState(false);
@@ -38,6 +38,13 @@ export default function StudentSignUpPage() {
   useEffect(() => {
     document.body.classList.remove("hero-playing");
   }, []);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/');
+    }
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
