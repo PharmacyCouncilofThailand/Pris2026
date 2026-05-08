@@ -70,7 +70,7 @@ export default function Header() {
   const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login") || pathname.startsWith("/profile");
   const useDarkText = isLightPage && !isScrolled;
 
-  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/approved-abstracts")) {
+  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/forgot-password") || pathname.includes("/reset-password") || pathname.includes("/approved-abstracts")) {
     return null;
   }
 

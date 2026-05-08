@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useRef, useEffect , useTransition } from "react";
+import React, { useEffect, useTransition } from "react";
 import Image from "next/image";
 import { Link, useRouter, usePathname } from "@/i18n/routing";
 import { useTranslations, useLocale } from "next-intl";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignUpTypePage() {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [isPendingLang, startTransitionLang] = useTransition();
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
@@ -17,9 +19,16 @@ export default function SignUpTypePage() {
     });
   };
   const t = useTranslations("auth");
-    useEffect(() => {
+  useEffect(() => {
     document.body.classList.remove("hero-playing");
   }, []);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/');
+    }
+  }, [isAuthenticated, router]);
 
   
 

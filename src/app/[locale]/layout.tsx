@@ -6,6 +6,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import GlobalRefreshRedirect from "@/components/layout/GlobalRefreshRedirect";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 type Locale = (typeof routing.locales)[number];
 
@@ -41,6 +42,7 @@ export default async function LocaleLayout({
           }}
         />
         <GlobalRefreshRedirect />
+        <Toaster position="top-center" toastOptions={{ duration: 4000, style: { borderRadius: '12px', padding: '12px 16px', fontSize: '14px' } }} />
         <Header />
         {children}
         <Footer />

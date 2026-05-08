@@ -11,10 +11,10 @@ import toast from "react-hot-toast";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
 export default function LoginPage() {
+  const router = useRouter();
   const locale = useLocale();
   const pathname = usePathname();
   const [isPendingLang, startTransitionLang] = useTransition();
-  const router = useRouter();
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
@@ -22,7 +22,7 @@ export default function LoginPage() {
     });
   };
   const t = useTranslations("auth");
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
@@ -33,6 +33,15 @@ export default function LoginPage() {
   useEffect(() => {
     document.body.classList.remove("hero-playing");
   }, []);
+
+  // Redirect to home (or ?redirect=) if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirect = urlParams.get('redirect') || '/';
+      router.replace(redirect);
+    }
+  }, [isAuthenticated, router]);
 
   
 
@@ -189,7 +198,7 @@ export default function LoginPage() {
                   />
                   <span className="text-sm font-bold text-gray-600 group-hover:text-black transition-colors select-none">{t("rememberMe")}</span>
                 </label>
-                <Link href="#" className="text-sm font-bold text-gray-900 hover:underline underline-offset-4">{t("forgotPassword")}</Link>
+                <Link href="/forgot-password" className="text-sm font-bold text-gray-900 hover:underline underline-offset-4">{t("forgotPassword")}</Link>
               </div>
 
               {/* Cloudflare Turnstile */}
