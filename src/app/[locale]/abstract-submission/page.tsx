@@ -83,7 +83,8 @@ export default function AbstractSubmission() {
           firstName: user.firstName || prev.author.firstName,
           lastName: user.lastName || prev.author.lastName,
           email: user.email || prev.author.email,
-          affiliation: user.institution || prev.author.affiliation,
+          // Fallback chain: institution (pharmacist/medical/general) → university (students)
+          affiliation: user.institution || user.university || prev.author.affiliation,
           phone: user.phone || prev.author.phone,
         }
       }));
@@ -116,36 +117,94 @@ export default function AbstractSubmission() {
   }
 
   const handleNext = () => {
-    // Validate Step 3: title, category, type, keywords are required
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Step 1: Presenting Author — mirror API: firstName/lastName/email/affiliation required (min 1), email valid
+    if (currentStep === 1) {
+      const { firstName, lastName, email, affiliation } = formData.author;
+      const missing: string[] = [];
+      if (!firstName.trim()) missing.push('First Name');
+      if (!lastName.trim()) missing.push('Last Name');
+      if (!email.trim()) missing.push('Email');
+      else if (!emailRe.test(email.trim())) missing.push('Valid Email');
+      if (!affiliation.trim()) missing.push('Affiliation');
+      if (missing.length > 0) {
+        setShowErrors(true);
+        toast.error(`Please complete: ${missing.join(', ')}`);
+        return;
+      }
+    }
+
+    // Step 2: Co-Authors are optional, but if added each must be complete (API requires firstName/lastName/email/institution)
+    if (currentStep === 2) {
+      for (let i = 0; i < formData.coAuthors.length; i++) {
+        const ca = formData.coAuthors[i];
+        const missing: string[] = [];
+        if (!ca.firstName.trim()) missing.push('First Name');
+        if (!ca.lastName.trim()) missing.push('Last Name');
+        if (!ca.email.trim()) missing.push('Email');
+        else if (!emailRe.test(ca.email.trim())) missing.push('Valid Email');
+        if (!ca.institution.trim()) missing.push('Institution');
+        if (missing.length > 0) {
+          setShowErrors(true);
+          toast.error(`Co-Author #${i + 1}: ${missing.join(', ')}`);
+          return;
+        }
+      }
+    }
+
+    // Step 3: title min 10 / max 500, category, presentationType, keywords required
     if (currentStep === 3) {
       const { title, category, type, keywords } = formData.abstract;
       const missing: string[] = [];
       if (!title.trim()) missing.push('Title');
+      else if (title.trim().length < 10) missing.push('Title (min 10 chars)');
+      else if (title.trim().length > 500) missing.push('Title (max 500 chars)');
       if (!category.trim()) missing.push('Submission Theme');
       if (!type.trim()) missing.push('Presentation Mode');
       if (!keywords.trim()) missing.push('Keywords');
       if (missing.length > 0) {
         setShowErrors(true);
-        toast.error(`Please fill in all required fields: ${missing.join(', ')}`);
+        toast.error(`Please fix: ${missing.join(', ')}`);
         return;
       }
     }
-    // Validate Step 4: all content sections must have at least 1 word
+
+    // Step 4: per-section min character count (matches API: background/methods/results/conclusion ≥ 50, objective ≥ 20) + total words ≤ 300
     if (currentStep === 4) {
-      const sections = ['background', 'objective', 'methods', 'results', 'conclusion'];
-      const emptyFields = sections.filter(k => !(formData.content as any)[k]?.trim());
-      if (emptyFields.length > 0) {
+      const minChars: Record<string, number> = {
+        background: 50,
+        objective: 20,
+        methods: 50,
+        results: 50,
+        conclusion: 50,
+      };
+      const issues: string[] = [];
+      for (const [k, min] of Object.entries(minChars)) {
+        const v = ((formData.content as any)[k] || '').trim();
+        const label = k.charAt(0).toUpperCase() + k.slice(1);
+        if (!v) issues.push(label);
+        else if (v.length < min) issues.push(`${label} (min ${min} chars, currently ${v.length})`);
+      }
+      if (issues.length > 0) {
         setShowErrors(true);
-        toast.error(`Please fill in all required sections: ${emptyFields.join(', ')}`);
+        toast.error(`Please fix: ${issues.join(', ')}`);
         return;
       }
-      const totalText = sections.map(k => (formData.content as any)[k] || '').join(' ');
+      const totalText = Object.keys(minChars).map(k => (formData.content as any)[k] || '').join(' ');
       const totalWords = totalText.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
-      if (totalWords > 250) {
-        toast.error(`Total word count (${totalWords}) exceeds the 250-word limit.`);
+      if (totalWords > 300) {
+        toast.error(`Total word count (${totalWords}) exceeds the 300-word limit.`);
+        return;
+      }
+      // File required (matches API: 'Abstract file (PDF) is required')
+      if (!formData.file) {
+        setShowErrors(true);
+        toast.error('Please attach the abstract PDF file before continuing.');
         return;
       }
     }
+
     setShowErrors(false);
     if (currentStep < 5) setCurrentStep(currentStep + 1);
   };
@@ -155,6 +214,13 @@ export default function AbstractSubmission() {
   };
 
   const handleSubmit = async () => {
+    // Final guard — file is required by API
+    if (!formData.file) {
+      setSubmitError('Abstract PDF file is required.');
+      toast.error('Please attach the abstract PDF file.');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError("");
 
@@ -210,7 +276,7 @@ export default function AbstractSubmission() {
       
       {/* ─── Modern Research Studio Layout ─── */}
       <section className="pt-32 pb-40">
-        <div className="container mx-auto px-6 md:px-12 max-w-5xl">
+        <div className="container mx-auto px-6 md:px-12 max-w-7xl">
           
           {/* Header Info */}
           <PageHero
@@ -285,8 +351,8 @@ export default function AbstractSubmission() {
 
             <div className="relative z-10 min-h-[500px]">
               <div className="step-content">
-                {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} />}
-                {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} />}
+                {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} showErrors={showErrors} />}
+                {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} categories={categories} showErrors={showErrors} />}
                 {currentStep === 4 && <Step4Content content={formData.content} file={formData.file} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 5 && <Step5Review data={formData} />}
@@ -365,7 +431,8 @@ export default function AbstractSubmission() {
 }
 
 // Sub-component: Step 1
-function Step1Author({ data, setFormData }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
@@ -384,13 +451,13 @@ function Step1Author({ data, setFormData }: { data: any, setFormData: React.Disp
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <InputGroup label="First Name" name="firstName" value={data.firstName} onChange={handleChange} placeholder="e.g. John" />
-        <InputGroup label="Last Name" name="lastName" value={data.lastName} onChange={handleChange} placeholder="e.g. Doe" />
+        <InputGroup label="First Name" name="firstName" value={data.firstName} onChange={handleChange} placeholder="e.g. John" required error={showErrors && !data.firstName.trim()} />
+        <InputGroup label="Last Name" name="lastName" value={data.lastName} onChange={handleChange} placeholder="e.g. Doe" required error={showErrors && !data.lastName.trim()} />
         <div className="md:col-span-2">
-          <InputGroup label="Email Address" name="email" value={data.email} onChange={handleChange} placeholder="john.doe@university.edu" type="email" />
+          <InputGroup label="Email Address" name="email" value={data.email} onChange={handleChange} placeholder="john.doe@university.edu" type="email" required error={showErrors && (!data.email.trim() || !emailRe.test(data.email.trim()))} />
         </div>
         <div className="md:col-span-2">
-          <InputGroup label="Affiliation / Institution" name="affiliation" value={data.affiliation} onChange={handleChange} placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University" />
+          <InputGroup label="Affiliation / Institution" name="affiliation" value={data.affiliation} onChange={handleChange} placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University" required error={showErrors && !data.affiliation.trim()} />
         </div>
         <InputGroup label="Phone Number" name="phone" value={data.phone} onChange={handleChange} placeholder="+66 XX XXX XXXX" />
       </div>
@@ -399,7 +466,8 @@ function Step1Author({ data, setFormData }: { data: any, setFormData: React.Disp
 }
 
 // Sub-component: Step 2
-function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React.Dispatch<React.SetStateAction<any>> }) {
+function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const addAuthor = () => {
     setFormData((prev: any) => ({
       ...prev,
@@ -450,18 +518,19 @@ function Step2CoAuthors({ list, setFormData }: { list: any[], setFormData: React
           <div key={idx} className="p-10 bg-white shadow-sm rounded-[3rem] border border-slate-100 relative group hover:border-orange-500/30 transition-all duration-500">
             <button 
               onClick={() => removeAuthor(idx)}
-              className="absolute top-8 right-8 text-slate-300 hover:text-rose-500 transition-colors p-3 bg-slate-50 rounded-2xl"
+              className="absolute top-8 right-8 text-rose-400 hover:text-rose-600 transition-colors p-3 bg-rose-50 hover:bg-rose-100 rounded-2xl"
+              aria-label="Remove co-author"
             >
               <Trash2 className="w-5 h-5" />
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <InputGroup label="First Name" name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Jane" />
-              <InputGroup label="Last Name" name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Smith" />
+              <InputGroup label="First Name" name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Jane" required error={showErrors && !author.firstName.trim()} />
+              <InputGroup label="Last Name" name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder="e.g. Smith" required error={showErrors && !author.lastName.trim()} />
               <div className="md:col-span-2">
-                <InputGroup label="Institution / Affiliation" name="institution" value={author.institution} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" />
+                <InputGroup label="Institution / Affiliation" name="institution" value={author.institution} onChange={(e: any) => handleChange(idx, e)} placeholder="Institution name" required error={showErrors && !author.institution.trim()} />
               </div>
               <div className="md:col-span-2">
-                <InputGroup label="Email Address (Contact)" name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" />
+                <InputGroup label="Email Address (Contact)" name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" required error={showErrors && (!author.email.trim() || !emailRe.test(author.email.trim()))} />
               </div>
             </div>
           </div>
@@ -512,11 +581,11 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
       </div>
       
       <div className="space-y-10">
-        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" required error={showErrors && !data.title.trim()} />
+        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" required error={showErrors && (data.title.trim().length < 10 || data.title.trim().length > 500)} />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Submission Theme <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px]">Submission Theme <span className="text-rose-500">*</span></label>
             <div className="relative" ref={categoryRef}>
               <button
                 type="button"
@@ -552,7 +621,7 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
           </div>
           
           <div className="flex flex-col gap-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">Presentation Mode <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px]">Presentation Mode <span className="text-rose-500">*</span></label>
             <div className="flex gap-3">
               {['Oral', 'Poster'].map(type => {
                 let typeLabel = type;
@@ -612,7 +681,7 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
 
   // Total word count across all sections
   const totalWords = Object.values(sectionWordCounts).reduce((a, b) => a + b, 0);
-  const wordPercent = Math.min((totalWords / 250) * 100, 100);
+  const wordPercent = Math.min((totalWords / 300) * 100, 100);
 
   const sections = [
     { key: 'background', label: 'Background' },
@@ -631,12 +700,12 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
           <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> indicates a required field</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <div className={`px-5 py-3 rounded-2xl text-sm font-black ${totalWords > 250 ? 'bg-rose-50 text-rose-600' : totalWords >= 200 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-500'}`}>
-            {totalWords} / 250 words
+          <div className={`px-5 py-3 rounded-2xl text-sm font-black ${totalWords > 300 ? 'bg-rose-50 text-rose-600' : totalWords >= 250 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-500'}`}>
+            {totalWords} / 300 words
           </div>
           <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-300 ${totalWords > 250 ? 'bg-rose-500' : totalWords >= 200 ? 'bg-amber-400' : 'bg-emerald-400'}`}
+              className={`h-full rounded-full transition-all duration-300 ${totalWords > 300 ? 'bg-rose-500' : totalWords >= 250 ? 'bg-amber-400' : 'bg-emerald-400'}`}
               style={{ width: `${wordPercent}%` }}
             />
           </div>
@@ -644,26 +713,34 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
       </div>
       
       <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
-        {sections.map(section => (
+        {sections.map(section => {
+          const minChars = section.key === 'objective' ? 20 : 50;
+          const currentText = (content[section.key] || '').trim();
+          const hasError = showErrors && currentText.length < minChars;
+          return (
           <div key={section.key} className="space-y-4">
-            <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block">{section.label} <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span> <span className="text-[10px] text-slate-400 font-bold normal-case tracking-normal">(min {minChars} chars)</span></label>
             <textarea 
               name={section.key}
               value={content[section.key]}
               onChange={handleTextChange}
-              className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${showErrors && !content[section.key]?.trim() ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
+              className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${hasError ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
               placeholder={`Elaborate your ${section.label.toLowerCase()}...`}
             />
-            <div className="flex justify-end">
-              <span className="text-[10px] font-bold text-slate-400 tracking-wide">
+            <div className="flex justify-between items-center">
+              <span className={`text-xs font-bold tracking-wide ${hasError ? 'text-rose-500' : 'text-slate-500'}`}>
+                {currentText.length} / {minChars} chars
+              </span>
+              <span className="text-xs font-bold text-slate-500 tracking-wide">
                 {sectionWordCounts[section.key]} {sectionWordCounts[section.key] === 1 ? 'word' : 'words'}
               </span>
             </div>
           </div>
-        ))}
+          );
+        })}
         
         <div className="pt-10 border-t border-white/5">
-          <label className="text-[10px] font-black text-gold uppercase tracking-[3px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
+          <label className="text-sm font-black text-gold uppercase tracking-[2px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
           {!file ? (
             <div className="relative group">
               <input 
@@ -695,7 +772,8 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
               </div>
               <button 
                 onClick={removeFile} 
-                className="p-3 bg-white hover:bg-rose-50 rounded-xl text-slate-300 hover:text-rose-500 transition-colors shadow-sm"
+                className="p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-rose-400 hover:text-rose-600 transition-colors shadow-sm"
+                aria-label="Remove file"
               >
                 <Trash2 className="w-5 h-5" />
               </button>
@@ -710,138 +788,130 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
 // Sub-component: Step 5
 function Step5Review({ data }: { data: any }) {
   return (
-    <div className="space-y-16">
-      <div className="space-y-4">
-        <h2 className="text-4xl lg:text-7xl font-black text-slate-950 uppercase tracking-tighter leading-none">
-          Manuscript<br/>
-          <span className="text-blue-600/80">Verification</span>
+    <div className="space-y-10">
+      <div className="space-y-2">
+        <h2 className="text-2xl lg:text-3xl font-black text-slate-950 uppercase tracking-tight leading-tight">
+          Manuscript <span className="text-blue-600/80">Verification</span>
         </h2>
-        <p className="text-slate-400 font-bold uppercase tracking-[0.3em] text-xs">Phase 05 / Final Audit Protocol</p>
+        <p className="text-slate-400 font-bold uppercase tracking-[0.25em] text-[11px]">Phase 05 / Final Audit Protocol</p>
       </div>
       
       <div className="relative">
         {/* Subtle Architectural Background Lines */}
         <div className="absolute -inset-10 border border-slate-100 rounded-[3rem] pointer-events-none" />
-        <div className="absolute top-0 bottom-0 left-1/2 w-px bg-slate-50 hidden xl:block" />
         
         <div className="relative z-10 space-y-20">
           {/* Header Metadata Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pb-16 border-b border-slate-100">
             <div className="space-y-3">
-              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Category</span>
+              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">Category</span>
               <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.category || "General Pharmacy"}</p>
             </div>
             <div className="space-y-3">
-              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Presentation</span>
+              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">Presentation</span>
               <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.type || "Oral"} Mode</p>
             </div>
             <div className="space-y-3">
-              <span className="text-[10px] font-black text-orange-500/60 uppercase tracking-[4px]">Reference</span>
+              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">Reference</span>
               <p className="text-xl font-black text-slate-900 uppercase">PRIS-2026-TMP</p>
             </div>
           </div>
 
           {/* Research Title Section */}
           <div className="space-y-8">
-            <span className="text-[10px] font-black text-blue-600/40 uppercase tracking-[6px] block">Full Research Title</span>
+            <span className="text-sm font-black text-blue-600/60 uppercase tracking-[3px] block">Full Research Title</span>
             <h3 className="text-4xl md:text-6xl font-black text-slate-950 leading-[1.1] uppercase tracking-tight">
               &quot;{data.abstract.title || "Untitled Research Submission"}&quot;
             </h3>
           </div>
 
-          {/* Authors Dossier */}
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-20">
-            <div className="space-y-10">
-              <div className="pb-4 border-b-2 border-slate-950 w-fit">
-                <span className="text-[10px] font-black text-slate-950 uppercase tracking-[4px]">Principal Investigator</span>
-              </div>
-              <div className="space-y-4">
-                <p className="text-3xl font-black text-slate-950 uppercase leading-none">
-                  {data.author.firstName} {data.author.lastName}
-                </p>
-                <div className="space-y-2">
-                  <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">{data.author.affiliation}</p>
-                  <p className="text-xs text-blue-600/60 font-black tracking-widest">{data.author.email}</p>
-                </div>
-              </div>
+          {/* Authors Dossier — Principal */}
+          <div className="space-y-10">
+            <div className="pb-4 border-b-2 border-slate-950 w-fit">
+              <span className="text-sm font-black text-slate-950 uppercase tracking-[2px]">Author</span>
             </div>
-
-            <div className="space-y-10">
-              <div className="pb-4 border-b border-slate-200 w-fit">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Supporting Contributors</span>
-              </div>
-              <div className="space-y-6">
-                {data.coAuthors.length === 0 ? (
-                  <p className="text-slate-300 italic font-medium">No additional authors identified.</p>
-                ) : (
-                  <div className="grid grid-cols-1 gap-6">
-                    {data.coAuthors.map((ca: any, i: number) => (
-                      <div key={i} className="flex items-start gap-4">
-                        <span className="text-[10px] font-black text-slate-300 pt-1">0{i+1}</span>
-                        <div>
-                          <p className="text-sm font-black text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.institution}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
+            <div className="space-y-4">
+              <p className="text-3xl font-black text-slate-950 uppercase leading-none">
+                {data.author.firstName} {data.author.lastName}
+              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">{data.author.affiliation}</p>
+                <p className="text-xs text-blue-600/60 font-black tracking-widest">{data.author.email}</p>
               </div>
             </div>
           </div>
 
-          {/* Abstract Content & File Matching Grid Layout */}
-          <div className="pt-10 border-t border-slate-100 flex items-stretch">
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-20 w-full">
-              {/* Key Terminologies & Content Summary */}
-              <div className="space-y-10">
-                <div className="pb-4 border-b border-slate-200 w-fit">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Abstract Content Overview</span>
-                </div>
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-[10px] items-center text-blue-600/60 uppercase tracking-[3px] font-black mb-2 block">Keywords</span>
-                    <p className="text-sm font-bold text-slate-900">{data.abstract.keywords || "None provided"}</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {['background', 'objective', 'methods', 'results', 'conclusion'].map((section) => (
-                      <div key={section}>
-                        <span className="text-[9px] items-center text-slate-400 uppercase tracking-[3px] font-black mb-1 block">{section}</span>
-                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">{data.content[section] || "None provided"}</p>
+          {/* Authors Dossier — Co-Authors */}
+          <div className="space-y-10 pt-10 border-t border-slate-100">
+            <div className="pb-4 border-b border-slate-200 w-fit">
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">Supporting Contributors</span>
+            </div>
+            <div className="space-y-6">
+              {data.coAuthors.length === 0 ? (
+                <p className="text-slate-300 italic font-medium">No additional authors identified.</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-6">
+                  {data.coAuthors.map((ca: any, i: number) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <span className="text-[10px] font-black text-slate-300 pt-1">0{i+1}</span>
+                      <div>
+                        <p className="text-sm font-black text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.institution}</p>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
+              )}
+            </div>
+          </div>
+
+          {/* Abstract Content Overview */}
+          <div className="space-y-10 pt-10 border-t border-slate-100">
+            <div className="pb-4 border-b border-slate-200 w-fit">
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">Abstract Content Overview</span>
+            </div>
+            <div className="space-y-8">
+              <div>
+                <span className="text-sm items-center text-blue-600/70 uppercase tracking-[2px] font-black mb-2 block">Keywords</span>
+                <p className="text-sm font-bold text-slate-900">{data.abstract.keywords || "None provided"}</p>
               </div>
-              
-              {/* Attached Files Section aligned precisely with Supporting Contributors */}
-              <div className="space-y-10 xl:pl-0 border-t xl:border-t-0 border-slate-100 pt-10 xl:pt-0">
-                <div className="pb-4 border-b border-slate-200 w-fit">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px]">Attached Document(s)</span>
-                </div>
-                {data.file ? (
-                  <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                      <FileText className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <div className="overflow-hidden">
-                      <p className="text-sm font-black text-emerald-950 truncate">{data.file.name}</p>
-                      <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
-                    </div>
+              <div className="space-y-6">
+                {['background', 'objective', 'methods', 'results', 'conclusion'].map((section) => (
+                  <div key={section} className="pb-6 border-b border-slate-100 last:border-b-0 last:pb-0">
+                    <span className="text-sm items-center text-slate-500 uppercase tracking-[2px] font-black mb-2 block">{section}</span>
+                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{data.content[section] || "None provided"}</p>
                   </div>
-                ) : (
-                  <div className="p-6 bg-rose-50 rounded-2xl border border-rose-100 flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-rose-200 flex items-center justify-center shrink-0">
-                      <AlertCircle className="w-5 h-5 text-rose-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-rose-900">No Documents</p>
-                      <p className="text-[10px] text-rose-600 font-bold uppercase tracking-[2px] mt-1">Required</p>
-                    </div>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
+          </div>
+
+          {/* Attached Document */}
+          <div className="space-y-10 pt-10 border-t border-slate-100">
+            <div className="pb-4 border-b border-slate-200 w-fit">
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">Attached Document(s)</span>
+            </div>
+            {data.file ? (
+              <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                  <FileText className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-sm font-black text-emerald-950 truncate">{data.file.name}</p>
+                  <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 bg-rose-50 rounded-2xl border border-rose-100 flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-rose-200 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-rose-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-black text-rose-900">No Documents</p>
+                  <p className="text-[10px] text-rose-600 font-bold uppercase tracking-[2px] mt-1">Required</p>
+                </div>
+              </div>
+            )}
           </div>
 
         </div>
@@ -854,7 +924,7 @@ function Step5Review({ data }: { data: any }) {
 function InputGroup({ label, placeholder, value, onChange, name, type = "text", required = false, error = false }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string, required?: boolean, error?: boolean }) {
   return (
     <div className="flex flex-col gap-4">
-      <label className="text-[10px] font-black text-gold uppercase tracking-[3px]">{label} {required && <span className="text-rose-500">*</span>}</label>
+      <label className="text-sm font-black text-gold uppercase tracking-[2px]">{label} {required && <span className="text-rose-500">*</span>}</label>
       <input 
         type={type}
         name={name}
