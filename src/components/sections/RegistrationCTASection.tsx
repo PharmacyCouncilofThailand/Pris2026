@@ -1,20 +1,38 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useCallback } from "react";
 import { MoveUpRight, Sparkles, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useParams, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
+import { useAuth } from "@/context/AuthContext";
+import { ssoRedirectToConferenceWeb } from "@/lib/sso";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const EVENT_CODE = process.env.NEXT_PUBLIC_PRIS_EVENT_CODE || "PRIS-2026";
+
 export default function RegistrationCTASection() {
   const t = useTranslations("registrationCTA");
+  const router = useRouter();
+  const params = useParams<{ locale: string }>();
+  const locale = params?.locale || "en";
+  const { isAuthenticated, token } = useAuth();
   const containerRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+
+  const handleBuyTicket = useCallback(() => {
+    if (!isAuthenticated || !token) {
+      const redirect = encodeURIComponent(`/${locale}/registration`);
+      router.push(`/${locale}/login?redirect=${redirect}`);
+      return;
+    }
+    ssoRedirectToConferenceWeb(token, `/events/${EVENT_CODE}`);
+  }, [isAuthenticated, token, locale, router]);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -372,11 +390,10 @@ export default function RegistrationCTASection() {
 
         {/* Register CTA Button & Payment Info */}
         <div className="mt-16 md:mt-24 flex flex-col items-center fade-up gap-6">
-          <a
-            href="https://conference-web-tawny.vercel.app/events/mock-event-2025"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group relative inline-flex items-center justify-center gap-6 md:gap-8 text-white px-10 md:px-16 py-6 md:py-8 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] shadow-2xl hover:shadow-[0_0_60px_rgba(0,85,255,0.4)]"
+          <button
+            type="button"
+            onClick={handleBuyTicket}
+            className="group relative inline-flex items-center justify-center gap-6 md:gap-8 text-white px-10 md:px-16 py-6 md:py-8 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] shadow-2xl hover:shadow-[0_0_60px_rgba(0,85,255,0.4)] cursor-pointer"
           >
             {/* Animated gradient background — always visible */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
@@ -390,7 +407,7 @@ export default function RegistrationCTASection() {
             <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 bg-white/20 group-hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:rotate-45 transition-all duration-500 border border-white/30">
               <MoveUpRight className="w-6 h-6 md:w-7 md:h-7" />
             </div>
-          </a>
+          </button>
 
           {/* Payment Method Note */}
           <div className="flex items-center gap-2 text-black/50 mt-1">
