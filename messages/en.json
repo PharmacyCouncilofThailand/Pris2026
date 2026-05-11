@@ -49,8 +49,8 @@
     "stat1Label": "Participants",
     "stat2Value": "60+",
     "stat2Label": "Exhibition Booths",
-    "stat3Value": "30+",
-    "stat3Label": "Poster",
+    "stat3Value": "300+",
+    "stat3Label": "Oral & Poster",
     "research": {
       "title": "Research",
       "desc": "Showcasing current studies, academic work, and evidence that strengthen the profession."
@@ -96,7 +96,7 @@
     "description": "A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br class='hidden md:block' /><strong class='font-semibold text-black'>Experience the future of pharmacy.</strong>",
     "needToKnow": "Need to Know",
     "criticalDates": "Special Offer",
-    "periodEarly": "May 15 – Jun 30, 2026",
+    "periodEarly": "June 1 – June 30, 2026",
     "titleEarly": "Early Bird Registration",
     "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
     "periodRegular": "Jul 1 - Sep 30, 2026",

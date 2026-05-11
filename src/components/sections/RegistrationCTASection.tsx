@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef, useCallback } from "react";
-import { MoveUpRight, Sparkles, ChevronDown } from "lucide-react";
+import React, { useRef, useCallback, useEffect, useState } from "react";
+import { MoveUpRight, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -24,6 +24,7 @@ export default function RegistrationCTASection() {
   const { isAuthenticated, token } = useAuth();
   const containerRef = useRef<HTMLElement>(null);
   const textRef = useRef<HTMLHeadingElement>(null);
+  const [isCtaDocked, setIsCtaDocked] = useState(false);
 
   const handleBuyTicket = useCallback(() => {
     if (!isAuthenticated || !token) {
@@ -33,6 +34,36 @@ export default function RegistrationCTASection() {
     }
     ssoRedirectToConferenceWeb(token, `/events/${EVENT_CODE}`);
   }, [isAuthenticated, token, locale, router]);
+
+  useEffect(() => {
+    let rafId = 0;
+
+    const updateCtaPosition = () => {
+      const footer = document.querySelector("footer");
+      if (!footer) {
+        setIsCtaDocked(false);
+        return;
+      }
+
+      const footerRect = footer.getBoundingClientRect();
+      setIsCtaDocked(footerRect.top <= window.innerHeight);
+    };
+
+    const requestUpdate = () => {
+      window.cancelAnimationFrame(rafId);
+      rafId = window.requestAnimationFrame(updateCtaPosition);
+    };
+
+    requestUpdate();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
+  }, []);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -110,11 +141,11 @@ export default function RegistrationCTASection() {
   return (
     <section 
       ref={containerRef} 
-      className="py-24 md:py-40 bg-white text-black relative font-sans selection:bg-[#0055FF] selection:text-white overflow-hidden"
+      className="pt-16 pb-36 md:pt-28 md:pb-44 lg:pt-40 lg:pb-52 bg-white text-black relative font-sans selection:bg-[#0055FF] selection:text-white overflow-hidden"
     >
       {/* Massive Typography Hero */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px]">
-        <div className="flex flex-col mb-32 md:mb-48" ref={textRef}>
+        <div className="flex flex-col mb-20 md:mb-32 lg:mb-48" ref={textRef}>
           <p className="fade-up text-[#FF5A00] text-xs md:text-sm font-semibold tracking-[0.3em] uppercase mb-8 ml-2 flex items-center gap-3">
             <Sparkles className="w-4 h-4 text-[#0055FF]" /> 
             {t("pretitle")}
@@ -138,7 +169,7 @@ export default function RegistrationCTASection() {
             </div>
           </h2>
 
-          <div className="mt-16 md:mt-32 fade-up max-w-3xl">
+          <div className="mt-12 md:mt-20 lg:mt-32 fade-up max-w-3xl">
               <p 
                 className="text-xl md:text-3xl font-light tracking-tight leading-[1.4] text-black/80"
                 dangerouslySetInnerHTML={{ __html: t.raw("description") }}
@@ -147,7 +178,7 @@ export default function RegistrationCTASection() {
         </div>
       </div>
 
-      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-20" />
+      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-12 md:my-20" />
 
       {/* Avant-Garde Timeline & Features Layout */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] timeline-container relative">
@@ -168,7 +199,7 @@ export default function RegistrationCTASection() {
           </div>
 
           {/* Right Scroll Column */}
-          <div className="w-full lg:w-7/12 lg:ml-auto flex flex-col gap-24 md:gap-32">
+          <div className="w-full lg:w-7/12 lg:ml-auto flex flex-col gap-16 md:gap-24 lg:gap-32">
             
             {/* Timeline */}
             <div className="flex flex-col gap-12 border-l border-black/15 pl-6 md:pl-12 relative fade-up">
@@ -241,15 +272,15 @@ export default function RegistrationCTASection() {
         </div>
       </div>
 
-      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-20 md:my-32" />
+      <div className="draw-line-premium w-full h-[1px] bg-black/15 my-12 md:my-20 lg:my-32" />
 
       {/* Interactive Pricing Rows (Bespoke Table Layout) */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] pricing-wrapper">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 fade-up">
-          <h3 className="text-4xl md:text-6xl font-semibold tracking-tighter">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 md:mb-16 fade-up">
+          <h3 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter">
             {t.rich("tiersTitle", { br: () => <br/> })}
           </h3>
-          <div className="flex items-center gap-4 mt-8 md:mt-0">
+          <div className="flex items-center gap-4 mt-8 lg:mt-0">
             <span className="w-8 md:w-16 h-[2px] bg-[#0055FF]"></span>
             <p className="text-sm md:text-base uppercase tracking-[0.3em] text-[#0055FF] font-black">
               {t("tiersSubtitle")}
@@ -260,16 +291,16 @@ export default function RegistrationCTASection() {
         <div className="flex flex-col [perspective:1000px]">
           {/* Row 1: Early Bird (ORANGE HOVER) */}
           <div className="pricing-row group relative border-t border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#FF5A00] cursor-pointer bg-transparent text-black">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
-              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
-                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] group-hover:text-black/60 transition-colors duration-500 w-24">01</span>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between p-6 sm:p-8 lg:p-14 gap-6 lg:gap-8">
+              <div className="flex-1 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-16">
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] group-hover:text-black/60 transition-colors duration-500 lg:w-24">01</span>
                 <div>
-                  <h4 className="text-4xl md:text-6xl font-bold tracking-tighter mb-3 group-hover:text-black transition-colors duration-500">{t("titleEarly")}</h4>
+                  <h4 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-3 group-hover:text-black transition-colors duration-500">{t("titleEarly")}</h4>
                   <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-black/70 transition-colors duration-500">{t("tierEarlyLabel")}</p>
                 </div>
               </div>
-              <div className="text-left md:text-right flex flex-col items-start md:items-end gap-1">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-black transition-colors duration-500">฿1,250</div>
+              <div className="text-left lg:text-right flex flex-col items-start lg:items-end gap-1">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-black transition-colors duration-500">฿1,250</div>
                 <div className="text-lg font-medium text-black/30 group-hover:text-black/50 transition-colors duration-500 line-through">฿2,000</div>
               </div>
             </div>
@@ -277,64 +308,64 @@ export default function RegistrationCTASection() {
 
           {/* Row 2: Regular (BLUE HOVER) */}
           <div className="pricing-row group relative overflow-hidden transition-all duration-700 hover:bg-[#0055FF] cursor-pointer bg-transparent text-black hover:text-white mt-4 md:mt-8 border-t border-black/15 hover:border-[#0055FF]">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
-              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
-                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#0055FF] group-hover:text-white/60 transition-colors duration-500 w-24">02</span>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between p-6 sm:p-8 lg:p-14 gap-6 lg:gap-8">
+              <div className="flex-1 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-16">
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#0055FF] group-hover:text-white/60 transition-colors duration-500 lg:w-24">02</span>
                 <div>
-                  <h4 className="text-4xl md:text-6xl font-bold tracking-tighter mb-3 group-hover:text-white transition-colors duration-500">{t("titleRegular")}</h4>
+                  <h4 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-3 group-hover:text-white transition-colors duration-500">{t("titleRegular")}</h4>
                   <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-white/80 transition-colors duration-500">{t("tierRegLabel")}</p>
                 </div>
               </div>
-              <div className="text-left md:text-right">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-white transition-colors duration-500">฿2,000</div>
+              <div className="text-left lg:text-right">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-white transition-colors duration-500">฿2,000</div>
               </div>
             </div>
           </div>
 
           {/* Row 3: Late Registration (ORANGE HOVER) */}
           <div className="pricing-row group relative border-t border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#FF5A00] cursor-pointer bg-transparent text-black">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
-              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
-                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] group-hover:text-black/60 transition-colors duration-500 w-24">03</span>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between p-6 sm:p-8 lg:p-14 gap-6 lg:gap-8">
+              <div className="flex-1 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-16">
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] group-hover:text-black/60 transition-colors duration-500 lg:w-24">03</span>
                 <div>
-                  <h4 className="text-4xl md:text-6xl font-bold tracking-tighter mb-3 group-hover:text-black transition-colors duration-500">{t("tierLate")}</h4>
+                  <h4 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter mb-3 group-hover:text-black transition-colors duration-500">{t("tierLate")}</h4>
                   <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-black/70 transition-colors duration-500">{t("tierLateLabel")}</p>
                 </div>
               </div>
-              <div className="text-left md:text-right">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-black transition-colors duration-500">฿2,500</div>
+              <div className="text-left lg:text-right">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-black transition-colors duration-500">฿2,500</div>
               </div>
             </div>
           </div>
 
           {/* Row 4: Post Grad (BLUE HOVER) */}
           <div className="pricing-row group relative border-t border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#0055FF] cursor-pointer bg-transparent text-black hover:text-white">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
-              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
-                <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-white/60 transition-colors duration-500 w-24">04</span>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between p-6 sm:p-8 lg:p-14 gap-6 lg:gap-8">
+              <div className="flex-1 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-16">
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-white/60 transition-colors duration-500 lg:w-24">04</span>
                 <div>
-                  <h4 className="text-3xl md:text-5xl font-bold tracking-tighter mb-3 group-hover:text-white transition-colors duration-500">{t("tierPostGrad")}</h4>
+                  <h4 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-3 group-hover:text-white transition-colors duration-500">{t("tierPostGrad")}</h4>
                   <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-white/80 transition-colors duration-500">{t("tierPostGradLabel")}</p>
                 </div>
               </div>
-              <div className="text-left md:text-right">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter group-hover:text-white transition-colors duration-500">฿1,000</div>
+              <div className="text-left lg:text-right">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-white transition-colors duration-500">฿1,000</div>
               </div>
             </div>
           </div>
 
           {/* Row 5: Under Grad (ORANGE HOVER) */}
           <div className="pricing-row group relative border-y border-black/15 overflow-hidden transition-all duration-700 hover:bg-[#FF5A00] cursor-pointer bg-transparent text-black">
-            <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between p-8 md:p-14 gap-8">
-              <div className="flex-1 flex flex-col md:flex-row md:items-center gap-6 md:gap-16">
-                <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-black/60 transition-colors duration-500 w-24">05</span>
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between p-6 sm:p-8 lg:p-14 gap-6 lg:gap-8">
+              <div className="flex-1 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-16">
+                <span className="text-xs uppercase tracking-[0.3em] font-bold text-black/30 group-hover:text-black/60 transition-colors duration-500 lg:w-24">05</span>
                 <div>
-                  <h4 className="text-3xl md:text-5xl font-bold tracking-tighter mb-3 transition-colors duration-500 group-hover:text-black">{t("tierUnderGrad")}</h4>
+                  <h4 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter mb-3 transition-colors duration-500 group-hover:text-black">{t("tierUnderGrad")}</h4>
                   <p className="text-sm font-semibold uppercase tracking-[0.15em] text-black/40 group-hover:text-black/70 transition-colors duration-500">{t("tierUnderGradLabel")}</p>
                 </div>
               </div>
-              <div className="text-left md:text-right flex items-baseline gap-3">
-                <div className="text-4xl md:text-6xl font-black tracking-tighter transition-colors duration-500 group-hover:text-black">฿500</div>
+              <div className="text-left lg:text-right flex items-baseline gap-3">
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap transition-colors duration-500 group-hover:text-black">฿500</div>
               </div>
             </div>
           </div>
@@ -388,34 +419,133 @@ export default function RegistrationCTASection() {
           </div>
         </div>
 
-        {/* Register CTA Button & Payment Info */}
-        <div className="mt-16 md:mt-24 flex flex-col items-center fade-up gap-6">
-          <button
-            type="button"
-            onClick={handleBuyTicket}
-            className="group relative inline-flex items-center justify-center gap-6 md:gap-8 text-white px-10 md:px-16 py-6 md:py-8 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] shadow-2xl hover:shadow-[0_0_60px_rgba(0,85,255,0.4)] cursor-pointer"
-          >
-            {/* Animated gradient background — always visible */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
-            {/* Shimmer sweep */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
+        {/* Floating Register CTA Button & Payment Info */}
+        <div
+          className={`registration-floating-cta ${isCtaDocked ? "absolute" : "fixed"} inset-x-0 z-40 flex justify-center px-3`}
+        >
+          <div className="registration-floating-cta-inner flex flex-col items-center">
+            <button
+              type="button"
+              onClick={handleBuyTicket}
+              className="registration-floating-cta-button group relative inline-flex items-center justify-center overflow-hidden rounded-full text-white shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_0_60px_rgba(0,85,255,0.35)] active:scale-[0.98] cursor-pointer"
+            >
+              {/* Animated gradient background — always visible */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
+              {/* Shimmer sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
 
-            
-            <span className="relative z-10 text-base md:text-xl font-black uppercase tracking-[0.25em]">
-              {t("registerCollection")}
-            </span>
-            <div className="relative z-10 w-12 h-12 md:w-14 md:h-14 bg-white/20 group-hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center group-hover:rotate-45 transition-all duration-500 border border-white/30">
-              <MoveUpRight className="w-6 h-6 md:w-7 md:h-7" />
+              
+              <span className="registration-floating-cta-text relative z-10 font-black uppercase">
+                {t("registerCollection")}
+              </span>
+              <div className="registration-floating-cta-icon relative z-10 flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-sm transition-all duration-500 group-hover:rotate-45 group-hover:bg-white/30">
+                <MoveUpRight className="h-[52%] w-[52%]" />
+              </div>
+            </button>
+
+            {/* Payment Method Note */}
+            <div className="registration-floating-cta-note text-center text-black/55">
+              <span className="font-medium">{t("paymentNote")}</span>
             </div>
-          </button>
-
-          {/* Payment Method Note */}
-          <div className="flex items-center gap-2 text-black/50 mt-1">
-            <span className="text-sm md:text-base font-medium">{t("paymentNote")}</span>
           </div>
         </div>
 
         <style dangerouslySetInnerHTML={{__html: `
+          .registration-floating-cta {
+            bottom: max(env(safe-area-inset-bottom), 0.875rem);
+          }
+          .registration-floating-cta-inner {
+            gap: clamp(0.35rem, 1.1svh, 0.75rem);
+            max-width: min(100%, 34rem);
+          }
+          .registration-floating-cta-button {
+            min-height: clamp(3.25rem, 7.5svh, 4.25rem);
+            gap: clamp(0.75rem, 3vw, 1.35rem);
+            padding: clamp(0.75rem, 1.6svh, 1.15rem) clamp(1.6rem, 7vw, 3rem);
+          }
+          .registration-floating-cta-text {
+            font-size: clamp(0.78rem, 3.6vw, 1rem);
+            letter-spacing: clamp(0.14em, 0.8vw, 0.22em);
+            white-space: nowrap;
+          }
+          .registration-floating-cta-icon {
+            width: clamp(2.25rem, 9.5vw, 3rem);
+            height: clamp(2.25rem, 9.5vw, 3rem);
+            flex: 0 0 auto;
+          }
+          .registration-floating-cta-note {
+            max-width: min(92vw, 32rem);
+            font-size: clamp(0.72rem, 2.9vw, 0.95rem);
+            line-height: 1.45;
+          }
+          @media (min-width: 640px) {
+            .registration-floating-cta {
+              bottom: max(env(safe-area-inset-bottom), 1.5rem);
+              padding-inline: 1rem;
+            }
+            .registration-floating-cta-button {
+              min-height: clamp(4rem, 7svh, 5rem);
+              padding-inline: clamp(2.5rem, 6vw, 4rem);
+            }
+            .registration-floating-cta-icon {
+              width: clamp(2.75rem, 5vw, 3.5rem);
+              height: clamp(2.75rem, 5vw, 3.5rem);
+            }
+          }
+          @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+            .registration-floating-cta {
+              bottom: max(env(safe-area-inset-bottom), 1rem);
+            }
+            .registration-floating-cta-button {
+              min-height: 3.65rem;
+              gap: 1rem;
+              padding: 0.9rem 2.25rem;
+            }
+            .registration-floating-cta-text {
+              font-size: 0.9rem;
+              letter-spacing: 0.18em;
+            }
+            .registration-floating-cta-icon {
+              width: 2.55rem;
+              height: 2.55rem;
+            }
+            .registration-floating-cta-note {
+              font-size: 0.78rem;
+            }
+          }
+          @media (min-width: 1024px) {
+            .registration-floating-cta-button {
+              min-height: 5rem;
+              gap: 2rem;
+              padding: 1.5rem 4rem;
+            }
+            .registration-floating-cta-text {
+              font-size: 1.25rem;
+              letter-spacing: 0.25em;
+            }
+            .registration-floating-cta-icon {
+              width: 3.5rem;
+              height: 3.5rem;
+            }
+            .registration-floating-cta-note {
+              font-size: 1rem;
+            }
+          }
+          @media (max-height: 620px) {
+            .registration-floating-cta {
+              bottom: max(env(safe-area-inset-bottom), 0.5rem);
+            }
+            .registration-floating-cta-inner {
+              gap: 0.25rem;
+            }
+            .registration-floating-cta-button {
+              min-height: 2.85rem;
+              padding-block: 0.55rem;
+            }
+            .registration-floating-cta-note {
+              display: none;
+            }
+          }
           @keyframes gradient-shift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }

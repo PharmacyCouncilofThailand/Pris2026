@@ -97,11 +97,11 @@ export default function SponsorshipPage() {
                 ORGANIZED BY
               </h2>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
+            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-20">
               {organizedByLogos.map((sponsor) => (
                 <div 
                   key={sponsor.id} 
-                  className="relative flex items-center justify-center w-40 h-32 md:w-56 md:h-40"
+                  className="relative flex items-center justify-center w-28 h-24 sm:w-40 sm:h-32 md:w-56 md:h-40"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -121,11 +121,11 @@ export default function SponsorshipPage() {
                 PARTNER
               </h2>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-16">
               {partnerLogos.map((sponsor) => (
                 <div 
                   key={sponsor.id} 
-                  className="relative flex items-center justify-center w-32 h-24 md:w-48 md:h-32"
+                  className="relative flex items-center justify-center w-24 h-20 sm:w-32 sm:h-24 md:w-48 md:h-32"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -156,11 +156,11 @@ export default function SponsorshipPage() {
                   </h2>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-12 md:gap-20">
+                <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-20">
                   {tierData.sponsors.map((sponsor) => (
                     <div 
                       key={sponsor.id} 
-                      className="relative flex items-center justify-center w-40 h-24 md:w-56 md:h-32"
+                      className="relative flex items-center justify-center w-28 h-20 sm:w-40 sm:h-24 md:w-56 md:h-32"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img

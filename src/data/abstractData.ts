@@ -33,12 +33,14 @@ export const abstractTimeline = [
   },
 ];
 export const abstractCategories = [
-  { id: 1, title: "Clinical Pharmacy / Patient Care", titleTh: "เภสัชกรรมคลินิก / การดูแลผู้ป่วย" },
-  { id: 2, title: "Social and Administrative Pharmacy", titleTh: "เภสัชกรรมสังคมและบริหาร" },
-  { id: 3, title: "Pharmaceutical Sciences and Medication Management", titleTh: "วิทยาศาสตร์เภสัชกรรมและการจัดการด้านยา" },
-  { id: 4, title: "Pharmacology and Pharmacogenomics", titleTh: "เภสัชวิทยาและเภสัชพันธุศาสตร์" },
-  { id: 5, title: "Pharmacy Education", titleTh: "เภสัชศาสตรศึกษา" },
-  { id: 6, title: "Digital Pharmacy and Health Technology", titleTh: "เภสัชกรรมดิจิทัลและเทคโนโลยีสุขภาพ" },
+  { id: 1, title: "Clinical Pharmacy and Pharmaceutical Care", titleTh: "เภสัชกรรมคลินิกและการบริบาลทางเภสัชกรรม" },
+  { id: 2, title: "Community Pharmacy and Professional Practice", titleTh: "เภสัชกรรมชุมชนและการปฏิบัติงานวิชาชีพ" },
+  { id: 3, title: "Pharmacy Administration", titleTh: "การบริหารเภสัชกิจ" },
+  { id: 4, title: "Pharmaceutical Sciences, Technology and Industrial Pharmacy", titleTh: "เภสัชศาสตร์และเทคโนโลยีเภสัชกรรมและเภสัชกรรมอุตสาหการ" },
+  { id: 5, title: "Digital Pharmacy and Health Informatics", titleTh: "เภสัชกรรมดิจิทัลและสารสนเทศศาสตร์สุขภาพ" },
+  { id: 6, title: "Health and Drug Consumer Protection", titleTh: "การคุ้มครองผู้บริโภคด้านยาและสุขภาพ" },
+  { id: 7, title: "Herbal Pharmacy", titleTh: "เภสัชกรรมสมุนไพร" },
+  { id: 8, title: "Pharmacogenomics and Precision Medicine", titleTh: "เภสัชพันธุศาสตร์และการแพทย์แม่นยำ" },
 ];
 
 export const submissionGuidelines = {

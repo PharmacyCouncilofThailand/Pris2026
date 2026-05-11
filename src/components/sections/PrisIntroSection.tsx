@@ -81,7 +81,7 @@ export default function PrisIntroSection() {
     <>
     <section
       ref={containerRef}
-      className="relative bg-white text-black pt-28 md:pt-40 pb-12 md:pb-16 overflow-hidden selection:bg-[#0055FF] selection:text-white"
+      className="relative bg-white text-black pt-20 md:pt-28 lg:pt-40 pb-12 md:pb-16 overflow-hidden selection:bg-[#0055FF] selection:text-white"
     >
       {/* Subtle decorative elements */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-500/[0.04] rounded-full blur-[160px] pointer-events-none" />

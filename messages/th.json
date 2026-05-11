@@ -44,7 +44,7 @@
     "stat2Value": "60+",
     "intro": "PRIS หรือ <span class='text-orange-600 font-medium'>Pharmacy Research and Innovation Summit</span> คืองานประชุมวิชาการเภสัชกรรมและนวัตกรรมระดับชาติ ที่จัดขึ้นเพื่อรวมตัวเภสัชกรจากทุกสาขา ไม่ว่าจะเป็นสายวิชาการ โรงพยาบาล ร้านยา การตลาด และอุตสาหกรรม โดยมุ่งเน้นการแลกเปลี่ยนความรู้ด้านงานวิจัยและนวัตกรรมทางเภสัชกรรม ด้วยเป้าหมายที่ต้องการให้ <span class='text-orange-600 font-medium'>งานวิจัยและนวัตกรรมทางเภสัชกรรมขับเคลื่อนระบบสาธารณสุขอย่างยั่งยืน</span> ให้ก้าวทันความเปลี่ยนแปลงของโลกสุขภาพยุคใหม่",
     "stat1Value": "1,000+",
-    "stat3Value": "30+",
+    "stat3Value": "300+",
     "connection": {
       "desc": "Creating space for pharmacists, students, educators, and partners to collaborate.",
       "title": "Connection"
@@ -57,7 +57,7 @@
     "body": "",
     "title": "PRIS คืออะไร?",
     "stat1Label": "ผู้เข้าร่วมงาน",
-    "stat3Label": "โปสเตอร์",
+    "stat3Label": "Oral & Poster",
     "research": {
       "desc": "Showcasing current studies, academic work, and evidence that strengthen the profession.",
       "title": "Research"
@@ -97,7 +97,7 @@
     "description": "โอกาสสำคัญในการเชื่อมต่อกับนวัตกรรมทางเภสัชกรรมและเครือข่ายวิชาชีพทั่วประเทศ <br class='hidden md:block' /><strong class='font-semibold text-black'>สัมผัสประสบการณ์แห่งอนาคตของเภสัชกรรม</strong>",
     "needToKnow": "ข้อมูลสำคัญ",
     "criticalDates": "ข้อเสนอพิเศษ",
-    "periodEarly": "15 พ.ค. – 30 มิ.ย. 2569",
+    "periodEarly": "1 มิ.ย. – 30 มิ.ย. 2569",
     "titleEarly": "ลงทะเบียน Early Bird",
     "descEarly": "สำรองที่นั่งล่วงหน้าเพื่อรับเรทราคาที่ดีที่สุด คุ้มค่าที่สุดสำหรับการเข้าร่วมงาน",
     "periodRegular": "1 ก.ค. – 30 ก.ย. 2569",

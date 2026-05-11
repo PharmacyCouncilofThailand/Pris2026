@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { abstractCategories } from "@/data/abstractData";
+import { useLocale } from "next-intl";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -12,6 +13,7 @@ if (typeof window !== "undefined") {
 
 export default function AbstractTopicList() {
   const containerRef = useRef<HTMLElement>(null);
+  const locale = useLocale();
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -58,34 +60,39 @@ export default function AbstractTopicList() {
   }, { scope: containerRef });
 
   return (
-    <section ref={containerRef} className="py-20 md:py-28 bg-slate-50 border-b border-slate-200 overflow-hidden">
-      <div className="container mx-auto px-6 max-w-5xl">
-        <div className="flex flex-col md:flex-row gap-12 md:items-start">
+    <section ref={containerRef} className="py-14 sm:py-16 lg:py-24 bg-slate-50 border-b border-slate-200 overflow-hidden">
+      <div className="container mx-auto px-5 sm:px-6 lg:px-8 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(260px,0.78fr)_minmax(0,1.45fr)] gap-10 lg:gap-16 xl:gap-20 items-start lg:items-center">
           {/* Header Part */}
-          <div className="md:w-1/3 md:sticky md:top-32 topic-header">
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 font-outfit tracking-tight leading-tight">
-              Submission Themes & Topics
+          <div className="topic-header max-w-xl lg:max-w-sm">
+            <span className="mb-4 inline-flex h-10 w-10 items-center justify-center border border-slate-300 bg-white text-xs font-black text-[#0055FF]">
+              08
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-black text-slate-900 mb-4 font-outfit tracking-tight leading-[1.04]">
+              {locale === "th" ? "หัวข้อสำหรับการส่งบทคัดย่อ" : "Submission Themes & Topics"}
             </h2>
-            <p className="text-slate-600 leading-relaxed">
-              PRIS 2026 welcomes submissions in various fields of pharmaceutical research and innovation. Please select the theme that best fits your research.
+            <p className="text-base sm:text-lg lg:text-base text-slate-600 leading-relaxed">
+              {locale === "th" 
+                ? "PRIS 2026 ยินดีรับผลงานทางวิชาการและนวัตกรรมทางเภสัชกรรมในหลากหลายสาขา โปรดเลือกหัวข้อที่ตรงกับงานวิจัยของคุณมากที่สุด" 
+                : "PRIS 2026 welcomes submissions in various fields of pharmaceutical research and innovation. Please select the theme that best fits your research."}
             </p>
           </div>
 
           {/* List Part */}
-          <div className="md:w-2/3 topic-list-container">
-            <ul className="space-y-6">
+          <div className="topic-list-container w-full">
+            <ul className="divide-y divide-slate-200 border-y border-slate-200">
               {abstractCategories.map((item) => (
                 <li
                   key={item.id}
-                  className="topic-item flex gap-6 items-start pb-6 border-b border-slate-200 last:border-0"
+                  className="topic-item group grid grid-cols-[2.75rem_1fr] sm:grid-cols-[3.25rem_1fr] items-start gap-4 sm:gap-6 py-4 sm:py-5 lg:py-6 transition-colors duration-300 hover:bg-white/70"
                 >
-                  <div className="w-12 h-12 bg-white border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 font-bold text-lg font-outfit">
+                  <div className="h-11 w-11 sm:h-12 sm:w-12 bg-white border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 font-bold text-base sm:text-lg font-outfit transition-colors duration-300 group-hover:border-[#0055FF] group-hover:text-[#0055FF]">
                     {item.id.toString().padStart(2, '0')}
                   </div>
                   
-                  <div className="pt-1">
-                    <h3 className="text-xl font-bold text-slate-900 leading-snug">
-                      {item.title}
+                  <div className="min-w-0 pt-0.5 sm:pt-1">
+                    <h3 className="text-lg sm:text-xl lg:text-[1.35rem] font-bold text-slate-900 leading-snug tracking-[-0.01em]">
+                      {locale === "th" && item.titleTh ? item.titleTh : item.title}
                     </h3>
                   </div>
                 </li>
