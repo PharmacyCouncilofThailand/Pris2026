@@ -27,10 +27,96 @@ import PageHero from "@/components/sections/PageHero";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "";
+const MAX_ABSTRACT_FILES = Number(process.env.NEXT_PUBLIC_ABSTRACT_MAX_FILES || "5");
+const MAX_ABSTRACT_FILE_SIZE = 30 * 1024 * 1024;
+const MAX_ABSTRACT_TOTAL_SIZE = Number(
+  process.env.NEXT_PUBLIC_ABSTRACT_MAX_TOTAL_FILE_SIZE || String(MAX_ABSTRACT_FILE_SIZE * MAX_ABSTRACT_FILES),
+);
+const TITLE_WORD_LIMIT = 30;
+const KEYWORD_LIMIT = 6;
+const SECTION_MIN_WORDS = 10;
 
 interface CategoryOption {
   id: number;
   name: string;
+}
+
+type WordSegment = {
+  segment: string;
+  isWordLike?: boolean;
+};
+
+function formatFileSize(size: number) {
+  return `${(size / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function getWordSegments(text: string): WordSegment[] | null {
+  const intlWithSegmenter = Intl as typeof Intl & {
+    Segmenter?: new (
+      locales?: string | string[],
+      options?: { granularity: "word" },
+    ) => { segment(input: string): Iterable<WordSegment> };
+  };
+
+  if (!intlWithSegmenter.Segmenter) return null;
+
+  const segmenter = new intlWithSegmenter.Segmenter(["th", "en"], {
+    granularity: "word",
+  });
+
+  return Array.from(segmenter.segment(text));
+}
+
+function countWords(text: string) {
+  const normalized = text.trim();
+  if (!normalized) return 0;
+
+  const segments = getWordSegments(normalized);
+  if (segments) {
+    return segments.filter((segment) => segment.isWordLike).length;
+  }
+
+  return normalized.split(/\s+/).filter((word) => word.length > 0).length;
+}
+
+function limitWords(text: string, limit: number) {
+  const segments = getWordSegments(text);
+  if (segments) {
+    let wordCount = 0;
+    let limitedText = "";
+
+    for (const segment of segments) {
+      if (segment.isWordLike && wordCount >= limit) break;
+      limitedText += segment.segment;
+      if (segment.isWordLike) wordCount += 1;
+    }
+
+    return limitedText;
+  }
+
+  const words = text.trim().split(/\s+/).filter((word) => word.length > 0);
+  if (words.length <= limit) return text;
+  return words.slice(0, limit).join(" ");
+}
+
+function parseKeywords(text: string) {
+  return text.split(",").map((keyword) => keyword.trim()).filter(Boolean);
+}
+
+function limitCommaSeparatedKeywords(text: string, limit: number) {
+  const parts = text.split(",");
+  const limitedParts: string[] = [];
+  let keywordCount = 0;
+
+  for (const part of parts) {
+    if (part.trim()) {
+      if (keywordCount >= limit) break;
+      keywordCount += 1;
+    }
+    limitedParts.push(part);
+  }
+
+  return limitedParts.join(",");
 }
 
 export default function AbstractSubmission() {
@@ -70,7 +156,7 @@ export default function AbstractSubmission() {
     coAuthors: [] as { firstName: string, lastName: string, institution: string, email: string }[],
     abstract: { title: "", category: "", type: "", keywords: "" },
     content: { background: "", objective: "", methods: "", results: "", conclusion: "" },
-    file: null as File | null
+    files: [] as File[]
   });
 
   // Autofill user data when logged in
@@ -156,13 +242,17 @@ export default function AbstractSubmission() {
     // Step 3: title min 10 / max 500, category, presentationType, keywords required
     if (currentStep === 3) {
       const { title, category, type, keywords } = formData.abstract;
+      const titleWordCount = countWords(title);
+      const keywordCount = parseKeywords(keywords).length;
       const missing: string[] = [];
       if (!title.trim()) missing.push('Title');
       else if (title.trim().length < 10) missing.push('Title (min 10 chars)');
+      else if (titleWordCount > TITLE_WORD_LIMIT) missing.push(`Title (max ${TITLE_WORD_LIMIT} words)`);
       else if (title.trim().length > 500) missing.push('Title (max 500 chars)');
       if (!category.trim()) missing.push('Submission Theme');
-      if (!type.trim()) missing.push('Presentation Mode');
+      if (!type.trim()) missing.push('Preferred Presentation Mode');
       if (!keywords.trim()) missing.push('Keywords');
+      else if (keywordCount > KEYWORD_LIMIT) missing.push(`Keywords (max ${KEYWORD_LIMIT}, comma separated)`);
       if (missing.length > 0) {
         setShowErrors(true);
         toast.error(`Please fix: ${missing.join(', ')}`);
@@ -170,37 +260,32 @@ export default function AbstractSubmission() {
       }
     }
 
-    // Step 4: per-section min character count (matches API: background/methods/results/conclusion ≥ 50, objective ≥ 20) + total words ≤ 300
+    // Step 4: per-section min words + total words <= 300
     if (currentStep === 4) {
-      const minChars: Record<string, number> = {
-        background: 50,
-        objective: 20,
-        methods: 50,
-        results: 50,
-        conclusion: 50,
-      };
+      const sectionKeys = ['background', 'objective', 'methods', 'results', 'conclusion'];
       const issues: string[] = [];
-      for (const [k, min] of Object.entries(minChars)) {
+      for (const k of sectionKeys) {
         const v = ((formData.content as any)[k] || '').trim();
         const label = k.charAt(0).toUpperCase() + k.slice(1);
+        const sectionWords = countWords(v);
         if (!v) issues.push(label);
-        else if (v.length < min) issues.push(`${label} (min ${min} chars, currently ${v.length})`);
+        else if (sectionWords < SECTION_MIN_WORDS) issues.push(`${label} (min ${SECTION_MIN_WORDS} words)`);
       }
       if (issues.length > 0) {
         setShowErrors(true);
         toast.error(`Please fix: ${issues.join(', ')}`);
         return;
       }
-      const totalText = Object.keys(minChars).map(k => (formData.content as any)[k] || '').join(' ');
-      const totalWords = totalText.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
+      const totalText = sectionKeys.map(k => (formData.content as any)[k] || '').join(' ');
+      const totalWords = countWords(totalText);
       if (totalWords > 300) {
         toast.error(`Total word count (${totalWords}) exceeds the 300-word limit.`);
         return;
       }
-      // File required (matches API: 'Abstract file (PDF) is required')
-      if (!formData.file) {
+      // File required (matches API: at least one abstract PDF is required)
+      if (formData.files.length === 0) {
         setShowErrors(true);
-        toast.error('Please attach the abstract PDF file before continuing.');
+        toast.error('Please attach at least one abstract PDF file before continuing.');
         return;
       }
     }
@@ -215,9 +300,9 @@ export default function AbstractSubmission() {
 
   const handleSubmit = async () => {
     // Final guard — file is required by API
-    if (!formData.file) {
-      setSubmitError('Abstract PDF file is required.');
-      toast.error('Please attach the abstract PDF file.');
+    if (formData.files.length === 0) {
+      setSubmitError('At least one abstract PDF file is required.');
+      toast.error('Please attach at least one abstract PDF file.');
       return;
     }
 
@@ -244,9 +329,9 @@ export default function AbstractSubmission() {
       if (formData.coAuthors.length > 0) {
         fd.append("coAuthors", JSON.stringify(formData.coAuthors));
       }
-      if (formData.file) {
-        fd.append("abstractFile", formData.file);
-      }
+      formData.files.forEach((file) => {
+        fd.append("abstractFiles", file);
+      });
 
       const res = await fetch(`${API_URL}/api/abstracts/submit`, {
         method: "POST",
@@ -354,7 +439,7 @@ export default function AbstractSubmission() {
                 {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} categories={categories} showErrors={showErrors} />}
-                {currentStep === 4 && <Step4Content content={formData.content} file={formData.file} setFormData={setFormData} showErrors={showErrors} />}
+                {currentStep === 4 && <Step4Content content={formData.content} files={formData.files} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 5 && <Step5Review data={formData} />}
               </div>
 
@@ -558,9 +643,15 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    const nextValue =
+      name === "title"
+        ? limitWords(value, TITLE_WORD_LIMIT)
+        : name === "keywords"
+          ? limitCommaSeparatedKeywords(value, KEYWORD_LIMIT)
+          : value;
     setFormData((prev: any) => ({
       ...prev,
-      abstract: { ...prev.abstract, [name]: value }
+      abstract: { ...prev.abstract, [name]: nextValue }
     }));
   };
 
@@ -581,7 +672,22 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
       </div>
       
       <div className="space-y-10">
-        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" required error={showErrors && (data.title.trim().length < 10 || data.title.trim().length > 500)} />
+        <div className="space-y-2">
+          <InputGroup
+            label="Complete Abstract Title"
+            name="title"
+            value={data.title}
+            onChange={handleChange}
+            placeholder="ALL CAPS STRONGLY RECOMMENDED"
+            required
+            error={showErrors && (data.title.trim().length < 10 || countWords(data.title) > TITLE_WORD_LIMIT || data.title.trim().length > 500)}
+          />
+          <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
+            countWords(data.title) >= TITLE_WORD_LIMIT ? "text-amber-500" : "text-slate-300"
+          }`}>
+            {countWords(data.title)} / {TITLE_WORD_LIMIT} words
+          </p>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-4">
@@ -621,7 +727,7 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
           </div>
           
           <div className="flex flex-col gap-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px]">Presentation Mode <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px]">Prefer Presentation Mode <span className="text-rose-500">*</span></label>
             <div className="flex gap-3">
               {['Oral', 'Poster'].map(type => {
                 let typeLabel = type;
@@ -645,14 +751,29 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
           </div>
         </div>
 
-        <InputGroup label="Key Terminologies (Semicolon separated)" name="keywords" value={data.keywords} onChange={handleChange} placeholder="e.g. Pharmacy; Clinical; Outcomes" required error={showErrors && !data.keywords.trim()} />
+        <div className="space-y-2">
+          <InputGroup
+            label="Keywords"
+            name="keywords"
+            value={data.keywords}
+            onChange={handleChange}
+            placeholder="e.g. Pharmacy, Clinical, Outcomes"
+            required
+            error={showErrors && (!data.keywords.trim() || parseKeywords(data.keywords).length > KEYWORD_LIMIT)}
+          />
+          <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
+            parseKeywords(data.keywords).length >= KEYWORD_LIMIT ? "text-amber-500" : "text-slate-300"
+          }`}>
+            {parseKeywords(data.keywords).length} / {KEYWORD_LIMIT} keywords
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
 // Sub-component: Step 4
-function Step4Content({ content, file, setFormData, showErrors }: { content: any, file: File | null, setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
+function Step4Content({ content, files, setFormData, showErrors }: { content: any, files: File[], setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
@@ -662,16 +783,59 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0] || null;
-    setFormData((prev: any) => ({ ...prev, file: selected }));
+    const selectedFiles = Array.from(e.target.files || []);
+    e.target.value = "";
+
+    if (selectedFiles.length === 0) return;
+
+    const invalidFiles = selectedFiles.filter((file) => {
+      const isPdfMime = file.type === "application/pdf";
+      const hasPdfExtension = file.name.toLowerCase().endsWith(".pdf");
+      return !isPdfMime && !hasPdfExtension;
+    });
+
+    if (invalidFiles.length > 0) {
+      toast.error("Only PDF files are allowed.");
+      return;
+    }
+
+    const oversizedFile = selectedFiles.find((file) => file.size > MAX_ABSTRACT_FILE_SIZE);
+    if (oversizedFile) {
+      toast.error(`${oversizedFile.name} exceeds the 30MB file limit.`);
+      return;
+    }
+
+    const mergedFiles = [...files];
+    for (const file of selectedFiles) {
+      const isDuplicate = mergedFiles.some(
+        (existing) =>
+          existing.name === file.name &&
+          existing.size === file.size &&
+          existing.lastModified === file.lastModified,
+      );
+      if (!isDuplicate) mergedFiles.push(file);
+    }
+
+    if (mergedFiles.length > MAX_ABSTRACT_FILES) {
+      toast.error(`You can attach up to ${MAX_ABSTRACT_FILES} PDF files.`);
+      return;
+    }
+
+    const totalSize = mergedFiles.reduce((sum, file) => sum + file.size, 0);
+    if (totalSize > MAX_ABSTRACT_TOTAL_SIZE) {
+      toast.error(`Total file size must not exceed ${formatFileSize(MAX_ABSTRACT_TOTAL_SIZE)}.`);
+      return;
+    }
+
+    setFormData((prev: any) => ({ ...prev, files: mergedFiles }));
   };
 
-  const removeFile = () => {
-    setFormData((prev: any) => ({ ...prev, file: null }));
+  const removeFile = (index: number) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      files: prev.files.filter((_: File, fileIndex: number) => fileIndex !== index),
+    }));
   };
-
-  // Word count helper
-  const countWords = (text: string) => text.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
 
   // Per-section word counts
   const sectionWordCounts: Record<string, number> = {};
@@ -682,6 +846,8 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
   // Total word count across all sections
   const totalWords = Object.values(sectionWordCounts).reduce((a, b) => a + b, 0);
   const wordPercent = Math.min((totalWords / 300) * 100, 100);
+  const attachedSize = files.reduce((sum, file) => sum + file.size, 0);
+  const hasFileError = showErrors && files.length === 0;
 
   const sections = [
     { key: 'background', label: 'Background' },
@@ -714,12 +880,11 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
       
       <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
         {sections.map(section => {
-          const minChars = section.key === 'objective' ? 20 : 50;
           const currentText = (content[section.key] || '').trim();
-          const hasError = showErrors && currentText.length < minChars;
+          const hasError = showErrors && countWords(currentText) < SECTION_MIN_WORDS;
           return (
           <div key={section.key} className="space-y-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span> <span className="text-[10px] text-slate-400 font-bold normal-case tracking-normal">(min {minChars} chars)</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span></label>
             <textarea 
               name={section.key}
               value={content[section.key]}
@@ -727,57 +892,79 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
               className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${hasError ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
               placeholder={`Elaborate your ${section.label.toLowerCase()}...`}
             />
-            <div className="flex justify-between items-center">
-              <span className={`text-xs font-bold tracking-wide ${hasError ? 'text-rose-500' : 'text-slate-500'}`}>
-                {currentText.length} / {minChars} chars
-              </span>
-              <span className="text-xs font-bold text-slate-500 tracking-wide">
-                {sectionWordCounts[section.key]} {sectionWordCounts[section.key] === 1 ? 'word' : 'words'}
-              </span>
-            </div>
           </div>
           );
         })}
         
-        <div className="pt-10 border-t border-white/5">
-          <label className="text-sm font-black text-gold uppercase tracking-[2px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
-          {!file ? (
-            <div className="relative group">
+        <div className="pt-10 border-t border-white/5 flex flex-col gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">
+              Full Abstract Documents (PDF FORMAT ONLY) <span className="text-rose-500">*</span>
+            </label>
+            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[2px]">
+              {files.length} / {MAX_ABSTRACT_FILES} files • {formatFileSize(attachedSize)} total
+            </p>
+          </div>
+
+          {files.length < MAX_ABSTRACT_FILES && (
+            <div className="relative group order-2">
               <input 
                 type="file" 
                 accept=".pdf"
+                multiple
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 onChange={handleFileChange}
               />
-              <div className="p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white border-slate-200 group-hover:border-gold group-hover:bg-gold/5">
+              <div className={`p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white group-hover:border-gold group-hover:bg-gold/5 ${
+                hasFileError ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"
+              }`}>
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                     <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
                   </div>
-                  <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">Upload Document</p>
-                  <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">PDF Document Only (Max 30MB)</p>
+                  <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">
+                    {files.length > 0 ? "Add More Documents" : "Upload Documents"}
+                  </p>
+                  <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">
+                    PDF only • max 30MB each • up to {MAX_ABSTRACT_FILES} files
+                  </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {files.length > 0 ? (
+            <div className="space-y-3 order-1">
+              {files.map((file, index) => (
+                <div key={`${file.name}-${file.size}-${file.lastModified}`} className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <CheckCircle className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-black text-emerald-950 truncate">{file.name}</p>
+                      <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">
+                        {formatFileSize(file.size)} • PDF Document
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => removeFile(index)} 
+                    className="p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-rose-400 hover:text-rose-600 transition-colors shadow-sm"
+                    aria-label={`Remove ${file.name}`}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ))}
             </div>
           ) : (
-            <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4 overflow-hidden">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-black text-emerald-950 truncate">{file.name}</p>
-                  <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                </div>
-              </div>
-              <button 
-                onClick={removeFile} 
-                className="p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-rose-400 hover:text-rose-600 transition-colors shadow-sm"
-                aria-label="Remove file"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
+            hasFileError && (
+              <p className="order-1 text-xs font-bold text-rose-500 uppercase tracking-[2px]">
+                Please attach at least one PDF file.
+              </p>
+            )
           )}
         </div>
       </div>
@@ -891,15 +1078,23 @@ function Step5Review({ data }: { data: any }) {
             <div className="pb-4 border-b border-slate-200 w-fit">
               <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">Attached Document(s)</span>
             </div>
-            {data.file ? (
-              <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-black text-emerald-950 truncate">{data.file.name}</p>
-                  <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
-                </div>
+            {data.files.length > 0 ? (
+              <div className="space-y-3">
+                {data.files.map((file: File, index: number) => (
+                  <div key={`${file.name}-${file.size}-${file.lastModified}`} className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-black text-emerald-950 truncate">
+                        {index + 1}. {file.name}
+                      </p>
+                      <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">
+                        PDF Document • {formatFileSize(file.size)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="p-6 bg-rose-50 rounded-2xl border border-rose-100 flex items-start gap-4">

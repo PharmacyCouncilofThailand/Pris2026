@@ -263,13 +263,13 @@ export const submissionFormLabels = {
     abstractTitle: "Abstract Title",
     category: "Submission Category",
     presentationType: "Preferred Presentation Type",
-    keywords: "Keywords (separated by semi-colon)",
+    keywords: "Keywords (comma separated, max 6)",
     abstractFile: "Abstract File (PDF only)",
   },
   placeholders: {
     name: "e.g. Somchai",
     institution: "University, Hospital, or Organization",
-    keywords: "e.g. Pharmacy; Clinical; Research",
+    keywords: "e.g. Pharmacy, Clinical, Research",
   },
 };
 

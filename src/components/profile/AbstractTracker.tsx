@@ -26,6 +26,15 @@ interface CoAuthor {
   country?: string;
 }
 
+interface AbstractFile {
+  id?: number;
+  fileName: string;
+  fileUrl: string;
+  fileType?: string;
+  fileSize?: number;
+  sortOrder?: number;
+}
+
 interface AbstractItem {
   id: number;
   trackingId: string;
@@ -41,6 +50,7 @@ interface AbstractItem {
   fullPaperUrl?: string;
   createdAt: string;
   coAuthors: CoAuthor[];
+  files?: AbstractFile[];
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
@@ -137,6 +147,12 @@ export default function AbstractTracker() {
         const StatusIcon = status.icon;
         const isExpanded = expandedId === item.id;
         const typeLabel = item.presentationType === "oral" ? "Oral" : "Poster";
+        const documentFiles =
+          item.files && item.files.length > 0
+            ? [...item.files].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+            : item.fullPaperUrl
+              ? [{ fileName: "View PDF", fileUrl: item.fullPaperUrl }]
+              : [];
 
         return (
           <div
@@ -216,17 +232,26 @@ export default function AbstractTracker() {
                     <p className="text-sm font-bold text-slate-700">{item.keywords || "—"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">Document</p>
-                    {item.fullPaperUrl ? (
-                      <a
-                        href={item.fullPaperUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                      >
-                        <FileText className="w-4 h-4" /> View PDF
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">Documents ({documentFiles.length})</p>
+                    {documentFiles.length > 0 ? (
+                      <div className="space-y-2">
+                        {documentFiles.map((file, index) => (
+                          <a
+                            key={`${file.fileUrl}-${index}`}
+                            href={file.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                          >
+                            <FileText className="w-4 h-4 shrink-0" />
+                            <span className="truncate">
+                              {documentFiles.length > 1 ? `${index + 1}. ` : ""}
+                              {file.fileName || "View PDF"}
+                            </span>
+                            <ExternalLink className="w-3 h-3 shrink-0" />
+                          </a>
+                        ))}
+                      </div>
                     ) : (
                       <p className="text-sm font-bold text-slate-400">—</p>
                     )}
