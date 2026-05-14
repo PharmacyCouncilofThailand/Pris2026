@@ -729,7 +729,7 @@ export default function Hero() {
         className="absolute bottom-8 md:bottom-12 left-0 w-full flex flex-col items-center justify-center z-[2] transition-opacity duration-300"
         style={{ opacity: 0 }}
       >
-        <div className="flex flex-col items-center gap-3 text-black text-[9px] font-medium uppercase tracking-[5px]">
+        <div className="flex flex-col items-center gap-2 text-black text-xs sm:text-sm font-semibold uppercase tracking-widest px-4 text-center">
           <span>{t('scrollDown')}</span>
           <ChevronDown className="w-4 h-4 text-black animate-bounce" />
         </div>

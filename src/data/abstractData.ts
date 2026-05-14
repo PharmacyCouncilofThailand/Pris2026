@@ -125,7 +125,7 @@ export const submissionGuidelines = {
     "Do NOT submit abstracts with typographical or grammatical errors.",
     "All abbreviations should be given in brackets after the first full use of the word.",
     "Presentation type: Poster presentation / Oral presentation.",
-    "Language: Thai",
+    "Language: Thai / English",
   ],
   guidelinesTh: [
     "ต้องส่งบทคัดย่อผ่านระบบออนไลน์บนเว็บไซต์ PRIS 2026 เท่านั้น",
@@ -138,7 +138,7 @@ export const submissionGuidelines = {
     "บทคัดย่อต้องผ่านการตรวจสอบตัวสะกด ไวยากรณ์ และรูปแบบที่ถูกต้อง",
     "คำย่อทั้งหมดจะต้องระบุไว้ในวงเล็บหลังจากการใช้คำเต็มครั้งแรก",
     "ประเภทการนำเสนอ (กรุณาเลือกหนึ่งประเภท): นำเสนอแบบโปสเตอร์ / นำเสนอแบบปากเปล่า",
-    "ภาษาที่ใช้ในการนำเสนอ: ภาษาไทยเท่านั้น",
+    "ภาษาที่ใช้ในการนำเสนอ: ภาษาไทย / ภาษาอังกฤษ",
   ],
   acknowledgementNote: "Notification of acceptance will be sent automatically to the abstract submitter only. Please contact the secretariat at pris2026@pharmacy.org if you do not receive the confirmation email.",
   acknowledgementNoteTh: "การแจ้งผลการพิจารณาจะถูกส่งให้ผู้ส่งรายงานเท่านั้น กรุณาติดต่อเลขาธิการที่ pris2026@pharmacy.org หากท่านไม่ได้รับอีเมลยืนยัน",

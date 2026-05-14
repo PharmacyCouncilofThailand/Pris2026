@@ -443,10 +443,6 @@ export default function RegistrationCTASection() {
               </div>
             </button>
 
-            {/* Payment Method Note */}
-            <div className="registration-floating-cta-note text-center text-black/55">
-              <span className="font-medium">{t("paymentNote")}</span>
-            </div>
           </div>
         </div>
 
