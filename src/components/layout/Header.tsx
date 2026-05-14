@@ -91,7 +91,7 @@ export default function Header() {
       )}
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
-        <div className="flex items-center justify-between gap-3 xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-8">
+        <div className="flex items-center justify-between gap-3 xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4">
           {/* Left: Logo */}
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link

@@ -67,7 +67,7 @@ export default function PageHero({
   return (
     <section
       ref={heroRef}
-      className="relative pt-40 md:pt-56 pb-20 md:pb-32 px-6 md:px-12 flex flex-col justify-end items-center text-center"
+      className="relative pt-40 md:pt-56 [@media(max-height:900px)]:pt-28 [@media(max-height:500px)]:pt-20 pb-20 md:pb-32 [@media(max-height:900px)]:pb-12 [@media(max-height:500px)]:pb-8 px-6 md:px-12 flex flex-col justify-end items-center text-center"
     >
       {/* Decorative BG Glows */}
       {!dark && (
@@ -96,7 +96,7 @@ export default function PageHero({
 
         {/* Title */}
         <h1
-          className={`text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 ${inlineTitle ? 'flex flex-row justify-center gap-x-3 md:gap-x-6' : ''}`}
+          className={`text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] [@media(max-height:500px)]:text-4xl font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 [@media(max-height:500px)]:mb-4 ${inlineTitle ? 'flex flex-row justify-center gap-x-3 md:gap-x-6' : ''}`}
         >
           <div className="overflow-hidden py-2 -my-2 md:pl-2">
             <span className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line pr-[0.15em]`}>{title1}</span>

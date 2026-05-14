@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ChevronDown, MapPin, CalendarDays } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
 
@@ -258,14 +258,16 @@ export default function Hero() {
       };
 
       // Phase 1 (Auto): Letters stagger in
-      const maskLetters = svgRef.current.querySelectorAll(".mask-letter");
+      const gradientLetters = svgRef.current.querySelectorAll(".gradient-letter");
+      
       if (isMobile) {
         // Mobile optimization: Skip SVG Mask and Scroll Zoom entirely for performance
         triggerAutoPlay();
-      } else if (maskLetters.length) {
-        gsap.set(maskLetters, { fill: "white" });
-        gsap.to(maskLetters, {
-          fill: "black",
+      } else if (gradientLetters.length) {
+        gsap.set(gradientLetters, { opacity: 0 }); // Hide gradient text initially
+        
+        gsap.to(gradientLetters, {
+          opacity: 1,
           duration: 0.35,
           stagger: 0.08,
           ease: "power2.out",
@@ -275,7 +277,7 @@ export default function Hero() {
           },
         });
         
-        // Show scroll down hint earlier, independent of mask animation completion
+        // Show scroll down hint earlier, independent of animation completion
         if (!isMobile) {
           gsap.to(hintRef.current, { opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.out" });
         }
@@ -332,15 +334,14 @@ export default function Hero() {
       />
 
       {/* Hero Content */}
-      <div className="relative z-[2] w-full min-h-[100svh] flex flex-col items-center pointer-events-auto px-4 pt-[130px] md:pt-[160px] pb-2 text-center">
+      <div className="hero-shell relative z-[2] w-full min-h-[100svh] grid grid-rows-[minmax(0,1fr)_auto] content-stretch gap-0 items-stretch pointer-events-auto text-center">
 
         {/* Main Content Wrapper (Centered) */}
-        <div className="flex-1 w-full flex flex-col justify-center items-center pb-4 md:pb-8 mt-12 md:mt-20">
+        <div className="hero-main min-h-0 w-full max-w-6xl mx-auto flex flex-col justify-center items-center">
 
-        {/* Logo */}
         <div
           ref={logoRef}
-          className="z-[2] will-change-transform transform-gpu flex flex-col items-center mb-4 md:mb-6"
+          className="z-[2] will-change-transform transform-gpu flex flex-col items-center"
           style={{ opacity: 0 }}
         >
           <Image
@@ -348,7 +349,7 @@ export default function Hero() {
             alt="PRIS 2026 Logo"
             width={400}
             height={500}
-            className="w-[85vw] max-w-[420px] md:max-w-[680px] h-auto drop-shadow-2xl"
+            className="hero-logo-image h-auto object-contain drop-shadow-2xl"
             priority
           />
         </div>
@@ -356,37 +357,30 @@ export default function Hero() {
         {/* Thin divider */}
         <div
           ref={infoRef}
-          className="z-[2] w-full max-w-xl flex flex-col items-center gap-3 md:gap-4"
+          className="hero-info z-[2] w-full flex flex-col items-center"
           style={{ opacity: 0 }}
         >
           {/* Horizontal rule */}
           <div className="w-24 h-px bg-white/20" />
 
           {/* Date + Location */}
-          <div className="flex flex-col items-center gap-2.5 sm:gap-3 text-white/80 text-xs sm:text-sm tracking-widest uppercase font-medium text-center">
-            <span className="flex items-center gap-2">
-              <CalendarDays className="w-3.5 h-3.5 opacity-70 shrink-0" />
-              29 – 30 October 2026
-            </span>
-            <span className="flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 opacity-70 shrink-0" />
-              IMPACT Challenger, Muang Thong Thani
-            </span>
+          <div className="hero-event-copy flex flex-col items-center text-white/90 uppercase font-semibold text-center drop-shadow-md">
+            <span>29 – 30 October 2026</span>
+            <span>IMPACT Challenger, Muang Thong Thani</span>
           </div>
 
           {/* Organizer — subtle, small */}
-          <p className="text-white/50 text-[10px] sm:text-xs tracking-[0.2em] uppercase text-center mt-1 md:mt-2">
+          <p className="hero-organizer text-white/75 uppercase font-semibold text-center drop-shadow-md">
             Organized by The Pharmacy Council of Thailand
           </p>
         </div>
 
-        {/* Countdown — on Desktop stays at top due to md:mb-auto, on Mobile sits above button */}
         <div
           ref={countdownRef}
-          className="w-full flex justify-center mt-2 md:mt-4 mb-6 md:mb-auto z-[2]"
+          className="hero-countdown w-full flex justify-center z-[2]"
           style={{ opacity: 0 }}
         >
-          <div className="scale-[0.88] md:scale-[0.95] origin-center">
+          <div className="[&>*]:max-w-full">
             <Countdown />
           </div>
         </div>
@@ -394,13 +388,13 @@ export default function Hero() {
         {/* Register Button */}
         <div
           ref={buttonsRef}
-          className="z-[2]"
+          className="hero-register z-[2] flex flex-col items-center"
           style={{ opacity: 0 }}
         >
           <Link
             href="/registration"
             onClick={handleRegisterClick}
-            className="group relative inline-flex items-center gap-4 px-10 md:px-14 py-5 md:py-6 rounded-full text-white transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] z-10"
+            className="hero-register-link group relative inline-flex items-center rounded-full text-white transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] z-10"
           >
             {/* Outer pulsing glow (GPU accelerated) */}
             <div className="absolute inset-[-6px] rounded-full bg-gradient-to-r from-[#ff7300] to-[#ffb74d] blur-md opacity-30 group-hover:opacity-70 animate-[gentle-pulse_3s_ease-in-out_infinite] -z-10" />
@@ -415,10 +409,10 @@ export default function Hero() {
               <div className="absolute bottom-0 left-[15%] w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#ffb74d]/70 to-transparent rounded-sm" />
             </div>
             
-            <span className="relative z-10 text-[0.9375rem] sm:text-[1.0625rem] md:text-[1.15rem] font-bold tracking-[0.2em] uppercase text-white/90 group-hover:text-white transition-colors">
+            <span className="hero-register-text relative z-10 font-bold uppercase text-white/90 group-hover:text-white transition-colors">
               {t("registerNow")}
             </span>
-            <span className="relative z-10 flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/10 group-hover:bg-white/25 group-hover:translate-x-[4px] transition-all duration-300 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
+            <span className="hero-register-icon relative z-10 flex items-center justify-center rounded-full bg-white/10 group-hover:bg-white/25 group-hover:translate-x-[4px] transition-all duration-300 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </span>
           </Link>
@@ -428,19 +422,19 @@ export default function Hero() {
         {/* ── Official Partners ── */}
         <div
           ref={partnersRef}
-          className="w-full flex justify-center mt-2 md:mt-4 flex-col items-center overflow-hidden pb-1 order-3"
+          className="hero-partners w-full flex justify-center flex-col items-center overflow-hidden"
           style={{ opacity: 0 }}
         >
           {/* Subtle top border */}
-          <div className="w-full border-t border-white/8 mb-2 md:mb-3" />
+          <div className="w-full border-t border-white/8 mb-2" />
 
-          <span className="text-white/40 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.35em] mb-2 md:mb-3">
+          <span className="hero-partners-label text-white/40 font-bold uppercase">
             Official Partners
           </span>
 
           {/* Partner logos marquee — full width edge-to-edge */}
           <div className="relative w-full overflow-hidden">
-            <div className="flex w-max animate-partner-scroll items-center will-change-transform transform-gpu py-1">
+            <div className="inline-flex animate-partner-scroll items-center py-1">
               {[...Array(3)].map((_, i) => (
                 <React.Fragment key={i}>
                   {[
@@ -456,14 +450,14 @@ export default function Hero() {
                   ].map((partner, index) => (
                     <div
                       key={`partner-${i}-${index}`}
-                      className="mx-6 md:mx-9 flex items-center justify-center flex-shrink-0"
+                      className="hero-partner-item flex items-center justify-center flex-shrink-0"
                     >
-                      <div className="relative h-16 w-16 md:h-[65px] md:w-[65px] flex items-center justify-center">
+                      <div className="hero-partner-logo relative flex items-center justify-center">
                         <Image
                           src={partner.logo}
                           alt={partner.name}
                           fill
-                          sizes="80px"
+                          sizes="64px"
                           className={`object-contain ${partner.scale}`}
                         />
                       </div>
@@ -476,6 +470,72 @@ export default function Hero() {
         </div>
 
         <style dangerouslySetInnerHTML={{__html: `
+          .hero-shell {
+            --hero-x: clamp(1rem, 3.2vw, 2.5rem);
+            --hero-top: clamp(5.5rem, 12svh, 8rem);
+            --hero-bottom: max(env(safe-area-inset-bottom), 0.75rem);
+            padding: var(--hero-top) var(--hero-x) var(--hero-bottom);
+          }
+          .hero-main {
+            gap: clamp(0.55rem, 1.25svh, 1.35rem);
+            padding-block: clamp(0.15rem, 1.1svh, 0.85rem);
+          }
+          .hero-logo-image {
+            width: clamp(18.5rem, 86vw, 52.5rem);
+            max-height: clamp(6.25rem, 24svh, 16.5rem);
+          }
+          .hero-info {
+            max-width: min(92vw, 42rem);
+            gap: clamp(0.35rem, 0.9svh, 0.75rem);
+            margin-bottom: clamp(0.1rem, 0.65svh, 0.55rem);
+          }
+          .hero-event-copy {
+            gap: clamp(0.22rem, 0.6svh, 0.55rem);
+            font-size: clamp(0.64rem, 1.65vw, 1rem);
+            letter-spacing: clamp(0.08em, 0.55vw, 0.2em);
+            line-height: 1.45;
+          }
+          .hero-organizer {
+            max-width: min(88vw, 34rem);
+            font-size: clamp(0.56rem, 1.35vw, 0.875rem);
+            letter-spacing: clamp(0.06em, 0.45vw, 0.16em);
+            line-height: 1.5;
+          }
+          .hero-countdown {
+            margin-top: clamp(0.05rem, 0.45svh, 0.35rem);
+          }
+          .hero-register {
+            margin-top: clamp(0.95rem, 2.2svh, 2rem);
+          }
+          .hero-register-link {
+            min-height: clamp(2.75rem, 6.2svh, 4rem);
+            gap: clamp(0.6rem, 1.25vw, 1rem);
+            padding: clamp(0.65rem, 1.45svh, 1.25rem) clamp(1.45rem, 4.2vw, 3.5rem);
+          }
+          .hero-register-text {
+            font-size: clamp(0.78rem, 1.55vw, 1.05rem);
+            letter-spacing: clamp(0.13em, 0.45vw, 0.2em);
+          }
+          .hero-register-icon {
+            width: clamp(1.75rem, 4.6vw, 2.5rem);
+            height: clamp(1.75rem, 4.6vw, 2.5rem);
+          }
+          .hero-partners {
+            margin-top: clamp(0.35rem, 1.1svh, 1.5rem);
+            padding-bottom: var(--hero-bottom);
+          }
+          .hero-partners-label {
+            font-size: clamp(0.48rem, 1.05vw, 0.625rem);
+            letter-spacing: clamp(0.2em, 0.65vw, 0.35em);
+            margin-bottom: clamp(0.35rem, 0.9svh, 0.65rem);
+          }
+          .hero-partner-item {
+            margin-inline: clamp(0.75rem, 3vw, 2rem);
+          }
+          .hero-partner-logo {
+            width: clamp(2.25rem, 9.8vw, 4rem);
+            height: clamp(2.25rem, 9.8vw, 4rem);
+          }
           @keyframes partner-scroll {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-33.333%, 0, 0); }
@@ -496,6 +556,108 @@ export default function Hero() {
               animation: none;
             }
           }
+          @media (max-width: 430px) and (orientation: portrait) {
+            .hero-shell {
+              --hero-top: clamp(5.75rem, 13svh, 7.25rem);
+              --hero-x: clamp(0.85rem, 4vw, 1rem);
+            }
+            .hero-main {
+              gap: clamp(0.45rem, 1svh, 0.75rem);
+            }
+            .hero-logo-image {
+              width: min(93vw, 26rem);
+              max-height: 22svh;
+            }
+            .hero-info {
+              max-width: min(92vw, 22rem);
+              gap: 0.32rem;
+            }
+            .hero-event-copy {
+              font-size: clamp(0.58rem, 2.65vw, 0.7rem);
+              letter-spacing: 0.08em;
+            }
+            .hero-organizer {
+              max-width: min(88vw, 19rem);
+              font-size: clamp(0.5rem, 2.35vw, 0.62rem);
+              letter-spacing: 0.055em;
+            }
+            .hero-register {
+              margin-top: clamp(0.8rem, 1.8svh, 1.15rem);
+            }
+            .hero-register-link {
+              min-height: 2.95rem;
+              padding: 0.7rem 1.45rem;
+            }
+            .hero-partner-item {
+              margin-inline: clamp(0.65rem, 3.2vw, 0.95rem);
+            }
+          }
+          @media (max-height: 700px) {
+            .hero-shell {
+              --hero-top: clamp(4.75rem, 11svh, 6rem);
+            }
+            .hero-main {
+              gap: clamp(0.35rem, 0.8svh, 0.65rem);
+              padding-block: 0;
+            }
+            .hero-logo-image {
+              max-height: 20svh;
+            }
+            .hero-info {
+              gap: 0.25rem;
+              margin-bottom: 0;
+            }
+            .hero-register {
+              margin-top: clamp(0.65rem, 1.5svh, 1rem);
+            }
+            .hero-partners {
+              margin-top: 0.25rem;
+            }
+          }
+          @media (max-height: 540px) {
+            .hero-info {
+              display: none;
+            }
+            .hero-logo-image {
+              max-height: 24svh;
+            }
+            .hero-register {
+              margin-top: 0.65rem;
+            }
+            .hero-partners-label {
+              display: none;
+            }
+          }
+          @media (max-height: 500px) {
+            .hero-shell {
+              grid-template-rows: minmax(0, 1fr);
+            }
+            .hero-partners {
+              display: none;
+            }
+          }
+          @media (min-width: 768px) {
+            .hero-shell {
+              --hero-top: clamp(6.5rem, 13svh, 9rem);
+              --hero-bottom: max(env(safe-area-inset-bottom), 1rem);
+            }
+            .hero-main {
+              gap: clamp(0.8rem, 1.45svh, 1.5rem);
+            }
+            .hero-logo-image {
+              width: clamp(32rem, 64vw, 52.5rem);
+              max-height: clamp(9rem, 26svh, 17rem);
+            }
+          }
+          @media (min-width: 1024px) {
+            .hero-logo-image {
+              width: clamp(36rem, 48vw, 52.5rem);
+            }
+            .hero-partner-logo {
+              width: clamp(3.25rem, 3.6vw, 4rem);
+              height: clamp(3.25rem, 3.6vw, 4rem);
+            }
+          }
         `}} />
       </div>
 
@@ -513,29 +675,11 @@ export default function Hero() {
               <stop offset="0%" stopColor="#0055FF" />
               <stop offset="100%" stopColor="#FF5A00" />
             </linearGradient>
-            <mask id="textCutout">
-              <rect width="100%" height="100%" fill="white" />
-              <text
-                x="50%"
-                y="54%"
-                dominantBaseline="central"
-                textAnchor="middle"
-                className="font-black text-[13vw] sm:text-[11vw] md:text-[10vw] font-outfit tracking-tighter"
-                fill="black"
-              >
-                {"PRIS 2026".split("").map((char, i) => (
-                  <tspan key={i} className="mask-letter">
-                    {char}
-                  </tspan>
-                ))}
-              </text>
-            </mask>
           </defs>
           <rect
             width="100%"
             height="100%"
             fill="white"
-            mask="url(#textCutout)"
           />
 
           {/* Gradient text to fill the cutout instead of video (per user request) */}
@@ -548,7 +692,11 @@ export default function Hero() {
             fill="url(#prisGradient)"
             pointerEvents="none"
           >
-            {"PRIS 2026"}
+            {"PRIS 2026".split("").map((char, i) => (
+              <tspan key={i} className="gradient-letter">
+                {char}
+              </tspan>
+            ))}
           </text>
 
 
@@ -563,7 +711,14 @@ export default function Hero() {
             fill="transparent"
             pointerEvents="none"
           >
-            PRI<tspan ref={zoomTargetRef}>S</tspan> 2026
+            {"PRIS 2026".split("").map((char, i) => (
+              <tspan 
+                key={i} 
+                ref={char === "S" ? zoomTargetRef : null}
+              >
+                {char}
+              </tspan>
+            ))}
           </text>
         </svg>
       </div>
@@ -574,7 +729,7 @@ export default function Hero() {
         className="absolute bottom-8 md:bottom-12 left-0 w-full flex flex-col items-center justify-center z-[2] transition-opacity duration-300"
         style={{ opacity: 0 }}
       >
-        <div className="flex flex-col items-center gap-3 text-black text-[9px] font-medium uppercase tracking-[5px]">
+        <div className="flex flex-col items-center gap-2 text-black text-xs sm:text-sm font-semibold uppercase tracking-widest px-4 text-center">
           <span>{t('scrollDown')}</span>
           <ChevronDown className="w-4 h-4 text-black animate-bounce" />
         </div>

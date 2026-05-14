@@ -54,19 +54,19 @@ export default function Countdown({ className }: CountdownProps) {
   ];
 
   return (
-    <div className={cn("inline-flex items-center", className)}>
+    <div className={cn("inline-flex max-w-full items-center", className)}>
       {units.map((unit, i) => (
         <div key={unit.label} className="flex items-center">
-          <div className="flex flex-col items-center px-4 sm:px-5 md:px-7">
-            <span className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tabular-nums tracking-tight leading-none">
+          <div className="flex flex-col items-center px-2 sm:px-3.5 md:px-5 lg:px-6">
+            <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white tabular-nums tracking-tight leading-none">
               {String(unit.value).padStart(2, "0")}
             </span>
-            <span className="text-[9px] sm:text-[10px] md:text-xs text-white/40 uppercase tracking-[0.2em] font-medium mt-1.5">
+            <span className="text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px] xl:text-xs text-white/40 uppercase tracking-[0.14em] sm:tracking-[0.18em] font-medium mt-1 sm:mt-1.5">
               {unit.label}
             </span>
           </div>
           {i < units.length - 1 && (
-            <div className="w-px h-10 sm:h-12 md:h-14 bg-white/20" />
+            <div className="w-px h-7 sm:h-8 md:h-10 lg:h-12 xl:h-14 bg-white/20" />
           )}
         </div>
       ))}

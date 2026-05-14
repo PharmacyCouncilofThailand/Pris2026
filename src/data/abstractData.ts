@@ -33,12 +33,14 @@ export const abstractTimeline = [
   },
 ];
 export const abstractCategories = [
-  { id: 1, title: "Clinical Pharmacy / Patient Care", titleTh: "เภสัชกรรมคลินิก / การดูแลผู้ป่วย" },
-  { id: 2, title: "Social and Administrative Pharmacy", titleTh: "เภสัชกรรมสังคมและบริหาร" },
-  { id: 3, title: "Pharmaceutical Sciences and Medication Management", titleTh: "วิทยาศาสตร์เภสัชกรรมและการจัดการด้านยา" },
-  { id: 4, title: "Pharmacology and Pharmacogenomics", titleTh: "เภสัชวิทยาและเภสัชพันธุศาสตร์" },
-  { id: 5, title: "Pharmacy Education", titleTh: "เภสัชศาสตรศึกษา" },
-  { id: 6, title: "Digital Pharmacy and Health Technology", titleTh: "เภสัชกรรมดิจิทัลและเทคโนโลยีสุขภาพ" },
+  { id: 1, title: "Clinical Pharmacy and Pharmaceutical Care", titleTh: "เภสัชกรรมคลินิกและการบริบาลทางเภสัชกรรม" },
+  { id: 2, title: "Community Pharmacy and Professional Practice", titleTh: "เภสัชกรรมชุมชนและการปฏิบัติงานวิชาชีพ" },
+  { id: 3, title: "Pharmacy Administration", titleTh: "การบริหารเภสัชกิจ" },
+  { id: 4, title: "Pharmaceutical Sciences, Technology and Industrial Pharmacy", titleTh: "เภสัชศาสตร์และเทคโนโลยีเภสัชกรรมและเภสัชกรรมอุตสาหการ" },
+  { id: 5, title: "Digital Pharmacy and Health Informatics", titleTh: "เภสัชกรรมดิจิทัลและสารสนเทศศาสตร์สุขภาพ" },
+  { id: 6, title: "Health and Drug Consumer Protection", titleTh: "การคุ้มครองผู้บริโภคด้านยาและสุขภาพ" },
+  { id: 7, title: "Herbal Pharmacy", titleTh: "เภสัชกรรมสมุนไพร" },
+  { id: 8, title: "Pharmacogenomics and Precision Medicine", titleTh: "เภสัชพันธุศาสตร์และการแพทย์แม่นยำ" },
 ];
 
 export const submissionGuidelines = {
@@ -123,7 +125,7 @@ export const submissionGuidelines = {
     "Do NOT submit abstracts with typographical or grammatical errors.",
     "All abbreviations should be given in brackets after the first full use of the word.",
     "Presentation type: Poster presentation / Oral presentation.",
-    "Language: Thai",
+    "Language: Thai / English",
   ],
   guidelinesTh: [
     "ต้องส่งบทคัดย่อผ่านระบบออนไลน์บนเว็บไซต์ PRIS 2026 เท่านั้น",
@@ -136,7 +138,7 @@ export const submissionGuidelines = {
     "บทคัดย่อต้องผ่านการตรวจสอบตัวสะกด ไวยากรณ์ และรูปแบบที่ถูกต้อง",
     "คำย่อทั้งหมดจะต้องระบุไว้ในวงเล็บหลังจากการใช้คำเต็มครั้งแรก",
     "ประเภทการนำเสนอ (กรุณาเลือกหนึ่งประเภท): นำเสนอแบบโปสเตอร์ / นำเสนอแบบปากเปล่า",
-    "ภาษาที่ใช้ในการนำเสนอ: ภาษาไทยเท่านั้น",
+    "ภาษาที่ใช้ในการนำเสนอ: ภาษาไทย / ภาษาอังกฤษ",
   ],
   acknowledgementNote: "Notification of acceptance will be sent automatically to the abstract submitter only. Please contact the secretariat at pris2026@pharmacy.org if you do not receive the confirmation email.",
   acknowledgementNoteTh: "การแจ้งผลการพิจารณาจะถูกส่งให้ผู้ส่งรายงานเท่านั้น กรุณาติดต่อเลขาธิการที่ pris2026@pharmacy.org หากท่านไม่ได้รับอีเมลยืนยัน",

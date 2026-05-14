@@ -87,7 +87,7 @@ function EventCard({ event, locale }: { event: Event; locale: string }) {
 
        {/* Speakers (Always visible, clean grid layout) */}
        {event.speakers && event.speakers.length > 0 && (
-         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
              {event.speakers.map((sp, idx) => (
                  <div key={idx} className="flex items-center gap-4 group/speaker">
                     {sp.image ? (
@@ -102,10 +102,10 @@ function EventCard({ event, locale }: { event: Event; locale: string }) {
                       </div>
                     )}
                     <div className="flex flex-col min-w-0 flex-1">
-                       <span className="font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block whitespace-nowrap">
+                       <span className="font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block">
                           {locale === 'th' && sp.nameTh ? sp.nameTh : sp.name}
                        </span>
-                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider block mt-0.5 whitespace-nowrap">
+                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider block mt-0.5">
                           {locale === 'th' && sp.roleTh ? sp.roleTh : sp.role}
                        </span>
                     </div>
@@ -201,7 +201,7 @@ export default function EventScheduleSection() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 md:py-40 bg-[linear-gradient(to_bottom,black_0%,#0b1a4a_35%,#451a03_65%,black_100%)] text-white overflow-hidden z-[2]"
+      className="relative py-16 md:py-24 lg:py-32 bg-[linear-gradient(to_bottom,black_0%,#0b1a4a_35%,#451a03_65%,black_100%)] text-white overflow-hidden z-[2]"
     >
       <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl relative z-[1]">
         
@@ -270,7 +270,7 @@ export default function EventScheduleSection() {
             timeGroups.map((group, groupIdx) => (
               <div 
                 key={groupIdx} 
-                className="timeline-row grid grid-cols-1 lg:grid-cols-[200px_1fr] xl:grid-cols-[240px_1fr] gap-4 md:gap-10 lg:gap-16 pt-6 md:pt-0 relative"
+                className="timeline-row grid grid-cols-1 lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr] gap-4 md:gap-10 lg:gap-12 pt-6 md:pt-0 relative"
               >
                 {/* Time Column (Sticky on Desktop) */}
                 <div className="relative">
