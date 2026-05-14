@@ -393,7 +393,7 @@
     "createAccount": "สร้างบัญชี",
     "selectProfile": "เลือกประเภทโปรไฟล์ของคุณ",
     "student": "นักศึกษา",
-    "studentDesc": "สำหรับผู้เข้าร่วมที่เป็นนักศึกษา",
+    "studentDesc": "สำหรับนักศึกษาระดับ Bachelor's Degree (ป.ตรี), Master's Degree (ป.โท), และ Doctoral Degree/Doctorate (ป.เอก)",
     "pharmacist": "เภสัชกร",
     "pharmacistDesc": "สำหรับเภสัชกร",
     "healthcare": "บุคลากรทางการแพทย์",

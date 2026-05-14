@@ -125,7 +125,6 @@ export default function PharmacistSignUpPage() {
               const form = e.target as HTMLFormElement;
               const firstName = (form.elements.namedItem('firstName') as HTMLInputElement).value;
               const lastName = (form.elements.namedItem('lastName') as HTMLInputElement).value;
-              const idInput = (form.elements.namedItem('idCard') as HTMLInputElement).value;
               const pharmacyLicenseId = (form.elements.namedItem('licenseNumber') as HTMLInputElement).value;
               const email = (form.elements.namedItem('email') as HTMLInputElement).value;
               const organization = (form.elements.namedItem('organization') as HTMLInputElement).value;
@@ -151,15 +150,6 @@ export default function PharmacistSignUpPage() {
                 if (phone) fd.append('phone', phone);
                 if (turnstileToken) fd.append('recaptchaToken', turnstileToken);
                 if (EVENT_CODE) fd.append('eventCode', EVENT_CODE);
-
-                // Auto-detect: 13 digit number = idCard, otherwise = passportId
-                if (idInput) {
-                  if (/^\d{13}$/.test(idInput)) {
-                    fd.append('idCard', idInput);
-                  } else {
-                    fd.append('passportId', idInput);
-                  }
-                }
 
                 const res = await fetch(`${API_URL}/auth/register`, {
                   method: 'POST',
@@ -220,20 +210,6 @@ export default function PharmacistSignUpPage() {
                     required
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="idCard">
-                  {t("nationalId")} <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="idCard"
-                  placeholder="e.g. 1234567890123 or AB1234567"
-                  maxLength={13}
-                  className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
-                  required
-                />
               </div>
 
               <div>
