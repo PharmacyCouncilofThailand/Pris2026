@@ -118,6 +118,9 @@ export default function PharmacistSignUpPage() {
               <p className="text-sm font-medium text-gray-500">
                 {t("fillDetails")}
               </p>
+              <p className="mt-3 text-xs font-semibold leading-relaxed text-blue-600 bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
+                Licensed pharmacists currently enrolled in a Master&apos;s Degree or Doctoral Degree/Doctorate program should sign up as Pharmacist first, then request postgraduate student-rate eligibility from Profile after signing in.
+              </p>
             </div>
 
             <form className="space-y-5 fade-in-up" onSubmit={async (e) => {
