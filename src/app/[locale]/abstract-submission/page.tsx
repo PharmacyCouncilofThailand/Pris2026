@@ -16,7 +16,9 @@ import {
   Plus,
   Trash2,
   AlertCircle,
-  Loader2
+  Loader2,
+  ExternalLink,
+  PencilLine
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
@@ -27,10 +29,137 @@ import PageHero from "@/components/sections/PageHero";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "";
+const MAX_ABSTRACT_FILES = 3;
+const MAX_ABSTRACT_FILE_SIZE = 30 * 1024 * 1024;
+const MAX_ABSTRACT_TOTAL_SIZE = MAX_ABSTRACT_FILE_SIZE * MAX_ABSTRACT_FILES;
+const TITLE_WORD_LIMIT = 30;
+const KEYWORD_LIMIT = 6;
+const SECTION_MIN_WORDS = 10;
 
 interface CategoryOption {
   id: number;
   name: string;
+}
+
+interface ExistingAbstractFile {
+  id?: number;
+  fileName: string;
+  fileUrl: string;
+  fileType?: string;
+  fileSize?: number;
+  sortOrder?: number;
+}
+
+interface RevisionRequestFile {
+  id?: number;
+  fileName: string;
+  fileUrl: string;
+  fileType?: string;
+  fileSize?: number;
+}
+
+interface RevisionRequest {
+  id: number;
+  topic: string;
+  comment: string;
+  status: string;
+  createdAt: string;
+  files?: RevisionRequestFile[];
+}
+
+type WordSegment = {
+  segment: string;
+  isWordLike?: boolean;
+};
+
+const REVISION_TOPIC_LABELS: Record<string, string> = {
+  title: "Complete Abstract Title",
+  keywords: "Keywords",
+  background: "Background",
+  objective: "Objective",
+  methods: "Methods",
+  results: "Results",
+  conclusion: "Conclusion",
+  documents: "Attached Documents",
+  other: "Other",
+};
+
+const getRevisionTopicLabel = (topic?: string) =>
+  topic ? REVISION_TOPIC_LABELS[topic] || topic : "Revision Request";
+
+const BODY_REVISION_TOPICS = new Set(["background", "objective", "methods", "results", "conclusion", "documents"]);
+
+function formatFileSize(size: number) {
+  return `${(size / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function getWordSegments(text: string): WordSegment[] | null {
+  const intlWithSegmenter = Intl as typeof Intl & {
+    Segmenter?: new (
+      locales?: string | string[],
+      options?: { granularity: "word" },
+    ) => { segment(input: string): Iterable<WordSegment> };
+  };
+
+  if (!intlWithSegmenter.Segmenter) return null;
+
+  const segmenter = new intlWithSegmenter.Segmenter(["th", "en"], {
+    granularity: "word",
+  });
+
+  return Array.from(segmenter.segment(text));
+}
+
+function countWords(text: string) {
+  const normalized = text.trim();
+  if (!normalized) return 0;
+
+  const segments = getWordSegments(normalized);
+  if (segments) {
+    return segments.filter((segment) => segment.isWordLike).length;
+  }
+
+  return normalized.split(/\s+/).filter((word) => word.length > 0).length;
+}
+
+function limitWords(text: string, limit: number) {
+  const segments = getWordSegments(text);
+  if (segments) {
+    let wordCount = 0;
+    let limitedText = "";
+
+    for (const segment of segments) {
+      if (segment.isWordLike && wordCount >= limit) break;
+      limitedText += segment.segment;
+      if (segment.isWordLike) wordCount += 1;
+    }
+
+    return limitedText;
+  }
+
+  const words = text.trim().split(/\s+/).filter((word) => word.length > 0);
+  if (words.length <= limit) return text;
+  return words.slice(0, limit).join(" ");
+}
+
+function parseKeywords(text: string) {
+  return text.split(",").map((keyword) => keyword.trim()).filter(Boolean);
+}
+
+function limitCommaSeparatedKeywords(text: string, limit: number) {
+  const parts = text.split(",");
+  const limitedParts: string[] = [];
+  let keywordCount = 0;
+
+  for (const part of parts) {
+    if (part.trim()) {
+      if (keywordCount >= limit) break;
+      keywordCount += 1;
+    }
+    limitedParts.push(part);
+  }
+
+  return limitedParts.join(",");
 }
 
 export default function AbstractSubmission() {
@@ -41,14 +170,29 @@ export default function AbstractSubmission() {
   const [trackingId, setTrackingId] = useState("");
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [showErrors, setShowErrors] = useState(false);
+  const [editId, setEditId] = useState<number | null>(null);
+  const [isEditParamReady, setIsEditParamReady] = useState(false);
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false);
+  const [editLoadError, setEditLoadError] = useState("");
+  const [existingFiles, setExistingFiles] = useState<ExistingAbstractFile[]>([]);
+  const [revisionRequest, setRevisionRequest] = useState<RevisionRequest | null>(null);
   const t = useTranslations("abstractSubmission");
   const router = useRouter();
   const { user, isAuthenticated, token } = useAuth();
+  const isEditMode = editId !== null;
+
+  useEffect(() => {
+    const rawEditId = new URLSearchParams(window.location.search).get("edit");
+    const parsedEditId = rawEditId ? Number(rawEditId) : null;
+    setEditId(Number.isInteger(parsedEditId) && parsedEditId !== null && parsedEditId > 0 ? parsedEditId : null);
+    setIsEditParamReady(true);
+  }, []);
   
   // Login guard — redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login?redirect=/abstract-submission");
+      const redirectTarget = `/abstract-submission${window.location.search || ""}`;
+      router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
     }
   }, [isAuthenticated, router]);
 
@@ -70,7 +214,7 @@ export default function AbstractSubmission() {
     coAuthors: [] as { firstName: string, lastName: string, institution: string, email: string }[],
     abstract: { title: "", category: "", type: "", keywords: "" },
     content: { background: "", objective: "", methods: "", results: "", conclusion: "" },
-    file: null as File | null
+    files: [] as File[]
   });
 
   // Autofill user data when logged in
@@ -91,6 +235,77 @@ export default function AbstractSubmission() {
     }
   }, [isAuthenticated, user]);
 
+  useEffect(() => {
+    if (!isEditParamReady || !isEditMode || !editId || !token) return;
+
+    let isMounted = true;
+    const loadEditableAbstract = async () => {
+      setIsLoadingEdit(true);
+      setEditLoadError("");
+      try {
+        const res = await fetch(`${API_URL}/api/abstracts/user/${editId}/edit`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.abstract) {
+          throw new Error(data.error || "Unable to load abstract for revision.");
+        }
+
+        if (!isMounted) return;
+        const abstractData = data.abstract;
+        const latestRevisionRequest = abstractData.latestRevisionRequest || null;
+
+        setFormData(prev => ({
+          ...prev,
+          coAuthors: (abstractData.coAuthors || []).map((coAuthor: any) => ({
+            firstName: coAuthor.firstName || "",
+            lastName: coAuthor.lastName || "",
+            institution: coAuthor.institution || "",
+            email: coAuthor.email || "",
+          })),
+          abstract: {
+            title: abstractData.title || "",
+            category: abstractData.category || "",
+            type: abstractData.presentationType
+              ? abstractData.presentationType.charAt(0).toUpperCase() + abstractData.presentationType.slice(1)
+              : "",
+            keywords: abstractData.keywords || "",
+          },
+          content: {
+            background: abstractData.background || "",
+            objective: abstractData.objective || "",
+            methods: abstractData.methods || "",
+            results: abstractData.results || "",
+            conclusion: abstractData.conclusion || "",
+          },
+          files: [],
+        }));
+        setExistingFiles(
+          abstractData.files && abstractData.files.length > 0
+            ? [...abstractData.files].sort((a: ExistingAbstractFile, b: ExistingAbstractFile) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+            : abstractData.fullPaperUrl
+              ? [{ fileName: "Current abstract PDF", fileUrl: abstractData.fullPaperUrl }]
+              : [],
+        );
+        setRevisionRequest(latestRevisionRequest);
+        setTrackingId(abstractData.trackingId || "");
+        setCurrentStep(latestRevisionRequest && BODY_REVISION_TOPICS.has(latestRevisionRequest.topic) ? 4 : 3);
+      } catch (error) {
+        if (!isMounted) return;
+        setEditLoadError(error instanceof Error ? error.message : "Unable to load abstract for revision.");
+      } finally {
+        if (isMounted) setIsLoadingEdit(false);
+      }
+    };
+
+    loadEditableAbstract();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [editId, isEditMode, isEditParamReady, token]);
+
   const steps = [
     { id: 1, label: t("steps.step1"), icon: <User className="w-5 h-5" /> },
     { id: 2, label: t("steps.step2"), icon: <Users className="w-5 h-5" /> },
@@ -107,11 +322,35 @@ export default function AbstractSubmission() {
     );
   }, [currentStep]);
 
-  // Don't render form until authenticated
-  if (!isAuthenticated) {
+  // Don't render form until authenticated and edit data is ready
+  if (!isAuthenticated || !isEditParamReady || (isEditMode && isLoadingEdit)) {
     return (
       <main className="min-h-screen bg-[#fafafa] flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+      </main>
+    );
+  }
+
+  if (isEditMode && editLoadError) {
+    return (
+      <main className="min-h-screen bg-[#fafafa] flex items-center justify-center px-6">
+        <div className="max-w-lg w-full rounded-[2rem] border border-rose-100 bg-white p-10 text-center shadow-xl">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50">
+            <AlertCircle className="h-8 w-8 text-rose-500" />
+          </div>
+          <h1 className="text-2xl font-black uppercase tracking-tight text-slate-900">
+            Revision Unavailable
+          </h1>
+          <p className="mt-3 text-sm font-medium leading-relaxed text-slate-500">
+            {editLoadError}
+          </p>
+          <Link
+            href="/profile"
+            className="mt-8 inline-flex items-center justify-center rounded-2xl bg-slate-950 px-8 py-4 text-[10px] font-black uppercase tracking-[3px] text-white transition-all hover:bg-gold hover:text-black"
+          >
+            Back to Abstract Tracker
+          </Link>
+        </div>
       </main>
     );
   }
@@ -156,13 +395,17 @@ export default function AbstractSubmission() {
     // Step 3: title min 10 / max 500, category, presentationType, keywords required
     if (currentStep === 3) {
       const { title, category, type, keywords } = formData.abstract;
+      const titleWordCount = countWords(title);
+      const keywordCount = parseKeywords(keywords).length;
       const missing: string[] = [];
       if (!title.trim()) missing.push('Title');
       else if (title.trim().length < 10) missing.push('Title (min 10 chars)');
+      else if (titleWordCount > TITLE_WORD_LIMIT) missing.push(`Title (max ${TITLE_WORD_LIMIT} words)`);
       else if (title.trim().length > 500) missing.push('Title (max 500 chars)');
       if (!category.trim()) missing.push('Submission Theme');
-      if (!type.trim()) missing.push('Presentation Mode');
+      if (!type.trim()) missing.push('Preferred Presentation Mode');
       if (!keywords.trim()) missing.push('Keywords');
+      else if (keywordCount > KEYWORD_LIMIT) missing.push(`Keywords (max ${KEYWORD_LIMIT}, comma separated)`);
       if (missing.length > 0) {
         setShowErrors(true);
         toast.error(`Please fix: ${missing.join(', ')}`);
@@ -170,37 +413,32 @@ export default function AbstractSubmission() {
       }
     }
 
-    // Step 4: per-section min character count (matches API: background/methods/results/conclusion ≥ 50, objective ≥ 20) + total words ≤ 300
+    // Step 4: per-section min words + total words <= 300
     if (currentStep === 4) {
-      const minChars: Record<string, number> = {
-        background: 50,
-        objective: 20,
-        methods: 50,
-        results: 50,
-        conclusion: 50,
-      };
+      const sectionKeys = ['background', 'objective', 'methods', 'results', 'conclusion'];
       const issues: string[] = [];
-      for (const [k, min] of Object.entries(minChars)) {
+      for (const k of sectionKeys) {
         const v = ((formData.content as any)[k] || '').trim();
         const label = k.charAt(0).toUpperCase() + k.slice(1);
+        const sectionWords = countWords(v);
         if (!v) issues.push(label);
-        else if (v.length < min) issues.push(`${label} (min ${min} chars, currently ${v.length})`);
+        else if (sectionWords < SECTION_MIN_WORDS) issues.push(`${label} (min ${SECTION_MIN_WORDS} words)`);
       }
       if (issues.length > 0) {
         setShowErrors(true);
         toast.error(`Please fix: ${issues.join(', ')}`);
         return;
       }
-      const totalText = Object.keys(minChars).map(k => (formData.content as any)[k] || '').join(' ');
-      const totalWords = totalText.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
+      const totalText = sectionKeys.map(k => (formData.content as any)[k] || '').join(' ');
+      const totalWords = countWords(totalText);
       if (totalWords > 300) {
         toast.error(`Total word count (${totalWords}) exceeds the 300-word limit.`);
         return;
       }
-      // File required (matches API: 'Abstract file (PDF) is required')
-      if (!formData.file) {
+      // File required (matches API: at least one abstract PDF is required)
+      if (formData.files.length === 0) {
         setShowErrors(true);
-        toast.error('Please attach the abstract PDF file before continuing.');
+        toast.error(isEditMode ? 'Please attach at least one replacement abstract PDF file before continuing.' : 'Please attach at least one abstract PDF file before continuing.');
         return;
       }
     }
@@ -215,9 +453,12 @@ export default function AbstractSubmission() {
 
   const handleSubmit = async () => {
     // Final guard — file is required by API
-    if (!formData.file) {
-      setSubmitError('Abstract PDF file is required.');
-      toast.error('Please attach the abstract PDF file.');
+    if (formData.files.length === 0) {
+      const fileRequiredMessage = isEditMode
+        ? 'At least one replacement abstract PDF file is required.'
+        : 'At least one abstract PDF file is required.';
+      setSubmitError(fileRequiredMessage);
+      toast.error(fileRequiredMessage);
       return;
     }
 
@@ -244,12 +485,16 @@ export default function AbstractSubmission() {
       if (formData.coAuthors.length > 0) {
         fd.append("coAuthors", JSON.stringify(formData.coAuthors));
       }
-      if (formData.file) {
-        fd.append("abstractFile", formData.file);
-      }
+      formData.files.forEach((file) => {
+        fd.append("abstractFiles", file);
+      });
 
-      const res = await fetch(`${API_URL}/api/abstracts/submit`, {
-        method: "POST",
+      const endpoint = isEditMode && editId
+        ? `${API_URL}/api/abstracts/user/${editId}/resubmit`
+        : `${API_URL}/api/abstracts/submit`;
+
+      const res = await fetch(endpoint, {
+        method: isEditMode ? "PATCH" : "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: fd,
       });
@@ -257,7 +502,7 @@ export default function AbstractSubmission() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setSubmitError(data.error || "Submission failed. Please try again.");
+        setSubmitError(data.error || (isEditMode ? "Resubmission failed. Please try again." : "Submission failed. Please try again."));
         return;
       }
 
@@ -285,6 +530,26 @@ export default function AbstractSubmission() {
             subtitle={t("desc")}
           />
 
+          {isEditMode && (
+            <div className="bg-blue-50/80 border border-blue-100 rounded-2xl p-6 mb-8">
+              <div className="flex gap-4 items-start text-left max-w-4xl mx-auto">
+                <PencilLine className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
+                <div className="min-w-0">
+                  <h4 className="text-sm font-black text-blue-900 uppercase tracking-[2px] mb-2">
+                    Revision Mode
+                  </h4>
+                  <p className="text-sm text-blue-700/80 leading-relaxed">
+                    Update the requested abstract details and upload replacement PDF document(s). The new file(s) will replace the current submitted document(s).
+                  </p>
+                  {revisionRequest && (
+                    <p className="mt-3 text-sm font-bold text-blue-950">
+                      Topic: {getRevisionTopicLabel(revisionRequest.topic)}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-16">
             <div className="flex gap-4 items-start justify-center text-left max-w-3xl mx-auto">
@@ -354,8 +619,18 @@ export default function AbstractSubmission() {
                 {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} categories={categories} showErrors={showErrors} />}
-                {currentStep === 4 && <Step4Content content={formData.content} file={formData.file} setFormData={setFormData} showErrors={showErrors} />}
-                {currentStep === 5 && <Step5Review data={formData} />}
+                {currentStep === 4 && (
+                  <Step4Content
+                    content={formData.content}
+                    files={formData.files}
+                    setFormData={setFormData}
+                    showErrors={showErrors}
+                    isEditMode={isEditMode}
+                    existingFiles={existingFiles}
+                    revisionRequest={revisionRequest}
+                  />
+                )}
+                {currentStep === 5 && <Step5Review data={formData} isEditMode={isEditMode} trackingId={trackingId} />}
               </div>
 
               {/* Navigation Controls */}
@@ -383,8 +658,8 @@ export default function AbstractSubmission() {
                   className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Submitting...</>
-                  ) : currentStep === 5 ? "Submit Final Abstract" : "Proceed to Next Stage"}
+                    <><Loader2 className="w-4 h-4 animate-spin" /> {isEditMode ? "Resubmitting..." : "Submitting..."}</>
+                  ) : currentStep === 5 ? (isEditMode ? "Resubmit Revised Abstract" : "Submit Final Abstract") : "Proceed to Next Stage"}
                   {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
                 </button>
               </div>
@@ -402,7 +677,7 @@ export default function AbstractSubmission() {
               <CheckCircle className="w-12 h-12 text-emerald-500" />
             </div>
             <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight mb-4">
-              Submission Complete
+              {isEditMode ? "Resubmission Complete" : "Submission Complete"}
             </h2>
             {trackingId && (
               <div className="bg-slate-50 rounded-2xl px-6 py-4 mb-4">
@@ -410,18 +685,24 @@ export default function AbstractSubmission() {
                 <p className="text-2xl font-black text-slate-900">{trackingId}</p>
               </div>
             )}
+            {isEditMode ? (
+              <p className="text-lg text-slate-500 font-medium mb-3">
+                Your revised abstract has been resubmitted.<br />Please wait for approval via Email.
+              </p>
+            ) : (
             <p className="text-lg text-slate-500 font-medium mb-3">
               ส่ง Abstract เสร็จสิ้นแล้ว<br/>รอรับการอนุมัติผ่านทาง Email
             </p>
+            )}
             <p className="text-xs font-bold text-slate-400 mb-10 px-6 uppercase tracking-widest">
               Please wait for approval via Email.
             </p>
             <Link 
-              href="/"
+              href={isEditMode ? "/profile" : "/"}
               onClick={() => setIsSubmitted(false)}
               className="px-10 py-5 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[10px] sm:text-[11px] hover:bg-gold hover:text-black shadow-lg transition-all block w-full sm:w-auto"
             >
-              Return to Homepage
+              {isEditMode ? "Back to Abstract Tracker" : "Return to Homepage"}
             </Link>
           </div>
         </div>
@@ -558,9 +839,15 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    const nextValue =
+      name === "title"
+        ? limitWords(value, TITLE_WORD_LIMIT)
+        : name === "keywords"
+          ? limitCommaSeparatedKeywords(value, KEYWORD_LIMIT)
+          : value;
     setFormData((prev: any) => ({
       ...prev,
-      abstract: { ...prev.abstract, [name]: value }
+      abstract: { ...prev.abstract, [name]: nextValue }
     }));
   };
 
@@ -581,7 +868,22 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
       </div>
       
       <div className="space-y-10">
-        <InputGroup label="Complete Abstract Title" name="title" value={data.title} onChange={handleChange} placeholder="ALL CAPS STRONGLY RECOMMENDED" required error={showErrors && (data.title.trim().length < 10 || data.title.trim().length > 500)} />
+        <div className="space-y-2">
+          <InputGroup
+            label="Complete Abstract Title"
+            name="title"
+            value={data.title}
+            onChange={handleChange}
+            placeholder="ALL CAPS STRONGLY RECOMMENDED"
+            required
+            error={showErrors && (data.title.trim().length < 10 || countWords(data.title) > TITLE_WORD_LIMIT || data.title.trim().length > 500)}
+          />
+          <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
+            countWords(data.title) >= TITLE_WORD_LIMIT ? "text-amber-500" : "text-slate-300"
+          }`}>
+            {countWords(data.title)} / {TITLE_WORD_LIMIT} words
+          </p>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-4">
@@ -621,7 +923,7 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
           </div>
           
           <div className="flex flex-col gap-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px]">Presentation Mode <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px]">Prefer Presentation Mode <span className="text-rose-500">*</span></label>
             <div className="flex gap-3">
               {['Oral', 'Poster'].map(type => {
                 let typeLabel = type;
@@ -645,14 +947,45 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
           </div>
         </div>
 
-        <InputGroup label="Key Terminologies (Semicolon separated)" name="keywords" value={data.keywords} onChange={handleChange} placeholder="e.g. Pharmacy; Clinical; Outcomes" required error={showErrors && !data.keywords.trim()} />
+        <div className="space-y-2">
+          <InputGroup
+            label="Keywords"
+            name="keywords"
+            value={data.keywords}
+            onChange={handleChange}
+            placeholder="e.g. Pharmacy, Clinical, Outcomes"
+            required
+            error={showErrors && (!data.keywords.trim() || parseKeywords(data.keywords).length > KEYWORD_LIMIT)}
+          />
+          <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
+            parseKeywords(data.keywords).length >= KEYWORD_LIMIT ? "text-amber-500" : "text-slate-300"
+          }`}>
+            {parseKeywords(data.keywords).length} / {KEYWORD_LIMIT} keywords
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
 // Sub-component: Step 4
-function Step4Content({ content, file, setFormData, showErrors }: { content: any, file: File | null, setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
+function Step4Content({
+  content,
+  files,
+  setFormData,
+  showErrors,
+  isEditMode = false,
+  existingFiles = [],
+  revisionRequest = null,
+}: {
+  content: any,
+  files: File[],
+  setFormData: React.Dispatch<React.SetStateAction<any>>,
+  showErrors: boolean,
+  isEditMode?: boolean,
+  existingFiles?: ExistingAbstractFile[],
+  revisionRequest?: RevisionRequest | null,
+}) {
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
@@ -662,16 +995,59 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = e.target.files?.[0] || null;
-    setFormData((prev: any) => ({ ...prev, file: selected }));
+    const selectedFiles = Array.from(e.target.files || []);
+    e.target.value = "";
+
+    if (selectedFiles.length === 0) return;
+
+    const invalidFiles = selectedFiles.filter((file) => {
+      const isPdfMime = file.type === "application/pdf";
+      const hasPdfExtension = file.name.toLowerCase().endsWith(".pdf");
+      return !isPdfMime && !hasPdfExtension;
+    });
+
+    if (invalidFiles.length > 0) {
+      toast.error("Only PDF files are allowed.");
+      return;
+    }
+
+    const oversizedFile = selectedFiles.find((file) => file.size > MAX_ABSTRACT_FILE_SIZE);
+    if (oversizedFile) {
+      toast.error(`${oversizedFile.name} exceeds the 30MB file limit.`);
+      return;
+    }
+
+    const mergedFiles = [...files];
+    for (const file of selectedFiles) {
+      const isDuplicate = mergedFiles.some(
+        (existing) =>
+          existing.name === file.name &&
+          existing.size === file.size &&
+          existing.lastModified === file.lastModified,
+      );
+      if (!isDuplicate) mergedFiles.push(file);
+    }
+
+    if (mergedFiles.length > MAX_ABSTRACT_FILES) {
+      toast.error(`You can attach up to ${MAX_ABSTRACT_FILES} PDF files.`);
+      return;
+    }
+
+    const totalSize = mergedFiles.reduce((sum, file) => sum + file.size, 0);
+    if (totalSize > MAX_ABSTRACT_TOTAL_SIZE) {
+      toast.error(`Total file size must not exceed ${formatFileSize(MAX_ABSTRACT_TOTAL_SIZE)}.`);
+      return;
+    }
+
+    setFormData((prev: any) => ({ ...prev, files: mergedFiles }));
   };
 
-  const removeFile = () => {
-    setFormData((prev: any) => ({ ...prev, file: null }));
+  const removeFile = (index: number) => {
+    setFormData((prev: any) => ({
+      ...prev,
+      files: prev.files.filter((_: File, fileIndex: number) => fileIndex !== index),
+    }));
   };
-
-  // Word count helper
-  const countWords = (text: string) => text.trim().split(/\s+/).filter((w: string) => w.length > 0).length;
 
   // Per-section word counts
   const sectionWordCounts: Record<string, number> = {};
@@ -682,6 +1058,8 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
   // Total word count across all sections
   const totalWords = Object.values(sectionWordCounts).reduce((a, b) => a + b, 0);
   const wordPercent = Math.min((totalWords / 300) * 100, 100);
+  const attachedSize = files.reduce((sum, file) => sum + file.size, 0);
+  const hasFileError = showErrors && files.length === 0;
 
   const sections = [
     { key: 'background', label: 'Background' },
@@ -711,15 +1089,45 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
           </div>
         </div>
       </div>
+
+      {isEditMode && revisionRequest && (
+        <div className="rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
+          <p className="text-[10px] font-black uppercase tracking-[3px] text-blue-500 mb-2">
+            Rewrite Request
+          </p>
+          <p className="text-sm font-black text-slate-900 uppercase tracking-wide">
+            {getRevisionTopicLabel(revisionRequest.topic)}
+          </p>
+          <p className="mt-3 text-sm font-medium leading-relaxed text-slate-600 whitespace-pre-wrap">
+            {revisionRequest.comment}
+          </p>
+          {revisionRequest.files && revisionRequest.files.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-3">
+              {revisionRequest.files.map((file, index) => (
+                <a
+                  key={`${file.fileUrl}-${index}`}
+                  href={file.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex max-w-full items-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-2 text-xs font-black text-blue-600 hover:text-blue-700"
+                >
+                  <FileText className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{file.fileName || `Revision file ${index + 1}`}</span>
+                  <ExternalLink className="w-3 h-3 shrink-0" />
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       
       <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
         {sections.map(section => {
-          const minChars = section.key === 'objective' ? 20 : 50;
           const currentText = (content[section.key] || '').trim();
-          const hasError = showErrors && currentText.length < minChars;
+          const hasError = showErrors && countWords(currentText) < SECTION_MIN_WORDS;
           return (
           <div key={section.key} className="space-y-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span> <span className="text-[10px] text-slate-400 font-bold normal-case tracking-normal">(min {minChars} chars)</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span></label>
             <textarea 
               name={section.key}
               value={content[section.key]}
@@ -727,57 +1135,110 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
               className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${hasError ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
               placeholder={`Elaborate your ${section.label.toLowerCase()}...`}
             />
-            <div className="flex justify-between items-center">
-              <span className={`text-xs font-bold tracking-wide ${hasError ? 'text-rose-500' : 'text-slate-500'}`}>
-                {currentText.length} / {minChars} chars
-              </span>
-              <span className="text-xs font-bold text-slate-500 tracking-wide">
-                {sectionWordCounts[section.key]} {sectionWordCounts[section.key] === 1 ? 'word' : 'words'}
-              </span>
-            </div>
           </div>
           );
         })}
         
-        <div className="pt-10 border-t border-white/5">
-          <label className="text-sm font-black text-gold uppercase tracking-[2px] block mb-6">Full Abstract Document (PDF FORMAT ONLY)</label>
-          {!file ? (
-            <div className="relative group">
+        <div className="pt-10 border-t border-white/5 flex flex-col gap-5">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">
+              {isEditMode ? "Replacement Abstract Documents (PDF FORMAT ONLY)" : "Full Abstract Documents (PDF FORMAT ONLY)"} <span className="text-rose-500">*</span>
+            </label>
+            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[2px]">
+              {files.length} / {MAX_ABSTRACT_FILES} files • {formatFileSize(attachedSize)} total
+            </p>
+          </div>
+          <div className="rounded-2xl border border-amber-100 bg-amber-50/70 px-5 py-4">
+            <p className="text-xs font-bold leading-relaxed text-amber-800">
+              Note: The text entered above and the attached abstract PDF document(s) must be the same abstract version.
+            </p>
+          </div>
+
+          {isEditMode && existingFiles.length > 0 && (
+            <div className="order-0 rounded-2xl border border-slate-100 bg-slate-50/70 p-5">
+              <p className="text-[10px] font-black uppercase tracking-[3px] text-slate-400 mb-3">
+                Current Submitted Document(s) - will be replaced
+              </p>
+              <div className="space-y-2">
+                {existingFiles.map((file, index) => (
+                  <a
+                    key={`${file.fileUrl}-${index}`}
+                    href={file.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors"
+                  >
+                    <FileText className="w-4 h-4 shrink-0" />
+                    <span className="truncate">
+                      {existingFiles.length > 1 ? `${index + 1}. ` : ""}
+                      {file.fileName || "Current abstract PDF"}
+                    </span>
+                    <ExternalLink className="w-3 h-3 shrink-0" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {files.length < MAX_ABSTRACT_FILES && (
+            <div className="relative group order-2">
               <input 
                 type="file" 
                 accept=".pdf"
+                multiple
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 onChange={handleFileChange}
               />
-              <div className="p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white border-slate-200 group-hover:border-gold group-hover:bg-gold/5">
+              <div className={`p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white group-hover:border-gold group-hover:bg-gold/5 ${
+                hasFileError ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"
+              }`}>
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                     <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
                   </div>
-                  <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">Upload Document</p>
-                  <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">PDF Document Only (Max 30MB)</p>
+                  <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">
+                    {files.length > 0 ? (isEditMode ? "Add More Replacement Documents" : "Add More Documents") : (isEditMode ? "Upload Replacement Documents" : "Upload Documents")}
+                  </p>
+                  <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">
+                    PDF only • max 30MB each • up to {MAX_ABSTRACT_FILES} files
+                  </p>
                 </div>
               </div>
+            </div>
+          )}
+
+          {files.length > 0 ? (
+            <div className="space-y-3 order-1">
+              {files.map((file, index) => (
+                <div key={`${file.name}-${file.size}-${file.lastModified}`} className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <CheckCircle className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-black text-emerald-950 truncate">{file.name}</p>
+                      <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">
+                        {formatFileSize(file.size)} • PDF Document
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={() => removeFile(index)} 
+                    className="p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-rose-400 hover:text-rose-600 transition-colors shadow-sm"
+                    aria-label={`Remove ${file.name}`}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ))}
             </div>
           ) : (
-            <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-4 overflow-hidden">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-black text-emerald-950 truncate">{file.name}</p>
-                  <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                </div>
-              </div>
-              <button 
-                onClick={removeFile} 
-                className="p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-rose-400 hover:text-rose-600 transition-colors shadow-sm"
-                aria-label="Remove file"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
-            </div>
+            hasFileError && (
+              <p className="order-1 text-xs font-bold text-rose-500 uppercase tracking-[2px]">
+                {isEditMode ? "Please attach at least one replacement PDF file." : "Please attach at least one PDF file."}
+              </p>
+            )
           )}
         </div>
       </div>
@@ -786,12 +1247,12 @@ function Step4Content({ content, file, setFormData, showErrors }: { content: any
 }
 
 // Sub-component: Step 5
-function Step5Review({ data }: { data: any }) {
+function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: boolean, trackingId?: string }) {
   return (
     <div className="space-y-10">
       <div className="space-y-2">
         <h2 className="text-2xl lg:text-3xl font-black text-slate-950 uppercase tracking-tight leading-tight">
-          Manuscript <span className="text-blue-600/80">Verification</span>
+          {isEditMode ? "Revision" : "Manuscript"} <span className="text-blue-600/80">Verification</span>
         </h2>
         <p className="text-slate-400 font-bold uppercase tracking-[0.25em] text-[11px]">Phase 05 / Final Audit Protocol</p>
       </div>
@@ -813,7 +1274,7 @@ function Step5Review({ data }: { data: any }) {
             </div>
             <div className="space-y-3">
               <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">Reference</span>
-              <p className="text-xl font-black text-slate-900 uppercase">PRIS-2026-TMP</p>
+              <p className="text-xl font-black text-slate-900 uppercase">{trackingId || "PRIS-2026-TMP"}</p>
             </div>
           </div>
 
@@ -889,17 +1350,25 @@ function Step5Review({ data }: { data: any }) {
           {/* Attached Document */}
           <div className="space-y-10 pt-10 border-t border-slate-100">
             <div className="pb-4 border-b border-slate-200 w-fit">
-              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">Attached Document(s)</span>
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">{isEditMode ? "Replacement Document(s)" : "Attached Document(s)"}</span>
             </div>
-            {data.file ? (
-              <div className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
-                  <FileText className="w-5 h-5 text-emerald-600" />
-                </div>
-                <div className="overflow-hidden">
-                  <p className="text-sm font-black text-emerald-950 truncate">{data.file.name}</p>
-                  <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">PDF Document</p>
-                </div>
+            {data.files.length > 0 ? (
+              <div className="space-y-3">
+                {data.files.map((file: File, index: number) => (
+                  <div key={`${file.name}-${file.size}-${file.lastModified}`} className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-sm font-black text-emerald-950 truncate">
+                        {index + 1}. {file.name}
+                      </p>
+                      <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">
+                        PDF Document • {formatFileSize(file.size)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="p-6 bg-rose-50 rounded-2xl border border-rose-100 flex items-start gap-4">

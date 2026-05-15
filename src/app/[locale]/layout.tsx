@@ -42,7 +42,7 @@ export default async function LocaleLayout({
           }}
         />
         <GlobalRefreshRedirect />
-        <Toaster position="top-center" toastOptions={{ duration: 4000, style: { borderRadius: '12px', padding: '12px 16px', fontSize: '14px' } }} />
+        <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', padding: '12px 16px', fontSize: '14px' } }} />
         <Header />
         {children}
         <Footer />

@@ -109,39 +109,39 @@ export default function SignUpTypePage() {
             <div className="space-y-4 ">
               <Link 
                 href="/signup/student" 
-                className="group flex items-center justify-between p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+                className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
               >
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">{t("student")}</h3>
-                  <p className="text-sm font-medium text-gray-500">{t("studentDesc")}</p>
+                  <p className="text-sm font-medium leading-relaxed text-gray-500 break-words">{t("studentDesc")}</p>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
+                <div className="w-12 h-12 shrink-0 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
                    <div className="text-[10px] font-bold uppercase tracking-widest">{t("go")}</div>
                 </div>
               </Link>
 
               <Link 
                 href="/signup/pharmacist" 
-                className="group flex items-center justify-between p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+                className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
               >
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">{t("pharmacist")}</h3>
-                  <p className="text-sm font-medium text-gray-500">{t("pharmacistDesc")}</p>
+                  <p className="text-sm font-medium leading-relaxed text-gray-500 break-words">{t("pharmacistDesc")}</p>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
+                <div className="w-12 h-12 shrink-0 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
                    <div className="text-[10px] font-bold uppercase tracking-widest">{t("go")}</div>
                 </div>
               </Link>
 
               <Link 
                 href="/signup/healthcare" 
-                className="group flex items-center justify-between p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
+                className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
               >
-                <div>
+                <div className="min-w-0">
                   <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-black">{t("healthcare")}</h3>
-                  <p className="text-sm font-medium text-gray-500">{t("healthcareDesc")}</p>
+                  <p className="text-sm font-medium leading-relaxed text-gray-500 break-words">{t("healthcareDesc")}</p>
                 </div>
-                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
+                <div className="w-12 h-12 shrink-0 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-black group-hover:text-white transition-all text-black border border-gray-100 group-hover:border-black">
                    <div className="text-[10px] font-bold uppercase tracking-widest">{t("go")}</div>
                 </div>
               </Link>

@@ -3,7 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
-import { QrCode, LogOut, Mail, Briefcase, BadgeCheck, FileText, User, Phone, Building2, Globe, Ticket, ArrowRight, Loader2 } from "lucide-react";
+import { QrCode, LogOut, Mail, Briefcase, BadgeCheck, FileText, User, Phone, Building2, Globe, Ticket, ArrowRight, Loader2, GraduationCap, UploadCloud, CheckCircle2, Clock3, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -15,6 +15,20 @@ const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
 interface RegistrationInfo {
   isRegistered: boolean;
   regCode: string | null;
+}
+
+interface StudentEligibilityInfo {
+  id: number;
+  eventCode: string;
+  eventName: string;
+  studentLevel: "postgraduate";
+  status: "pending" | "approved" | "rejected" | "cancelled";
+  documentFileName: string;
+  documentUrl: string;
+  rejectionReason?: string | null;
+  resubmissionCount: number;
+  createdAt: string;
+  reviewedAt?: string | null;
 }
 
 function getDelegateLabel(delegateType?: string, role?: string): string {
@@ -48,14 +62,32 @@ function getStatusBadge(status?: string) {
   }
 }
 
+function getEligibilityBadge(status?: StudentEligibilityInfo["status"]) {
+  switch (status) {
+    case "approved":
+      return { label: "Approved for this event", className: "bg-emerald-50 text-emerald-700 border-emerald-100", icon: CheckCircle2 };
+    case "pending":
+      return { label: "Pending review", className: "bg-amber-50 text-amber-700 border-amber-100", icon: Clock3 };
+    case "rejected":
+      return { label: "Rejected", className: "bg-rose-50 text-rose-700 border-rose-100", icon: AlertCircle };
+    default:
+      return { label: "Not submitted", className: "bg-slate-50 text-slate-600 border-slate-200", icon: GraduationCap };
+  }
+}
+
 export default function ProfilePage() {
   const containerRef = useRef<HTMLDivElement>(null!);
+  const eligibilityFileRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { logout, user, token, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<"profile" | "abstracts">("profile");
   const [profileData, setProfileData] = useState(user);
   const [registration, setRegistration] = useState<RegistrationInfo | null>(null);
   const [registrationLoading, setRegistrationLoading] = useState(!!EVENT_CODE);
+  const [studentEligibility, setStudentEligibility] = useState<StudentEligibilityInfo | null>(null);
+  const [eligibilityLoading, setEligibilityLoading] = useState(false);
+  const [eligibilitySubmitting, setEligibilitySubmitting] = useState(false);
+  const [eligibilityFileName, setEligibilityFileName] = useState("");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -91,6 +123,64 @@ export default function ProfilePage() {
       .catch(() => {})
       .finally(() => setRegistrationLoading(false));
   }, [token]);
+
+  const fetchStudentEligibility = async () => {
+    if (!token || !EVENT_CODE || profileData?.role !== "pharmacist") return;
+    setEligibilityLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/events/${encodeURIComponent(EVENT_CODE)}/student-eligibility/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStudentEligibility(data.eligibility ?? null);
+      }
+    } catch {
+      toast.error("Failed to load postgraduate eligibility status.");
+    } finally {
+      setEligibilityLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudentEligibility();
+  }, [token, profileData?.role]);
+
+  const submitStudentEligibility = async () => {
+    if (!token || !EVENT_CODE) return;
+    const file = eligibilityFileRef.current?.files?.[0];
+    if (!file) {
+      toast.error("Please attach a student verification document.");
+      return;
+    }
+
+    setEligibilitySubmitting(true);
+    try {
+      const fd = new FormData();
+      fd.append("verificationDoc", file);
+
+      const res = await fetch(`${API_URL}/api/events/${encodeURIComponent(EVENT_CODE)}/student-eligibility-requests`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd,
+      });
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        toast.error(data.error || "Failed to submit postgraduate eligibility request.");
+        return;
+      }
+
+      toast.success("Postgraduate student-rate request submitted.");
+      setEligibilityFileName("");
+      if (eligibilityFileRef.current) eligibilityFileRef.current.value = "";
+      await fetchStudentEligibility();
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setEligibilitySubmitting(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -168,7 +258,8 @@ export default function ProfilePage() {
 
         {/* ─── Tab: Profile (Ticket) ─── */}
         {activeTab === "profile" && (
-          <div className="w-full bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden flex flex-col md:flex-row fade-in-stagger relative">
+          <div className="space-y-6 fade-in-stagger">
+          <div className="w-full bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden flex flex-col md:flex-row relative">
 
             {/* Subtle Perforation Line on Mobile */}
             <div className="block md:hidden absolute left-0 right-0 top-[60%] border-t-2 border-dashed border-slate-200 z-20" />
@@ -302,6 +393,132 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
+          </div>
+          {profileData.role === "pharmacist" && EVENT_CODE && (
+            <div className="w-full bg-white rounded-[2rem] shadow-lg shadow-slate-200/40 border border-slate-200/70 overflow-hidden">
+              <div className="p-7 md:p-8 border-b border-slate-100 flex flex-col lg:flex-row gap-4 lg:items-start lg:justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                    <GraduationCap className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                      Postgraduate Student Rate
+                    </h3>
+                    <p className="text-sm text-slate-500 font-medium mt-1 max-w-2xl">
+                      For licensed pharmacists currently enrolled in a Master&apos;s Degree or Doctoral Degree/Doctorate program. Approval is valid only for this event.
+                    </p>
+                  </div>
+                </div>
+                {(() => {
+                  const badge = getEligibilityBadge(studentEligibility?.status);
+                  const Icon = badge.icon;
+                  return (
+                    <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-[10px] font-black uppercase tracking-[2px] ${badge.className}`}>
+                      <Icon className="w-4 h-4" />
+                      {badge.label}
+                    </span>
+                  );
+                })()}
+              </div>
+
+              <div className="p-7 md:p-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
+                    <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 mb-2">
+                      Requested Level
+                    </p>
+                    <p className="text-lg font-black text-slate-900">Postgraduate only</p>
+                    <p className="text-sm text-slate-500 mt-1">
+                      Master&apos;s Degree and Doctoral Degree/Doctorate are grouped as postgraduate.
+                    </p>
+                  </div>
+
+                  {eligibilityLoading ? (
+                    <div className="flex items-center gap-3 text-sm font-semibold text-slate-500">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Loading eligibility status...
+                    </div>
+                  ) : studentEligibility ? (
+                    <div className="rounded-2xl border border-slate-200 p-5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Document</p>
+                          <p className="text-sm font-bold text-slate-800 mt-1 break-all">{studentEligibility.documentFileName}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Submitted</p>
+                          <p className="text-sm font-bold text-slate-800 mt-1">
+                            {new Date(studentEligibility.createdAt).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      {studentEligibility.status === "rejected" && studentEligibility.rejectionReason && (
+                        <div className="mt-4 rounded-xl bg-rose-50 border border-rose-100 p-4">
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-rose-500">Reason</p>
+                          <p className="text-sm text-rose-900 font-semibold mt-1">{studentEligibility.rejectionReason}</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-500 font-medium">
+                      No postgraduate student-rate request has been submitted for this event yet.
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 p-5 bg-white">
+                  {studentEligibility?.status === "approved" ? (
+                    <div className="h-full flex flex-col items-center justify-center text-center py-8">
+                      <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
+                      <p className="font-black text-slate-900">Approved</p>
+                      <p className="text-sm text-slate-500 mt-1">
+                        You can use postgraduate student-rate tickets for this event.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm font-black text-slate-900 mb-2">
+                          Student Verification Document <span className="text-rose-500">*</span>
+                        </p>
+                        <div className="relative group cursor-pointer">
+                          <input
+                            ref={eligibilityFileRef}
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                            onChange={(event) => setEligibilityFileName(event.target.files?.[0]?.name || "")}
+                          />
+                          <div className={`min-h-[108px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 px-4 text-center transition-all ${
+                            eligibilityFileName
+                              ? "border-slate-900 bg-slate-50"
+                              : "border-slate-300 bg-slate-50/60 group-hover:border-blue-400 group-hover:bg-blue-50/40"
+                          }`}>
+                            <UploadCloud className={`w-7 h-7 ${eligibilityFileName ? "text-slate-900" : "text-slate-400 group-hover:text-blue-500"}`} />
+                            <span className="text-sm font-bold text-slate-700 break-all">
+                              {eligibilityFileName || "PDF, JPG, or PNG"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-xs leading-relaxed text-slate-500">
+                        This request is only for postgraduate student-rate eligibility and must be reviewed again for each event.
+                      </p>
+                      <button
+                        onClick={submitStudentEligibility}
+                        disabled={eligibilitySubmitting || !eligibilityFileName}
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-[11px] font-black uppercase tracking-[2px] text-white transition-all hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {eligibilitySubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
+                        {studentEligibility?.status === "rejected" ? "Resubmit Document" : studentEligibility?.status === "pending" ? "Replace Document" : "Submit Request"}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           </div>
         )}
 

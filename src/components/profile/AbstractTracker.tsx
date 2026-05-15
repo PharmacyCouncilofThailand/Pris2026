@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Link } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import {
   FileText,
@@ -13,6 +14,7 @@ import {
   ExternalLink,
   Users,
   Inbox,
+  PencilLine,
 } from "lucide-react";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
@@ -26,6 +28,34 @@ interface CoAuthor {
   country?: string;
 }
 
+interface AbstractFile {
+  id?: number;
+  fileName: string;
+  fileUrl: string;
+  fileType?: string;
+  fileSize?: number;
+  sortOrder?: number;
+}
+
+interface RevisionRequestFile {
+  id?: number;
+  fileName: string;
+  fileUrl: string;
+  fileType?: string;
+  fileSize?: number;
+  createdAt?: string;
+}
+
+interface RevisionRequest {
+  id: number;
+  topic: string;
+  comment: string;
+  status: string;
+  createdAt: string;
+  resubmittedAt?: string | null;
+  files?: RevisionRequestFile[];
+}
+
 interface AbstractItem {
   id: number;
   trackingId: string;
@@ -35,12 +65,15 @@ interface AbstractItem {
   status: string;
   keywords: string;
   background: string;
+  objective?: string;
   methods: string;
   results: string;
   conclusion: string;
   fullPaperUrl?: string;
   createdAt: string;
   coAuthors: CoAuthor[];
+  files?: AbstractFile[];
+  latestRevisionRequest?: RevisionRequest | null;
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
@@ -65,7 +98,29 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; 
     border: "border-rose-200",
     icon: XCircle,
   },
+  revision: {
+    label: "Rewrite Requested",
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    icon: PencilLine,
+  },
 };
+
+const REVISION_TOPIC_LABELS: Record<string, string> = {
+  title: "Complete Abstract Title",
+  keywords: "Keywords",
+  background: "Background",
+  objective: "Objective",
+  methods: "Methods",
+  results: "Results",
+  conclusion: "Conclusion",
+  documents: "Attached Documents",
+  other: "Other",
+};
+
+const getRevisionTopicLabel = (topic?: string) =>
+  topic ? REVISION_TOPIC_LABELS[topic] || topic : "Revision Request";
 
 export default function AbstractTracker() {
   const { token } = useAuth();
@@ -137,6 +192,14 @@ export default function AbstractTracker() {
         const StatusIcon = status.icon;
         const isExpanded = expandedId === item.id;
         const typeLabel = item.presentationType === "oral" ? "Oral" : "Poster";
+        const revisionRequest = item.latestRevisionRequest;
+        const revisionFiles = revisionRequest?.files || [];
+        const documentFiles =
+          item.files && item.files.length > 0
+            ? [...item.files].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+            : item.fullPaperUrl
+              ? [{ fileName: "View PDF", fileUrl: item.fullPaperUrl }]
+              : [];
 
         return (
           <div
@@ -199,6 +262,48 @@ export default function AbstractTracker() {
                   </span>
                 </div>
 
+                {item.status === "revision" && (
+                  <div className="mt-6 rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
+                    <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black text-blue-500 uppercase tracking-[3px] mb-2">
+                          Rewrite Requested
+                        </p>
+                        <p className="text-sm font-black text-slate-900 uppercase tracking-wide">
+                          {getRevisionTopicLabel(revisionRequest?.topic)}
+                        </p>
+                        <p className="mt-3 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                          {revisionRequest?.comment || "Please revise this abstract and resubmit the replacement document(s)."}
+                        </p>
+                        {revisionFiles.length > 0 && (
+                          <div className="mt-4 flex flex-wrap gap-3">
+                            {revisionFiles.map((file, index) => (
+                              <a
+                                key={`${file.fileUrl}-${index}`}
+                                href={file.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex max-w-full items-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-2 text-xs font-black text-blue-600 hover:text-blue-700 transition-colors"
+                              >
+                                <FileText className="w-4 h-4 shrink-0" />
+                                <span className="truncate">{file.fileName || `Revision file ${index + 1}`}</span>
+                                <ExternalLink className="w-3 h-3 shrink-0" />
+                              </a>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <Link
+                        href={`/abstract-submission?edit=${item.id}`}
+                        className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3 text-[10px] font-black uppercase tracking-[2px] text-white shadow-lg transition-all hover:bg-gold hover:text-black"
+                      >
+                        <PencilLine className="w-4 h-4" />
+                        Revise Abstract
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
                 {/* Info Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
                   <div>
@@ -216,17 +321,26 @@ export default function AbstractTracker() {
                     <p className="text-sm font-bold text-slate-700">{item.keywords || "—"}</p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">Document</p>
-                    {item.fullPaperUrl ? (
-                      <a
-                        href={item.fullPaperUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                      >
-                        <FileText className="w-4 h-4" /> View PDF
-                        <ExternalLink className="w-3 h-3" />
-                      </a>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">Documents ({documentFiles.length})</p>
+                    {documentFiles.length > 0 ? (
+                      <div className="space-y-2">
+                        {documentFiles.map((file, index) => (
+                          <a
+                            key={`${file.fileUrl}-${index}`}
+                            href={file.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                          >
+                            <FileText className="w-4 h-4 shrink-0" />
+                            <span className="truncate">
+                              {documentFiles.length > 1 ? `${index + 1}. ` : ""}
+                              {file.fileName || "View PDF"}
+                            </span>
+                            <ExternalLink className="w-3 h-3 shrink-0" />
+                          </a>
+                        ))}
+                      </div>
                     ) : (
                       <p className="text-sm font-bold text-slate-400">—</p>
                     )}
@@ -237,6 +351,7 @@ export default function AbstractTracker() {
                 <div className="mt-8 space-y-5">
                   {[
                     { label: "Background", value: item.background },
+                    { label: "Objective", value: item.objective },
                     { label: "Methods", value: item.methods },
                     { label: "Results", value: item.results },
                     { label: "Conclusion", value: item.conclusion },
