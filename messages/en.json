@@ -33,7 +33,8 @@
   "hero": {
     "registerNow": "Register Now",
     "submitAbstract": "Submit Abstract",
-    "scrollDown": "เลื่อนหรือปัดหน้าจอเพื่อเข้าสู่เว็บไซต์ / Swipe up to Enter main website"
+    "scrollDown": "ปัดขึ้นเพื่อเข้าสู่เว็บไซต์",
+    "scrollDownSecondary": "SWIPE UP TO ENTER"
   },
   "welcome": {
     "welcomeMessages": "OFFICIAL ADDRESSES",

@@ -33,7 +33,8 @@
   "hero": {
     "registerNow": "ลงทะเบียน",
     "submitAbstract": "ส่งผลงานวิจัย",
-    "scrollDown": "เลื่อนหรือปัดหน้าจอเพื่อเข้าสู่เว็บไซต์"
+    "scrollDown": "ปัดขึ้นเพื่อเข้าสู่เว็บไซต์",
+    "scrollDownSecondary": "SWIPE UP TO ENTER"
   },
   "welcome": {
     "welcomeMessages": "OFFICIAL ADDRESSES",

@@ -28,8 +28,26 @@ const HERO_CFG = {
   mobile: { initialScale: 1.4, initialY: "15vh" },
 } as const;
 
+const INTRO_TEXT = "PRIS 2026";
+const INTRO_CHARS = INTRO_TEXT.split("");
+
+const PARTNERS = [
+  { name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", scale: "scale-[1.4]" },
+  { name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", scale: "scale-[1.5]" },
+  { name: "Pharmacy Administration College", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", scale: "" },
+  { name: "Consumer Protection Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยคุ้มครอง.png", scale: "scale-[1.4]" },
+  { name: "Community Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png", scale: "" },
+  { name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", scale: "" },
+  { name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", scale: "" },
+  { name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", scale: "scale-[1.4]" },
+  { name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png", scale: "scale-[0.85]" },
+] as const;
+
+const PARTNER_LOOPS = [0, 1, 2] as const;
+
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const maskRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomTargetRef = useRef<SVGTSpanElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
@@ -89,12 +107,12 @@ export default function Hero() {
 
   useGSAP(
     () => {
-      if (!svgRef.current) return;
+      if (!maskRef.current || !svgRef.current) return;
       heroCompleteRef.current = false;
 
       /* Returning visitor: skip all animation */
       if (hasPlayed()) {
-        gsap.set(svgRef.current, { display: "none" });
+        gsap.set(maskRef.current, { display: "none" });
         gsap.set(logoRef.current, { opacity: 1, y: 0, scale: 1 });
         gsap.set(countdownRef.current, { opacity: 1, y: 0 });
         gsap.set(infoRef.current, { opacity: 1, y: 0 });
@@ -107,7 +125,7 @@ export default function Hero() {
 
       /* First visit: full cinematic intro */
       // Initial states
-      gsap.set(svgRef.current, { scale: 1, opacity: 1 });
+      gsap.set(maskRef.current, { scale: 1, opacity: 1 });
       gsap.set(hintRef.current, { opacity: 0 });
       gsap.set(logoRef.current, { opacity: 0 });
       gsap.set(infoRef.current, { opacity: 0, y: 30 });
@@ -119,6 +137,8 @@ export default function Hero() {
 
       // Device settings
       const isMobile = window.innerWidth <= 1024; // Treat tablets as mobile for scrolling performance
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const shouldSkipIntro = isMobile || prefersReducedMotion;
       const { initialScale, initialY } = isMobile
         ? HERO_CFG.mobile
         : HERO_CFG.desktop;
@@ -130,13 +150,13 @@ export default function Hero() {
 
       // Calculate zoom origin (center of "S")
       const calcOrigin = () => {
-        if (!svgRef.current || !zoomTargetRef.current) return;
+        if (!maskRef.current || !svgRef.current || !zoomTargetRef.current) return;
         const svg = svgRef.current.getBoundingClientRect();
         const tgt = zoomTargetRef.current.getBoundingClientRect();
         if (svg.width === 0 || svg.height === 0) return;
         const ox = ((tgt.left + tgt.width / 2 - svg.left) / svg.width) * 100;
         const oy = ((tgt.top + tgt.height / 2 - svg.top) / svg.height) * 100;
-        gsap.set(svgRef.current, { transformOrigin: `${ox}% ${oy}%` });
+        gsap.set(maskRef.current, { transformOrigin: `${ox}% ${oy}%` });
       };
       calcOrigin();
       document.fonts?.ready.then(calcOrigin);
@@ -156,12 +176,14 @@ export default function Hero() {
 
       // Block keyboard scrolling immediately
       window.addEventListener("keydown", preventKeyScroll, { passive: false });
-      window.addEventListener("touchmove", preventTouchMove, { passive: false });
+      if (isMobile) {
+        window.addEventListener("touchmove", preventTouchMove, { passive: false });
+      }
 
       const tlZoom = gsap.timeline({ paused: true });
       tlZoom
         .to(
-          svgRef.current,
+          maskRef.current,
           {
             scale: HERO_CFG.maskScale,
             ease: "power2.in",
@@ -170,7 +192,7 @@ export default function Hero() {
           },
           0,
         )
-        .to(svgRef.current, { opacity: 0, ease: "none", duration: 0.1 }, 0.9)
+        .to(maskRef.current, { opacity: 0, ease: "none", duration: 0.1 }, 0.9)
         .to(hintRef.current, { opacity: 0, duration: 0.1 }, 0);
 
       // Phase 3 (Auto + Locked): Reveal brand
@@ -187,7 +209,7 @@ export default function Hero() {
           heroCompleteRef.current = true;
           markPlayed();
 
-          gsap.set(svgRef.current, { display: "none" });
+          gsap.set(maskRef.current, { display: "none" });
         },
       });
       if (isMobile) {
@@ -213,15 +235,11 @@ export default function Hero() {
       let scrollAccum = 0;
       const maxScroll = window.innerHeight * HERO_CFG.zoomScrollDistance;
       let autoTriggered = false;
+      let hintTweenKilled = false;
+      let wheelRaf = 0;
 
-      const handleWheel = (e: WheelEvent) => {
-        e.preventDefault();
-        if (autoTriggered) return; // Already triggered
-
-        // Kill any pending fade-in of hintRef to prevent conflict with tlZoom
-        gsap.killTweensOf(hintRef.current, "opacity");
-
-        scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + e.deltaY));
+      const flushWheelProgress = () => {
+        wheelRaf = 0;
         const progress = scrollAccum / maxScroll;
         tlZoom.progress(progress);
 
@@ -231,7 +249,7 @@ export default function Hero() {
           window.addEventListener("wheel", preventPostZoomWheel, { passive: false });
           gsap.to(tlZoom, {
             progress: 1,
-            duration: 0.4,
+            duration: 0.35,
             ease: "power2.in",
             onComplete: () => { 
               gsap.set(hintRef.current, { display: "none" });
@@ -241,16 +259,35 @@ export default function Hero() {
         }
       };
 
+      const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        if (autoTriggered) return; // Already triggered
+
+        if (!hintTweenKilled) {
+          gsap.killTweensOf(hintRef.current, "opacity");
+          hintTweenKilled = true;
+        }
+
+        scrollAccum = Math.min(maxScroll, Math.max(0, scrollAccum + e.deltaY));
+        if (!wheelRaf) {
+          wheelRaf = window.requestAnimationFrame(flushWheelProgress);
+        }
+      };
+
       const triggerAutoPlay = () => {
         autoTriggered = true;
+        if (wheelRaf) {
+          window.cancelAnimationFrame(wheelRaf);
+          wheelRaf = 0;
+        }
         gsap.killTweensOf(hintRef.current);
-        gsap.set(svgRef.current, { display: "none" });
+        gsap.set(maskRef.current, { display: "none" });
         gsap.set(hintRef.current, { display: "none" });
         tlAuto.play();
       };
 
       const bindInteractions = () => {
-        if (isMobile) {
+        if (shouldSkipIntro) {
           triggerAutoPlay();
         } else {
           window.addEventListener("wheel", handleWheel, { passive: false });
@@ -260,8 +297,8 @@ export default function Hero() {
       // Phase 1 (Auto): Letters stagger in
       const gradientLetters = svgRef.current.querySelectorAll(".gradient-letter");
       
-      if (isMobile) {
-        // Mobile optimization: Skip SVG Mask and Scroll Zoom entirely for performance
+      if (shouldSkipIntro) {
+        // Mobile/reduced-motion optimization: skip the SVG zoom intro.
         triggerAutoPlay();
       } else if (gradientLetters.length) {
         gsap.set(gradientLetters, { opacity: 0 }); // Hide gradient text initially
@@ -294,6 +331,9 @@ export default function Hero() {
         window.removeEventListener("wheel", preventPostZoomWheel);
         window.removeEventListener("keydown", preventKeyScroll);
         window.removeEventListener("touchmove", preventTouchMove);
+        if (wheelRaf) {
+          window.cancelAnimationFrame(wheelRaf);
+        }
         document.body.style.overflow = "";
         document.documentElement.style.overflow = "";
         tlZoom.kill();
@@ -308,25 +348,7 @@ export default function Hero() {
       ref={containerRef}
       className="relative w-full min-h-[100svh] overflow-hidden bg-black flex flex-col justify-center items-center isolate"
     >
-      {/* Background: BG2Monly.webp for mobile, BGonly.webp for desktop */}
-      <Image
-        src="/assets/Img/BG/BG2Monly.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        quality={90}
-        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none lg:hidden"
-      />
-      <Image
-        src="/assets/Img/BG/BGonly.webp"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        quality={90}
-        className="absolute inset-0 w-full h-full object-cover opacity-90 z-0 pointer-events-none hidden lg:block"
-      />
+      <div className="hero-bg absolute inset-0 z-0 pointer-events-none opacity-90" />
 
       {/* Subtle vignette overlay for depth */}
       <div className="absolute inset-0 z-0 pointer-events-none"
@@ -435,19 +457,9 @@ export default function Hero() {
           {/* Partner logos marquee — full width edge-to-edge */}
           <div className="relative w-full overflow-hidden">
             <div className="inline-flex animate-partner-scroll items-center py-1">
-              {[...Array(3)].map((_, i) => (
+              {PARTNER_LOOPS.map((i) => (
                 <React.Fragment key={i}>
-                  {[
-                    { name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", scale: "scale-[1.4]" },
-                    { name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", scale: "scale-[1.5]" },
-                    { name: "Pharmacy Administration College", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", scale: "" },
-                    { name: "Consumer Protection Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยคุ้มครอง.png", scale: "scale-[1.4]" },
-                    { name: "Community Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png", scale: "" },
-                    { name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", scale: "" },
-                    { name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", scale: "" },
-                    { name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", scale: "scale-[1.4]" },
-                    { name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png", scale: "scale-[0.85]" },
-                  ].map((partner, index) => (
+                  {PARTNERS.map((partner, index) => (
                     <div
                       key={`partner-${i}-${index}`}
                       className="hero-partner-item flex items-center justify-center flex-shrink-0"
@@ -476,13 +488,18 @@ export default function Hero() {
             --hero-bottom: max(env(safe-area-inset-bottom), 0.75rem);
             padding: var(--hero-top) var(--hero-x) var(--hero-bottom);
           }
+          .hero-bg {
+            background-image: url("/assets/Img/BG/BG2Monly.webp");
+            background-position: center;
+            background-size: cover;
+          }
           .hero-main {
             gap: clamp(0.55rem, 1.25svh, 1.35rem);
             padding-block: clamp(0.15rem, 1.1svh, 0.85rem);
           }
           .hero-logo-image {
-            width: clamp(18.5rem, 86vw, 52.5rem);
-            max-height: clamp(6.25rem, 24svh, 16.5rem);
+            width: clamp(20rem, 90vw, 58rem);
+            max-height: clamp(7rem, 28svh, 18.5rem);
           }
           .hero-info {
             max-width: min(92vw, 42rem);
@@ -565,8 +582,8 @@ export default function Hero() {
               gap: clamp(0.45rem, 1svh, 0.75rem);
             }
             .hero-logo-image {
-              width: min(93vw, 26rem);
-              max-height: 22svh;
+              width: min(95vw, 28rem);
+              max-height: 24svh;
             }
             .hero-info {
               max-width: min(92vw, 22rem);
@@ -645,13 +662,16 @@ export default function Hero() {
               gap: clamp(0.8rem, 1.45svh, 1.5rem);
             }
             .hero-logo-image {
-              width: clamp(32rem, 64vw, 52.5rem);
-              max-height: clamp(9rem, 26svh, 17rem);
+              width: clamp(36rem, 68vw, 58rem);
+              max-height: clamp(10rem, 29svh, 19rem);
             }
           }
           @media (min-width: 1024px) {
+            .hero-bg {
+              background-image: url("/assets/Img/BG/BGonly.webp");
+            }
             .hero-logo-image {
-              width: clamp(36rem, 48vw, 52.5rem);
+              width: clamp(40rem, 54vw, 58rem);
             }
             .hero-partner-logo {
               width: clamp(3.25rem, 3.6vw, 4rem);
@@ -662,11 +682,14 @@ export default function Hero() {
       </div>
 
       {/* SVG Mask Container */}
-      <div className="absolute inset-0 w-full h-full z-[1] pointer-events-none overflow-hidden">
+      <div
+        ref={maskRef}
+        className="absolute inset-0 w-full h-full z-[1] pointer-events-none overflow-hidden will-change-transform transform-gpu"
+        style={{ backfaceVisibility: "hidden" }}
+      >
         <svg
           ref={svgRef}
-          className="w-full h-full absolute top-0 left-0 will-change-transform transform-gpu"
-          style={{ backfaceVisibility: "hidden", perspective: 1000 }}
+          className="w-full h-full absolute top-0 left-0"
           width="100%"
           height="100%"
         >
@@ -688,33 +711,15 @@ export default function Hero() {
             y="54%"
             dominantBaseline="central"
             textAnchor="middle"
-            className="font-black text-[13vw] sm:text-[11vw] md:text-[10vw] font-outfit tracking-tighter"
+            className="font-black text-[16vw] sm:text-[14vw] md:text-[12vw] font-outfit tracking-tighter"
             fill="url(#prisGradient)"
             pointerEvents="none"
           >
-            {"PRIS 2026".split("").map((char, i) => (
-              <tspan key={i} className="gradient-letter">
-                {char}
-              </tspan>
-            ))}
-          </text>
-
-
-
-          {/* Invisible replica for measuring the "S" coordinate */}
-          <text
-            x="50%"
-            y="54%"
-            dominantBaseline="central"
-            textAnchor="middle"
-            className="font-black text-[13vw] sm:text-[11vw] md:text-[10vw] font-outfit tracking-tighter"
-            fill="transparent"
-            pointerEvents="none"
-          >
-            {"PRIS 2026".split("").map((char, i) => (
-              <tspan 
-                key={i} 
+            {INTRO_CHARS.map((char, i) => (
+              <tspan
+                key={`${char}-${i}`}
                 ref={char === "S" ? zoomTargetRef : null}
+                className="gradient-letter"
               >
                 {char}
               </tspan>
@@ -729,9 +734,14 @@ export default function Hero() {
         className="absolute bottom-8 md:bottom-12 left-0 w-full flex flex-col items-center justify-center z-[2] transition-opacity duration-300"
         style={{ opacity: 0 }}
       >
-        <div className="flex flex-col items-center gap-2 text-black text-xs sm:text-sm font-semibold uppercase tracking-widest px-4 text-center">
-          <span>{t('scrollDown')}</span>
-          <ChevronDown className="w-4 h-4 text-black animate-bounce" />
+        <div className="flex flex-col items-center gap-1.5 px-4 text-center text-black">
+          <span className="text-[11px] sm:text-xs font-semibold leading-none tracking-[0.18em]">
+            {t('scrollDown')}
+          </span>
+          <span className="text-[9px] sm:text-[10px] font-semibold leading-none tracking-[0.28em]">
+            {t('scrollDownSecondary')}
+          </span>
+          <ChevronDown className="mt-1 w-4 h-4 text-black animate-bounce" />
         </div>
       </div>
     </section>

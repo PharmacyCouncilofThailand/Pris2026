@@ -31,6 +31,7 @@ export default function StickyStackWrapper({
           scale: 0.85,
           opacity: 0,
           ease: "none",
+          force3D: true,
           scrollTrigger: {
             trigger: wrapperRef.current,
             start: "top top",
@@ -38,6 +39,8 @@ export default function StickyStackWrapper({
             pin: true,
             pinSpacing: false, // Prevents pushing down the next section, allowing it to slide over
             scrub: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
           },
         });
         return () => tl.kill();
@@ -47,6 +50,8 @@ export default function StickyStackWrapper({
          // Mobile: natural scroll, no pinning or scaling down
          gsap.set(innerRef.current, { scale: 1, opacity: 1 });
       });
+
+      return () => mm.revert();
     },
     { scope: wrapperRef }
   );

@@ -45,6 +45,8 @@ const mockupSponsors = [
   }
 ];
 
+const SHOW_MOCKUP_SPONSORS = false;
+
 export default function SponsorshipPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("sponsorship");
@@ -138,42 +140,43 @@ export default function SponsorshipPage() {
             </div>
           </div>
 
-          {/* Mockup Sponsors */}
-          <div className="content-block mb-14">
-            <div className="text-center mb-10 md:mb-14">
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
-                SPONSOR
-              </h2>
-            </div>
-            {mockupSponsors.map((tierData, index) => (
-              <div key={index} className="mb-14 last:mb-0">
-                <div className="flex flex-col items-center text-center mb-8">
-                  <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gray-400 mb-4">
-                    {t("tierLabel")} {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-6 pb-4 border-b border-gray-200">
-                    {tierData.tier}
-                  </h2>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-20">
-                  {tierData.sponsors.map((sponsor) => (
-                    <div 
-                      key={sponsor.id} 
-                      className="relative flex items-center justify-center w-28 h-20 sm:w-40 sm:h-24 md:w-56 md:h-32"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={sponsor.logo}
-                        alt={sponsor.name}
-                        className="object-contain w-full h-full max-w-[80%] max-h-[80%]"
-                      />
-                    </div>
-                  ))}
-                </div>
+          {SHOW_MOCKUP_SPONSORS && (
+            <div className="content-block mb-14">
+              <div className="text-center mb-10 md:mb-14">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
+                  SPONSOR
+                </h2>
               </div>
-            ))}
-          </div>
+              {mockupSponsors.map((tierData, index) => (
+                <div key={index} className="mb-14 last:mb-0">
+                  <div className="flex flex-col items-center text-center mb-8">
+                    <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gray-400 mb-4">
+                      {t("tierLabel")} {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-6 pb-4 border-b border-gray-200">
+                      {tierData.tier}
+                    </h2>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-20">
+                    {tierData.sponsors.map((sponsor) => (
+                      <div 
+                        key={sponsor.id} 
+                        className="relative flex items-center justify-center w-28 h-20 sm:w-40 sm:h-24 md:w-56 md:h-32"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={sponsor.logo}
+                          alt={sponsor.name}
+                          className="object-contain w-full h-full max-w-[80%] max-h-[80%]"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
         </div>
       </section>
