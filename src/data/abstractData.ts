@@ -2,8 +2,8 @@ export const abstractTimeline = [
   {
     label: "Abstract Submission Round 1",
     labelTh: "Abstract รอบ 1",
-    date: "15 May - 10 June 2026",
-    dateTh: "15 พฤษภาคม 2569 - 10 มิถุนายน 2569",
+    date: "1 June - 10 June 2026",
+    dateTh: "1 มิถุนายน 2569 - 10 มิถุนายน 2569",
     status: "upcoming",
     color: "blue",
   },
@@ -51,8 +51,8 @@ export const submissionGuidelines = {
     {
       label: "Abstract Submission Round 1",
       labelTh: "Abstract รอบ 1",
-      value: "15 May - 10 June 2026",
-      valueTh: "15 พฤษภาคม 2569 - 10 มิถุนายน 2569",
+      value: "1 June - 10 June 2026",
+      valueTh: "1 มิถุนายน 2569 - 10 มิถุนายน 2569",
       highlight: true,
     },
     {
@@ -81,13 +81,13 @@ export const submissionGuidelines = {
   presenterRegistrationNoteSegments: [
     { text: "If you " },
     { text: "submit your abstract during Round 1", accent: true },
-    { text: " (15 May - 10 June 2026) and your abstract " },
+    { text: " (1 June - 10 June 2026) and your abstract " },
     { text: "must be approved only", accent: true },
     { text: ", you will still be eligible for the Early Bird registration rate of THB 1,250 even if approval is granted after the Early Bird period has ended." },
   ],
   presenterRegistrationNoteSegmentsTh: [
     { text: "สำหรับท่านที่ส่งบทคัดย่อ (Abstract) ภายในช่วงเวลา " },
-    { text: "รอบที่ 1 คือวันที่ 15 พฤษภาคม – 10 มิถุนายน 2569", accent: true },
+    { text: "รอบที่ 1 คือวันที่ 1 มิถุนายน – 10 มิถุนายน 2569", accent: true },
     { text: " ท่านจะยังคงได้รับสิทธิ์ซื้อบัตรเข้างานในราคา Early Bird 1,250 บาท แม้จะพ้นกำหนดช่วงเวลาดังกล่าวไปแล้ว " },
     { text: "หากบทคัดย่อของท่านได้รับการอนุมัติให้เข้าร่วมนำเสนอผลงาน", accent: true },
   ],
