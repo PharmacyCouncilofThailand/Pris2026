@@ -112,7 +112,7 @@ export default function RecentMemoriesSection() {
             </div>
 
             {/* Column 3 — scrolls UP (hidden on mobile, visible on md+) */}
-            <div className="hidden md:flex flex-1 overflow-hidden relative">
+            <div className="hidden md:block flex-1 overflow-hidden relative">
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up-slow w-full">
                 {col3Items.map((src, i) => (
                   <div
@@ -150,17 +150,17 @@ export default function RecentMemoriesSection() {
           .animate-scroll-up {
             animation: scroll-up 120s linear infinite;
             will-change: transform;
-            transform: translateZ(0);
+            backface-visibility: hidden;
           }
           .animate-scroll-down {
             animation: scroll-down 135s linear infinite;
             will-change: transform;
-            transform: translateZ(0);
+            backface-visibility: hidden;
           }
           .animate-scroll-up-slow {
             animation: scroll-up 150s linear infinite;
             will-change: transform;
-            transform: translateZ(0);
+            backface-visibility: hidden;
           }
 
           .animate-scroll-up:hover,

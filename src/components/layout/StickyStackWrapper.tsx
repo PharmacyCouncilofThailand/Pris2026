@@ -57,10 +57,10 @@ export default function StickyStackWrapper({
   );
 
   return (
-    <div ref={wrapperRef} className="relative w-full h-screen" style={{ zIndex: 1, backgroundColor: "black" }}>
+    <div ref={wrapperRef} className="relative w-full" style={{ zIndex: 1, backgroundColor: "black" }}>
       <div
         ref={innerRef}
-        className="w-full h-full will-change-transform"
+        className="w-full will-change-transform"
         style={{ transformOrigin: "center center" }}
       >
         {children}
