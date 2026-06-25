@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
 
@@ -31,20 +31,6 @@ const HERO_CFG = {
 const INTRO_TEXT = "PRIS 2026";
 const INTRO_CHARS = INTRO_TEXT.split("");
 
-const PARTNERS = [
-  { name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", scale: "scale-[1.4]" },
-  { name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", scale: "scale-[1.5]" },
-  { name: "Pharmacy Administration College", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", scale: "" },
-  { name: "Consumer Protection Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยคุ้มครอง.png", scale: "scale-[1.4]" },
-  { name: "Community Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png", scale: "" },
-  { name: "Herbal Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", scale: "" },
-  { name: "Industrial Pharmacy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", scale: "" },
-  { name: "Pharmacotherapy College", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชบำบัด.png", scale: "scale-[1.4]" },
-  { name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png", scale: "scale-[0.85]" },
-] as const;
-
-const PARTNER_LOOPS = [0, 1, 2] as const;
-
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const maskRef = useRef<HTMLDivElement>(null);
@@ -55,7 +41,6 @@ export default function Hero() {
   const infoRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
-  const partnersRef = useRef<HTMLDivElement>(null);
 
   const t = useTranslations("hero");
   const { isAuthenticated } = useAuth();
@@ -117,7 +102,6 @@ export default function Hero() {
         gsap.set(countdownRef.current, { opacity: 1, y: 0 });
         gsap.set(infoRef.current, { opacity: 1, y: 0 });
         gsap.set(buttonsRef.current, { opacity: 1, y: 0 });
-        gsap.set(partnersRef.current, { opacity: 1, y: 0 });
         heroCompleteRef.current = true;
 
         return;
@@ -131,9 +115,6 @@ export default function Hero() {
       gsap.set(infoRef.current, { opacity: 0, y: 30 });
       gsap.set(countdownRef.current, { opacity: 0, y: 30 });
       gsap.set(buttonsRef.current, { opacity: 0, y: 30 });
-      gsap.set(partnersRef.current, { opacity: 0, y: 20 });
-      // Start video immediately so it shows through the text mask
-
 
       // Device settings
       const isMobile = window.innerWidth <= 1024; // Treat tablets as mobile for scrolling performance
@@ -213,12 +194,11 @@ export default function Hero() {
         },
       });
       if (isMobile) {
-        // Mobile-optimized: Single smooth continuous push (avoids the 0.2s pause gap that looks like stutter)
+        // Mobile-optimized: Single smooth continuous push
         tlAuto
           .to(logoRef.current, { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
           .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
-          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power3.out", duration: 0.8 }, 1.0)
           .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.4);
       } else {
         // Desktop: Two-phase motion (syncs with the SVG mask scroll)
@@ -227,7 +207,6 @@ export default function Hero() {
           .to(logoRef.current, { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
           .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
-          .fromTo(partnersRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.7 }, 1.5)
           .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.9);
       }
 
@@ -323,9 +302,6 @@ export default function Hero() {
         bindInteractions();
       }
 
-      // NOTE: wheel/touch listeners are added in addScrollListeners()
-      // after the letter stagger animation completes
-
       return () => {
         window.removeEventListener("wheel", handleWheel);
         window.removeEventListener("wheel", preventPostZoomWheel);
@@ -346,339 +322,156 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef}
-      className="relative w-full min-h-[100svh] overflow-hidden bg-black flex flex-col justify-center items-center isolate"
+      className="font-heading relative isolate w-full min-h-[100svh] overflow-x-hidden bg-[#04050d] text-white min-[1280px]:h-full xl:overflow-hidden"
     >
-      <div className="hero-bg absolute inset-0 z-0 pointer-events-none opacity-90" />
+      <Image
+        src="/assets/Img/BG/BG-new2.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        quality={95}
+        className="absolute inset-0 z-0 h-full w-full object-cover"
+        style={{ objectPosition: "center top" }}
+      />
 
-      {/* Subtle vignette overlay for depth */}
-      <div className="absolute inset-0 z-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%)" }}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none lg:hidden"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(3,5,14,0.3) 0%, rgba(3,5,14,0.72) 46%, rgba(3,5,14,0.94) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-y-0 left-0 z-[1] hidden w-[62%] pointer-events-none lg:block"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(3,5,14,0.22) 0%, rgba(3,5,14,0.04) 72%, rgba(3,5,14,0) 100%)",
+        }}
       />
 
       {/* Hero Content */}
-      <div className="hero-shell relative z-[2] w-full min-h-[100svh] grid grid-rows-[minmax(0,1fr)_auto] content-stretch gap-0 items-stretch pointer-events-auto text-center">
-
-        {/* Main Content Wrapper (Centered) */}
-        <div className="hero-main min-h-0 w-full max-w-6xl mx-auto flex flex-col justify-center items-center">
-
-        <div
-          ref={logoRef}
-          className="z-[2] will-change-transform transform-gpu flex flex-col items-center"
-          style={{ opacity: 0 }}
-        >
-          <Image
-            src="/assets/Img/logo/LOGO1.png"
-            alt="PRIS 2026 Logo"
-            width={400}
-            height={500}
-            className="hero-logo-image h-auto object-contain drop-shadow-2xl"
-            priority
-          />
-        </div>
-
-        {/* Thin divider */}
-        <div
-          ref={infoRef}
-          className="hero-info z-[2] w-full flex flex-col items-center"
-          style={{ opacity: 0 }}
-        >
-          {/* Horizontal rule */}
-          <div className="w-24 h-px bg-white/20" />
-
-          {/* Date + Location */}
-          <div className="hero-event-copy flex flex-col items-center text-white/90 uppercase font-semibold text-center drop-shadow-md">
-            <span>29 – 30 October 2026</span>
-            <span>IMPACT Challenger, Muang Thong Thani</span>
-          </div>
-
-          {/* Organizer — subtle, small */}
-          <p className="hero-organizer text-white/75 uppercase font-semibold text-center drop-shadow-md">
-            Organized by The Pharmacy Council of Thailand
-          </p>
-        </div>
-
-        <div
-          ref={countdownRef}
-          className="hero-countdown w-full flex justify-center z-[2]"
-          style={{ opacity: 0 }}
-        >
-          <div className="[&>*]:max-w-full">
-            <Countdown />
-          </div>
-        </div>
-
-        {/* Register Button */}
-        <div
-          ref={buttonsRef}
-          className="hero-register z-[2] flex flex-col items-center"
-          style={{ opacity: 0 }}
-        >
-          <Link
-            href="/registration"
-            onClick={handleRegisterClick}
-            className="hero-register-link group relative inline-flex items-center rounded-full text-white transition-all duration-500 hover:scale-[1.03] active:scale-[0.98] z-10"
-          >
-            {/* Outer pulsing glow (GPU accelerated) */}
-            <div className="absolute inset-[-6px] rounded-full bg-gradient-to-r from-[#ff7300] to-[#ffb74d] blur-md opacity-30 group-hover:opacity-70 animate-[gentle-pulse_3s_ease-in-out_infinite] -z-10" />
-
-            {/* Main Button Background with border */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#ff7300] to-[#e65c00] border border-[#ffb74d]/40 rounded-full shadow-[0_0_25px_rgba(255,115,0,0.4),inset_0_1px_0_rgba(255,255,255,0.2)] group-hover:from-[#ff8c00] group-hover:to-[#ff7300] group-hover:border-[#ffd54f]/60 transition-all duration-500 -z-10 overflow-hidden">
-              
-              {/* Continuous shimmer sweep */}
-              <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer-sweep_3.5s_infinite_ease-in-out]" />
-              
-              {/* Bottom accent line for 3D depth */}
-              <div className="absolute bottom-0 left-[15%] w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#ffb74d]/70 to-transparent rounded-sm" />
+      <div className="relative z-[2] mx-auto flex min-h-[100svh] w-full max-w-[1920px] flex-col px-4 pb-6 pt-16 sm:px-8 sm:pt-20 md:px-10 md:pb-[7vh] md:pt-[7vh] md:portrait:px-[5.2vw] md:portrait:pb-[2.6vh] md:portrait:pt-[7.2vh] min-[1280px]:h-full min-[1280px]:min-h-0 min-[1280px]:px-[8vw] min-[1280px]:pb-[2.2vh] min-[1280px]:pt-[5.6rem] min-[1280px]:max-[1439px]:landscape:pt-[9.2rem] max-md:landscape:pb-5 max-md:landscape:pt-12 pointer-events-auto">
+        <div className="mx-auto flex w-full flex-col md:max-w-[820px] md:portrait:max-w-none min-[1280px]:mx-0 min-[1280px]:max-w-[58vw]">
+          <div ref={logoRef} className="will-change-transform transform-gpu flex flex-col" style={{ opacity: 0 }}>
+            <div className="flex translate-y-6 items-start gap-4 sm:gap-6 lg:gap-5 md:portrait:gap-5 max-md:landscape:translate-y-3 max-md:landscape:gap-3">
+              <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
+                <Image
+                  src="/assets/Img/logo/Logo_Pharmacycouncil_White.png"
+                  alt="The Pharmacy Council of Thailand"
+                  fill
+                  sizes="112px"
+                  className="scale-[0.88] object-contain drop-shadow-[0_0_14px_rgba(255,255,255,0.18)]"
+                />
+              </div>
+              <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
+                <Image
+                  src="/assets/Img/logo/Logo_ราชวิทยาลัยสีขาว.png"
+                  alt="Royal College of Pharmacy of Thailand"
+                  fill
+                  sizes="112px"
+                  className="scale-[1.35] object-contain drop-shadow-[0_0_14px_rgba(255,255,255,0.18)]"
+                />
+              </div>
             </div>
-            
-            <span className="hero-register-text relative z-10 font-bold uppercase text-white/90 group-hover:text-white transition-colors">
-              {t("registerNow")}
-            </span>
-            <span className="hero-register-icon relative z-10 flex items-center justify-center rounded-full bg-white/10 group-hover:bg-white/25 group-hover:translate-x-[4px] transition-all duration-300 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </span>
-          </Link>
-        </div>
-        </div>
 
-        {/* ── Official Partners ── */}
-        <div
-          ref={partnersRef}
-          className="hero-partners w-full flex justify-center flex-col items-center overflow-hidden"
-          style={{ opacity: 0 }}
-        >
-          {/* Subtle top border */}
-          <div className="w-full border-t border-white/8 mb-2" />
-
-          <span className="hero-partners-label text-white/40 font-bold uppercase">
-            Official Partners
-          </span>
-
-          {/* Partner logos marquee — full width edge-to-edge */}
-          <div className="relative w-full overflow-hidden">
-            <div className="inline-flex animate-partner-scroll items-center py-1">
-              {PARTNER_LOOPS.map((i) => (
-                <React.Fragment key={i}>
-                  {PARTNERS.map((partner, index) => (
-                    <div
-                      key={`partner-${i}-${index}`}
-                      className="hero-partner-item flex items-center justify-center flex-shrink-0"
-                    >
-                      <div className="hero-partner-logo relative flex items-center justify-center">
-                        <Image
-                          src={partner.logo}
-                          alt={partner.name}
-                          fill
-                          sizes="64px"
-                          className={`object-contain ${partner.scale}`}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </React.Fragment>
-              ))}
+            <div className="-ml-4 mt-6 sm:-ml-10 sm:mt-9 lg:-ml-[3vw] lg:mt-[1.6vh] md:portrait:-ml-[1.8vw] md:portrait:mt-[2.8vh] min-[1280px]:portrait:mt-[1.6vh] max-md:landscape:mt-3">
+              <Image
+                src="/assets/Img/logo/LOGO1.png"
+                alt="2nd PRIS 2026 Pharmacy Research and Innovation Summit"
+                width={982}
+                height={268}
+                priority
+                className="h-auto w-full max-w-[min(94vw,620px)] sm:max-w-[780px] md:portrait:max-w-[min(88vw,900px)] lg:max-w-[min(50vw,780px)] max-md:landscape:max-w-[360px] drop-shadow-[0_0_24px_rgba(71,139,255,0.34)]"
+              />
             </div>
           </div>
+
+          <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col" style={{ opacity: 0 }}>
+            <div className="mt-7 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4">
+              <h1 className="max-w-[1060px] text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
+                Pharmacy Research & Innovation
+                <span className="block">Driving Sustainable Healthcare</span>
+              </h1>
+            </div>
+
+            <div className="mt-7 flex w-full max-w-[860px] flex-col gap-4 text-white sm:flex-row sm:items-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
+              <div className="flex min-w-0 items-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2">
+                <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-[#168fff] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+                <div className="min-w-0 uppercase">
+                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-[#168fff] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
+                    <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                      29-30
+                    </span>
+                    <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                      October
+                    </span>
+                    <span className="text-[1.12rem] font-black tracking-[0.14em] text-white sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                      2026
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="hidden h-11 w-px shrink-0 bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-8" />
+
+              <div className="flex min-w-0 items-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2">
+                <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-[#168fff] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+                <div className="min-w-0 uppercase">
+                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-[#168fff] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                    Jupiter Room 4-13
+                  </p>
+                  <p className="mt-2 text-sm font-black leading-snug tracking-[0.08em] text-white/90 sm:text-[0.9rem] md:portrait:mt-1.5 md:portrait:text-[0.78rem] md:portrait:tracking-[0.06em] lg:text-[0.78rem] max-md:landscape:mt-1 max-md:landscape:text-[0.58rem]">
+                    Impact Muang Thong Thani
+                    <span className="block">Nonthaburi, Thailand</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div ref={buttonsRef} className="will-change-transform transform-gpu" style={{ opacity: 0 }}>
+            <div className="mt-7 grid w-full max-w-[760px] grid-cols-1 gap-4 sm:grid-cols-2 md:portrait:mt-[4.6vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:grid-cols-2 max-md:landscape:gap-3">
+              <Link
+                href="/registration"
+                onClick={handleRegisterClick}
+                className="group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center text-[0.8rem] font-black uppercase tracking-[0.16em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.26),inset_0_-18px_38px_rgba(140,43,0,0.22),0_0_30px_rgba(255,112,20,0.38),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-[#ffc078] hover:bg-[#ff7a1a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-18px_42px_rgba(140,43,0,0.24),0_0_48px_rgba(255,122,26,0.62),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 sm:text-base sm:tracking-[0.2em] md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]"
+              >
+                <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,221,177,0.52),transparent_58%)]" />
+                <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-75 transition group-hover:via-[#07101f]" />
+                <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-white/26 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
+                <span className="relative justify-self-start h-2 w-2 rounded-full bg-white opacity-85 shadow-[0_0_18px_rgba(255,255,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
+                <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]">{t("registerNow") || "Register Now"}</span>
+                <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-white/18 bg-white text-[#ff6a00] shadow-[0_0_16px_rgba(255,255,255,0.28)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#07101f] group-hover:text-white sm:h-8 sm:w-8">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </Link>
+              <Link
+                href="/call-for-abstracts"
+                className="group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-white/85 bg-white px-5 text-center text-[0.8rem] font-black uppercase tracking-[0.16em] text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_0_30px_rgba(255,255,255,0.24),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white hover:bg-[#f5fbff] hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_0_42px_rgba(255,255,255,0.38),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 sm:text-base sm:tracking-[0.2em] md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]"
+              >
+                <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.92),rgba(214,238,255,0.55)_48%,transparent_72%)]" />
+                <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#168fff] to-transparent opacity-80 transition group-hover:via-[#ff7a1a]" />
+                <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-[#168fff]/22 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
+                <span className="relative justify-self-start h-2 w-2 rounded-full bg-[#168fff] opacity-80 shadow-[0_0_18px_rgba(22,143,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
+                <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]">Submit Abstract</span>
+                <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-[#07101f]/10 bg-[#07101f] text-white shadow-[0_0_16px_rgba(22,143,255,0.25)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#168fff] sm:h-8 sm:w-8">
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              </Link>
+            </div>
+          </div>
+
         </div>
 
-        <style dangerouslySetInnerHTML={{__html: `
-          .hero-shell {
-            --hero-x: clamp(1rem, 3.2vw, 2.5rem);
-            --hero-top: clamp(5.5rem, 12svh, 8rem);
-            --hero-bottom: max(env(safe-area-inset-bottom), 0.75rem);
-            padding: var(--hero-top) var(--hero-x) var(--hero-bottom);
-          }
-          .hero-bg {
-            background-image: url("/assets/Img/BG/BG2Monly.webp");
-            background-position: center;
-            background-size: cover;
-          }
-          .hero-main {
-            gap: clamp(0.55rem, 1.25svh, 1.35rem);
-            padding-block: clamp(0.15rem, 1.1svh, 0.85rem);
-          }
-          .hero-logo-image {
-            width: clamp(20rem, 90vw, 58rem);
-            max-height: clamp(7rem, 28svh, 18.5rem);
-          }
-          .hero-info {
-            max-width: min(92vw, 42rem);
-            gap: clamp(0.35rem, 0.9svh, 0.75rem);
-            margin-bottom: clamp(0.1rem, 0.65svh, 0.55rem);
-          }
-          .hero-event-copy {
-            gap: clamp(0.22rem, 0.6svh, 0.55rem);
-            font-size: clamp(0.64rem, 1.65vw, 1rem);
-            letter-spacing: clamp(0.08em, 0.55vw, 0.2em);
-            line-height: 1.45;
-          }
-          .hero-organizer {
-            max-width: min(88vw, 34rem);
-            font-size: clamp(0.56rem, 1.35vw, 0.875rem);
-            letter-spacing: clamp(0.06em, 0.45vw, 0.16em);
-            line-height: 1.5;
-          }
-          .hero-countdown {
-            margin-top: clamp(0.05rem, 0.45svh, 0.35rem);
-          }
-          .hero-register {
-            margin-top: clamp(0.95rem, 2.2svh, 2rem);
-          }
-          .hero-register-link {
-            min-height: clamp(2.75rem, 6.2svh, 4rem);
-            gap: clamp(0.6rem, 1.25vw, 1rem);
-            padding: clamp(0.65rem, 1.45svh, 1.25rem) clamp(1.45rem, 4.2vw, 3.5rem);
-          }
-          .hero-register-text {
-            font-size: clamp(0.78rem, 1.55vw, 1.05rem);
-            letter-spacing: clamp(0.13em, 0.45vw, 0.2em);
-          }
-          .hero-register-icon {
-            width: clamp(1.75rem, 4.6vw, 2.5rem);
-            height: clamp(1.75rem, 4.6vw, 2.5rem);
-          }
-          .hero-partners {
-            margin-top: clamp(0.35rem, 1.1svh, 1.5rem);
-            padding-bottom: var(--hero-bottom);
-          }
-          .hero-partners-label {
-            font-size: clamp(0.48rem, 1.05vw, 0.625rem);
-            letter-spacing: clamp(0.2em, 0.65vw, 0.35em);
-            margin-bottom: clamp(0.35rem, 0.9svh, 0.65rem);
-          }
-          .hero-partner-item {
-            margin-inline: clamp(0.75rem, 3vw, 2rem);
-          }
-          .hero-partner-logo {
-            width: clamp(2.25rem, 9.8vw, 4rem);
-            height: clamp(2.25rem, 9.8vw, 4rem);
-          }
-          @keyframes partner-scroll {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-33.333%, 0, 0); }
-          }
-          .animate-partner-scroll {
-            animation: partner-scroll 35s linear infinite;
-          }
-          @keyframes shimmer-sweep {
-            0% { transform: translate3d(-200%, 0, 0) skewX(-25deg); }
-            100% { transform: translate3d(300%, 0, 0) skewX(-25deg); }
-          }
-          @keyframes gentle-pulse {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.03); }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .animate-partner-scroll, .animate-\\[shimmer-sweep_3\\.5s_infinite_ease-in-out\\], .animate-\\[gentle-pulse_3s_ease-in-out_infinite\\] {
-              animation: none;
-            }
-          }
-          @media (max-width: 430px) and (orientation: portrait) {
-            .hero-shell {
-              --hero-top: clamp(5.75rem, 13svh, 7.25rem);
-              --hero-x: clamp(0.85rem, 4vw, 1rem);
-            }
-            .hero-main {
-              gap: clamp(0.45rem, 1svh, 0.75rem);
-            }
-            .hero-logo-image {
-              width: min(95vw, 28rem);
-              max-height: 24svh;
-            }
-            .hero-info {
-              max-width: min(92vw, 22rem);
-              gap: 0.32rem;
-            }
-            .hero-event-copy {
-              font-size: clamp(0.58rem, 2.65vw, 0.7rem);
-              letter-spacing: 0.08em;
-            }
-            .hero-organizer {
-              max-width: min(88vw, 19rem);
-              font-size: clamp(0.5rem, 2.35vw, 0.62rem);
-              letter-spacing: 0.055em;
-            }
-            .hero-register {
-              margin-top: clamp(0.8rem, 1.8svh, 1.15rem);
-            }
-            .hero-register-link {
-              min-height: 2.95rem;
-              padding: 0.7rem 1.45rem;
-            }
-            .hero-partner-item {
-              margin-inline: clamp(0.65rem, 3.2vw, 0.95rem);
-            }
-          }
-          @media (max-height: 700px) {
-            .hero-shell {
-              --hero-top: clamp(4.75rem, 11svh, 6rem);
-            }
-            .hero-main {
-              gap: clamp(0.35rem, 0.8svh, 0.65rem);
-              padding-block: 0;
-            }
-            .hero-logo-image {
-              max-height: 20svh;
-            }
-            .hero-info {
-              gap: 0.25rem;
-              margin-bottom: 0;
-            }
-            .hero-register {
-              margin-top: clamp(0.65rem, 1.5svh, 1rem);
-            }
-            .hero-partners {
-              margin-top: 0.25rem;
-            }
-          }
-          @media (max-height: 540px) {
-            .hero-info {
-              display: none;
-            }
-            .hero-logo-image {
-              max-height: 24svh;
-            }
-            .hero-register {
-              margin-top: 0.65rem;
-            }
-            .hero-partners-label {
-              display: none;
-            }
-          }
-          @media (max-height: 500px) {
-            .hero-shell {
-              grid-template-rows: minmax(0, 1fr);
-            }
-            .hero-partners {
-              display: none;
-            }
-          }
-          @media (min-width: 768px) {
-            .hero-shell {
-              --hero-top: clamp(6.5rem, 13svh, 9rem);
-              --hero-bottom: max(env(safe-area-inset-bottom), 1rem);
-            }
-            .hero-main {
-              gap: clamp(0.8rem, 1.45svh, 1.5rem);
-            }
-            .hero-logo-image {
-              width: clamp(36rem, 68vw, 58rem);
-              max-height: clamp(10rem, 29svh, 19rem);
-            }
-          }
-          @media (min-width: 1024px) {
-            .hero-bg {
-              background-image: url("/assets/Img/BG/BGonly.webp");
-            }
-            .hero-logo-image {
-              width: clamp(40rem, 54vw, 58rem);
-            }
-            .hero-partner-logo {
-              width: clamp(3.25rem, 3.6vw, 4rem);
-              height: clamp(3.25rem, 3.6vw, 4rem);
-            }
-          }
-        `}} />
+        <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
+          <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
+            <p className="text-center text-[0.62rem] font-black uppercase tracking-[0.26em] text-white/58 sm:text-[0.68rem] sm:tracking-[0.34em] max-md:landscape:text-[0.52rem]">
+              Countdown to PRIS 2026
+            </p>
+            <Countdown className="mx-auto" />
+          </div>
+        </div>
       </div>
 
       {/* SVG Mask Container */}
@@ -704,8 +497,6 @@ export default function Hero() {
             height="100%"
             fill="white"
           />
-
-          {/* Gradient text to fill the cutout instead of video (per user request) */}
           <text
             x="50%"
             y="54%"

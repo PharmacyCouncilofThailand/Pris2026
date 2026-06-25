@@ -33,8 +33,13 @@
   "hero": {
     "registerNow": "ลงทะเบียน",
     "submitAbstract": "ส่งผลงานวิจัย",
-    "scrollDown": "ปัดขึ้นเพื่อเข้าสู่เว็บไซต์",
-    "scrollDownSecondary": "SWIPE UP TO ENTER"
+    "scrollDown": "เลื่อนเพื่อเข้าสู่เว็บไซต์หลัก",
+    "scrollDownSecondary": "SWIPE UP TO ENTER",
+    "heading": "PHARMACY RESEARCH & INNOVATION DRIVING SUSTAINABLE HEALTHCARE",
+    "date": "29-30 ตุลาคม 2569",
+    "venueTitle": "JUPITER ROOM 4-13",
+    "venueLocation": "IMPACT MUANG THONG THANI NONTHABURI, THAILAND",
+    "countdownLabel": "COUNTDOWN TO PRIS 2026"
   },
   "welcome": {
     "welcomeMessages": "OFFICIAL ADDRESSES",
@@ -98,13 +103,13 @@
     "description": "โอกาสสำคัญในการเชื่อมต่อกับนวัตกรรมทางเภสัชกรรมและเครือข่ายวิชาชีพทั่วประเทศ <br class='hidden md:block' /><strong class='font-semibold text-black'>สัมผัสประสบการณ์แห่งอนาคตของเภสัชกรรม</strong>",
     "needToKnow": "ข้อมูลสำคัญ",
     "criticalDates": "ข้อเสนอพิเศษ",
-    "periodEarly": "1 มิ.ย. – 30 มิ.ย. 2569",
+    "periodEarly": "1 ก.ค. – 1 ส.ค. 2569",
     "titleEarly": "ลงทะเบียน Early Bird",
     "descEarly": "สำรองที่นั่งล่วงหน้าเพื่อรับเรทราคาที่ดีที่สุด คุ้มค่าที่สุดสำหรับการเข้าร่วมงาน",
-    "periodRegular": "1 ก.ค. – 30 ก.ย. 2569",
+    "periodRegular": "1 ส.ค. – 15 ต.ค. 2569",
     "titleRegular": "ลงทะเบียนราคาปกติ",
     "descRegular": "ช่วงเวลาลงทะเบียนอัตราปกติ",
-    "periodClosed": "ตั้งแต่ 1 ต.ค. 2569",
+    "periodClosed": "ตั้งแต่ 15 ต.ค. 2569",
     "titleClosed": "ลงทะเบียนล่าช้า / หน้างาน",
     "descClosed": "ช่วงเวลาคาบเกี่ยวกับการจัดงาน อัตราค่าลงทะเบียนจะปรับเป็นราคา Late Registration",
     "feature1Label": "เวิร์กชอป",

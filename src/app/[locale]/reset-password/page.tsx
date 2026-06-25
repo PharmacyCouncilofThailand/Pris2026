@@ -152,8 +152,8 @@ function ResetPasswordContent() {
                 <Image
                   src="/assets/Img/logo/LOGO1.png"
                   alt="PRIS 2026 Logo"
-                  width={200}
-                  height={80}
+                  width={1280}
+                  height={356}
                   className="h-[55px] w-auto object-contain brightness-0"
                   priority
                 />

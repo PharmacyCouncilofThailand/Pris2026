@@ -33,8 +33,13 @@
   "hero": {
     "registerNow": "Register Now",
     "submitAbstract": "Submit Abstract",
-    "scrollDown": "ปัดขึ้นเพื่อเข้าสู่เว็บไซต์",
-    "scrollDownSecondary": "SWIPE UP TO ENTER"
+    "scrollDown": "เลื่อนเพื่อเข้าสู่เว็บไซต์หลัก",
+    "scrollDownSecondary": "SWIPE UP TO ENTER",
+    "heading": "PHARMACY RESEARCH & INNOVATION DRIVING SUSTAINABLE HEALTHCARE",
+    "date": "29-30 OCTOBER 2026",
+    "venueTitle": "JUPITER ROOM 4-13",
+    "venueLocation": "IMPACT MUANG THONG THANI NONTHABURI, THAILAND",
+    "countdownLabel": "COUNTDOWN TO PRIS 2026"
   },
   "welcome": {
     "welcomeMessages": "OFFICIAL ADDRESSES",
@@ -97,13 +102,13 @@
     "description": "A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br class='hidden md:block' /><strong class='font-semibold text-black'>Experience the future of pharmacy.</strong>",
     "needToKnow": "Need to Know",
     "criticalDates": "Special Offer",
-    "periodEarly": "June 1 – June 30, 2026",
+    "periodEarly": "Jul 1 – Aug 1, 2026",
     "titleEarly": "Early Bird Registration",
     "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
-    "periodRegular": "Jul 1 - Sep 30, 2026",
+    "periodRegular": "Aug 1 - Oct 15, 2026",
     "titleRegular": "Regular Registration",
     "descRegular": "Standard registration window. Rates increase to full price during this period.",
-    "periodClosed": "From Oct 1, 2026",
+    "periodClosed": "From Oct 15, 2026",
     "titleClosed": "Late / On-site Registration",
     "descClosed": "Final registration phase leading up to the event. Passes available at late registration rates.",
     "feature1Label": "Workshop",

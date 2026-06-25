@@ -43,9 +43,9 @@ export default function PendingApprovalPage() {
           <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
             <Image
               src="/assets/Img/logo/LOGO1.png"
-              alt="PRIS 2026 Logo"
-              width={200}
-              height={80}
+                  alt="PRIS 2026 Logo"
+                  width={1280}
+                  height={356}
               className="h-9 w-auto object-contain brightness-0"
               priority
             />
