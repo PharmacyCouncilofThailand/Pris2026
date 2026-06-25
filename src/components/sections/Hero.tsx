@@ -325,7 +325,7 @@ export default function Hero() {
       className="font-heading relative isolate w-full min-h-[100svh] overflow-x-hidden bg-[#04050d] text-white min-[1280px]:h-full xl:overflow-hidden"
     >
       <Image
-        src="/assets/Img/BG/BG-new2.jpg"
+        src="/assets/Img/BG/BG.jpg"
         alt=""
         fill
         priority
