@@ -8,6 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import PageHero from "@/components/sections/PageHero";
+import { ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -392,12 +393,22 @@ export default function DetailedGuidelines() {
             {t("ctaDesc")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/abstract-submission"
-              className="bg-blue-600 text-white font-bold px-8 py-4 uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
-            >
-              {t("submitBtn")}
-            </Link>
+            {ABSTRACT_OPEN ? (
+              <Link
+                href="/abstract-submission"
+                className="bg-blue-600 text-white font-bold px-8 py-4 uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
+              >
+                {t("submitBtn")}
+              </Link>
+            ) : (
+              <div
+                aria-disabled="true"
+                title={ABSTRACT_NOTICE}
+                className="bg-blue-600/60 text-white font-bold px-8 py-4 text-sm cursor-not-allowed select-none"
+              >
+                {ABSTRACT_NOTICE}
+              </div>
+            )}
             <Link
               href="/call-for-abstracts"
               className="bg-white text-slate-900 font-bold px-8 py-4 uppercase tracking-widest text-sm border border-slate-200 hover:bg-slate-100 transition-colors"

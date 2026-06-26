@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import AbstractTracker from "@/components/profile/AbstractTracker";
+import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
@@ -418,13 +419,23 @@ export default function ProfilePage() {
                         Complete your registration to receive your event pass and QR code.
                       </p>
                     </div>
-                    <Link
-                      href="/registration"
-                      className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
-                    >
-                      Register Now
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
+                    {REGISTRATION_OPEN ? (
+                      <Link
+                        href="/registration"
+                        className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
+                      >
+                        Register Now
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
+                    ) : (
+                      <div
+                        aria-disabled="true"
+                        title={REGISTRATION_NOTICE}
+                        className="inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white/70 text-slate-900 rounded-xl text-[11px] font-black tracking-wide shadow-lg cursor-not-allowed select-none"
+                      >
+                        {REGISTRATION_NOTICE}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -9,6 +9,7 @@ import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useAuth } from "@/context/AuthContext";
 import { ssoRedirectToConferenceWeb } from "@/lib/sso";
+import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -424,24 +425,36 @@ export default function RegistrationCTASection() {
           className={`registration-floating-cta ${isCtaDocked ? "absolute" : "fixed"} inset-x-0 z-40 flex justify-center px-3`}
         >
           <div className="registration-floating-cta-inner flex flex-col items-center">
-            <button
-              type="button"
-              onClick={handleBuyTicket}
-              className="registration-floating-cta-button group relative inline-flex items-center justify-center overflow-hidden rounded-full text-white shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_0_60px_rgba(0,85,255,0.35)] active:scale-[0.98] cursor-pointer"
-            >
-              {/* Animated gradient background — always visible */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
-              {/* Shimmer sweep */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
+            {REGISTRATION_OPEN ? (
+              <button
+                type="button"
+                onClick={handleBuyTicket}
+                className="registration-floating-cta-button group relative inline-flex items-center justify-center overflow-hidden rounded-full text-white shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_0_60px_rgba(0,85,255,0.35)] active:scale-[0.98] cursor-pointer"
+              >
+                {/* Animated gradient background — always visible */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0055FF] via-[#FF5A00] to-[#0055FF] bg-[length:200%_100%] animate-[gradient-shift_3s_ease_infinite] rounded-full" />
+                {/* Shimmer sweep */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000 ease-in-out" />
 
-              
-              <span className="registration-floating-cta-text relative z-10 font-black uppercase">
-                {t("registerCollection")}
-              </span>
-              <div className="registration-floating-cta-icon relative z-10 flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-sm transition-all duration-500 group-hover:rotate-45 group-hover:bg-white/30">
-                <MoveUpRight className="h-[52%] w-[52%]" />
+                <span className="registration-floating-cta-text relative z-10 font-black uppercase">
+                  {t("registerCollection")}
+                </span>
+                <div className="registration-floating-cta-icon relative z-10 flex items-center justify-center rounded-full border border-white/30 bg-white/20 backdrop-blur-sm transition-all duration-500 group-hover:rotate-45 group-hover:bg-white/30">
+                  <MoveUpRight className="h-[52%] w-[52%]" />
+                </div>
+              </button>
+            ) : (
+              <div
+                aria-disabled="true"
+                title={REGISTRATION_NOTICE}
+                className="registration-floating-cta-button relative inline-flex items-center justify-center overflow-hidden rounded-full text-white shadow-2xl cursor-not-allowed select-none opacity-95"
+              >
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0055FF]/70 via-[#FF5A00]/70 to-[#0055FF]/70" />
+                <span className="registration-floating-cta-text relative z-10 font-black">
+                  {REGISTRATION_NOTICE}
+                </span>
               </div>
-            </button>
+            )}
 
           </div>
         </div>

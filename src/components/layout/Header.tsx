@@ -209,11 +209,12 @@ export default function Header() {
               </span>
             </button>
 
-            <div className={cn(
-              "flex items-center gap-4 border-l pl-4",
-              useDarkText ? "border-slate-200" : "border-white/20"
-            )}>
-              {isLoggedIn ? (
+            {/* Login / Sign up hidden until registration opens; profile stays for logged-in users */}
+            {isLoggedIn && (
+              <div className={cn(
+                "flex items-center gap-4 border-l pl-4",
+                useDarkText ? "border-slate-200" : "border-white/20"
+              )}>
                 <Link
                   href="/profile"
                   prefetch={true}
@@ -227,33 +228,8 @@ export default function Header() {
                   <User className="w-4 h-4" />
                   My Profile
                 </Link>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    prefetch={true}
-                    className={cn(
-                      "text-[12px] font-bold uppercase tracking-[0.15em] transition-colors duration-300",
-                      useDarkText ? "text-slate-600 hover:text-blue-600" : "text-white/80 hover:text-white"
-                    )}
-                  >
-                    Log in
-                  </Link>
-                  <Link
-                    href="/signup"
-                    prefetch={true}
-                    className={cn(
-                      "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
-                      useDarkText
-                        ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
-                        : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
-                    )}
-                  >
-                    Sign up
-                  </Link>
-                </>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Mobile Navigation */}
@@ -339,9 +315,9 @@ export default function Header() {
                   </ul>
                 </nav>
 
-                {/* Mobile Auth Buttons */}
-                <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
-                  {isLoggedIn ? (
+                {/* Mobile Auth Buttons — Login / Sign up hidden until registration opens */}
+                {isLoggedIn && (
+                  <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
                     <Link
                       href="/profile"
                       prefetch={true}
@@ -350,25 +326,8 @@ export default function Header() {
                       <User className="w-4 h-4" />
                       My Profile
                     </Link>
-                  ) : (
-                    <>
-                      <Link
-                        href="/login"
-                        prefetch={true}
-                        className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest text-white border border-white/20 rounded-full hover:bg-white/5 transition-colors"
-                      >
-                        Log in
-                      </Link>
-                      <Link
-                        href="/signup"
-                        prefetch={true}
-                        className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
-                      >
-                        Sign up
-                      </Link>
-                    </>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>
