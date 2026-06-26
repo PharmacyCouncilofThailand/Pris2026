@@ -2,8 +2,8 @@ export const policyFaqs = [
     {
         question: "How do I cancel my registration?",
         questionTh: "ฉันจะยกเลิกการลงทะเบียนได้อย่างไร?",
-        answer: "To cancel your registration, please email pharthai@pharmacycouncil.org with your registration confirmation number and full name. Cancellation requests must be submitted in writing.",
-        answerTh: "ในการยกเลิกการลงทะเบียน โปรดส่งอีเมลถึง pharthai@pharmacycouncil.org พร้อมแจ้งหมายเลขยืนยันการลงทะเบียนและชื่อนามสกุลของคุณ การขอยกเลิกทั้งหมดต้องทำเป็นลายลักษณ์อักษร"
+        answer: "To cancel your registration, please email pr@pharmacycouncil.org with your registration confirmation number and full name. Cancellation requests must be submitted in writing.",
+        answerTh: "ในการยกเลิกการลงทะเบียน โปรดส่งอีเมลถึง pr@pharmacycouncil.org พร้อมแจ้งหมายเลขยืนยันการลงทะเบียนและชื่อนามสกุลของคุณ การขอยกเลิกทั้งหมดต้องทำเป็นลายลักษณ์อักษร"
     },
     {
         question: "When will I receive my refund?",
@@ -14,8 +14,8 @@ export const policyFaqs = [
     {
         question: "Can I transfer my registration to another person?",
         questionTh: "ฉันสามารถโอนสิทธิ์การลงทะเบียนแทนบุคคลอื่นได้หรือไม่?",
-        answer: "Yes, registration transfers are permitted until June 15, 2026. Please contact pharthai@pharmacycouncil.org with details of both the original registrant and the new registrant.",
-        answerTh: "ได้ การโอนสิทธิ์การลงทะเบียนสามารถทำได้จนถึงวันที่ 15 มิถุนายน 2569 โปรดติดต่อ pharthai@pharmacycouncil.org พร้อมแจ้งรายละเอียดของผู้ลงทะเบียนรายเดิมและผู้รับโอนรายใหม่"
+        answer: "Yes, registration transfers are permitted until June 15, 2026. Please contact pr@pharmacycouncil.org with details of both the original registrant and the new registrant.",
+        answerTh: "ได้ การโอนสิทธิ์การลงทะเบียนสามารถทำได้จนถึงวันที่ 15 มิถุนายน 2569 โปรดติดต่อ pr@pharmacycouncil.org พร้อมแจ้งรายละเอียดของผู้ลงทะเบียนรายเดิมและผู้รับโอนรายใหม่"
     },
     {
         question: "What if I paid for workshops or gala dinner add-ons?",

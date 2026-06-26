@@ -61,7 +61,7 @@ export default function RegistrationPolicies() {
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-4xl mx-auto content-block text-center border-t border-b border-gray-200 py-12 md:py-16">
           <p className="text-gray-600 text-base md:text-lg leading-[1.8] font-light">
-            {t("intro")} <a href="mailto:pharthai@pharmacycouncil.org" className="text-blue-600 font-medium hover:underline">pharthai@pharmacycouncil.org</a>
+            {t("intro")} <a href="mailto:pr@pharmacycouncil.org" className="text-blue-600 font-medium hover:underline">pr@pharmacycouncil.org</a>
           </p>
         </div>
       </section>

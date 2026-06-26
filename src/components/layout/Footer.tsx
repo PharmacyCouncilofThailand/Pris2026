@@ -12,6 +12,7 @@ const quickLinks = [
   { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
   { labelKey: "registration", href: "/registration" },
   { labelKey: "gallery", href: "/gallery" },
+  { labelKey: "contact", href: "/contact" },
 ];
 
 const galleryThumbs = galleryImages.slice(0, 6);
@@ -104,13 +105,13 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:pharthai@pharmacycouncil.org"
+                  href="mailto:pr@pharmacycouncil.org"
                   className="flex items-center gap-4 text-zinc-400 hover:text-white transition-colors duration-300 group"
                 >
                   <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#D4AF37]/50 group-hover:bg-[#D4AF37]/10 transition-all duration-300 shrink-0">
                     <Mail className="h-4 w-4 text-zinc-300 group-hover:text-[#D4AF37] transition-colors" />
                   </div>
-                  <span className="text-sm md:text-base font-light tracking-wide">pharthai@pharmacycouncil.org</span>
+                  <span className="text-sm md:text-base font-light tracking-wide">pr@pharmacycouncil.org</span>
                 </a>
               </li>
               <li>

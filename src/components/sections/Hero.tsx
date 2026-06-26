@@ -123,10 +123,15 @@ export default function Hero() {
       const { initialScale, initialY } = isMobile
         ? HERO_CFG.mobile
         : HERO_CFG.desktop;
+        
+      const initialX = 0;
+
       gsap.set(logoRef.current, {
         opacity: 0,
         y: initialY,
+        x: initialX,
         scale: initialScale,
+        transformOrigin: "center center"
       });
 
       // Calculate zoom origin (center of "S")
@@ -196,15 +201,15 @@ export default function Hero() {
       if (isMobile) {
         // Mobile-optimized: Single smooth continuous push
         tlAuto
-          .to(logoRef.current, { opacity: 1, y: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
+          .to(logoRef.current, { opacity: 1, y: 0, x: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
           .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
           .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.4);
       } else {
         // Desktop: Two-phase motion (syncs with the SVG mask scroll)
         tlAuto
-          .to(logoRef.current, { opacity: 1, y: initialY, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
-          .to(logoRef.current, { y: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
+          .to(logoRef.current, { opacity: 1, y: initialY, x: initialX, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
+          .to(logoRef.current, { y: 0, x: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
           .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
           .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.9);
@@ -322,7 +327,7 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef}
-      className="font-heading relative isolate w-full min-h-[100svh] overflow-x-hidden bg-[#04050d] text-white min-[1280px]:h-full xl:overflow-hidden"
+      className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:h-full xl:overflow-hidden"
     >
       <Image
         src="/assets/Img/BG/BG.jpg"
@@ -351,10 +356,10 @@ export default function Hero() {
       />
 
       {/* Hero Content */}
-      <div className="relative z-[2] mx-auto flex min-h-[100svh] w-full max-w-[1920px] flex-col px-4 pb-6 pt-16 sm:px-8 sm:pt-20 md:px-10 md:pb-[7vh] md:pt-[7vh] md:portrait:px-[5.2vw] md:portrait:pb-[2.6vh] md:portrait:pt-[7.2vh] min-[1280px]:h-full min-[1280px]:min-h-0 min-[1280px]:px-[8vw] min-[1280px]:pb-[2.2vh] min-[1280px]:pt-[5.6rem] min-[1280px]:max-[1439px]:landscape:pt-[9.2rem] max-md:landscape:pb-5 max-md:landscape:pt-12 pointer-events-auto">
-        <div className="mx-auto flex w-full flex-col md:max-w-[820px] md:portrait:max-w-none min-[1280px]:mx-0 min-[1280px]:max-w-[58vw]">
-          <div ref={logoRef} className="will-change-transform transform-gpu flex flex-col" style={{ opacity: 0 }}>
-            <div className="flex translate-y-6 items-start gap-4 sm:gap-6 lg:gap-5 md:portrait:gap-5 max-md:landscape:translate-y-3 max-md:landscape:gap-3">
+      <div className="relative z-[2] mx-auto flex min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 w-full max-w-[1920px] flex-col px-4 pb-6 pt-16 sm:px-8 sm:pt-20 md:px-10 md:pb-[7vh] md:pt-[7vh] md:portrait:px-[5.2vw] md:portrait:pb-[2.6vh] md:portrait:pt-[7.2vh] min-[1280px]:h-full min-[1280px]:min-h-0 min-[1280px]:px-[8vw] min-[1280px]:pb-[2.2vh] min-[1280px]:pt-[5.6rem] min-[1280px]:max-[1439px]:landscape:pt-[9.2rem] max-md:landscape:pb-5 max-md:landscape:pt-12 pointer-events-auto">
+        <div className="mx-auto flex w-full flex-col items-center md:max-w-[820px] md:portrait:max-w-none min-[1280px]:mx-auto min-[1280px]:max-w-[80vw]">
+          <div ref={logoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
+            <div className="flex translate-y-6 items-center justify-center gap-4 sm:gap-6 lg:gap-5 md:portrait:gap-5 max-md:landscape:translate-y-3 max-md:landscape:gap-3">
               <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
                 <Image
                   src="/assets/Img/logo/Logo_Pharmacycouncil_White.png"
@@ -375,7 +380,7 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="-ml-4 mt-6 sm:-ml-10 sm:mt-9 lg:-ml-[3vw] lg:mt-[1.6vh] md:portrait:-ml-[1.8vw] md:portrait:mt-[2.8vh] min-[1280px]:portrait:mt-[1.6vh] max-md:landscape:mt-3">
+            <div className="mt-9 sm:mt-9 lg:mt-[1.6vh] md:portrait:mt-[2.8vh] min-[1280px]:portrait:mt-[1.6vh] max-md:landscape:mt-3 flex justify-center w-full">
               <Image
                 src="/assets/Img/logo/LOGO1.png"
                 alt="2nd PRIS 2026 Pharmacy Research and Innovation Summit"
@@ -387,16 +392,16 @@ export default function Hero() {
             </div>
           </div>
 
-          <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col" style={{ opacity: 0 }}>
-            <div className="mt-7 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4">
-              <h1 className="max-w-[1060px] text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
+          <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
+            <div className="mt-4 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4 text-center flex justify-center w-full">
+              <h1 className="max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
                 Pharmacy Research & Innovation
                 <span className="block">Driving Sustainable Healthcare</span>
               </h1>
             </div>
 
-            <div className="mt-7 flex w-full max-w-[860px] flex-col gap-4 text-white sm:flex-row sm:items-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
-              <div className="flex min-w-0 items-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2">
+            <div className="mt-7 flex w-full max-w-[860px] flex-col justify-center gap-4 text-white sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
+              <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
                 <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-[#168fff] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                 <div className="min-w-0 uppercase">
                   <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-[#168fff] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
@@ -415,7 +420,7 @@ export default function Hero() {
 
               <div className="hidden h-11 w-px shrink-0 bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-8" />
 
-              <div className="flex min-w-0 items-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2">
+              <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
                 <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-[#168fff] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                 <div className="min-w-0 uppercase">
                   <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-[#168fff] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
@@ -430,7 +435,7 @@ export default function Hero() {
             </div>
           </div>
 
-          <div ref={buttonsRef} className="will-change-transform transform-gpu" style={{ opacity: 0 }}>
+          <div ref={buttonsRef} className="will-change-transform transform-gpu flex justify-center w-full" style={{ opacity: 0 }}>
             <div className="mt-7 grid w-full max-w-[760px] grid-cols-1 gap-4 sm:grid-cols-2 md:portrait:mt-[4.6vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:grid-cols-2 max-md:landscape:gap-3">
               <Link
                 href="/registration"
@@ -464,7 +469,7 @@ export default function Hero() {
 
         </div>
 
-        <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
+        <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
           <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
             <p className="text-center text-[0.62rem] font-black uppercase tracking-[0.26em] text-white/58 sm:text-[0.68rem] sm:tracking-[0.34em] max-md:landscape:text-[0.52rem]">
               Countdown to PRIS 2026
@@ -487,30 +492,47 @@ export default function Hero() {
           height="100%"
         >
           <defs>
-            <linearGradient id="prisGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#0055FF" />
-              <stop offset="100%" stopColor="#FF5A00" />
-            </linearGradient>
+            <mask id="textMask">
+              <rect width="100%" height="100%" fill="white" />
+              <text
+                x="50%"
+                y="50%"
+                dominantBaseline="central"
+                textAnchor="middle"
+                className="font-black text-[16vw] sm:text-[14vw] md:text-[12vw] font-outfit tracking-tighter"
+                fill="black"
+              >
+                {INTRO_CHARS.map((char, i) => (
+                  <tspan
+                    key={`mask-${char}-${i}`}
+                    className="gradient-letter"
+                  >
+                    {char}
+                  </tspan>
+                ))}
+              </text>
+            </mask>
           </defs>
           <rect
             width="100%"
             height="100%"
             fill="white"
+            mask="url(#textMask)"
+            pointerEvents="none"
           />
           <text
             x="50%"
-            y="54%"
+            y="50%"
             dominantBaseline="central"
             textAnchor="middle"
             className="font-black text-[16vw] sm:text-[14vw] md:text-[12vw] font-outfit tracking-tighter"
-            fill="url(#prisGradient)"
+            fill="transparent"
             pointerEvents="none"
           >
             {INTRO_CHARS.map((char, i) => (
               <tspan
-                key={`${char}-${i}`}
+                key={`measure-${char}-${i}`}
                 ref={char === "S" ? zoomTargetRef : null}
-                className="gradient-letter"
               >
                 {char}
               </tspan>
