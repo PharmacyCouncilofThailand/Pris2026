@@ -1,4 +1,8 @@
 {
+  "paymentReturn": {
+    "success": "Registration successful! A confirmation email is on its way.",
+    "successWithCode": "Registration successful! Your registration code is {regCode}."
+  },
   "common": {
     "home": "Home",
     "about": "About",
