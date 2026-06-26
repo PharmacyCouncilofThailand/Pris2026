@@ -3,11 +3,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
-import { QrCode, LogOut, Mail, Briefcase, BadgeCheck, FileText, User, Phone, Building2, Globe, Ticket, ArrowRight, Loader2, GraduationCap, UploadCloud, CheckCircle2, Clock3, AlertCircle } from "lucide-react";
+import { LogOut, Mail, Briefcase, BadgeCheck, FileText, User, Phone, Building2, Globe, Ticket, ArrowRight, Loader2, GraduationCap, UploadCloud, CheckCircle2, Clock3, AlertCircle, Download } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import toast from "react-hot-toast";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import AbstractTracker from "@/components/profile/AbstractTracker";
+import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
@@ -78,6 +80,7 @@ function getEligibilityBadge(status?: StudentEligibilityInfo["status"]) {
 export default function ProfilePage() {
   const containerRef = useRef<HTMLDivElement>(null!);
   const eligibilityFileRef = useRef<HTMLInputElement>(null);
+  const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
   const { logout, user, token, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState<"profile" | "abstracts">("profile");
@@ -186,6 +189,23 @@ export default function ProfilePage() {
     logout();
     toast.success("Signed out successfully");
     router.push("/");
+  };
+
+  const handleDownloadQr = () => {
+    const code = registration?.regCode;
+    const canvas = qrCanvasRef.current;
+    if (!code || !canvas) return;
+    try {
+      const dataUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `PRIS2026-${code}.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch {
+      toast.error("Failed to download QR code");
+    }
   };
 
   useGSAP(() => {
@@ -358,15 +378,32 @@ export default function ProfilePage() {
                       Scan at Entrance
                     </p>
 
-                    <div className="bg-white p-5 rounded-3xl shadow-2xl mb-6 relative group cursor-pointer hover:scale-105 transition-transform duration-300">
+                    <div className="bg-white p-5 rounded-3xl shadow-2xl mb-6 relative group">
                       <div className="absolute inset-0 ring-4 ring-white/10 rounded-3xl -m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <QrCode className="w-32 h-32 md:w-40 md:h-40 text-slate-900" strokeWidth={1} />
+                      <QRCodeCanvas
+                        ref={qrCanvasRef}
+                        value={memberCode}
+                        size={1000}
+                        level="M"
+                        marginSize={2}
+                        bgColor="#ffffff"
+                        fgColor="#0f172a"
+                        className="!w-32 !h-32 md:!w-40 md:!h-40"
+                      />
                     </div>
 
-                    <div className="text-center w-full mt-auto">
+                    <div className="text-center w-full">
                       <p className="font-mono text-lg md:text-xl font-bold tracking-[0.2em] text-white break-all">{memberCode}</p>
                       <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4" />
                     </div>
+
+                    <button
+                      onClick={handleDownloadQr}
+                      className="group mt-6 inline-flex items-center gap-2 px-5 py-3 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
+                    >
+                      <Download className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
+                      Download PNG
+                    </button>
                   </>
                 ) : (
                   <div className="text-center flex flex-col items-center gap-5 py-6">
@@ -382,13 +419,23 @@ export default function ProfilePage() {
                         Complete your registration to receive your event pass and QR code.
                       </p>
                     </div>
-                    <Link
-                      href="/registration"
-                      className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
-                    >
-                      Register Now
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                    </Link>
+                    {REGISTRATION_OPEN ? (
+                      <Link
+                        href="/registration"
+                        className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
+                      >
+                        Register Now
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
+                    ) : (
+                      <div
+                        aria-disabled="true"
+                        title={REGISTRATION_NOTICE}
+                        className="inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white/70 text-slate-900 rounded-xl text-[11px] font-black tracking-wide shadow-lg cursor-not-allowed select-none"
+                      >
+                        {REGISTRATION_NOTICE}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

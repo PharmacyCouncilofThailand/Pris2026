@@ -12,6 +12,7 @@ import {
   Mail,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
@@ -233,12 +234,22 @@ function ConfirmAbstractContent() {
               >
                 {t("ctaProfile")}
               </Link>
-              <Link
-                href="/registration"
-                className="inline-block rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800"
-              >
-                {t("ctaRegister")}
-              </Link>
+              {REGISTRATION_OPEN ? (
+                <Link
+                  href="/registration"
+                  className="inline-block rounded-lg bg-slate-900 px-5 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                >
+                  {t("ctaRegister")}
+                </Link>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  title={REGISTRATION_NOTICE}
+                  className="inline-block rounded-lg bg-slate-900/60 px-5 py-2 text-sm font-medium text-white cursor-not-allowed select-none"
+                >
+                  {REGISTRATION_NOTICE}
+                </span>
+              )}
             </div>
           </div>
         )}

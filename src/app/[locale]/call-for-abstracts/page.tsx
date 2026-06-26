@@ -7,6 +7,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import PageHero from "@/components/sections/PageHero";
+import { ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
 
 // Dynamic imports for the sections
 const AbstractTimeline = dynamic(() => import("@/components/sections/AbstractTimeline"), { ssr: false });
@@ -47,12 +48,22 @@ export default function CallForAbstractsPage() {
             {t("ctaDesc")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/abstract-submission"
-              className="bg-blue-600 text-white font-bold px-8 py-4 rounded-full text-center uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
-            >
-              {t("submitAbstract")}
-            </Link>
+            {ABSTRACT_OPEN ? (
+              <Link
+                href="/abstract-submission"
+                className="bg-blue-600 text-white font-bold px-8 py-4 rounded-full text-center uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
+              >
+                {t("submitAbstract")}
+              </Link>
+            ) : (
+              <div
+                aria-disabled="true"
+                title={ABSTRACT_NOTICE}
+                className="bg-blue-600/60 text-white font-bold px-8 py-4 rounded-full text-center text-sm cursor-not-allowed select-none"
+              >
+                {ABSTRACT_NOTICE}
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -19,6 +19,7 @@ import { abstractStatusLabels } from "@/data/abstractData";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
+import { ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
 
 // Mock data for the dashboard
 const mockSubmissions = [
@@ -114,12 +115,22 @@ export default function AbstractStatus() {
                 {t("desc")}
               </p>
             </div>
-            <Link 
-              href="/abstract-submission" 
-              className="px-6 py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-xl hover:bg-white transition-all shadow-lg shadow-gold/10"
-            >
-              {t("newSubmissionBtn")}
-            </Link>
+            {ABSTRACT_OPEN ? (
+              <Link 
+                href="/abstract-submission" 
+                className="px-6 py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-xl hover:bg-white transition-all shadow-lg shadow-gold/10"
+              >
+                {t("newSubmissionBtn")}
+              </Link>
+            ) : (
+              <div
+                aria-disabled="true"
+                title={ABSTRACT_NOTICE}
+                className="px-6 py-3 bg-gold/60 text-black font-bold text-xs rounded-xl cursor-not-allowed select-none"
+              >
+                {ABSTRACT_NOTICE}
+              </div>
+            )}
           </div>
         </div>
       </section>
