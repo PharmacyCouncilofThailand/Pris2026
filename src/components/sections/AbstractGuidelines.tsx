@@ -40,14 +40,7 @@ export default function AbstractGuidelines() {
             ))}
           </div>
 
-          {/* Callouts */}
-          <div className="mt-12 space-y-4 max-w-4xl">
-            <div className="border-l-4 border-red-500 bg-red-50 p-6 rounded-r-lg">
-              <p className="text-red-700 text-sm md:text-base font-medium">
-                {locale === "th" ? submissionGuidelines.noMediaNoteTh : submissionGuidelines.noMediaNote}
-              </p>
-            </div>
-          </div>
+
         </div>
       </section>
 

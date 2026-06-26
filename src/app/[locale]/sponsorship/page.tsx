@@ -192,19 +192,9 @@ export default function SponsorshipPage() {
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-8">
             {t("cta.title")}
           </h2>
-          <p className="text-gray-500 text-base md:text-lg font-light leading-relaxed mb-12 max-w-2xl mx-auto">
-            {t("cta.desc")}
+          <p className="text-gray-500 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">
+            {t("cta.desc")} <a href="mailto:pr@pharmacycouncil.org" className="text-blue-600 font-medium hover:underline">pr@pharmacycouncil.org</a>
           </p>
-          <div className="flex justify-center">
-            <a
-              href="https://sponsor-wine.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gray-900 text-white rounded-full font-bold px-12 md:px-16 py-5 md:py-6 text-center uppercase tracking-widest text-base md:text-lg hover:bg-gray-800 transition-all duration-300"
-            >
-              {t("cta.btn")}
-            </a>
-          </div>
         </div>
       </section>
 
