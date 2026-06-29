@@ -8,7 +8,7 @@ export const galleryImages = [
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-9.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-11.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-12.jpg",
-  "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-29.jpg",
+
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-31.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-33.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-38.jpg",

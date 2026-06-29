@@ -121,38 +121,33 @@ export default function PrisIntroSection() {
           {/* Stat 1: Participants */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
             <p
-              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-[#1e293b]"
             >
-              <CountUp text={t("stat1Value")} duration={2500} />
+              <CountUp text={t("stat1Value")} duration={2500} suffixClassName="text-[#FF5A00]" />
             </p>
 
             {/* Icon: Network/People */}
             <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
-              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
+              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-[#1e293b]">
                 {/* Central person */}
                 <circle cx="40" cy="24" r="5" stroke="currentColor" strokeWidth="1.8"/>
                 <path d="M33 38a7 7 0 0114 0" stroke="currentColor" strokeWidth="1.8" fill="none"/>
                 {/* Left person */}
-                <circle cx="16" cy="34" r="4" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M10 45a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.4" fill="none"/>
+                <circle cx="20" cy="40" r="4" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M14 51a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.8" fill="none"/>
                 {/* Right person */}
-                <circle cx="64" cy="34" r="4" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M58 45a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.4" fill="none"/>
-                {/* Bottom left */}
-                <circle cx="24" cy="60" r="3.5" stroke="currentColor" strokeWidth="1.2"/>
-                {/* Bottom right */}
-                <circle cx="56" cy="60" r="3.5" stroke="currentColor" strokeWidth="1.2"/>
-                {/* Connection lines */}
-                <line x1="36" y1="29" x2="20" y2="34" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
-                <line x1="44" y1="29" x2="60" y2="34" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
-                <line x1="16" y1="49" x2="24" y2="56" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
-                <line x1="64" y1="49" x2="56" y2="56" stroke="currentColor" strokeWidth="1" opacity="0.4"/>
-                <line x1="28" y1="60" x2="52" y2="60" stroke="currentColor" strokeWidth="1" opacity="0.25" strokeDasharray="3 3"/>
-                <line x1="40" y1="38" x2="40" y2="55" stroke="currentColor" strokeWidth="1" opacity="0.25" strokeDasharray="3 3"/>
+                <circle cx="60" cy="40" r="4" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M54 51a6 6 0 0112 0" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+                
+                {/* Orange Arc */}
+                <path d="M 18 60 Q 40 45 62 60" stroke="#FF5A00" strokeWidth="1.8" fill="none" strokeLinecap="round" />
+                
+                {/* Orange bottom dash */}
+                <line x1="36" y1="72" x2="44" y2="72" stroke="#FF5A00" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
 
-            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-[#1e293b]/70">
               {t("stat1Label")}
             </p>
           </div>
@@ -160,14 +155,14 @@ export default function PrisIntroSection() {
           {/* Stat 2: Exhibition Booths */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12 border-b sm:border-b-0 sm:border-r border-black/10">
             <p
-              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-[#1e293b]"
             >
-              <CountUp text={t("stat2Value")} duration={1500} />
+              <CountUp text={t("stat2Value")} duration={1500} suffixClassName="text-[#FF5A00]" />
             </p>
 
             {/* Icon: Exhibition Booth */}
             <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
-              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
+              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-[#1e293b]">
                 {/* Canopy roof */}
                 <path d="M18 24L40 12L62 24" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
                 <line x1="18" y1="24" x2="62" y2="24" stroke="currentColor" strokeWidth="1.8"/>
@@ -176,18 +171,21 @@ export default function PrisIntroSection() {
                 <line x1="58" y1="24" x2="58" y2="56" stroke="currentColor" strokeWidth="1.8"/>
                 {/* Counter */}
                 <rect x="22" y="42" width="36" height="14" rx="1" stroke="currentColor" strokeWidth="1.6"/>
-                {/* Person behind counter */}
-                <circle cx="40" cy="33" r="4" stroke="currentColor" strokeWidth="1.4"/>
-                <path d="M35 42a5 5 0 0110 0" stroke="currentColor" strokeWidth="1.4" fill="none"/>
+                {/* Person behind counter (Orange) */}
+                <circle cx="40" cy="33" r="4" stroke="#FF5A00" strokeWidth="1.6"/>
+                <path d="M35 42a5 5 0 0110 0" stroke="#FF5A00" strokeWidth="1.6" fill="none"/>
                 {/* Base */}
                 <line x1="18" y1="56" x2="62" y2="56" stroke="currentColor" strokeWidth="1.8"/>
                 {/* Legs */}
-                <line x1="22" y1="56" x2="20" y2="64" stroke="currentColor" strokeWidth="1.4"/>
-                <line x1="58" y1="56" x2="60" y2="64" stroke="currentColor" strokeWidth="1.4"/>
+                <line x1="22" y1="56" x2="20" y2="64" stroke="currentColor" strokeWidth="1.8"/>
+                <line x1="58" y1="56" x2="60" y2="64" stroke="currentColor" strokeWidth="1.8"/>
+                
+                {/* Orange bottom dash */}
+                <line x1="36" y1="72" x2="44" y2="72" stroke="#FF5A00" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
 
-            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-[#1e293b]/70">
               {t("stat2Label")}
             </p>
           </div>
@@ -195,35 +193,42 @@ export default function PrisIntroSection() {
           {/* Stat 3: Networking Night */}
           <div className="pris-stat group flex flex-col items-center text-center pt-14 pb-8 md:pt-20 md:pb-12">
             <p
-              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-black"
+              className="stat-number text-7xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[7.5rem] font-black tracking-tighter leading-none text-[#1e293b]"
             >
-              <CountUp text={t("stat3Value")} duration={1000} />
+              <CountUp text={t("stat3Value")} duration={1000} suffixClassName="text-[#FF5A00]" />
             </p>
 
             {/* Icon: Wine glasses / Networking */}
             <div className="mt-8 mb-5 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center">
-              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-black/70">
+              <svg viewBox="0 0 80 80" fill="none" className="w-full h-full text-[#1e293b]">
                 {/* Board / Poster frame */}
                 <rect x="20" y="16" width="40" height="32" rx="2" stroke="currentColor" strokeWidth="1.8" fill="none"/>
-                {/* Title line */}
-                <line x1="26" y1="24" x2="40" y2="24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                
+                {/* Orange line inside poster */}
+                <line x1="26" y1="24" x2="40" y2="24" stroke="#FF5A00" strokeWidth="1.8" strokeLinecap="round"/>
+                
                 {/* Content lines inside poster */}
-                <line x1="26" y1="30" x2="54" y2="30" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
-                <line x1="26" y1="36" x2="54" y2="36" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
-                <line x1="26" y1="42" x2="46" y2="42" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.5"/>
+                <line x1="26" y1="32" x2="54" y2="32" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
+                <line x1="26" y1="38" x2="54" y2="38" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
+                <line x1="26" y1="44" x2="46" y2="44" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" opacity="0.6"/>
+                
                 {/* Stand legs */}
-                <line x1="28" y1="48" x2="24" y2="64" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-                <line x1="52" y1="48" x2="56" y2="64" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+                <line x1="28" y1="48" x2="24" y2="64" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                <line x1="52" y1="48" x2="56" y2="64" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                
                 {/* Horizontal bar on stand */}
-                <line x1="26" y1="56" x2="54" y2="56" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
-                {/* Decorative dots around */}
-                <circle cx="14" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
-                <circle cx="66" cy="30" r="2" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
-                <circle cx="40" cy="68" r="2" stroke="currentColor" strokeWidth="1" opacity="0.2"/>
+                <line x1="26" y1="56" x2="54" y2="56" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                
+                {/* Decorative Orange dots around */}
+                <circle cx="12" cy="32" r="2" stroke="#FF5A00" strokeWidth="1.5" />
+                <circle cx="68" cy="32" r="2" stroke="#FF5A00" strokeWidth="1.5" />
+                
+                {/* Orange bottom dash */}
+                <line x1="36" y1="72" x2="44" y2="72" stroke="#FF5A00" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </div>
 
-            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+            <p className="text-[11px] md:text-xs font-bold uppercase tracking-[0.25em] text-[#1e293b]/70">
               {t("stat3Label")}
             </p>
           </div>

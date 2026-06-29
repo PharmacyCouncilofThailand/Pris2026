@@ -2,12 +2,18 @@ export interface NavItem {
     labelKey: string;
     href?: string;
     children?: NavItem[];
+    disabled?: boolean;
 }
 
 export const navigationData: NavItem[] = [
     {
         labelKey: "home",
         href: "/",
+    },
+    {
+        labelKey: "innovationWork",
+        href: "#",
+        disabled: true,
     },
     {
         labelKey: "about",
