@@ -108,7 +108,7 @@ export default function Header() {
               }}
             >
               <Image
-                src="/assets/Img/logo/LOGO1.png"
+                src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
                 alt="Pris 2026 Logo"
                 width={200}
                 height={80}
@@ -124,7 +124,15 @@ export default function Header() {
               <NavigationMenuList className="gap-2">
                 {navigationData.map((item) => (
                   <NavigationMenuItem key={item.labelKey}>
-                    {item.href && (!item.children || item.children.length === 0) ? (
+                    {item.disabled ? (
+                      <span className={cn(
+                        navigationMenuTriggerStyle(),
+                        "bg-transparent transition-colors opacity-50 cursor-not-allowed",
+                        useDarkText ? "text-slate-900" : "text-white"
+                      )}>
+                        {t(item.labelKey as TranslationKey)}
+                      </span>
+                    ) : item.href && (!item.children || item.children.length === 0) ? (
                       <NavigationMenuLink render={
                         <Link
                           href={item.href as LinkHref}
@@ -269,7 +277,7 @@ export default function Header() {
               <div className="p-6 h-full flex flex-col">
                 <div className="mb-8 mt-4">
                   <Image
-                    src="/assets/Img/logo/LOGO1.png"
+                    src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
                     alt="Pris 2026 Logo"
                     width={200}
                     height={80}
@@ -281,7 +289,11 @@ export default function Header() {
                   <ul className="flex flex-col gap-4">
                     {navigationData.map((item) => (
                       <li key={item.labelKey} className="border-b border-white/10 pb-4">
-                        {item.href ? (
+                        {item.disabled ? (
+                          <span className="text-lg font-medium text-gray-500 block cursor-not-allowed">
+                            {t(item.labelKey as TranslationKey)}
+                          </span>
+                        ) : item.href ? (
                           <Link
                             href={item.href as LinkHref}
                             prefetch={true}

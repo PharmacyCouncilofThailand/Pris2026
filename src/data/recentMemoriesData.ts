@@ -1,7 +1,7 @@
 export const column1 = [
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-7.jpg",
-  "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-29.jpg",
+
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD1-55.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD2-60.jpg",
   "/assets/Img/PRIS_Higlight/PRIS_HighlightD2-17.jpg",

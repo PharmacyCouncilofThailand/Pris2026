@@ -32,16 +32,26 @@ const HERO_CFG = {
 const INTRO_TEXT = "PRIS 2026";
 const INTRO_CHARS = INTRO_TEXT.split("");
 
+const SUBTEXT_PARTS = [
+  "จัดโดย",
+  "สภาเภสัชกรรม",
+  "และ",
+  "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย"
+];
+
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const maskRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const mainTextRef = useRef<SVGTextElement>(null);
   const zoomTargetRef = useRef<SVGTSpanElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const buttonsRef = useRef<HTMLDivElement>(null);
+  const subtextRef = useRef<HTMLDivElement>(null);
+  const subtextInnerRef = useRef<HTMLDivElement>(null);
 
   const t = useTranslations("hero");
   const { isAuthenticated } = useAuth();
@@ -103,6 +113,7 @@ export default function Hero() {
         gsap.set(countdownRef.current, { opacity: 1, y: 0 });
         gsap.set(infoRef.current, { opacity: 1, y: 0 });
         gsap.set(buttonsRef.current, { opacity: 1, y: 0 });
+        gsap.set(subtextRef.current, { display: "none" });
         heroCompleteRef.current = true;
 
         return;
@@ -145,8 +156,38 @@ export default function Hero() {
         const oy = ((tgt.top + tgt.height / 2 - svg.top) / svg.height) * 100;
         gsap.set(maskRef.current, { transformOrigin: `${ox}% ${oy}%` });
       };
+      
+      const updateSubtextWidth = () => {
+        if (!mainTextRef.current || !subtextInnerRef.current || !subtextRef.current || !containerRef.current) return;
+        const mainRect = mainTextRef.current.getBoundingClientRect();
+        const containerRect = containerRef.current.getBoundingClientRect();
+        
+        if (mainRect.width > 0) {
+          // Position tightly under the PRIS 2026 text
+          // Subtract a small percentage of height to account for font descender space
+          const relativeTop = mainRect.bottom - containerRect.top;
+          subtextRef.current.style.top = `${relativeTop - (mainRect.height * 0.1)}px`; 
+
+          // Measure and scale to perfectly match width
+          subtextInnerRef.current.style.transform = 'none';
+          const naturalWidth = subtextInnerRef.current.getBoundingClientRect().width;
+          
+          if (naturalWidth > 0) {
+            const scale = (mainRect.width / naturalWidth) * 0.92; // Reduce size to fit inside visible glyphs
+            subtextInnerRef.current.style.transform = `scale(${scale})`;
+          }
+        }
+      };
+
+      // Set initial sizes
       calcOrigin();
-      document.fonts?.ready.then(calcOrigin);
+      updateSubtextWidth();
+      document.fonts?.ready.then(() => {
+        calcOrigin();
+        updateSubtextWidth();
+      });
+
+      window.addEventListener("resize", updateSubtextWidth);
 
       // Lock scroll from the start; wheel events drive the animation
       document.body.style.overflow = "hidden";
@@ -180,7 +221,8 @@ export default function Hero() {
           0,
         )
         .to(maskRef.current, { opacity: 0, ease: "none", duration: 0.1 }, 0.9)
-        .to(hintRef.current, { opacity: 0, duration: 0.1 }, 0);
+        .to(hintRef.current, { opacity: 0, duration: 0.1 }, 0)
+        .to(subtextRef.current, { opacity: 0, duration: 0.1 }, 0);
 
       // Phase 3 (Auto + Locked): Reveal brand
       const tlAuto = gsap.timeline({
@@ -197,6 +239,7 @@ export default function Hero() {
           markPlayed();
 
           gsap.set(maskRef.current, { display: "none" });
+          gsap.set(subtextRef.current, { display: "none" });
         },
       });
       if (isMobile) {
@@ -266,8 +309,10 @@ export default function Hero() {
           wheelRaf = 0;
         }
         gsap.killTweensOf(hintRef.current);
+        gsap.killTweensOf(subtextRef.current);
         gsap.set(maskRef.current, { display: "none" });
         gsap.set(hintRef.current, { display: "none" });
+        gsap.set(subtextRef.current, { display: "none" });
         tlAuto.play();
       };
 
@@ -303,12 +348,28 @@ export default function Hero() {
         if (!isMobile) {
           gsap.to(hintRef.current, { opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.out" });
         }
+        
+        // Fade in subtext alongside PRIS 2026
+        const subtextParts = subtextRef.current?.querySelectorAll(".subtext-part");
+        if (subtextParts) {
+          gsap.set(subtextParts, { opacity: 0 });
+          gsap.to(subtextParts, {
+            opacity: 1,
+            duration: 0.35,
+            stagger: 0.08,
+            ease: "power2.out",
+            delay: 0.4,
+          });
+        }
       } else {
         if (!isMobile) gsap.set(hintRef.current, { opacity: 1 });
+        const subtextParts = subtextRef.current?.querySelectorAll(".subtext-part");
+        if (subtextParts) gsap.set(subtextParts, { opacity: 1 });
         bindInteractions();
       }
 
       return () => {
+        window.removeEventListener("resize", updateSubtextWidth);
         window.removeEventListener("wheel", handleWheel);
         window.removeEventListener("wheel", preventPostZoomWheel);
         window.removeEventListener("keydown", preventKeyScroll);
@@ -383,7 +444,7 @@ export default function Hero() {
 
             <div className="mt-9 sm:mt-9 lg:mt-[1.6vh] md:portrait:mt-[2.8vh] min-[1280px]:portrait:mt-[1.6vh] max-md:landscape:mt-3 flex justify-center w-full">
               <Image
-                src="/assets/Img/logo/LOGO1.png"
+                src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
                 alt="2nd PRIS 2026 Pharmacy Research and Innovation Summit"
                 width={982}
                 height={268}
@@ -403,9 +464,9 @@ export default function Hero() {
 
             <div className="mt-7 flex w-full max-w-[860px] flex-col justify-center gap-4 text-white sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
               <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
-                <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-[#168fff] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+                <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-[#a3e635] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                 <div className="min-w-0 uppercase">
-                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-[#168fff] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
+                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-[#a3e635] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
                     <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
                       29-30
                     </span>
@@ -422,9 +483,9 @@ export default function Hero() {
               <div className="hidden h-11 w-px shrink-0 bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-8" />
 
               <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
-                <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-[#168fff] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+                <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-[#a3e635] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                 <div className="min-w-0 uppercase">
-                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-[#168fff] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-[#a3e635] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
                     Jupiter Room 4-13
                   </p>
                   <p className="mt-2 text-sm font-black leading-snug tracking-[0.08em] text-white/90 sm:text-[0.9rem] md:portrait:mt-1.5 md:portrait:text-[0.78rem] md:portrait:tracking-[0.06em] lg:text-[0.78rem] max-md:landscape:mt-1 max-md:landscape:text-[0.58rem]">
@@ -520,7 +581,7 @@ export default function Hero() {
                 y="50%"
                 dominantBaseline="central"
                 textAnchor="middle"
-                className="font-black text-[16vw] sm:text-[14vw] md:text-[12vw] font-outfit tracking-tighter"
+                className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] font-outfit tracking-tighter"
                 fill="black"
               >
                 {INTRO_CHARS.map((char, i) => (
@@ -542,11 +603,12 @@ export default function Hero() {
             pointerEvents="none"
           />
           <text
+            ref={mainTextRef}
             x="50%"
             y="50%"
             dominantBaseline="central"
             textAnchor="middle"
-            className="font-black text-[16vw] sm:text-[14vw] md:text-[12vw] font-outfit tracking-tighter"
+            className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] font-outfit tracking-tighter"
             fill="transparent"
             pointerEvents="none"
           >
@@ -576,6 +638,23 @@ export default function Hero() {
             {t('scrollDownSecondary')}
           </span>
           <ChevronDown className="mt-1 w-4 h-4 text-black animate-bounce" />
+        </div>
+      </div>
+
+      {/* Intro Subtext */}
+      <div
+        ref={subtextRef}
+        className="absolute left-1/2 -translate-x-1/2 z-[2] pointer-events-none transition-opacity duration-300 flex justify-center"
+      >
+        <div ref={subtextInnerRef} className="text-black/90 font-medium whitespace-nowrap text-3xl tracking-tight origin-top flex">
+          {SUBTEXT_PARTS.map((part, i) => (
+            <React.Fragment key={`sub-${i}`}>
+              <span className="subtext-part inline-block">
+                {part}
+              </span>
+              {i < SUBTEXT_PARTS.length - 1 && <span className="inline-block">&nbsp;</span>}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </section>

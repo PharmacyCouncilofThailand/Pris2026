@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useMemo, useCallback } from 'react';
 interface CountUpProps {
   text: string;
   duration?: number;
+  suffixClassName?: string;
 }
 
 /**
@@ -12,8 +13,9 @@ interface CountUpProps {
  * Uses a single IntersectionObserver + requestAnimationFrame loop.
  * Writes directly to the DOM via ref to avoid React re-renders during animation.
  */
-export default function CountUp({ text, duration = 2000 }: CountUpProps) {
-  const spanRef = useRef<HTMLSpanElement>(null);
+export default function CountUp({ text, duration = 2000, suffixClassName }: CountUpProps) {
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const numRef = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
   // Parse text once — stable across renders
@@ -28,11 +30,11 @@ export default function CountUp({ text, duration = 2000 }: CountUpProps) {
   }, [text]);
 
   const runAnimation = useCallback(() => {
-    if (hasAnimated.current || endValue === 0 || !spanRef.current) return;
+    if (hasAnimated.current || endValue === 0 || !numRef.current) return;
     hasAnimated.current = true;
 
     let start: number | undefined;
-    const el = spanRef.current;
+    const el = numRef.current;
 
     const step = (ts: number) => {
       if (start === undefined) start = ts;
@@ -42,12 +44,12 @@ export default function CountUp({ text, duration = 2000 }: CountUpProps) {
       const ease = pct === 1 ? 1 : 1 - Math.pow(2, -10 * pct);
       const val = Math.floor(ease * endValue);
 
-      el.textContent = `${prefix}${val.toLocaleString()}${suffix}`;
+      el.textContent = val.toLocaleString();
 
       if (pct < 1) {
         requestAnimationFrame(step);
       } else {
-        el.textContent = `${prefix}${endValue.toLocaleString()}${suffix}`;
+        el.textContent = endValue.toLocaleString();
       }
     };
 
@@ -55,12 +57,13 @@ export default function CountUp({ text, duration = 2000 }: CountUpProps) {
   }, [prefix, suffix, endValue, duration]);
 
   useEffect(() => {
-    const el = spanRef.current;
-    if (!el) return;
+    const container = containerRef.current;
+    const numEl = numRef.current;
+    if (!container || !numEl) return;
 
-    // Show initial text (0 if animatable, raw text otherwise)
+    // Show initial text (0 if animatable)
     if (endValue > 0) {
-      el.textContent = `${prefix}0${suffix}`;
+      numEl.textContent = '0';
     }
 
     const io = new IntersectionObserver(
@@ -72,10 +75,20 @@ export default function CountUp({ text, duration = 2000 }: CountUpProps) {
       },
       { threshold: 0.1 }
     );
-    io.observe(el);
+    io.observe(container);
     return () => io.disconnect();
-  }, [prefix, suffix, endValue, runAnimation]);
+  }, [endValue, runAnimation]);
 
-  // Render once — all subsequent updates go through ref.textContent
-  return <span ref={spanRef}>{text}</span>;
+  if (endValue === 0) {
+    return <span>{text}</span>;
+  }
+
+  // Render separated parts
+  return (
+    <span ref={containerRef} className="inline-flex items-baseline">
+      {prefix && <span>{prefix}</span>}
+      <span ref={numRef}>0</span>
+      {suffix && <span className={suffixClassName}>{suffix}</span>}
+    </span>
+  );
 }
