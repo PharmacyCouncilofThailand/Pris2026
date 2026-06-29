@@ -66,7 +66,7 @@ export default function Countdown({ className }: CountdownProps) {
             <span className="text-4xl font-black leading-none tracking-[0.04em] text-white tabular-nums sm:text-5xl md:text-6xl max-md:landscape:text-3xl">
               {String(unit.value).padStart(2, "0")}
             </span>
-            <span className="mt-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-white/40 sm:text-[10px] md:text-xs max-md:landscape:mt-1 max-md:landscape:text-[8px]">
+            <span className="mt-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-white sm:text-[10px] md:text-xs max-md:landscape:mt-1 max-md:landscape:text-[8px]">
               {unit.label}
             </span>
           </div>

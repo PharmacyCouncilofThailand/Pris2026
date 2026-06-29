@@ -140,7 +140,7 @@ export default function Header() {
                           className={cn(
                             navigationMenuTriggerStyle(),
                             "bg-transparent transition-colors",
-                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-orange-500"
+                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-cyan-400"
                           )}
                           onClick={() => {
                             if (typeof document !== "undefined") {
@@ -158,7 +158,7 @@ export default function Header() {
                       <>
                         <NavigationMenuTrigger className={cn(
                           "bg-transparent transition-colors",
-                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-orange-500"
+                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-cyan-400"
                         )}>
                           {t(item.labelKey as TranslationKey)}
                         </NavigationMenuTrigger>
@@ -297,13 +297,13 @@ export default function Header() {
                           <Link
                             href={item.href as LinkHref}
                             prefetch={true}
-                            className="text-lg font-medium hover:text-orange-500 block"
+                            className="text-lg font-medium hover:text-cyan-400 block"
                           >
                             {t(item.labelKey as TranslationKey)}
                           </Link>
                         ) : (
                           <details className="group">
-                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-orange-500">
+                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-cyan-400">
                               {t(item.labelKey as TranslationKey)}
                               <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
                             </summary>
@@ -313,7 +313,7 @@ export default function Header() {
                                   <Link
                                     href={(child.href || "#") as LinkHref}
                                     prefetch={true}
-                                    className="text-gray-300 hover:text-orange-500 block py-1"
+                                    className="text-gray-300 hover:text-cyan-400 block py-1"
                                   >
                                     {t(child.labelKey as TranslationKey)}
                                   </Link>
