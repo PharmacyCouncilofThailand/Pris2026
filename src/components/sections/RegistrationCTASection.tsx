@@ -350,7 +350,7 @@ export default function RegistrationCTASection() {
                 </div>
               </div>
               <div className="text-left lg:text-right">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-white transition-colors duration-500">฿1,000</div>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-white transition-colors duration-500">฿1,250</div>
               </div>
             </div>
           </div>

@@ -41,6 +41,7 @@ const SUBTEXT_PARTS = [
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const maskRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const mainTextRef = useRef<SVGTextElement>(null);
@@ -98,6 +99,34 @@ export default function Hero() {
 
     return () => {
       document.body.classList.remove("hero-playing");
+    };
+  }, []);
+
+  // Keep background video playing at all times
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const ensurePlaying = () => {
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+    };
+
+    // Resume if the browser pauses the video (e.g. resource-saving)
+    video.addEventListener("pause", ensurePlaying);
+
+    // Resume when the user returns to the tab
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        ensurePlaying();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      video.removeEventListener("pause", ensurePlaying);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
@@ -389,9 +418,10 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef}
-      className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:h-full xl:overflow-hidden"
+      className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:min-h-[100svh]"
     >
       <video
+        ref={videoRef}
         src="/assets/Img/BG/BG LOOP.mp4"
         autoPlay
         loop
@@ -408,42 +438,43 @@ export default function Hero() {
             "linear-gradient(180deg, rgba(3,5,14,0.3) 0%, rgba(3,5,14,0.72) 46%, rgba(3,5,14,0.94) 100%)",
         }}
       />
+      {/* Desktop: centre vignette so text is always readable over the video */}
       <div
-        className="absolute inset-y-0 left-0 z-[1] hidden w-[62%] pointer-events-none lg:block"
+        className="absolute inset-0 z-[1] hidden pointer-events-none lg:block"
         style={{
           background:
-            "linear-gradient(90deg, rgba(3,5,14,0.22) 0%, rgba(3,5,14,0.04) 72%, rgba(3,5,14,0) 100%)",
+            "radial-gradient(ellipse 110% 80% at 50% 48%, rgba(3,5,14,0.52) 0%, rgba(3,5,14,0.28) 50%, rgba(3,5,14,0.10) 80%, transparent 100%)",
         }}
       />
 
       {/* Hero Content */}
-      <div className="relative z-[2] mx-auto flex min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 w-full max-w-[1920px] flex-col px-4 pb-6 pt-16 sm:px-8 sm:pt-20 md:px-10 md:pb-[7vh] md:pt-[7vh] md:portrait:px-[5.2vw] md:portrait:pb-[2.6vh] md:portrait:pt-[7.2vh] min-[1280px]:h-full min-[1280px]:min-h-0 min-[1280px]:px-[8vw] min-[1280px]:pb-[2.2vh] min-[1280px]:pt-[5.6rem] min-[1280px]:max-[1439px]:landscape:pt-[9.2rem] max-md:landscape:pb-5 max-md:landscape:pt-12 pointer-events-auto">
+      <div className="relative z-[2] mx-auto flex min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 w-full max-w-[1920px] flex-col px-4 pb-6 pt-16 sm:px-8 sm:pt-20 md:px-10 md:pb-[7vh] md:pt-[7vh] md:portrait:px-[5.2vw] md:portrait:pb-[2.6vh] md:portrait:pt-[7.2vh] min-[1280px]:min-h-[100svh] min-[1280px]:px-[8vw] min-[1280px]:pb-[2.2vh] min-[1280px]:pt-[5.6rem] min-[1280px]:max-[1439px]:landscape:pt-[9.2rem] max-md:landscape:pb-5 max-md:landscape:pt-12 pointer-events-auto">
         <div className="mx-auto flex w-full flex-col items-center md:max-w-[820px] md:portrait:max-w-none min-[1280px]:mx-auto min-[1280px]:max-w-[80vw]">
           <div ref={logoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
             <div className="flex translate-y-6 items-center justify-center gap-4 sm:gap-6 lg:gap-5 md:portrait:gap-5 max-md:landscape:translate-y-3 max-md:landscape:gap-3">
               <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
                 <Image
-                  src="/assets/Img/logo/Logo_Pharmacycouncil_White.png"
+                  src="/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png"
                   alt="The Pharmacy Council of Thailand"
                   fill
                   sizes="112px"
-                  className="scale-[0.88] object-contain drop-shadow-[0_0_14px_rgba(255,255,255,0.18)]"
+                  className="scale-[1.05] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] [filter:drop-shadow(0_0_18px_rgba(255,255,255,0.35))_drop-shadow(0_4px_12px_rgba(0,0,0,0.6))]"
                 />
               </div>
               <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
                 <Image
-                  src="/assets/Img/logo/Logo_ราชวิทยาลัยสีขาว.png"
+                  src="/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png"
                   alt="Royal College of Pharmacy of Thailand"
                   fill
                   sizes="112px"
-                  className="scale-[1.35] object-contain drop-shadow-[0_0_14px_rgba(255,255,255,0.18)]"
+                  className="scale-[1.35] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] [filter:drop-shadow(0_0_18px_rgba(255,255,255,0.35))_drop-shadow(0_4px_12px_rgba(0,0,0,0.6))]"
                 />
               </div>
             </div>
 
             <div className="mt-9 sm:mt-9 lg:mt-[1.6vh] md:portrait:mt-[2.8vh] min-[1280px]:portrait:mt-[1.6vh] max-md:landscape:mt-3 flex justify-center w-full">
               <Image
-                src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                src="/assets/Img/logo/Logo-Final .png"
                 alt="2nd PRIS 2026 Pharmacy Research and Innovation Summit"
                 width={982}
                 height={268}
@@ -455,17 +486,17 @@ export default function Hero() {
 
           <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
             <div className="mt-4 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4 text-center flex justify-center w-full">
-              <h1 className="max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
+              <h1 className="max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
                 Pharmacy Research & Innovation
                 <span className="block">Driving Sustainable Healthcare</span>
               </h1>
             </div>
 
-            <div className="mt-7 flex w-full max-w-[860px] flex-col justify-center gap-4 text-white sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
-              <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
-                <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-white drop-shadow-md md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+            <div className="mt-7 flex w-full max-w-[860px] flex-col justify-center gap-4 text-white sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:flex-col md:portrait:gap-3 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
+              <div className="flex flex-1 min-w-0 items-center justify-center text-center sm:text-left sm:justify-end md:portrait:text-center md:portrait:justify-center">
                 <div className="min-w-0 uppercase">
-                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000,0_4px_8px_rgba(0,0,0,0.6)] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
+                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
+                    <CalendarDays aria-hidden="true" className="inline-block relative top-[0.15rem] h-5 w-5 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                     <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
                       29-30
                     </span>
@@ -481,13 +512,13 @@ export default function Hero() {
 
               <div className="hidden h-11 w-px shrink-0 bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-8" />
 
-              <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
-                <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-white drop-shadow-md md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+              <div className="flex flex-1 min-w-0 items-center justify-center text-center sm:text-left sm:justify-start md:portrait:text-center md:portrait:justify-center">
                 <div className="min-w-0 uppercase">
-                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000,0_4px_8px_rgba(0,0,0,0.6)] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                    <MapPin aria-hidden="true" className="inline-block relative top-[0.15rem] mr-2.5 h-5 w-5 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                     Jupiter Room 4-13
                   </p>
-                  <p className="mt-2 text-sm font-black leading-snug tracking-[0.08em] text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000,0_4px_8px_rgba(0,0,0,0.6)] sm:text-[0.9rem] md:portrait:mt-1.5 md:portrait:text-[0.78rem] md:portrait:tracking-[0.06em] lg:text-[0.78rem] max-md:landscape:mt-1 max-md:landscape:text-[0.58rem]">
+                  <p className="mt-2 whitespace-nowrap text-[1.12rem] font-black leading-snug tracking-[0.14em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:mt-1.5 md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:mt-1 max-md:landscape:text-[0.78rem]">
                     Impact Muang Thong Thani
                     <span className="block">Nonthaburi, Thailand</span>
                   </p>

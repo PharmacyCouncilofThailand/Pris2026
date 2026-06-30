@@ -21,7 +21,10 @@
     "gallery": "Gallery",
     "contact": "Contact",
     "language": "Language",
-    "switchLang": "ภาษาไทย"
+    "switchLang": "ภาษาไทย",
+    "login": "Log In",
+    "signUp": "Sign Up",
+    "myProfile": "My Profile"
   },
   "footer": {
     "navigation": "Navigation",
@@ -60,7 +63,7 @@
     "stat1Label": "Participants",
     "stat2Value": "60+",
     "stat2Label": "Exhibition Booths",
-    "stat3Value": "300+",
+    "stat3Value": "500+",
     "stat3Label": "Oral & Poster",
     "research": {
       "title": "Research",
@@ -124,10 +127,10 @@
     "feature2Desc": "Experience the latest pharmaceutical innovations and medical devices from over 60 leading companies. Stay ahead of future trends.",
     "tiersTitle": "Registration\nTiers",
     "tiersSubtitle": "Select your pass type",
-    "tierEarlyLabel": "General • Before Jun 30, 2026",
-    "tierRegLabel": "General • Jul 1 - Sep 30, 2026",
+    "tierEarlyLabel": "General • Jul 1 - Aug 1, 2026",
+    "tierRegLabel": "General • Aug 1 - Oct 15, 2026",
     "tierLate": "Late Registration / On-site",
-    "tierLateLabel": "General • From Oct 1, 2026",
+    "tierLateLabel": "General • From Oct 15, 2026",
     "tierPostGrad": "Post Graduate",
     "tierPostGradLabel": "Master's & Ph.D. Level",
     "tierUnderGrad": "Under Graduate",
