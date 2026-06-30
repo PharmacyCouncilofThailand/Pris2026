@@ -391,13 +391,12 @@ export default function Hero() {
       ref={containerRef}
       className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:h-full xl:overflow-hidden"
     >
-      <Image
-        src="/assets/Img/BG/BG.jpg"
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        quality={95}
+      <video
+        src="/assets/Img/BG/BG LOOP.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
         className="absolute inset-0 z-0 h-full w-full object-cover"
         style={{ objectPosition: "center top" }}
       />
@@ -464,9 +463,9 @@ export default function Hero() {
 
             <div className="mt-7 flex w-full max-w-[860px] flex-col justify-center gap-4 text-white sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
               <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
-                <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-[#a3e635] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+                <CalendarDays aria-hidden="true" className="h-5 w-5 shrink-0 text-white drop-shadow-md md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                 <div className="min-w-0 uppercase">
-                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-[#a3e635] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
+                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000,0_4px_8px_rgba(0,0,0,0.6)] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
                     <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
                       29-30
                     </span>
@@ -483,12 +482,12 @@ export default function Hero() {
               <div className="hidden h-11 w-px shrink-0 bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-8" />
 
               <div className="flex min-w-0 items-center justify-center gap-3 md:portrait:gap-2.5 max-md:landscape:gap-2 text-center sm:text-left">
-                <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-[#a3e635] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
+                <MapPin aria-hidden="true" className="h-5 w-5 shrink-0 text-white drop-shadow-md md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
                 <div className="min-w-0 uppercase">
-                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-[#a3e635] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
+                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000,0_4px_8px_rgba(0,0,0,0.6)] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
                     Jupiter Room 4-13
                   </p>
-                  <p className="mt-2 text-sm font-black leading-snug tracking-[0.08em] text-white/90 sm:text-[0.9rem] md:portrait:mt-1.5 md:portrait:text-[0.78rem] md:portrait:tracking-[0.06em] lg:text-[0.78rem] max-md:landscape:mt-1 max-md:landscape:text-[0.58rem]">
+                  <p className="mt-2 text-sm font-black leading-snug tracking-[0.08em] text-white [text-shadow:-1px_-1px_0_#000,1px_-1px_0_#000,-1px_1px_0_#000,1px_1px_0_#000,0_4px_8px_rgba(0,0,0,0.6)] sm:text-[0.9rem] md:portrait:mt-1.5 md:portrait:text-[0.78rem] md:portrait:tracking-[0.06em] lg:text-[0.78rem] max-md:landscape:mt-1 max-md:landscape:text-[0.58rem]">
                     Impact Muang Thong Thani
                     <span className="block">Nonthaburi, Thailand</span>
                   </p>
@@ -518,7 +517,7 @@ export default function Hero() {
                 <div
                   aria-disabled="true"
                   title={REGISTRATION_NOTICE}
-                  className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-[#ff8a24]/60 bg-[#ff6a00]/75 px-5 text-center font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
+                  className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
                   <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{REGISTRATION_NOTICE}</span>
                 </div>
@@ -541,7 +540,7 @@ export default function Hero() {
                 <div
                   aria-disabled="true"
                   title={ABSTRACT_NOTICE}
-                  className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-white/70 bg-white/85 px-5 text-center font-black text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
+                  className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-white bg-white px-5 text-center font-black text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
                   <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{ABSTRACT_NOTICE}</span>
                 </div>
@@ -553,7 +552,7 @@ export default function Hero() {
 
         <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
           <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
-            <p className="text-center text-[0.62rem] font-black uppercase tracking-[0.26em] text-white/58 sm:text-[0.68rem] sm:tracking-[0.34em] max-md:landscape:text-[0.52rem]">
+            <p className="text-center text-[0.62rem] font-black uppercase tracking-[0.26em] text-white sm:text-[0.68rem] sm:tracking-[0.34em] max-md:landscape:text-[0.52rem]">
               Countdown to PRIS 2026
             </p>
             <Countdown className="mx-auto" />

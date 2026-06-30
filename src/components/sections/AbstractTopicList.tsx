@@ -65,9 +65,6 @@ export default function AbstractTopicList() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(260px,0.78fr)_minmax(0,1.45fr)] gap-10 lg:gap-16 xl:gap-20 items-start lg:items-center">
           {/* Header Part */}
           <div className="topic-header max-w-xl lg:max-w-sm">
-            <span className="mb-4 inline-flex h-10 w-10 items-center justify-center border border-slate-300 bg-white text-xs font-black text-[#0055FF]">
-              08
-            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-black text-slate-900 mb-4 font-outfit tracking-tight leading-[1.04]">
               {locale === "th" ? "หัวข้อสำหรับการส่งบทคัดย่อ" : "Submission Themes & Topics"}
             </h2>
