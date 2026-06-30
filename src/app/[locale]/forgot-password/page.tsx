@@ -23,6 +23,7 @@ export default function ForgotPasswordPage() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
@@ -178,16 +179,16 @@ export default function ForgotPasswordPage() {
                       const data = await res.json();
 
                       if (!res.ok || !data.success) {
-                        toast.error(data.error || "Failed to send reset link. Please try again.");
+                        toast.error(data.error || tt("resetLinkFailed"));
                         turnstileRef.current?.reset();
                         setTurnstileToken(null);
                         return;
                       }
 
-                      toast.success("Reset link sent!");
+                      toast.success(tt("resetLinkSent"));
                       setSubmittedEmail(email);
                     } catch {
-                      toast.error("Network error. Please check your connection.");
+                      toast.error(tt("networkError"));
                       turnstileRef.current?.reset();
                       setTurnstileToken(null);
                     } finally {

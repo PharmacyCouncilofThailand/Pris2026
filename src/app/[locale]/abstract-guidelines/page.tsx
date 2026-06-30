@@ -8,7 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import PageHero from "@/components/sections/PageHero";
-import { ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
+import { ABSTRACT_OPEN } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -18,6 +18,8 @@ export default function DetailedGuidelines() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const t = useTranslations("abstractGuidelines");
+  const tg = useTranslations("registrationGate");
+  const tp = useTranslations("abstractPage");
   const locale = useLocale();
   const importantDatesReservationNote =
     locale === "th"
@@ -121,7 +123,7 @@ export default function DetailedGuidelines() {
 
           <div className="content-block mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-              {locale === "th" ? "หมายเหตุการพิจารณา" : "Review Note"}
+              {tp("reviewNote")}
             </p>
             <p className="text-sm leading-relaxed text-slate-600 md:text-[0.95rem]">
               {importantDatesReviewNote}
@@ -250,7 +252,7 @@ export default function DetailedGuidelines() {
 
           <div className="content-block max-w-4xl">
             <p className="text-gray-500 text-base leading-[1.8] font-light mb-12">
-              {locale === "th" ? "บทคัดย่อต้องมีโครงสร้างตามหัวข้อต่อไปนี้:" : "Abstracts must be structured and include the following sections:"}
+              {tp("structureIntro")}
             </p>
           </div>
 
@@ -291,7 +293,7 @@ export default function DetailedGuidelines() {
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto content-block">
           <div className="border-t border-b border-gray-200 py-12 md:py-16 text-center">
-            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-orange-500 block mb-4">{locale === "th" ? "จำกัดจำนวนคำไม่เกิน" : "Maximum Word Limit"}</span>
+            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-orange-500 block mb-4">{tp("maxWordLimit")}</span>
             <p className="text-3xl md:text-5xl font-black tracking-tighter text-gray-900 uppercase">
               {locale === "th" ? submissionGuidelines.maxWordLimitTh : submissionGuidelines.maxWordLimit}
             </p>
@@ -306,10 +308,10 @@ export default function DetailedGuidelines() {
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{locale === "th" ? "การจัดรูปแบบเอกสาร" : "Typography"}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{tp("typography")}</span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
-              {locale === "th" ? "รูปแบบ" : "Formatting"}
+              {tp("formatting")}
             </h2>
           </div>
 
@@ -336,16 +338,16 @@ export default function DetailedGuidelines() {
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{locale === "th" ? "นโยบาย" : "Policies"}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{tp("policies")}</span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
-              {locale === "th" ? "นโยบาย" : "Policies"}
+              {tp("policies")}
             </h2>
           </div>
 
           {/* Declaration */}
           <div className="content-block mb-16">
-            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{locale === "th" ? "การรับรองและการมอบสิทธิ์" : "Declaration & Assignation"}</h3>
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{tp("declaration")}</h3>
             <div className="border-t border-gray-200">
               {(locale === "th" ? submissionGuidelines.policies.declarationTh : submissionGuidelines.policies.declaration).map((item, idx) => (
                 <div key={idx} className="flex items-start gap-6 py-5 border-b border-gray-100">
@@ -358,7 +360,7 @@ export default function DetailedGuidelines() {
 
           {/* Acceptance */}
           <div className="content-block mb-16">
-            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{locale === "th" ? "การแจ้งผลการพิจารณา" : "Acceptance Notification"}</h3>
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{tp("acceptanceNotification")}</h3>
             <div className="border-t border-gray-200">
               {(locale === "th" ? submissionGuidelines.policies.acceptanceTh : submissionGuidelines.policies.acceptance).map((item, idx) => (
                 <div key={idx} className="flex items-start gap-6 py-5 border-b border-gray-100">
@@ -373,7 +375,7 @@ export default function DetailedGuidelines() {
 
           {/* Withdrawal */}
           <div className="content-block">
-            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{locale === "th" ? "การถอนบทคัดย่อ" : "Abstract Withdrawal"}</h3>
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{tp("withdrawal")}</h3>
             <div className="border-t border-b border-gray-200 py-6">
               <p className="text-gray-600 text-base leading-relaxed font-light">
                 {locale === "th" ? submissionGuidelines.policies.withdrawalTh : submissionGuidelines.policies.withdrawal}
@@ -403,10 +405,10 @@ export default function DetailedGuidelines() {
             ) : (
               <div
                 aria-disabled="true"
-                title={ABSTRACT_NOTICE}
+                title={tg("abstractNotice")}
                 className="bg-blue-600/60 text-white font-bold px-8 py-4 text-sm cursor-not-allowed select-none"
               >
-                {ABSTRACT_NOTICE}
+                {tg("abstractNotice")}
               </div>
             )}
             <Link

@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { abstractTimeline, submissionGuidelines } from "@/data/abstractData";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function AbstractTimeline() {
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
+  const tp = useTranslations("abstractPage");
   
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -21,7 +22,7 @@ export default function AbstractTimeline() {
     locale === "th"
       ? submissionGuidelines.presenterRegistrationNoteTh
       : submissionGuidelines.presenterRegistrationNote;
-  const reviewNoteTitle = locale === "th" ? "หมายเหตุการพิจารณา" : "Review Note";
+  const reviewNoteTitle = tp("reviewNote");
 
   return (
     <section className="py-20 md:py-32 bg-[#FAFBFF] md:bg-white text-slate-900 overflow-hidden">
@@ -32,11 +33,11 @@ export default function AbstractTimeline() {
           <div className="flex items-center gap-4 mb-4">
             <div className="w-10 h-[2px] bg-[#0055FF]"></div>
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#0055FF]">
-              {locale === "th" ? "กำหนดการ" : "Timeline"}
+              {tp("timeline")}
             </p>
           </div>
           <h2 className="font-outfit text-5xl sm:text-6xl md:text-[5.5rem] font-black tracking-tighter leading-[0.9]">
-            {locale === "th" ? "วันสำคัญ" : "Important Dates"}
+            {tp("importantDates")}
           </h2>
         </div>
 

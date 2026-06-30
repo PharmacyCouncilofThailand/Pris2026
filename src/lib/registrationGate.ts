@@ -10,14 +10,14 @@
  */
 export const REGISTRATION_OPEN = true;
 
-/** Notice shown on disabled CTAs while registration is not open. */
+/** Notice shown on disabled CTAs while registration is not open. @deprecated Use i18n key registrationGate.registrationNotice */
 export const REGISTRATION_NOTICE = "เปิดลงทะเบียนวันที่ 1 กรกฎาคม 2569";
 
 /**
  * Same idea for abstract submission CTAs. Kept separate so registration and
  * abstract submission can be opened independently.
  */
-export const ABSTRACT_OPEN = false;
+export const ABSTRACT_OPEN = true;
 
-/** Notice shown on disabled abstract-submission CTAs while not open. */
+/** Notice shown on disabled abstract-submission CTAs while not open. @deprecated Use i18n key registrationGate.abstractNotice */
 export const ABSTRACT_NOTICE = "เปิดรับบทคัดย่อวันที่ 1 กรกฎาคม 2569";

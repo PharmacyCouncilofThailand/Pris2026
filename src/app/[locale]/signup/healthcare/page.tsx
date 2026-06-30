@@ -23,6 +23,7 @@ export default function HealthcareSignUpPage() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
@@ -78,7 +79,6 @@ export default function HealthcareSignUpPage() {
             </Link>
           </div>
 
-
         </div>
 
         {/* Form Right Side */}
@@ -133,7 +133,7 @@ export default function HealthcareSignUpPage() {
               const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
 
               if (password !== confirmPassword) {
-                toast.error('Passwords do not match.');
+                toast.error(t("passNotMatch"));
                 return;
               }
 
@@ -167,7 +167,7 @@ export default function HealthcareSignUpPage() {
                 const data = await res.json();
 
                 if (!res.ok || !data.success) {
-                  toast.error(data.error || 'Registration failed. Please try again.');
+                  toast.error(data.error || tt("registrationFailed"));
                   turnstileRef.current?.reset();
                   setTurnstileToken(null);
                   return;
@@ -179,13 +179,13 @@ export default function HealthcareSignUpPage() {
                   return;
                 }
 
-                toast.success('Account created successfully!');
+                toast.success(tt("accountCreated"));
                 login(data.user, data.token);
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect') || '/';
                 router.push(redirect);
               } catch {
-                toast.error('Network error. Please check your connection.');
+                toast.error(tt("networkError"));
                 turnstileRef.current?.reset();
                 setTurnstileToken(null);
               } finally {
@@ -201,7 +201,7 @@ export default function HealthcareSignUpPage() {
                   <input
                     type="text"
                     id="firstName"
-                    placeholder="First Name"
+                    placeholder={t("firstName")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                     required
                   />
@@ -213,7 +213,7 @@ export default function HealthcareSignUpPage() {
                   <input
                     type="text"
                     id="lastName"
-                    placeholder="Last Name"
+                    placeholder={t("lastName")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                     required
                   />
@@ -227,7 +227,7 @@ export default function HealthcareSignUpPage() {
                 <input
                   type="text"
                   id="idCard"
-                  placeholder="e.g. 1234567890123 or AB1234567"
+                  placeholder={t("nationalIdPlaceholder")}
                   maxLength={13}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   required
@@ -249,12 +249,12 @@ export default function HealthcareSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="organization">
-                  Organization / Affiliation
+                  {t("organizationAffiliation")}
                 </label>
                 <input
                   type="text"
                   id="organization"
-                  placeholder="Organization or Affiliation"
+                  placeholder={t("organizationPlaceholder")}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                 />
               </div>
@@ -272,7 +272,7 @@ export default function HealthcareSignUpPage() {
                   <input
                     type="tel"
                     id="phone"
-                    placeholder="08X XXX XXXX"
+                    placeholder={t("phonePlaceholder")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-r-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   />
                 </div>
@@ -281,7 +281,7 @@ export default function HealthcareSignUpPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="password">
-                    Password <span className="text-red-500">*</span>
+                    {t("password")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="password"
@@ -347,7 +347,7 @@ export default function HealthcareSignUpPage() {
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-500">{t("alreadyHaveAccount")} {" "}
                   <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
-                    Sign In
+                    {t("signIn")}
                   </Link>
                 </p>
               </div>

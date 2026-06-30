@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -33,6 +33,7 @@ type PageCopy = {
 
 export default function ContactPage() {
   const locale = useLocale();
+  const tc = useTranslations("contactPage");
   const pageRef = useRef<HTMLDivElement>(null!);
 
   const copy: PageCopy =
@@ -134,28 +135,28 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-3">
                     <label htmlFor="firstName" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formFirstName}</label>
-                    <input type="text" id="firstName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder="e.g. John" />
+                    <input type="text" id="firstName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("firstNamePlaceholder")} />
                   </div>
                   
                   <div className="flex flex-col gap-3">
                     <label htmlFor="lastName" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formLastName}</label>
-                    <input type="text" id="lastName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder="e.g. Doe" />
+                    <input type="text" id="lastName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("lastNamePlaceholder")} />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <label htmlFor="email" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formEmail}</label>
-                  <input type="email" id="email" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder="you@example.com" />
+                  <input type="email" id="email" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("emailPlaceholder")} />
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <label htmlFor="subject" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formSubject}</label>
-                  <input type="text" id="subject" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder="How can we help?" />
+                  <input type="text" id="subject" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("subjectPlaceholder")} />
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <label htmlFor="message" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formMessage}</label>
-                  <textarea id="message" required rows={4} className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400 resize-none leading-relaxed" placeholder="..." />
+                  <textarea id="message" required rows={4} className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400 resize-none leading-relaxed" placeholder={tc("messagePlaceholder")} />
                 </div>
 
                 <div className="pt-4 mt-2">

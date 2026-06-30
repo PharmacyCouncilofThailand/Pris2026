@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { abstractCategories } from "@/data/abstractData";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -14,6 +14,7 @@ if (typeof window !== "undefined") {
 export default function AbstractTopicList() {
   const containerRef = useRef<HTMLElement>(null);
   const locale = useLocale();
+  const tp = useTranslations("abstractPage");
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -66,12 +67,10 @@ export default function AbstractTopicList() {
           {/* Header Part */}
           <div className="topic-header max-w-xl lg:max-w-sm">
             <h2 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-black text-slate-900 mb-4 font-outfit tracking-tight leading-[1.04]">
-              {locale === "th" ? "หัวข้อสำหรับการส่งบทคัดย่อ" : "Submission Themes & Topics"}
+              {tp("topicsTitle")}
             </h2>
             <p className="text-base sm:text-lg lg:text-base text-slate-600 leading-relaxed">
-              {locale === "th" 
-                ? "PRIS 2026 ยินดีรับผลงานทางวิชาการและนวัตกรรมทางเภสัชกรรมในหลากหลายสาขา โปรดเลือกหัวข้อที่ตรงกับงานวิจัยของคุณมากที่สุด" 
-                : "PRIS 2026 welcomes submissions in various fields of pharmaceutical research and innovation. Please select the theme that best fits your research."}
+              {tp("topicsDesc")}
             </p>
           </div>
 

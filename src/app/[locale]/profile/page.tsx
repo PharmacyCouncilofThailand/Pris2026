@@ -8,8 +8,9 @@ import { QRCodeCanvas } from "qrcode.react";
 import toast from "react-hot-toast";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useTranslations, useLocale } from "next-intl";
 import AbstractTracker from "@/components/profile/AbstractTracker";
-import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
+import { REGISTRATION_OPEN } from "@/lib/registrationGate";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
@@ -33,51 +34,59 @@ interface StudentEligibilityInfo {
   reviewedAt?: string | null;
 }
 
-function getDelegateLabel(delegateType?: string, role?: string): string {
+function getDelegateLabel(
+  t: ReturnType<typeof useTranslations<"profile">>,
+  delegateType?: string,
+  role?: string
+): string {
   switch (delegateType) {
-    case "thai_student": return "Thai Student";
-    case "international_student": return "International Student";
-    case "thai_pharmacist": return "Thai Pharmacist";
-    case "international_pharmacist": return "International Pharmacist";
-    case "medical_professional": return "Medical Professional";
-    case "general": return "General Public";
+    case "thai_student": return t("delegateTypes.thaiStudent");
+    case "international_student": return t("delegateTypes.internationalStudent");
+    case "thai_pharmacist": return t("delegateTypes.thaiPharmacist");
+    case "international_pharmacist": return t("delegateTypes.internationalPharmacist");
+    case "medical_professional": return t("delegateTypes.medicalProfessional");
+    case "general": return t("delegateTypes.generalPublic");
   }
   switch (role) {
-    case "student": return "Student";
-    case "pharmacist": return "Pharmacist";
-    case "medical_professional": return "Medical Professional";
-    case "general": return "General Public";
-    default: return "Delegate";
+    case "student": return t("delegateTypes.student");
+    case "pharmacist": return t("delegateTypes.pharmacist");
+    case "medical_professional": return t("delegateTypes.medicalProfessional");
+    case "general": return t("delegateTypes.generalPublic");
+    default: return t("delegateTypes.delegate");
   }
 }
 
-function getStatusBadge(status?: string) {
+function getStatusBadge(t: ReturnType<typeof useTranslations<"profile">>, status?: string) {
   switch (status) {
     case "active":
-      return { label: "Active Member", className: "bg-emerald-50 text-emerald-700 border-emerald-100" };
+      return { label: t("status.active"), className: "bg-emerald-50 text-emerald-700 border-emerald-100" };
     case "pending_approval":
-      return { label: "Pending Approval", className: "bg-amber-50 text-amber-700 border-amber-100" };
+      return { label: t("status.pendingApproval"), className: "bg-amber-50 text-amber-700 border-amber-100" };
     case "rejected":
-      return { label: "Account Rejected", className: "bg-red-50 text-red-700 border-red-100" };
+      return { label: t("status.rejected"), className: "bg-red-50 text-red-700 border-red-100" };
     default:
-      return { label: "Member", className: "bg-slate-50 text-slate-600 border-slate-200" };
+      return { label: t("status.member"), className: "bg-slate-50 text-slate-600 border-slate-200" };
   }
 }
 
-function getEligibilityBadge(status?: StudentEligibilityInfo["status"]) {
+function getEligibilityBadge(t: ReturnType<typeof useTranslations<"profile">>, status?: StudentEligibilityInfo["status"]) {
   switch (status) {
     case "approved":
-      return { label: "Approved for this event", className: "bg-emerald-50 text-emerald-700 border-emerald-100", icon: CheckCircle2 };
+      return { label: t("eligibility.approved"), className: "bg-emerald-50 text-emerald-700 border-emerald-100", icon: CheckCircle2 };
     case "pending":
-      return { label: "Pending review", className: "bg-amber-50 text-amber-700 border-amber-100", icon: Clock3 };
+      return { label: t("eligibility.pending"), className: "bg-amber-50 text-amber-700 border-amber-100", icon: Clock3 };
     case "rejected":
-      return { label: "Rejected", className: "bg-rose-50 text-rose-700 border-rose-100", icon: AlertCircle };
+      return { label: t("eligibility.rejected"), className: "bg-rose-50 text-rose-700 border-rose-100", icon: AlertCircle };
     default:
-      return { label: "Not submitted", className: "bg-slate-50 text-slate-600 border-slate-200", icon: GraduationCap };
+      return { label: t("eligibility.notSubmitted"), className: "bg-slate-50 text-slate-600 border-slate-200", icon: GraduationCap };
   }
 }
 
 export default function ProfilePage() {
+  const t = useTranslations("profile");
+  const tg = useTranslations("registrationGate");
+  const tt = useTranslations("toasts");
+  const locale = useLocale();
   const containerRef = useRef<HTMLDivElement>(null!);
   const eligibilityFileRef = useRef<HTMLInputElement>(null);
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -139,7 +148,7 @@ export default function ProfilePage() {
         setStudentEligibility(data.eligibility ?? null);
       }
     } catch {
-      toast.error("Failed to load postgraduate eligibility status.");
+      toast.error(tt("eligibilityLoadFailed"));
     } finally {
       setEligibilityLoading(false);
     }
@@ -153,7 +162,7 @@ export default function ProfilePage() {
     if (!token || !EVENT_CODE) return;
     const file = eligibilityFileRef.current?.files?.[0];
     if (!file) {
-      toast.error("Please attach a student verification document.");
+      toast.error(tt("attachDocument"));
       return;
     }
 
@@ -170,16 +179,16 @@ export default function ProfilePage() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        toast.error(data.error || "Failed to submit postgraduate eligibility request.");
+        toast.error(data.error || tt("eligibilitySubmitFailed"));
         return;
       }
 
-      toast.success("Postgraduate student-rate request submitted.");
+      toast.success(tt("eligibilitySubmitted"));
       setEligibilityFileName("");
       if (eligibilityFileRef.current) eligibilityFileRef.current.value = "";
       await fetchStudentEligibility();
     } catch {
-      toast.error("Network error. Please try again.");
+      toast.error(tt("networkRetry"));
     } finally {
       setEligibilitySubmitting(false);
     }
@@ -187,7 +196,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     logout();
-    toast.success("Signed out successfully");
+    toast.success(tt("signedOut"));
     router.push("/");
   };
 
@@ -204,7 +213,7 @@ export default function ProfilePage() {
       a.click();
       a.remove();
     } catch {
-      toast.error("Failed to download QR code");
+      toast.error(tt("qrDownloadFailed"));
     }
   };
 
@@ -219,9 +228,9 @@ export default function ProfilePage() {
   if (!isAuthenticated || !profileData) return null;
 
   const fullName = `${profileData.firstName ?? ""} ${profileData.lastName ?? ""}`.trim() || profileData.email;
-  const delegateLabel = getDelegateLabel(profileData.delegateType, profileData.role);
+  const delegateLabel = getDelegateLabel(t, profileData.delegateType, profileData.role);
   const org = profileData.institution || profileData.university || null;
-  const statusBadge = getStatusBadge(profileData.status);
+  const statusBadge = getStatusBadge(t, profileData.status);
   const memberCode = registration?.regCode ?? "—";
 
   return (
@@ -245,7 +254,7 @@ export default function ProfilePage() {
             onClick={handleLogout}
             className="group flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors"
           >
-            <span>Sign Out</span>
+            <span>{t("signOut")}</span>
             <LogOut className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
@@ -261,7 +270,7 @@ export default function ProfilePage() {
             }`}
           >
             <User className="w-4 h-4" />
-            Profile
+            {t("profileTab")}
           </button>
           <button
             onClick={() => setActiveTab("abstracts")}
@@ -272,7 +281,7 @@ export default function ProfilePage() {
             }`}
           >
             <FileText className="w-4 h-4" />
-            Abstract Tracker
+            {t("abstractsTab")}
           </button>
         </div>
 
@@ -319,7 +328,7 @@ export default function ProfilePage() {
                       <Mail className="w-4 h-4 text-slate-600" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Email</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("email")}</p>
                       <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide break-all">{profileData.email}</p>
                     </div>
                   </div>
@@ -330,7 +339,7 @@ export default function ProfilePage() {
                         <Phone className="w-4 h-4 text-slate-600" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Phone</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("phone")}</p>
                         <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{profileData.phone}</p>
                       </div>
                     </div>
@@ -342,7 +351,7 @@ export default function ProfilePage() {
                         <Building2 className="w-4 h-4 text-slate-600" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Organization</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("organization")}</p>
                         <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{org}</p>
                       </div>
                     </div>
@@ -353,11 +362,11 @@ export default function ProfilePage() {
               {/* Footer Branding */}
               <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between opacity-80">
                 <div>
-                  <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">Event</p>
+                  <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">{t("event")}</p>
                   <p className="font-black text-sm md:text-base tracking-widest uppercase text-slate-900">PRIS 2026</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">Delegate Type</p>
+                  <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">{t("delegateType")}</p>
                   <p className="font-black text-sm md:text-base tracking-widest uppercase text-slate-900">{delegateLabel}</p>
                 </div>
               </div>
@@ -375,7 +384,7 @@ export default function ProfilePage() {
                 ) : registration?.isRegistered ? (
                   <>
                     <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 text-center bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700/50">
-                      Scan at Entrance
+                      {t("scanAtEntrance")}
                     </p>
 
                     <div className="bg-white p-5 rounded-3xl shadow-2xl mb-6 relative group">
@@ -402,7 +411,7 @@ export default function ProfilePage() {
                       className="group mt-6 inline-flex items-center gap-2 px-5 py-3 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
                     >
                       <Download className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
-                      Download PNG
+                      {t("downloadPng")}
                     </button>
                   </>
                 ) : (
@@ -411,12 +420,12 @@ export default function ProfilePage() {
                       <Ticket className="w-8 h-8 text-slate-400" />
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">Not Registered</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">{t("notRegistered")}</p>
                       <p className="text-base md:text-lg font-bold text-white leading-snug">
-                        You haven&apos;t registered<br />for this event yet
+                        {t("notRegisteredDesc")}
                       </p>
                       <p className="text-xs text-slate-400 leading-relaxed max-w-xs">
-                        Complete your registration to receive your event pass and QR code.
+                        {t("notRegisteredHint")}
                       </p>
                     </div>
                     {REGISTRATION_OPEN ? (
@@ -424,16 +433,16 @@ export default function ProfilePage() {
                         href="/registration"
                         className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
                       >
-                        Register Now
+                        {t("registerNow")}
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </Link>
                     ) : (
                       <div
                         aria-disabled="true"
-                        title={REGISTRATION_NOTICE}
+                        title={tg("registrationNotice")}
                         className="inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white/70 text-slate-900 rounded-xl text-[11px] font-black tracking-wide shadow-lg cursor-not-allowed select-none"
                       >
-                        {REGISTRATION_NOTICE}
+                        {tg("registrationNotice")}
                       </div>
                     )}
                   </div>
@@ -450,15 +459,15 @@ export default function ProfilePage() {
                   </div>
                   <div>
                     <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                      Postgraduate Student Rate
+                      {t("postgradTitle")}
                     </h3>
                     <p className="text-sm text-slate-500 font-medium mt-1 max-w-2xl">
-                      For licensed pharmacists currently enrolled in a Master&apos;s Degree or Doctoral Degree/Doctorate program. Approval is valid only for this event.
+                      {t("postgradDesc")}
                     </p>
                   </div>
                 </div>
                 {(() => {
-                  const badge = getEligibilityBadge(studentEligibility?.status);
+                  const badge = getEligibilityBadge(t, studentEligibility?.status);
                   const Icon = badge.icon;
                   return (
                     <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-[10px] font-black uppercase tracking-[2px] ${badge.className}`}>
@@ -473,43 +482,43 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
                     <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 mb-2">
-                      Requested Level
+                      {t("requestedLevel")}
                     </p>
-                    <p className="text-lg font-black text-slate-900">Postgraduate only</p>
+                    <p className="text-lg font-black text-slate-900">{t("postgradOnly")}</p>
                     <p className="text-sm text-slate-500 mt-1">
-                      Master&apos;s Degree and Doctoral Degree/Doctorate are grouped as postgraduate.
+                      {t("postgradNote")}
                     </p>
                   </div>
 
                   {eligibilityLoading ? (
                     <div className="flex items-center gap-3 text-sm font-semibold text-slate-500">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Loading eligibility status...
+                      {t("loadingEligibility")}
                     </div>
                   ) : studentEligibility ? (
                     <div className="rounded-2xl border border-slate-200 p-5">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Document</p>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">{t("document")}</p>
                           <p className="text-sm font-bold text-slate-800 mt-1 break-all">{studentEligibility.documentFileName}</p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">Submitted</p>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">{t("submitted")}</p>
                           <p className="text-sm font-bold text-slate-800 mt-1">
-                            {new Date(studentEligibility.createdAt).toLocaleString()}
+                            {new Date(studentEligibility.createdAt).toLocaleString(locale === "th" ? "th-TH" : "en-US")}
                           </p>
                         </div>
                       </div>
                       {studentEligibility.status === "rejected" && studentEligibility.rejectionReason && (
                         <div className="mt-4 rounded-xl bg-rose-50 border border-rose-100 p-4">
-                          <p className="text-[10px] font-black uppercase tracking-[2px] text-rose-500">Reason</p>
+                          <p className="text-[10px] font-black uppercase tracking-[2px] text-rose-500">{t("reason")}</p>
                           <p className="text-sm text-rose-900 font-semibold mt-1">{studentEligibility.rejectionReason}</p>
                         </div>
                       )}
                     </div>
                   ) : (
                     <div className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-500 font-medium">
-                      No postgraduate student-rate request has been submitted for this event yet.
+                      {t("noRequestYet")}
                     </div>
                   )}
                 </div>
@@ -518,16 +527,16 @@ export default function ProfilePage() {
                   {studentEligibility?.status === "approved" ? (
                     <div className="h-full flex flex-col items-center justify-center text-center py-8">
                       <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
-                      <p className="font-black text-slate-900">Approved</p>
+                      <p className="font-black text-slate-900">{t("approved")}</p>
                       <p className="text-sm text-slate-500 mt-1">
-                        You can use postgraduate student-rate tickets for this event.
+                        {t("approvedDesc")}
                       </p>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div>
                         <p className="text-sm font-black text-slate-900 mb-2">
-                          Student Verification Document <span className="text-rose-500">*</span>
+                          {t("verificationDoc")} <span className="text-rose-500">*</span>
                         </p>
                         <div className="relative group cursor-pointer">
                           <input
@@ -544,13 +553,13 @@ export default function ProfilePage() {
                           }`}>
                             <UploadCloud className={`w-7 h-7 ${eligibilityFileName ? "text-slate-900" : "text-slate-400 group-hover:text-blue-500"}`} />
                             <span className="text-sm font-bold text-slate-700 break-all">
-                              {eligibilityFileName || "PDF, JPG, or PNG"}
+                              {eligibilityFileName || t("fileFormat")}
                             </span>
                           </div>
                         </div>
                       </div>
                       <p className="text-xs leading-relaxed text-slate-500">
-                        This request is only for postgraduate student-rate eligibility and must be reviewed again for each event.
+                        {t("eligibilityNote")}
                       </p>
                       <button
                         onClick={submitStudentEligibility}
@@ -558,7 +567,7 @@ export default function ProfilePage() {
                         className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-[11px] font-black uppercase tracking-[2px] text-white transition-all hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {eligibilitySubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                        {studentEligibility?.status === "rejected" ? "Resubmit Document" : studentEligibility?.status === "pending" ? "Replace Document" : "Submit Request"}
+                        {studentEligibility?.status === "rejected" ? t("resubmitDocument") : studentEligibility?.status === "pending" ? t("replaceDocument") : t("submitRequest")}
                       </button>
                     </div>
                   )}
@@ -574,10 +583,10 @@ export default function ProfilePage() {
           <div className="fade-in-stagger">
             <div className="mb-8 pl-2">
               <h2 className="text-3xl sm:text-4xl font-black text-slate-900 uppercase tracking-tight">
-                Abstract <span className="text-blue-600/80">Tracker</span>
+                {t("abstractTrackerTitle")}
               </h2>
               <p className="text-slate-400 font-medium text-sm mt-2">
-                Monitor the review status of your submitted abstracts.
+                {t("abstractTrackerDesc")}
               </p>
             </div>
             <AbstractTracker />

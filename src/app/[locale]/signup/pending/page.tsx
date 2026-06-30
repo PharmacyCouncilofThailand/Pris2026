@@ -62,7 +62,7 @@ export default function PendingApprovalPage() {
             {t("accountPending")}
           </h1>
           <p className="text-sm font-medium text-gray-500 leading-relaxed max-w-md mx-auto">
-            Your account has been created successfully! It is currently under review by our admin team. 
+            {t("pendingCreatedIntro")}
             {t("notifyEmail")}
           </p>
         </div>
@@ -70,7 +70,7 @@ export default function PendingApprovalPage() {
         <div className=" bg-[#f8f9fc] rounded-2xl p-6 mb-8">
           <p className="text-sm font-medium text-gray-600">
             {t("processTakes")} <span className="font-bold text-gray-900">{t("businessDays")}</span>. 
-            Please check your email for updates.
+            {t("checkEmailUpdates")}
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export default function PendingApprovalPage() {
             href="/"
             className="inline-block bg-black hover:bg-gray-900 text-white font-bold text-base py-4 px-10 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10"
           >
-            Back to Home
+            {t("returnHome")}
           </Link>
         </div>
       </div>

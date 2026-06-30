@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { ChevronDown, ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
-import { REGISTRATION_OPEN, REGISTRATION_NOTICE, ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
+import { REGISTRATION_OPEN, ABSTRACT_OPEN } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -32,13 +32,6 @@ const HERO_CFG = {
 const INTRO_TEXT = "PRIS 2026";
 const INTRO_CHARS = INTRO_TEXT.split("");
 
-const SUBTEXT_PARTS = [
-  "จัดโดย",
-  "สภาเภสัชกรรม",
-  "และ",
-  "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย"
-];
-
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -55,6 +48,8 @@ export default function Hero() {
   const subtextInnerRef = useRef<HTMLDivElement>(null);
 
   const t = useTranslations("hero");
+  const tg = useTranslations("registrationGate");
+  const organizerParts = t.raw("organizerParts") as string[];
   const { isAuthenticated } = useAuth();
 
   const heroCompleteRef = useRef<boolean>(false);
@@ -487,41 +482,52 @@ export default function Hero() {
           <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
             <div className="mt-4 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4 text-center flex justify-center w-full">
               <h1 className="max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
-                Pharmacy Research & Innovation
-                <span className="block">Driving Sustainable Healthcare</span>
+                {t("headingLine1")}
+                <span className="block">{t("headingLine2")}</span>
               </h1>
             </div>
 
-            <div className="mt-7 flex w-full max-w-[860px] flex-col justify-center gap-4 text-white sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:mt-[2.8vh] lg:max-w-[780px] lg:gap-5 md:portrait:mt-[3.4vh] md:portrait:max-w-none md:portrait:flex-col md:portrait:gap-3 min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:flex-row max-md:landscape:items-center max-md:landscape:gap-3">
-              <div className="flex flex-1 min-w-0 items-center justify-center text-center sm:text-left sm:justify-end md:portrait:text-center md:portrait:justify-center">
-                <div className="min-w-0 uppercase">
-                  <p className="flex flex-nowrap items-baseline gap-2 whitespace-nowrap leading-none text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:gap-2.5 md:portrait:gap-1.5 max-md:landscape:gap-1.5">
-                    <CalendarDays aria-hidden="true" className="inline-block relative top-[0.15rem] h-5 w-5 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
-                    <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
-                      29-30
-                    </span>
-                    <span className="text-[1.12rem] font-black tracking-[0.14em] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
-                      October
-                    </span>
-                    <span className="text-[1.12rem] font-black tracking-[0.14em] text-white sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
-                      2026
-                    </span>
+            <div className="mt-7 w-full max-w-[880px] md:portrait:max-w-[920px] lg:mt-[2.8vh] md:portrait:mt-[3.4vh] min-[1280px]:portrait:mt-[2.8vh] max-md:landscape:mt-4">
+              <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-x-7 sm:gap-y-0 md:portrait:grid-cols-1 md:portrait:gap-4 max-md:landscape:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] max-md:landscape:gap-x-4">
+                {/* Date */}
+                <div className="flex items-start justify-center gap-2.5 sm:justify-end sm:pt-1 md:portrait:justify-center max-md:landscape:justify-end">
+                  <CalendarDays
+                    aria-hidden="true"
+                    className="mt-0.5 h-5 w-5 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4"
+                  />
+                  <p className="max-w-[16rem] text-center text-[1.05rem] font-black leading-tight tracking-[0.08em] text-white normal-case [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.08rem] max-md:landscape:text-right max-md:landscape:text-[0.82rem]">
+                    {t("date")}
                   </p>
                 </div>
-              </div>
 
-              <div className="hidden h-11 w-px shrink-0 bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-8" />
+                {/* Divider */}
+                <div className="hidden h-14 w-px shrink-0 self-center bg-gradient-to-b from-transparent via-white/28 to-transparent sm:block md:portrait:hidden max-md:landscape:block max-md:landscape:h-10" />
+                <div className="mx-auto h-px w-14 bg-gradient-to-r from-transparent via-white/28 to-transparent sm:hidden md:portrait:block max-md:landscape:hidden" />
 
-              <div className="flex flex-1 min-w-0 items-center justify-center text-center sm:text-left sm:justify-start md:portrait:text-center md:portrait:justify-center">
-                <div className="min-w-0 uppercase">
-                  <p className="whitespace-nowrap text-[1.12rem] font-black leading-none tracking-[0.14em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:text-[0.78rem]">
-                    <MapPin aria-hidden="true" className="inline-block relative top-[0.15rem] mr-2.5 h-5 w-5 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4" />
-                    Jupiter Room 4-13
-                  </p>
-                  <p className="mt-2 whitespace-nowrap text-[1.12rem] font-black leading-snug tracking-[0.14em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.35rem] md:text-[1.48rem] md:portrait:mt-1.5 md:portrait:text-[1.34rem] md:portrait:tracking-[0.1em] lg:text-[1.12rem] max-md:landscape:mt-1 max-md:landscape:text-[0.78rem]">
-                    Impact Muang Thong Thani
-                    <span className="block">Nonthaburi, Thailand</span>
-                  </p>
+                {/* Venue */}
+                <div className="flex justify-center sm:justify-start md:portrait:justify-center max-md:landscape:justify-start">
+                  <div className="grid max-w-[18rem] grid-cols-[auto_1fr] gap-x-2.5 gap-y-1 text-center sm:text-left md:portrait:mx-auto md:portrait:text-center max-md:landscape:text-left">
+                    <MapPin
+                      aria-hidden="true"
+                      className="row-start-1 h-5 w-5 shrink-0 self-center text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4"
+                    />
+                    <p className="row-start-1 col-start-2 text-[1.05rem] font-black uppercase leading-none tracking-[0.14em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.08rem] max-md:landscape:text-[0.82rem]">
+                      {t("venueTitle")}
+                    </p>
+                    {t("venueLocationNameTh") ? (
+                      <p className="col-start-2 text-[0.98rem] font-bold leading-snug tracking-[0.02em] text-white normal-case [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.12rem] md:text-[1.2rem] lg:text-[1rem] max-md:landscape:text-[0.78rem]">
+                        {t("venueLocationNameTh")}
+                      </p>
+                    ) : null}
+                    {t("venueLocationNameEn") ? (
+                      <p className="col-start-2 text-[0.88rem] font-black uppercase leading-snug tracking-[0.11em] text-white/88 [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[0.98rem] md:text-[1.05rem] lg:text-[0.92rem] max-md:landscape:text-[0.72rem]">
+                        {t("venueLocationNameEn")}
+                      </p>
+                    ) : null}
+                    <p className="col-start-2 text-[0.88rem] font-bold leading-snug tracking-[0.05em] text-white/82 normal-case [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[0.98rem] md:text-[1.05rem] lg:text-[0.92rem] max-md:landscape:text-[0.72rem]">
+                      {t("venueRegion")}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -539,7 +545,7 @@ export default function Hero() {
                   <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-75 transition group-hover:via-[#07101f]" />
                   <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-white/26 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                   <span className="relative justify-self-start h-2 w-2 rounded-full bg-white opacity-85 shadow-[0_0_18px_rgba(255,255,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
-                  <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]">{t("registerNow") || "Register Now"}</span>
+                  <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]">{t("registerNow")}</span>
                   <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-white/18 bg-white text-[#ff6a00] shadow-[0_0_16px_rgba(255,255,255,0.28)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#07101f] group-hover:text-white sm:h-8 sm:w-8">
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -547,10 +553,10 @@ export default function Hero() {
               ) : (
                 <div
                   aria-disabled="true"
-                  title={REGISTRATION_NOTICE}
+                  title={tg("registrationNotice")}
                   className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
-                  <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{REGISTRATION_NOTICE}</span>
+                  <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{tg("registrationNotice")}</span>
                 </div>
               )}
               {ABSTRACT_OPEN ? (
@@ -562,7 +568,7 @@ export default function Hero() {
                   <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#168fff] to-transparent opacity-80 transition group-hover:via-[#ff7a1a]" />
                   <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-[#168fff]/22 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                   <span className="relative justify-self-start h-2 w-2 rounded-full bg-[#168fff] opacity-80 shadow-[0_0_18px_rgba(22,143,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
-                  <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]">Submit Abstract</span>
+                  <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]">{t("submitAbstract")}</span>
                   <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-[#07101f]/10 bg-[#07101f] text-white shadow-[0_0_16px_rgba(22,143,255,0.25)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#168fff] sm:h-8 sm:w-8">
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -570,10 +576,10 @@ export default function Hero() {
               ) : (
                 <div
                   aria-disabled="true"
-                  title={ABSTRACT_NOTICE}
+                  title={tg("abstractNotice")}
                   className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-white bg-white px-5 text-center font-black text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
-                  <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{ABSTRACT_NOTICE}</span>
+                  <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{tg("abstractNotice")}</span>
                 </div>
               )}
             </div>
@@ -584,7 +590,7 @@ export default function Hero() {
         <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
           <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
             <p className="text-center text-[0.62rem] font-black uppercase tracking-[0.26em] text-white sm:text-[0.68rem] sm:tracking-[0.34em] max-md:landscape:text-[0.52rem]">
-              Countdown to PRIS 2026
+              {t("countdownLabel")}
             </p>
             <Countdown className="mx-auto" />
           </div>
@@ -677,12 +683,12 @@ export default function Hero() {
         className="absolute left-1/2 -translate-x-1/2 z-[2] pointer-events-none transition-opacity duration-300 flex justify-center"
       >
         <div ref={subtextInnerRef} className="text-black/90 font-medium whitespace-nowrap text-3xl tracking-tight origin-top flex">
-          {SUBTEXT_PARTS.map((part, i) => (
+          {organizerParts.map((part, i) => (
             <React.Fragment key={`sub-${i}`}>
               <span className="subtext-part inline-block">
                 {part}
               </span>
-              {i < SUBTEXT_PARTS.length - 1 && <span className="inline-block">&nbsp;</span>}
+              {i < organizerParts.length - 1 && <span className="inline-block">&nbsp;</span>}
             </React.Fragment>
           ))}
         </div>

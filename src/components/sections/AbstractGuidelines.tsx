@@ -7,6 +7,7 @@ import { submissionGuidelines } from "@/data/abstractData";
 export default function AbstractGuidelines() {
   const locale = useLocale();
   const t = useTranslations("abstractGuidelines");
+  const tp = useTranslations("abstractPage");
 
   const guidelines = locale === "th" ? submissionGuidelines.guidelinesTh : submissionGuidelines.guidelines;
 
@@ -21,11 +22,11 @@ export default function AbstractGuidelines() {
             <div className="flex items-center gap-4 mb-4">
               <span className="w-8 h-px bg-blue-600" />
               <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
-                {locale === "th" ? "กฎที่ต้องปฏิบัติตาม" : "Submission Rules"}
+                {tp("submissionRules")}
               </span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-gray-900">
-              {locale === "th" ? "คำแนะนำการส่งผลงาน" : "Submission Guidelines"}
+              {tp("submissionGuidelines")}
             </h2>
           </div>
 

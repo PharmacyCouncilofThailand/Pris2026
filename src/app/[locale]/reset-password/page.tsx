@@ -24,6 +24,7 @@ function ResetPasswordContent() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { isAuthenticated } = useAuth();
 
   const token = searchParams.get("token") || "";
@@ -82,14 +83,14 @@ function ResetPasswordContent() {
           setTokenError("invalid");
           return;
         }
-        toast.error(data.error || "Failed to reset password. Please try again.");
+        toast.error(data.error || tt("resetFailed"));
         return;
       }
 
       toast.success(t("resetSuccess"));
       setSuccess(true);
     } catch {
-      toast.error("Network error. Please check your connection.");
+      toast.error(tt("networkError"));
     } finally {
       setIsLoading(false);
     }
