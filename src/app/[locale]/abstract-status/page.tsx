@@ -19,7 +19,7 @@ import { abstractStatusLabels } from "@/data/abstractData";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
-import { ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
+import { ABSTRACT_OPEN } from "@/lib/registrationGate";
 
 // Mock data for the dashboard
 const mockSubmissions = [
@@ -53,6 +53,7 @@ export default function AbstractStatus() {
   const [searchQuery, setSearchQuery] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("abstractStatus");
+  const tg = useTranslations("registrationGate");
   const locale = useLocale();
 
   useGSAP(() => {
@@ -125,10 +126,10 @@ export default function AbstractStatus() {
             ) : (
               <div
                 aria-disabled="true"
-                title={ABSTRACT_NOTICE}
+                title={tg("abstractNotice")}
                 className="px-6 py-3 bg-gold/60 text-black font-bold text-xs rounded-xl cursor-not-allowed select-none"
               >
-                {ABSTRACT_NOTICE}
+                {tg("abstractNotice")}
               </div>
             )}
           </div>

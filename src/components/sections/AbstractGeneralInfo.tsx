@@ -2,10 +2,11 @@
 
 import React from "react";
 import { submissionGuidelines } from "@/data/abstractData";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function AbstractGeneralInfo() {
   const locale = useLocale();
+  const tp = useTranslations("abstractPage");
 
   return (
     <section className="bg-white px-6 md:px-12 py-20 md:py-28 border-b border-slate-200">
@@ -15,11 +16,11 @@ export default function AbstractGeneralInfo() {
           <div className="mb-6 flex items-center gap-4">
             <span className="h-px w-12 bg-blue-600" />
             <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-blue-600">
-              {locale === "th" ? "ภาพรวม" : "Overview"}
+              {tp("overview")}
             </span>
           </div>
           <h2 className="text-4xl font-black uppercase leading-none tracking-tighter text-gray-900 sm:text-5xl md:text-7xl">
-            {locale === "th" ? "ข้อมูลทั่วไป" : "General Information"}
+            {tp("generalInfo")}
           </h2>
         </div>
 

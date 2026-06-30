@@ -1,7 +1,7 @@
 "use client";
 
 import { useDeferredValue, useState, useEffect, useRef, useCallback, type ReactNode } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Building2, ChevronDown, FileText, Search, User } from "lucide-react";
 import { approvedPosterAbstracts, type ApprovedPosterAbstract } from "@/data/approvedPosterAbstracts";
 import { cn } from "@/lib/utils";
@@ -28,6 +28,7 @@ type PageCopy = {
 
 export default function ApprovedAbstractsPage() {
   const locale = useLocale();
+  const t = useTranslations("approvedAbstracts");
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearchQuery = useDeferredValue(searchQuery);
   const heroRef = useRef<HTMLElement>(null!);
@@ -53,41 +54,23 @@ export default function ApprovedAbstractsPage() {
       });
   }, { scope: heroRef });
 
-  const copy: PageCopy = locale === "th"
-    ? {
-        eyebrow: "ค้นหา Abstract",
-        title1: "Approved",
-        title2: "Abstracts",
-        desc: "ค้นหาบทคัดย่อ (Oral และ Poster) ที่ผ่านการพิจารณาและอนุมัติแล้วสำหรับการนำเสนอในงานวิชาการ PRIS 2026",
-        searchPlaceholder: "ค้นหาจากรหัส ชื่อผลงาน ผู้นำเสนอ หรือ สถาบัน...",
-        approvedBadge: "Approved",
-        emptyTitle: "ไม่พบรายการที่ตรงกับคำค้นหา",
-        emptyDesc: "ลองใช้คำค้นหาอื่น หรือลบคำค้นหาเพื่อดูรายการทั้งหมด",
-        presenterField: "ผู้นำเสนอ",
-        institutionField: "สถาบัน",
-        oralPresentation: "Oral",
-        posterPresentation: "Poster",
-        totalResults: "รายการ",
-        showMore: "ดูชื่อเต็ม",
-        showLess: "ย่อ",
-      }
-    : {
-        eyebrow: "Abstract Search",
-        title1: "Approved",
-        title2: "Abstracts",
-        desc: "Search PRIS 2026 abstracts (Oral and Poster) that have been successfully approved for presentation.",
-        searchPlaceholder: "Search by ID, title, presenter, or institution...",
-        approvedBadge: "Approved",
-        emptyTitle: "No matching abstracts found",
-        emptyDesc: "Try another keyword or clear the search to see all approved abstracts.",
-        presenterField: "Presenter",
-        institutionField: "Institution",
-        oralPresentation: "Oral",
-        posterPresentation: "Poster",
-        totalResults: "results",
-        showMore: "Show full title",
-        showLess: "Collapse",
-      };
+  const copy: PageCopy = {
+    eyebrow: t("eyebrow"),
+    title1: t("title1"),
+    title2: t("title2"),
+    desc: t("desc"),
+    searchPlaceholder: t("searchPlaceholder"),
+    approvedBadge: t("approvedBadge"),
+    emptyTitle: t("emptyTitle"),
+    emptyDesc: t("emptyDesc"),
+    presenterField: t("presenterField"),
+    institutionField: t("institutionField"),
+    oralPresentation: t("oralPresentation"),
+    posterPresentation: t("posterPresentation"),
+    totalResults: t("totalResults"),
+    showMore: t("showMore"),
+    showLess: t("showLess"),
+  };
 
   const normalizedQuery = deferredSearchQuery.trim().toLowerCase();
   const filteredPosters = approvedPosterAbstracts.filter((poster) => {

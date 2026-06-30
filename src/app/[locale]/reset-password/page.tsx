@@ -24,6 +24,7 @@ function ResetPasswordContent() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { isAuthenticated } = useAuth();
 
   const token = searchParams.get("token") || "";
@@ -82,14 +83,14 @@ function ResetPasswordContent() {
           setTokenError("invalid");
           return;
         }
-        toast.error(data.error || "Failed to reset password. Please try again.");
+        toast.error(data.error || tt("resetFailed"));
         return;
       }
 
       toast.success(t("resetSuccess"));
       setSuccess(true);
     } catch {
-      toast.error("Network error. Please check your connection.");
+      toast.error(tt("networkError"));
     } finally {
       setIsLoading(false);
     }
@@ -150,7 +151,7 @@ function ResetPasswordContent() {
             <div className="flex justify-center mb-10">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
                 <Image
-                  src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                  src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
                   width={1280}
                   height={356}

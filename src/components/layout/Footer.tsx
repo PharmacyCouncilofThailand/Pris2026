@@ -8,6 +8,7 @@ import { galleryImages } from "@/data/galleryData";
 
 const quickLinks = [
   { labelKey: "home", href: "/" },
+  { labelKey: "innovationWork", href: "#" },
   { labelKey: "aboutPris", href: "/about" },
   { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
   { labelKey: "registration", href: "/registration" },
@@ -94,13 +95,13 @@ export default function Footer() {
             <ul className="flex flex-col gap-4">
               <li>
                 <a
-                  href="tel:+6625919992"
+                  href="tel:025919992"
                   className="flex items-center gap-4 text-zinc-400 hover:text-white transition-colors duration-300 group"
                 >
                   <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-[#D4AF37]/50 group-hover:bg-[#D4AF37]/10 transition-all duration-300 shrink-0">
                     <Phone className="h-4 w-4 text-zinc-300 group-hover:text-[#D4AF37] transition-colors" />
                   </div>
-                  <span className="text-sm md:text-base font-light tracking-wide">+6625 919 992</span>
+                  <span className="text-sm md:text-base font-light tracking-wide">02-591-9992</span>
                 </a>
               </li>
               <li>

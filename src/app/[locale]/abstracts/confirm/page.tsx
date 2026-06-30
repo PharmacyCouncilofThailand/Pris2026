@@ -12,7 +12,7 @@ import {
   Mail,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
+import { REGISTRATION_OPEN } from "@/lib/registrationGate";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
@@ -38,6 +38,7 @@ interface AbstractSummary {
 
 function ConfirmAbstractContent() {
   const t = useTranslations("abstractsConfirm");
+  const tg = useTranslations("registrationGate");
   const locale = useLocale();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
@@ -244,10 +245,10 @@ function ConfirmAbstractContent() {
               ) : (
                 <span
                   aria-disabled="true"
-                  title={REGISTRATION_NOTICE}
+                  title={tg("registrationNotice")}
                   className="inline-block rounded-lg bg-slate-900/60 px-5 py-2 text-sm font-medium text-white cursor-not-allowed select-none"
                 >
-                  {REGISTRATION_NOTICE}
+                  {tg("registrationNotice")}
                 </span>
               )}
             </div>

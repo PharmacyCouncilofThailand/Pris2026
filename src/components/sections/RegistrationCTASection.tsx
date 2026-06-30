@@ -9,7 +9,7 @@ import { useGSAP } from "@gsap/react";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { useAuth } from "@/context/AuthContext";
 import { ssoRedirectToConferenceWeb } from "@/lib/sso";
-import { REGISTRATION_OPEN, REGISTRATION_NOTICE } from "@/lib/registrationGate";
+import { REGISTRATION_OPEN } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -19,6 +19,7 @@ const EVENT_CODE = process.env.NEXT_PUBLIC_PRIS_EVENT_CODE || "PRIS-2026";
 
 export default function RegistrationCTASection() {
   const t = useTranslations("registrationCTA");
+  const tg = useTranslations("registrationGate");
   const router = useRouter();
   const params = useParams<{ locale: string }>();
   const locale = params?.locale || "en";
@@ -350,7 +351,7 @@ export default function RegistrationCTASection() {
                 </div>
               </div>
               <div className="text-left lg:text-right">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-white transition-colors duration-500">฿1,000</div>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-white transition-colors duration-500">฿1,250</div>
               </div>
             </div>
           </div>
@@ -446,12 +447,12 @@ export default function RegistrationCTASection() {
             ) : (
               <div
                 aria-disabled="true"
-                title={REGISTRATION_NOTICE}
+                title={tg("registrationNotice")}
                 className="registration-floating-cta-button relative inline-flex items-center justify-center overflow-hidden rounded-full text-white shadow-2xl cursor-not-allowed select-none opacity-95"
               >
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#0055FF]/70 via-[#FF5A00]/70 to-[#0055FF]/70" />
                 <span className="registration-floating-cta-text relative z-10 font-black">
-                  {REGISTRATION_NOTICE}
+                  {tg("registrationNotice")}
                 </span>
               </div>
             )}

@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import PageHero from "@/components/sections/PageHero";
-import { ABSTRACT_OPEN, ABSTRACT_NOTICE } from "@/lib/registrationGate";
+import { ABSTRACT_OPEN } from "@/lib/registrationGate";
 
 // Dynamic imports for the sections
 const AbstractTimeline = dynamic(() => import("@/components/sections/AbstractTimeline"), { ssr: false });
@@ -17,6 +17,7 @@ const AbstractGuidelines = dynamic(() => import("@/components/sections/AbstractG
 
 export default function CallForAbstractsPage() {
   const t = useTranslations("cfa");
+  const tg = useTranslations("registrationGate");
 
   React.useEffect(() => {
     document.body.classList.remove("hero-playing");
@@ -58,10 +59,10 @@ export default function CallForAbstractsPage() {
             ) : (
               <div
                 aria-disabled="true"
-                title={ABSTRACT_NOTICE}
+                title={tg("abstractNotice")}
                 className="bg-blue-600/60 text-white font-bold px-8 py-4 rounded-full text-center text-sm cursor-not-allowed select-none"
               >
-                {ABSTRACT_NOTICE}
+                {tg("abstractNotice")}
               </div>
             )}
           </div>

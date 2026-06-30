@@ -22,6 +22,7 @@ export default function LoginPage() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
@@ -81,7 +82,6 @@ export default function LoginPage() {
             </Link>
           </div>
 
-
         </div>
 
         {/* Form Right Side */}
@@ -104,7 +104,7 @@ export default function LoginPage() {
             <div className="flex justify-center mb-10 ">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
                 <Image
-                  src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                  src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
                   width={200}
                   height={80}
@@ -146,20 +146,20 @@ export default function LoginPage() {
                   } else if (data.error === 'ACCOUNT_REJECTED') {
                     setRejectedModal(data.rejectionReason || '');
                   } else {
-                    toast.error(data.error || 'Login failed. Please try again.');
+                    toast.error(data.error || tt("loginFailed"));
                   }
                   turnstileRef.current?.reset();
                   setTurnstileToken(null);
                   return;
                 }
 
-                toast.success('Login successful!');
+                toast.success(tt("loginSuccess"));
                 login(data.user, data.token, rememberMe);
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect') || '/';
                 router.push(redirect);
               } catch {
-                toast.error('Network error. Please check your connection.');
+                toast.error(tt("networkError"));
                 turnstileRef.current?.reset();
                 setTurnstileToken(null);
               } finally {
@@ -227,7 +227,7 @@ export default function LoginPage() {
 
             <div className="mt-12 text-center ">
               <p className="text-sm font-medium text-gray-500">
-                Don&apos;t have an account?{" "}
+                {t("noAccount")}{" "}
                 <Link href="/signup" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">{t("signUp")}</Link>
               </p>
             </div>
@@ -256,7 +256,7 @@ export default function LoginPage() {
               onClick={() => setPendingModal(false)}
               className="w-full bg-black hover:bg-gray-900 text-white font-bold text-sm py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              I Understand
+              {t("iUnderstand")}
             </button>
           </div>
         </div>
@@ -288,7 +288,7 @@ export default function LoginPage() {
               onClick={() => setRejectedModal(null)}
               className="w-full bg-black hover:bg-gray-900 text-white font-bold text-sm py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
-              Close
+              {t("close")}
             </button>
           </div>
         </div>

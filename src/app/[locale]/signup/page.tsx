@@ -68,7 +68,6 @@ export default function SignUpTypePage() {
             </Link>
           </div>
 
-
         </div>
 
         {/* Form Right Side */}
@@ -91,7 +90,7 @@ export default function SignUpTypePage() {
             <div className="flex justify-center mb-10 ">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
                 <Image
-                  src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                  src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
                   width={1280}
                   height={356}
@@ -150,7 +149,7 @@ export default function SignUpTypePage() {
             <div className="mt-12 text-center ">
               <p className="text-sm font-medium text-gray-500">{t("alreadyHaveAccount")} {" "}
                 <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
-                  Sign In
+                  {t("signIn")}
                 </Link>
               </p>
             </div>

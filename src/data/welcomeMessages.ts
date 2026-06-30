@@ -27,14 +27,14 @@ export const messagesData = [
     thaiRole: "เลขาธิการสภาเภสัชกรรม",
     image: "/assets/Img/Welcome message/อ.สุณี.svg",
     quote: "Empowering our profession through collaborative research, unwavering dedication, and shared vision.",
-    thaiQuote: "เสริมสร้างพลังให้วิชาชีพของเราผ่านการวิจัยร่วมกัน ความทุ่มเทอย่างแน่วแน่ และวิสัยทัศน์ร่วมกัน",
+    thaiQuote: "เสริมสร้างพลังให้วิชาชีพเภสัชกรรมผ่านการวิจัยร่วมกัน พร้อมผลักดันนโยบายด้านเภสัชกรรมสู่การยอมรับระดับสากล",
     message: [
       "Welcome to PRIS 2026. The Pharmacy Council remains deeply committed to advancing the standards of our practice through rigorous scientific engagement and international collaboration.",
       "Over the next three days, you will have the unparalleled opportunity to delve into the latest advancements in pharmacology, precision medicine, and digital health strategies.",
       "Your participation signifies a shared commitment to elevating patient care standards worldwide. I urge you to actively engage, question the status quo, and forge new partnerships that will resonate far beyond this summit."
     ],
     thaiMessage: [
-      "ขอต้อนรับเข้าสู่งาน PRIS 2026 สภาเภสัชกรรมยังคงมุ่งมั่นอย่างลึกซึ้งในการพัฒนามาตรฐานการปฏิบัติงานของเรา ผ่านการมีส่วนร่วมทางวิทยาศาสตร์อย่างเข้มข้นและความร่วมมือระดับนานาชาติ",
+      "ขอต้อนรับสู่งาน PRIS2026 สภาเภสัชกรรมมุ่งมั่นในการพัฒนามาตรฐานงานเภสัชกรรม ผ่านการมีส่วนร่วมของทุกภาคส่วน สภาเภสัชกรรมยังคงมุ่งมั่นอย่างลึกซึ้งในการพัฒนามาตรฐานการปฏิบัติงานของเรา ผ่านการมีส่วนร่วมทางวิทยาศาสตร์อย่างเข้มข้นและความร่วมมือระดับนานาชาติ",
       "ในช่วงสามวันต่อจากนี้ ท่านจะได้รับโอกาสที่หาไม่ได้ในการเจาะลึกถึงความก้าวหน้าล่าสุดในสาขาเภสัชวิทยา การแพทย์แม่นยำ และกลยุทธ์ด้านสุขภาพดิจิทัล",
       "การมีส่วนร่วมของท่านแสดงถึงความมุ่งมั่นร่วมกันในการยกระดับมาตรฐานการดูแลผู้ป่วยทั่วโลก ดิฉันขอให้ท่านมีส่วนร่วมอย่างแข็งขัน ตั้งคำถามกับสิ่งที่เป็นอยู่ และสร้างความร่วมมือใหม่ๆ ที่จะส่งผลกระทบไปไกลกว่าการประชุมครั้งนี้"
     ]

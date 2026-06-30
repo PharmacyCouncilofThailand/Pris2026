@@ -24,6 +24,7 @@ export default function StudentSignUpPage() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [studentLevel, setStudentLevel] = useState("");
@@ -94,7 +95,6 @@ export default function StudentSignUpPage() {
             </Link>
           </div>
 
-
         </div>
 
         {/* Form Right Side */}
@@ -117,7 +117,7 @@ export default function StudentSignUpPage() {
             <div className="flex justify-center mb-10 fade-in-up">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
                 <Image
-                  src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                  src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
                   width={1280}
                   height={356}
@@ -148,11 +148,11 @@ export default function StudentSignUpPage() {
               const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
 
               if (password !== confirmPassword) {
-                toast.error('Passwords do not match.');
+                toast.error(t("passNotMatch"));
                 return;
               }
               if (!studentLevel) {
-                toast.error('Please select a student level.');
+                toast.error(tt("selectStudentLevel"));
                 return;
               }
 
@@ -181,7 +181,7 @@ export default function StudentSignUpPage() {
                 const data = await res.json();
 
                 if (!res.ok || !data.success) {
-                  toast.error(data.error || 'Registration failed. Please try again.');
+                  toast.error(data.error || tt("registrationFailed"));
                   turnstileRef.current?.reset();
                   setTurnstileToken(null);
                   return;
@@ -196,7 +196,7 @@ export default function StudentSignUpPage() {
                   router.push(redirect);
                 }
               } catch {
-                toast.error('Network error. Please check your connection.');
+                toast.error(tt("networkError"));
                 turnstileRef.current?.reset();
                 setTurnstileToken(null);
               } finally {
@@ -212,7 +212,7 @@ export default function StudentSignUpPage() {
                   <input
                     type="text"
                     id="firstName"
-                    placeholder="First Name"
+                    placeholder={t("firstName")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                     required
                   />
@@ -224,7 +224,7 @@ export default function StudentSignUpPage() {
                   <input
                     type="text"
                     id="lastName"
-                    placeholder="Last Name"
+                    placeholder={t("lastName")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                     required
                   />
@@ -251,7 +251,7 @@ export default function StudentSignUpPage() {
                 <input
                   type="text"
                   id="organization"
-                  placeholder="e.g. Chulalongkorn University"
+                  placeholder={t("organizationPlaceholderUniversity")}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                 />
               </div>
@@ -299,7 +299,7 @@ export default function StudentSignUpPage() {
               {/* File Upload */}
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2">
-                  Student Verification Document (PDF, JPG, PNG) <span className="text-red-500">*</span>
+                  {t("studentVerificationDoc")} <span className="text-red-500">*</span>
                 </label>
                 <div className="relative group cursor-pointer">
                   <input ref={fileRef} type="file" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setSelectedFileName(e.target.files?.[0]?.name || '')} />
@@ -324,7 +324,7 @@ export default function StudentSignUpPage() {
                   <input
                     type="tel"
                     id="phone"
-                    placeholder="08X XXX XXXX"
+                    placeholder={t("phonePlaceholder")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-r-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   />
                 </div>
@@ -333,7 +333,7 @@ export default function StudentSignUpPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="password">
-                    Password <span className="text-red-500">*</span>
+                    {t("password")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="password"
@@ -399,7 +399,7 @@ export default function StudentSignUpPage() {
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-500">{t("alreadyHaveAccount")} {" "}
                   <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
-                    Sign In
+                    {t("signIn")}
                   </Link>
                 </p>
               </div>

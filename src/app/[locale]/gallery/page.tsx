@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { galleryData } from "@/data/galleryData";
 
 if (typeof window !== "undefined") {
@@ -17,6 +17,7 @@ if (typeof window !== "undefined") {
 export default function GalleryPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const locale = useLocale();
+  const tp = useTranslations("abstractPage");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const images = galleryData.pris2025.images;
@@ -113,12 +114,12 @@ export default function GalleryPage() {
             <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black uppercase tracking-tighter leading-[0.85] text-white">
               <div className="overflow-hidden md:pl-2">
                 <span className="block gallery-hero-line pr-[0.15em]">
-                  {locale === "th" ? "แกลเลอรี" : "Gallery"}
+                  {tp("gallery")}
                 </span>
               </div>
               <div className="overflow-hidden md:pl-2">
                 <span className="block gallery-hero-line text-transparent bg-clip-text bg-gradient-to-r from-gold via-orange-400 to-gold pr-[0.15em]">
-                  {locale === "th" ? "ภาพประทับใจ" : "Highlights"}
+                  {tp("highlights")}
                 </span>
               </div>
             </h1>
@@ -141,7 +142,7 @@ export default function GalleryPage() {
               </h2>
             </div>
             <p className="text-white/20 text-sm pl-12">
-              {images.length} {locale === "th" ? "ภาพ" : "photos"}
+              {images.length} {tp("photos")}
             </p>
           </div>
         </section>

@@ -108,7 +108,7 @@ export default function Header() {
               }}
             >
               <Image
-                src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                src="/assets/Img/logo/Logo-Final .png"
                 alt="Pris 2026 Logo"
                 width={200}
                 height={80}
@@ -217,8 +217,8 @@ export default function Header() {
               </span>
             </button>
 
-            {/* Login / Sign up hidden until registration opens; profile stays for logged-in users */}
-            {isLoggedIn && (
+            {/* Auth Buttons */}
+            {isLoggedIn ? (
               <div className={cn(
                 "flex items-center gap-4 border-l pl-4",
                 useDarkText ? "border-slate-200" : "border-white/20"
@@ -234,7 +234,35 @@ export default function Header() {
                   )}
                 >
                   <User className="w-4 h-4" />
-                  My Profile
+                  {t("myProfile")}
+                </Link>
+              </div>
+            ) : (
+              <div className={cn(
+                "flex items-center gap-4 border-l pl-4",
+                useDarkText ? "border-slate-200" : "border-white/20"
+              )}>
+                <Link
+                  href="/login"
+                  prefetch={true}
+                  className={cn(
+                    "text-[11px] font-bold uppercase tracking-widest transition-colors hover:text-blue-600",
+                    useDarkText ? "text-slate-900" : "text-white"
+                  )}
+                >
+                  {t("login")}
+                </Link>
+                <Link
+                  href="/signup"
+                  prefetch={true}
+                  className={cn(
+                    "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                    useDarkText
+                      ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
+                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
+                  )}
+                >
+                  {t("signUp")}
                 </Link>
               </div>
             )}
@@ -277,7 +305,7 @@ export default function Header() {
               <div className="p-6 h-full flex flex-col">
                 <div className="mb-8 mt-4">
                   <Image
-                    src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                    src="/assets/Img/logo/Logo-Final .png"
                     alt="Pris 2026 Logo"
                     width={200}
                     height={80}
@@ -327,8 +355,8 @@ export default function Header() {
                   </ul>
                 </nav>
 
-                {/* Mobile Auth Buttons — Login / Sign up hidden until registration opens */}
-                {isLoggedIn && (
+                {/* Mobile Auth Buttons */}
+                {isLoggedIn ? (
                   <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
                     <Link
                       href="/profile"
@@ -336,7 +364,24 @@ export default function Header() {
                       className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
                     >
                       <User className="w-4 h-4" />
-                      My Profile
+                      {t("myProfile")}
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
+                    <Link
+                      href="/login"
+                      prefetch={true}
+                      className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest border border-white/20 text-white rounded-full hover:bg-white/10 transition-colors"
+                    >
+                      {t("login")}
+                    </Link>
+                    <Link
+                      href="/signup"
+                      prefetch={true}
+                      className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
+                    >
+                      {t("signUp")}
                     </Link>
                   </div>
                 )}

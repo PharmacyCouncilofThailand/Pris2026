@@ -23,6 +23,7 @@ export default function PharmacistSignUpPage() {
     });
   };
   const t = useTranslations("auth");
+  const tt = useTranslations("toasts");
   const { login, isAuthenticated } = useAuth();
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
@@ -78,7 +79,6 @@ export default function PharmacistSignUpPage() {
             </Link>
           </div>
 
-
         </div>
 
         {/* Form Right Side */}
@@ -101,7 +101,7 @@ export default function PharmacistSignUpPage() {
             <div className="flex justify-center mb-10 fade-in-up">
               <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
                 <Image
-                  src="/assets/Img/logo/LOGO_PRIS_NEW-removebg-preview.png"
+                  src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
                   width={1280}
                   height={356}
@@ -119,7 +119,7 @@ export default function PharmacistSignUpPage() {
                 {t("fillDetails")}
               </p>
               <p className="mt-3 text-xs font-semibold leading-relaxed text-blue-600 bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
-                Licensed pharmacists currently enrolled in a Master&apos;s Degree or Doctoral Degree/Doctorate program should sign up as Pharmacist first, then request postgraduate student-rate eligibility from Profile after signing in.
+                {t("pharmacistPostgradNote")}
               </p>
             </div>
 
@@ -136,7 +136,7 @@ export default function PharmacistSignUpPage() {
               const confirmPassword = (form.elements.namedItem('confirmPassword') as HTMLInputElement).value;
 
               if (password !== confirmPassword) {
-                toast.error('Passwords do not match.');
+                toast.error(t("passNotMatch"));
                 return;
               }
 
@@ -162,7 +162,7 @@ export default function PharmacistSignUpPage() {
                 const data = await res.json();
 
                 if (!res.ok || !data.success) {
-                  toast.error(data.error || 'Registration failed. Please try again.');
+                  toast.error(data.error || tt("registrationFailed"));
                   turnstileRef.current?.reset();
                   setTurnstileToken(null);
                   return;
@@ -174,13 +174,13 @@ export default function PharmacistSignUpPage() {
                   return;
                 }
 
-                toast.success('Account created successfully!');
+                toast.success(tt("accountCreated"));
                 login(data.user, data.token);
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirect = urlParams.get('redirect') || '/';
                 router.push(redirect);
               } catch {
-                toast.error('Network error. Please check your connection.');
+                toast.error(tt("networkError"));
                 turnstileRef.current?.reset();
                 setTurnstileToken(null);
               } finally {
@@ -196,7 +196,7 @@ export default function PharmacistSignUpPage() {
                   <input
                     type="text"
                     id="firstName"
-                    placeholder="First Name"
+                    placeholder={t("firstName")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                     required
                   />
@@ -208,7 +208,7 @@ export default function PharmacistSignUpPage() {
                   <input
                     type="text"
                     id="lastName"
-                    placeholder="Last Name"
+                    placeholder={t("lastName")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                     required
                   />
@@ -217,12 +217,12 @@ export default function PharmacistSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="licenseNumber">
-                  Pharmacy License Number <span className="text-red-500">*</span>
+                  {t("pharmacyLicenseNumber")} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   id="licenseNumber"
-                  placeholder="Enter license number"
+                  placeholder={t("licensePlaceholder")}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   required
                 />
@@ -243,12 +243,12 @@ export default function PharmacistSignUpPage() {
 
               <div>
                 <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="organization">
-                  Organization / Affiliation
+                  {t("organizationAffiliation")}
                 </label>
                 <input
                   type="text"
                   id="organization"
-                  placeholder="Organization or Affiliation"
+                  placeholder={t("organizationPlaceholder")}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                 />
               </div>
@@ -266,7 +266,7 @@ export default function PharmacistSignUpPage() {
                   <input
                     type="tel"
                     id="phone"
-                    placeholder="08X XXX XXXX"
+                    placeholder={t("phonePlaceholder")}
                     className="w-full bg-[#f8f9fc] border border-transparent rounded-r-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   />
                 </div>
@@ -275,7 +275,7 @@ export default function PharmacistSignUpPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="password">
-                    Password <span className="text-red-500">*</span>
+                    {t("password")} <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="password"
@@ -341,7 +341,7 @@ export default function PharmacistSignUpPage() {
               <div className="text-center">
                 <p className="text-sm font-medium text-gray-500">{t("alreadyHaveAccount")} {" "}
                   <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
-                    Sign In
+                    {t("signIn")}
                   </Link>
                 </p>
               </div>
