@@ -8,7 +8,7 @@
  * To open registration (1 July 2569 / 2026), simply set `REGISTRATION_OPEN` to
  * `true` — every gated button returns to its normal clickable behaviour.
  */
-export const REGISTRATION_OPEN = false;
+export const REGISTRATION_OPEN = true;
 
 /** Notice shown on disabled CTAs while registration is not open. */
 export const REGISTRATION_NOTICE = "เปิดลงทะเบียนวันที่ 1 กรกฎาคม 2569";
