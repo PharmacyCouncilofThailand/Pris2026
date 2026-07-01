@@ -21,14 +21,6 @@ export default function DetailedGuidelines() {
   const tg = useTranslations("registrationGate");
   const tp = useTranslations("abstractPage");
   const locale = useLocale();
-  const importantDatesReservationNote =
-    locale === "th"
-      ? submissionGuidelines.importantDatesReservationNoteTh
-      : submissionGuidelines.importantDatesReservationNote;
-  const importantDatesReviewNote =
-    locale === "th"
-      ? submissionGuidelines.presenterRegistrationNoteTh
-      : submissionGuidelines.presenterRegistrationNote;
 
   useEffect(() => {
     // Set current date on the client side to avoid hydration mismatch
@@ -119,18 +111,6 @@ export default function DetailedGuidelines() {
                 </div>
               );
             })}
-          </div>
-
-          <div className="content-block mt-8 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm md:p-6">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-              {tp("reviewNote")}
-            </p>
-            <p className="text-sm leading-relaxed text-slate-600 md:text-[0.95rem]">
-              {importantDatesReviewNote}
-            </p>
-            <p className="mt-3 text-sm font-semibold leading-relaxed text-red-700 md:text-[0.95rem]">
-              {importantDatesReservationNote}
-            </p>
           </div>
         </div>
       </section>
@@ -229,9 +209,7 @@ export default function DetailedGuidelines() {
             <div className="border-l-2 border-orange-400 pl-6 py-2">
               <p className="text-gray-500 text-sm leading-relaxed">{locale === "th" ? submissionGuidelines.reviewNoteTh : submissionGuidelines.reviewNote}</p>
             </div>
-            <div className="border-l-2 border-red-400 pl-6 py-2">
-              <p className="text-red-600 text-sm font-medium leading-relaxed">{locale === "th" ? submissionGuidelines.noMediaNoteTh : submissionGuidelines.noMediaNote}</p>
-            </div>
+
           </div>
         </div>
       </section>
@@ -332,6 +310,7 @@ export default function DetailedGuidelines() {
       </section>
 
       {/* ══════ DECLARATION & ACCEPTANCE ══════ */}
+      {false && (
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
 
@@ -384,6 +363,7 @@ export default function DetailedGuidelines() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ══════ CTA ══════ */}
       <section className="py-24 md:py-32 bg-slate-50 border-t border-slate-200">
@@ -398,7 +378,7 @@ export default function DetailedGuidelines() {
             {ABSTRACT_OPEN ? (
               <Link
                 href="/abstract-submission"
-                className="bg-blue-600 text-white font-bold px-8 py-4 uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
+                className="bg-blue-600 text-white font-bold px-8 py-4 rounded-full uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"
               >
                 {t("submitBtn")}
               </Link>
@@ -406,14 +386,14 @@ export default function DetailedGuidelines() {
               <div
                 aria-disabled="true"
                 title={tg("abstractNotice")}
-                className="bg-blue-600/60 text-white font-bold px-8 py-4 text-sm cursor-not-allowed select-none"
+                className="bg-blue-600/60 text-white font-bold px-8 py-4 rounded-full text-sm cursor-not-allowed select-none"
               >
                 {tg("abstractNotice")}
               </div>
             )}
             <Link
               href="/call-for-abstracts"
-              className="bg-white text-slate-900 font-bold px-8 py-4 uppercase tracking-widest text-sm border border-slate-200 hover:bg-slate-100 transition-colors"
+              className="bg-white text-slate-900 font-bold px-8 py-4 rounded-full uppercase tracking-widest text-sm border border-slate-200 hover:bg-slate-100 transition-colors"
             >
               {t("backBtn")}
             </Link>
