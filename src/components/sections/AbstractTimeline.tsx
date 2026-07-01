@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { abstractTimeline, submissionGuidelines } from "@/data/abstractData";
+import { abstractTimeline } from "@/data/abstractData";
 import { useLocale, useTranslations } from "next-intl";
 
 export default function AbstractTimeline() {
@@ -14,15 +14,6 @@ export default function AbstractTimeline() {
   }, []);
 
   const locale = useLocale();
-  const reservationNote =
-    locale === "th"
-      ? submissionGuidelines.importantDatesReservationNoteTh
-      : submissionGuidelines.importantDatesReservationNote;
-  const reviewNote =
-    locale === "th"
-      ? submissionGuidelines.presenterRegistrationNoteTh
-      : submissionGuidelines.presenterRegistrationNote;
-  const reviewNoteTitle = tp("reviewNote");
 
   return (
     <section className="py-20 md:py-32 bg-[#FAFBFF] md:bg-white text-slate-900 overflow-hidden">
@@ -74,12 +65,6 @@ export default function AbstractTimeline() {
           })}
         </div>
 
-        {/* Requirements Box */}
-        <div className={`mt-12 md:mt-16 border-l-4 border-red-500 bg-red-50 p-6 rounded-r-lg ${locale === "th" ? "w-fit overflow-x-auto max-w-full" : "max-w-4xl"}`}>
-          <p className={`text-red-700 text-sm md:text-base font-medium ${locale === "th" ? "whitespace-nowrap" : ""}`}>
-            {reviewNote}
-          </p>
-        </div>
       </div>
     </section>
   );
