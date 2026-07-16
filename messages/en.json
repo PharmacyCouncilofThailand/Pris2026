@@ -17,7 +17,8 @@
     "registrationInfo": "Registration Info",
     "policies": "Policies",
     "sponsorship": "Sponsorship",
-    "more": "More",
+    "more": "Others",
+    "hotelBookingForm": "Hotel Booking Form",
     "gallery": "Gallery",
     "contact": "Contact",
     "language": "Language",
@@ -453,6 +454,27 @@
       "pretitle": "FAQ",
       "title": "Frequently Asked Questions",
       "backBtn": "Back to Home"
+    }
+  },
+  "hotelBookingForm": {
+    "eyebrow": "Participant Information",
+    "title1": "Hotel",
+    "title2": "Booking Forms",
+    "subtitle": "Download accommodation booking forms for PRIS 2026 partner hotels from this page.",
+    "sectionTitle": "Accommodation Documents",
+    "sectionDescription": "Select your preferred hotel, download the form, and complete all required details before submitting it through the hotel's process.",
+    "downloadButton": "Download Form",
+    "cards": {
+      "ibis": {
+        "label": "Recommended Hotel",
+        "hotel": "Ibis",
+        "description": "Room booking form for PRIS 2026 participants who plan to stay at Ibis."
+      },
+      "novotel": {
+        "label": "Recommended Hotel",
+        "hotel": "Novotel",
+        "description": "Room booking form for PRIS 2026 participants who plan to stay at Novotel."
+      }
     }
   },
   "sponsorship": {

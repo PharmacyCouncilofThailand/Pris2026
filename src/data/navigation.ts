@@ -3,6 +3,8 @@ export interface NavItem {
     href?: string;
     children?: NavItem[];
     disabled?: boolean;
+    /** Hide from nav until user is logged in */
+    authRequired?: boolean;
 }
 
 export const navigationData: NavItem[] = [
@@ -47,6 +49,13 @@ export const navigationData: NavItem[] = [
     {
         labelKey: "gallery",
         href: "/gallery",
+    },
+    {
+        labelKey: "more",
+        authRequired: true,
+        children: [
+            { labelKey: "hotelBookingForm", href: "/hotel-booking-form" },
+        ],
     },
     {
         labelKey: "contact",
