@@ -36,6 +36,10 @@ export default function Header() {
   const t = useTranslations("common");
   type TranslationKey = Parameters<typeof t>[0];
   type LinkHref = React.ComponentProps<typeof Link>["href"];
+  const visibleNav = React.useMemo(
+    () => navigationData.filter((item) => !item.authRequired || isLoggedIn),
+    [isLoggedIn]
+  );
 
   React.useEffect(() => {
     let ticking = false;
@@ -60,6 +64,7 @@ export default function Header() {
     "/abstract-guidelines",
     "/approved-abstracts",
     "/registration-policies",
+    "/hotel-booking-form",
     "/sponsorship",
     "/contact",
     "/login",
@@ -122,7 +127,7 @@ export default function Header() {
           <div className="hidden xl:flex items-center justify-center xl:justify-self-center">
             <NavigationMenu>
               <NavigationMenuList className="gap-2">
-                {navigationData.map((item) => (
+                {visibleNav.map((item) => (
                   <NavigationMenuItem key={item.labelKey}>
                     {item.disabled ? (
                       <span className={cn(
@@ -315,7 +320,7 @@ export default function Header() {
 
                 <nav className="flex-1 overflow-y-auto">
                   <ul className="flex flex-col gap-4">
-                    {navigationData.map((item) => (
+                    {visibleNav.map((item) => (
                       <li key={item.labelKey} className="border-b border-white/10 pb-4">
                         {item.disabled ? (
                           <span className="text-lg font-medium text-gray-500 block cursor-not-allowed">
