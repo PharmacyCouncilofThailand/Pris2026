@@ -25,7 +25,8 @@
     "switchLang": "English",
     "login": "เข้าสู่ระบบ",
     "signUp": "ลงทะเบียน",
-    "myProfile": "โปรไฟล์ของฉัน"
+    "myProfile": "โปรไฟล์ของฉัน",
+    "agenda": "กำหนดการ"
   },
   "footer": {
     "navigation": "เมนูหลัก",

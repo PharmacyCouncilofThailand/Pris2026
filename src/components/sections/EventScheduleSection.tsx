@@ -18,23 +18,25 @@ if (typeof window !== "undefined") {
 }
 
 const TRACKS = [
-  { id: "All Tracks", label: "All Tracks", labelTh: "ทั้งหมด" },
-  { id: "Main Stage", label: "Main Stage", labelTh: "เวทีหลัก" },
-  { id: "Room 1", label: "Room 1", labelTh: "ห้อง 1" },
-  { id: "Room 2", label: "Room 2", labelTh: "ห้อง 2" },
-  { id: "Room 3", label: "Room 3", labelTh: "ห้อง 3" },
+  { id: "JUPITER 4-7", label: "JUPITER 4-7", labelTh: "ห้อง JUPITER 4-7" },
+  { id: "JUPITER 11", label: "JUPITER 11", labelTh: "ห้อง JUPITER 11" },
+  { id: "JUPITER 12", label: "JUPITER 12", labelTh: "ห้อง JUPITER 12" },
+  { id: "JUPITER 13", label: "JUPITER 13", labelTh: "ห้อง JUPITER 13" },
+  { id: "INNOVATION ZONE", label: "INNOVATION ZONE", labelTh: "INNOVATION ZONE" },
 ];
 
 function getTrackColor(track?: string) {
   switch (track) {
-    case "Main Stage": 
+    case "JUPITER 4-7": 
       return { bg: "bg-amber-500/10", border: "border-amber-500/30", text: "text-amber-400", strip: "bg-amber-500" };
-    case "Room 1": 
+    case "JUPITER 11": 
       return { bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-300", strip: "bg-blue-500" };
-    case "Room 2": 
+    case "JUPITER 12": 
       return { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-300", strip: "bg-emerald-500" };
-    case "Room 3": 
+    case "JUPITER 13": 
       return { bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-300", strip: "bg-purple-500" };
+    case "INNOVATION ZONE":
+      return { bg: "bg-rose-500/10", border: "border-rose-500/30", text: "text-rose-400", strip: "bg-rose-500" };
     case "Common":
     default: 
       return { bg: "bg-white/5", border: "border-white/10", text: "text-white/60", strip: "bg-gold" };
@@ -54,17 +56,7 @@ function EventCard({ event, locale }: { event: Event; locale: string }) {
        {/* Left Color Strip Indicator */}
        <div className={cn("absolute top-0 left-0 w-1.5 h-full transition-colors duration-500", tColors.strip)}></div>
        
-       {/* Header Tags */}
-       <div className="flex flex-wrap items-center gap-3 mb-5">
-           {event.track !== "Common" && event.track && (
-             <span className={cn("px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border", tColors.bg, tColors.text, tColors.border)}>
-               {trackName}
-             </span>
-           )}
-           <span className="px-3 py-1 rounded-full text-[10px] md:text-xs font-semibold uppercase tracking-widest text-[#a1a1aa] bg-white/5 border border-white/10">
-             {type}
-           </span>
-       </div>
+
 
        {/* Title & Description */}
        <h4 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 group-hover:text-gold transition-colors leading-snug lg:leading-tight pr-4">
@@ -102,7 +94,7 @@ function EventCard({ event, locale }: { event: Event; locale: string }) {
                       </div>
                     )}
                     <div className="flex flex-col min-w-0 flex-1">
-                       <span className="font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block">
+                       <span className={`font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block ${event.id === 3 || event.id === 1202 || event.id === 14 ? "whitespace-nowrap" : "whitespace-pre-line"}`}>
                           {locale === 'th' && sp.nameTh ? sp.nameTh : sp.name}
                        </span>
                        <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider block mt-0.5">
@@ -121,13 +113,16 @@ export default function EventScheduleSection() {
   const t = useTranslations("schedule");
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState(0);
-  const [activeTrack, setActiveTrack] = useState("All Tracks");
+  const [activeTrack, setActiveTrack] = useState("JUPITER 4-7");
+  const [activeGroup, setActiveGroup] = useState("GROUP 1");
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const INNOVATION_GROUPS = ["GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4"];
+
   // Reset track when day changes
   React.useEffect(() => {
-    setActiveTrack("All Tracks");
+    setActiveTrack("JUPITER 4-7");
   }, [activeTab]);
 
   useGSAP(
@@ -175,14 +170,15 @@ export default function EventScheduleSection() {
 
   const currentDay = scheduleData[activeTab];
 
-  // Fltler events based on selected track
+  // Filter events based on selected track
   const filteredEvents = useMemo(() => {
     return currentDay.events.filter(e => {
-      if (activeTrack === "All Tracks") return true;
-      if (e.track === "Common") return true; 
+      if (activeTrack === "INNOVATION ZONE") {
+        return e.track === "INNOVATION ZONE" && e.group === activeGroup;
+      }
       return e.track === activeTrack;
     });
-  }, [currentDay, activeTrack]);
+  }, [currentDay, activeTrack, activeGroup]);
 
   // Group filtered events by time
   const timeGroups = useMemo(() => {
@@ -226,7 +222,7 @@ export default function EventScheduleSection() {
               <div className="flex flex-col items-start gap-1 sm:gap-2">
                 <span 
                   className={cn(
-                    "text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight transition-colors duration-500",
+                    "text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight transition-colors duration-500 leading-normal pt-2",
                     activeTab === index ? "text-white" : "text-white/20 group-hover:text-white/60"
                   )}
                 >
@@ -262,6 +258,26 @@ export default function EventScheduleSection() {
             </button>
           ))}
         </div>
+
+        {/* ─── Level 3 Navigation: Innovation Zone Groups ─── */}
+        {activeTrack === "INNOVATION ZONE" && (
+          <div className="flex overflow-x-auto gap-3 pb-8 mb-8 border-b border-white/10 no-scrollbar snap-x">
+            {INNOVATION_GROUPS.map((group) => (
+              <button
+                key={group}
+                onClick={() => setActiveGroup(group)}
+                className={cn(
+                  "snap-start whitespace-nowrap px-4 py-2 md:px-5 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 border flex-shrink-0",
+                  activeGroup === group 
+                    ? "bg-gold text-black border-gold shadow-[0_0_15px_rgba(212,175,55,0.4)]" 
+                    : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white/80"
+                )}
+              >
+                {group}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* ─── The Ultimate Vertical Timeline ─── */}
         <div ref={containerRef} className="w-full flex flex-col gap-10 md:gap-20">
