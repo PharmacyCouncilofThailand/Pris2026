@@ -25,7 +25,8 @@
     "switchLang": "ภาษาไทย",
     "login": "Log In",
     "signUp": "Register",
-    "myProfile": "My Profile"
+    "myProfile": "My Profile",
+    "agenda": "Agenda"
   },
   "footer": {
     "navigation": "Navigation",
@@ -116,7 +117,7 @@
     "description": "A pivotal opportunity to connect with pharmaceutical innovations and a nationwide network of professionals. <br class='hidden md:block' /><strong class='font-semibold text-black'>Experience the future of pharmacy.</strong>",
     "needToKnow": "Need to Know",
     "criticalDates": "Special Offer",
-    "periodEarly": "Jul 1 – Aug 1, 2026",
+    "periodEarly": "Jul 1 – Jul 31, 2026",
     "titleEarly": "Early Bird Registration",
     "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
     "periodRegular": "Aug 1 - Oct 15, 2026",
@@ -133,7 +134,7 @@
     "feature2Desc": "Experience the latest pharmaceutical innovations and medical devices from over 60 leading companies. Stay ahead of future trends.",
     "tiersTitle": "Registration\nTiers",
     "tiersSubtitle": "Select your pass type",
-    "tierEarlyLabel": "General • Jul 1 - Aug 1, 2026",
+    "tierEarlyLabel": "General • Jul 1 - Jul 31, 2026",
     "tierRegLabel": "General • Aug 1 - Oct 15, 2026",
     "tierLate": "Late Registration / On-site",
     "tierLateLabel": "General • From Oct 15, 2026",

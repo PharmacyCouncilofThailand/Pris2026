@@ -25,6 +25,10 @@ export const navigationData: NavItem[] = [
         ],
     },
     {
+        labelKey: "agenda",
+        href: "/#agenda",
+    },
+    {
         labelKey: "callForAbstracts",
         href: "/call-for-abstracts",
         // children temporarily hidden
