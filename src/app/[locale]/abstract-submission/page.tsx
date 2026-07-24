@@ -211,7 +211,9 @@ export default function AbstractSubmission() {
       fetch(`${API_URL}/api/events/${EVENT_CODE}/abstract-categories`)
         .then(res => res.json())
         .then(data => {
-          if (data.categories) setCategories(data.categories);
+          if (data.categories) {
+            setCategories([...data.categories].sort((a: CategoryOption, b: CategoryOption) => a.id - b.id));
+          }
         })
         .catch(() => { /* silently fail, categories will be empty */ });
     }
@@ -221,7 +223,7 @@ export default function AbstractSubmission() {
   const [formData, setFormData] = useState({
     author: { firstName: "", lastName: "", email: "", affiliation: "", phone: "" },
     coAuthors: [] as { firstName: string, lastName: string, institution: string, email: string }[],
-    abstract: { title: "", category: "", type: "", keywords: "" },
+    abstract: { title: "", categoryId: undefined as number | undefined, category: "", type: "", keywords: "" },
     content: { background: "", objective: "", methods: "", results: "", conclusion: "" },
     files: [] as File[]
   });
@@ -275,6 +277,7 @@ export default function AbstractSubmission() {
           })),
           abstract: {
             title: abstractData.title || "",
+            categoryId: abstractData.categoryId || undefined,
             category: abstractData.category || "",
             type: abstractData.presentationType
               ? abstractData.presentationType.charAt(0).toUpperCase() + abstractData.presentationType.slice(1)
@@ -487,6 +490,9 @@ export default function AbstractSubmission() {
       fd.append("affiliation", formData.author.affiliation);
       if (formData.author.phone) fd.append("phone", formData.author.phone);
       fd.append("title", formData.abstract.title);
+      if (formData.abstract.categoryId) {
+        fd.append("categoryId", String(formData.abstract.categoryId));
+      }
       fd.append("category", formData.abstract.category);
       fd.append("presentationType", formData.abstract.type.toLowerCase());
       fd.append("keywords", formData.abstract.keywords);
@@ -869,10 +875,10 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
     }));
   };
 
-  const selectCategory = (name: string) => {
+  const selectCategory = (cat: CategoryOption) => {
     setFormData((prev: any) => ({
       ...prev,
-      abstract: { ...prev.abstract, category: name }
+      abstract: { ...prev.abstract, categoryId: cat.id, category: cat.name }
     }));
     setIsCategoryOpen(false);
   };
@@ -925,7 +931,7 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
                     <button
                       key={cat.id}
                       type="button"
-                      onClick={() => selectCategory(cat.name)}
+                      onClick={() => selectCategory(cat)}
                       className={`w-full text-left px-5 py-3.5 text-sm font-medium transition-colors ${
                         data.category === cat.name
                           ? "bg-slate-900 text-white"
