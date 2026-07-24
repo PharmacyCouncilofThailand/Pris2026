@@ -122,7 +122,11 @@ export default function AbstractTracker() {
 
   const getRevisionTopicLabel = (topic?: string) => {
     if (!topic) return t("revisionTopics.default");
-    return t(`revisionTopics.${topic}` as Parameters<typeof t>[0]);
+    const knownKeys = ["title", "keywords", "background", "objective", "methods", "results", "conclusion", "documents", "other"];
+    if (knownKeys.includes(topic)) {
+      return t(`revisionTopics.${topic}` as Parameters<typeof t>[0]);
+    }
+    return topic;
   };
 
   useEffect(() => {
