@@ -96,7 +96,17 @@
     "day1": "Day 1",
     "day2": "Day 2",
     "date1": "October 29, 2026",
-    "date2": "October 30, 2026"
+    "date2": "October 30, 2026",
+    "time": "Time",
+    "venue": "Venue",
+    "otherVenue": "Other venue",
+    "emptyTitle": "No active sessions",
+    "emptyDescription": "There are no sessions scheduled for this day.",
+    "innovationZone": "Innovation Zone",
+    "scheduleTableLabel": "Conference schedule by time and venue",
+    "dayNavigationLabel": "Select conference day",
+    "tableHint": "Compare sessions across every room. Scroll horizontally to explore the complete programme.",
+    "mobileHint": "Browse every session in chronological order with its room and venue clearly labeled."
   },
   "highlightVideo": {
     "title": "Recent Memories",
