@@ -23,6 +23,69 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const EVENT_TONES = {
+  ceremony: {
+    badge: "border-amber-300/25 bg-amber-300/10 text-amber-200",
+    dot: "bg-amber-300",
+    card: "border-amber-300/25 bg-[linear-gradient(135deg,rgba(245,158,11,0.12),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(252,211,77,0.9)] hover:border-amber-300/45",
+    mobile: "border-l-amber-300/85 bg-amber-300/[0.035]",
+  },
+  keynote: {
+    badge: "border-orange-300/25 bg-orange-300/10 text-orange-200",
+    dot: "bg-orange-300",
+    card: "border-orange-300/25 bg-[linear-gradient(135deg,rgba(234,88,12,0.13),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(251,146,60,0.9)] hover:border-orange-300/45",
+    mobile: "border-l-orange-300/85 bg-orange-300/[0.035]",
+  },
+  workshop: {
+    badge: "border-cyan-300/25 bg-cyan-300/10 text-cyan-100",
+    dot: "bg-cyan-300",
+    card: "border-cyan-300/25 bg-[linear-gradient(135deg,rgba(8,145,178,0.13),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(103,232,249,0.85)] hover:border-cyan-300/45",
+    mobile: "border-l-cyan-300/85 bg-cyan-300/[0.035]",
+  },
+  presentation: {
+    badge: "border-rose-300/25 bg-rose-300/10 text-rose-100",
+    dot: "bg-rose-300",
+    card: "border-rose-300/25 bg-[linear-gradient(135deg,rgba(225,29,72,0.12),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(253,164,175,0.88)] hover:border-rose-300/45",
+    mobile: "border-l-rose-300/85 bg-rose-300/[0.035]",
+  },
+  break: {
+    badge: "border-stone-300/20 bg-stone-200/8 text-stone-200",
+    dot: "bg-stone-300",
+    card: "border-stone-300/20 bg-[linear-gradient(135deg,rgba(168,162,158,0.09),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(214,211,209,0.72)] hover:border-stone-300/35",
+    mobile: "border-l-stone-300/70 bg-stone-200/[0.025]",
+  },
+  session: {
+    badge: "border-sky-300/25 bg-sky-300/10 text-sky-100",
+    dot: "bg-sky-300",
+    card: "border-sky-300/20 bg-[linear-gradient(135deg,rgba(14,116,144,0.1),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(125,211,252,0.8)] hover:border-sky-300/40",
+    mobile: "border-l-sky-300/80 bg-sky-300/[0.03]",
+  },
+} as const;
+
+function getEventTone(type: string) {
+  if (type === "Ceremony" || type === "Registration") {
+    return EVENT_TONES.ceremony;
+  }
+
+  if (type === "Keynote" || type === "Lecture" || type === "Lunch") {
+    return EVENT_TONES.keynote;
+  }
+
+  if (type === "Workshop" || type === "Activity") {
+    return EVENT_TONES.workshop;
+  }
+
+  if (type === "Poster Presentation") {
+    return EVENT_TONES.presentation;
+  }
+
+  if (type === "Break") {
+    return EVENT_TONES.break;
+  }
+
+  return EVENT_TONES.session;
+}
+
 function EventContent({
   event,
   locale,
@@ -38,13 +101,23 @@ function EventContent({
   const location =
     locale === "th" && event.locationTh ? event.locationTh : event.location;
   const type = locale === "th" && event.typeTh ? event.typeTh : event.type;
+  const tone = getEventTone(event.type);
 
   return (
     <article className="min-w-0">
       <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+        <span
+          aria-hidden="true"
+          className={cn("size-1.5 rounded-full shadow-[0_0_10px_currentColor]", tone.dot)}
+        />
         <span className="tabular-nums">{event.time}</span>
         {type && (
-          <span className="rounded-full border border-gold/20 bg-gold/8 px-2 py-0.5 text-[9px] text-gold/75">
+          <span
+            className={cn(
+              "rounded-full border px-2 py-0.5 text-[9px]",
+              tone.badge,
+            )}
+          >
             {type}
           </span>
         )}
@@ -373,6 +446,7 @@ export default function EventScheduleSection() {
 
                       {layout.cells.map((cell) => {
                         const gridColumn = columnIndex.get(cell.columnKey);
+                        const cellTone = getEventTone(cell.events[0].type);
 
                         if (!gridColumn) return null;
 
@@ -380,7 +454,10 @@ export default function EventScheduleSection() {
                           <div
                             key={cell.key}
                             role="cell"
-                            className="schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border border-white/12 bg-[#0d2455]/92 p-3 shadow-[inset_3px_0_0_rgba(202,155,82,0.75)] transition-colors duration-300 hover:border-gold/35 hover:bg-[#112b62]"
+                            className={cn(
+                              "schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border p-3 transition-colors duration-300",
+                              cellTone.card,
+                            )}
                             style={{
                               gridColumn,
                               gridRow: `${cell.startLine} / ${cell.endLine}`,
@@ -409,14 +486,21 @@ export default function EventScheduleSection() {
                       {t("otherVenue")}
                     </h3>
                     <div className="grid gap-4 lg:grid-cols-2">
-                      {layout.fallbackEvents.map((event) => (
-                        <div
-                          key={event.id}
-                          className="schedule-reveal rounded-xl border border-white/10 bg-white/5 p-4"
-                        >
-                          <EventContent event={event} locale={locale} compact />
-                        </div>
-                      ))}
+                      {layout.fallbackEvents.map((event) => {
+                        const tone = getEventTone(event.type);
+
+                        return (
+                          <div
+                            key={event.id}
+                            className={cn(
+                              "schedule-reveal rounded-xl border p-4",
+                              tone.card,
+                            )}
+                          >
+                            <EventContent event={event} locale={locale} compact />
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -450,9 +534,16 @@ export default function EventScheduleSection() {
                           const venue = columns.find(
                             (column) => column.key === resolveVenueKey(event),
                           );
+                          const tone = getEventTone(event.type);
 
                           return (
-                            <div key={event.id} className="px-4 py-5">
+                            <div
+                              key={event.id}
+                              className={cn(
+                                "border-l-[3px] px-4 py-5",
+                                tone.mobile,
+                              )}
+                            >
                               <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/6 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] text-white/68">
                                 {venue?.label ?? t("otherVenue")}
                               </div>
