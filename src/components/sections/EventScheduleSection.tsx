@@ -187,29 +187,60 @@ export default function EventScheduleSection() {
   const t = useTranslations("schedule");
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState(0);
+  const [activeVenueGroup, setActiveVenueGroup] = useState<"rooms" | "innovation">(
+    "rooms",
+  );
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const currentDay = scheduleData[activeTab];
 
-  const columns = useMemo(
+  const allColumns = useMemo(
     () => buildVenueColumns(currentDay.events, locale),
     [currentDay.events, locale],
   );
-  const layout = useMemo(
-    () => buildScheduleLayout(currentDay.events),
-    [currentDay.events],
+  const desktopColumns = useMemo(
+    () =>
+      allColumns.filter((column) =>
+        activeVenueGroup === "rooms"
+          ? column.kind === "room"
+          : column.kind !== "room",
+      ),
+    [activeVenueGroup, allColumns],
+  );
+  const desktopColumnKeys = useMemo(
+    () => new Set(desktopColumns.map((column) => column.key)),
+    [desktopColumns],
+  );
+  const desktopEvents = useMemo(
+    () =>
+      currentDay.events.filter((event) =>
+        desktopColumnKeys.has(resolveVenueKey(event)),
+      ),
+    [currentDay.events, desktopColumnKeys],
+  );
+  const desktopLayout = useMemo(
+    () => buildScheduleLayout(desktopEvents),
+    [desktopEvents],
   );
   const mobileGroups = useMemo(
     () => groupEventsForMobile(currentDay.events),
     [currentDay.events],
   );
   const columnIndex = useMemo(
-    () => new Map(columns.map((column, index) => [column.key, index + 2])),
-    [columns],
+    () =>
+      new Map(desktopColumns.map((column, index) => [column.key, index + 2])),
+    [desktopColumns],
   );
-  const innovationColumns = columns.filter((column) => column.kind === "innovation");
-  const innovationStart = columns.findIndex((column) => column.kind === "innovation") + 2;
-  const tableColumns = `116px repeat(${columns.length}, minmax(210px, 1fr))`;
+  const innovationColumns = desktopColumns.filter(
+    (column) => column.kind === "innovation",
+  );
+  const innovationStart =
+    desktopColumns.findIndex((column) => column.kind === "innovation") + 2;
+  const venueColumnWidth =
+    activeVenueGroup === "rooms"
+      ? "clamp(142px, 16vw, 210px)"
+      : "clamp(104px, 11.5vw, 185px)";
+  const tableColumns = `clamp(88px, 8vw, 116px) repeat(${desktopColumns.length}, minmax(${venueColumnWidth}, 1fr))`;
 
   useGSAP(
     () => {
@@ -258,7 +289,7 @@ export default function EventScheduleSection() {
 
       return () => media.revert();
     },
-    { scope: containerRef, dependencies: [activeTab] },
+    { scope: containerRef, dependencies: [activeTab, activeVenueGroup] },
   );
 
   return (
@@ -327,6 +358,47 @@ export default function EventScheduleSection() {
         </div>
 
         <div
+          className="mb-7 hidden grid-cols-2 gap-6 border-b border-white/10 md:grid lg:gap-12"
+          role="group"
+          aria-label={t("venueGroupNavigationLabel")}
+        >
+          {([
+            ["rooms", t("venueGroupRooms")],
+            ["innovation", t("venueGroupInnovation")],
+          ] as const).map(([group, label]) => {
+            const isActive = activeVenueGroup === group;
+
+            return (
+              <button
+                key={group}
+                type="button"
+                aria-pressed={isActive}
+                aria-controls="conference-schedule-panel"
+                onClick={() => setActiveVenueGroup(group)}
+                className={cn(
+                  "group relative min-h-16 cursor-pointer pb-5 text-left font-heading text-sm font-semibold leading-snug transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061332] lg:text-base",
+                  isActive
+                    ? "text-white"
+                    : "text-white/42 hover:text-white/78",
+                )}
+              >
+                <span className="block text-[9px] font-black uppercase tracking-[0.18em] text-gold/60">
+                  {t("venueGroupLabel")}
+                </span>
+                <span className="mt-1.5 block">{label}</span>
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute inset-x-0 bottom-[-1px] h-0.5 origin-left bg-gold transition-transform duration-300",
+                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-40",
+                  )}
+                />
+              </button>
+            );
+          })}
+        </div>
+
+        <div
           id="conference-schedule-panel"
           ref={containerRef}
           role="tabpanel"
@@ -345,9 +417,12 @@ export default function EventScheduleSection() {
                 >
                   <div
                     role="table"
-                    aria-label={t("scheduleTableLabel")}
+                    aria-label={`${t("scheduleTableLabel")} — ${
+                      activeVenueGroup === "rooms"
+                        ? t("venueGroupRooms")
+                        : t("venueGroupInnovation")
+                    }`}
                     className="w-full"
-                    style={{ minWidth: `${116 + columns.length * 210}px` }}
                   >
                     <div
                       role="row"
@@ -366,7 +441,7 @@ export default function EventScheduleSection() {
                         {t("time")}
                       </div>
 
-                      {columns
+                      {desktopColumns
                         .filter((column) => column.kind !== "innovation")
                         .map((column) => {
                           const gridColumn = columnIndex.get(column.key);
@@ -419,12 +494,12 @@ export default function EventScheduleSection() {
                       style={{
                         gridTemplateColumns: tableColumns,
                         gridTemplateRows: `repeat(${Math.max(
-                          layout.boundaries.length - 1,
+                          desktopLayout.boundaries.length - 1,
                           1,
                         )}, minmax(54px, auto))`,
                       }}
                     >
-                      {layout.boundaries.slice(0, -1).map((boundary, index) => (
+                      {desktopLayout.boundaries.slice(0, -1).map((boundary, index) => (
                         <React.Fragment key={boundary}>
                           <div
                             role="rowheader"
@@ -437,14 +512,14 @@ export default function EventScheduleSection() {
                             aria-hidden="true"
                             className="pointer-events-none z-0 border-b border-white/8"
                             style={{
-                              gridColumn: `2 / ${columns.length + 2}`,
+                              gridColumn: `2 / ${desktopColumns.length + 2}`,
                               gridRow: index + 1,
                             }}
                           />
                         </React.Fragment>
                       ))}
 
-                      {layout.cells.map((cell) => {
+                      {desktopLayout.cells.map((cell) => {
                         const gridColumn = columnIndex.get(cell.columnKey);
                         const cellTone = getEventTone(cell.events[0].type);
 
@@ -480,13 +555,13 @@ export default function EventScheduleSection() {
                   </div>
                 </div>
 
-                {layout.fallbackEvents.length > 0 && (
+                {desktopLayout.fallbackEvents.length > 0 && (
                   <div className="mt-5 rounded-2xl border border-gold/20 bg-[#08173b]/85 p-5">
                     <h3 className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-gold">
                       {t("otherVenue")}
                     </h3>
                     <div className="grid gap-4 lg:grid-cols-2">
-                      {layout.fallbackEvents.map((event) => {
+                      {desktopLayout.fallbackEvents.map((event) => {
                         const tone = getEventTone(event.type);
 
                         return (
@@ -531,7 +606,7 @@ export default function EventScheduleSection() {
 
                       <div className="divide-y divide-white/10">
                         {group.events.map((event) => {
-                          const venue = columns.find(
+                          const venue = allColumns.find(
                             (column) => column.key === resolveVenueKey(event),
                           );
                           const tone = getEventTone(event.type);
