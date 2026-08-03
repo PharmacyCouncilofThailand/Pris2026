@@ -1,336 +1,700 @@
 "use client";
 
-import React, { useState, useRef, useMemo } from "react";
-import Image from "next/image";
-import { ChevronDown, MapPin } from "lucide-react";
+import React, { useMemo, useRef, useState } from "react";
+import { CalendarClock, MapPin, Users } from "lucide-react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { cn } from "@/lib/utils";
+import { useLocale, useTranslations } from "next-intl";
+import { SectionTitle } from "@/components/elements/SectionTitle";
 import { Button } from "@/components/ui/button";
 import { scheduleData } from "@/data/scheduleData";
-import { useTranslations, useLocale } from "next-intl";
-import { SectionTitle } from "@/components/elements/SectionTitle";
-import { EventSpeaker, Event } from "@/types";
+import { cn } from "@/lib/utils";
+import type { Event } from "@/types";
+import {
+  buildScheduleLayout,
+  buildVenueColumns,
+  formatMinutes,
+  formatVenueGroupLabel,
+  groupEventsForMobile,
+  resolveVenueKey,
+  resolveVenueKeys,
+} from "./eventScheduleLayout";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const TRACKS = [
-  { id: "JUPITER 4-7", label: "JUPITER 4-7", labelTh: "ห้อง JUPITER 4-7" },
-  { id: "JUPITER 11", label: "JUPITER 11", labelTh: "ห้อง JUPITER 11" },
-  { id: "JUPITER 12", label: "JUPITER 12", labelTh: "ห้อง JUPITER 12" },
-  { id: "JUPITER 13", label: "JUPITER 13", labelTh: "ห้อง JUPITER 13" },
-  { id: "INNOVATION ZONE", label: "INNOVATION ZONE", labelTh: "INNOVATION ZONE" },
-];
+function formatSpeakerName(value: string) {
+  const text = value.trim();
+  let depth = 0;
 
-function getTrackColor(track?: string) {
-  switch (track) {
-    case "JUPITER 4-7": 
-      return { bg: "bg-amber-500/10", border: "border-amber-500/30", text: "text-amber-400", strip: "bg-amber-500" };
-    case "JUPITER 11": 
-      return { bg: "bg-blue-500/10", border: "border-blue-500/30", text: "text-blue-300", strip: "bg-blue-500" };
-    case "JUPITER 12": 
-      return { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-300", strip: "bg-emerald-500" };
-    case "JUPITER 13": 
-      return { bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-300", strip: "bg-purple-500" };
-    case "INNOVATION ZONE":
-      return { bg: "bg-rose-500/10", border: "border-rose-500/30", text: "text-rose-400", strip: "bg-rose-500" };
-    case "Common":
-    default: 
-      return { bg: "bg-white/5", border: "border-white/10", text: "text-white/60", strip: "bg-gold" };
+  for (let index = text.length - 1; index >= 0; index -= 1) {
+    const character = text[index];
+
+    if (character === ")") {
+      depth += 1;
+    } else if (character === "(") {
+      depth -= 1;
+
+      if (depth === 0 && index > 0) {
+        const name = text.slice(0, index).trim();
+        const position = text.slice(index + 1, -1).trim();
+
+        if (name && position) {
+          return `${name}\n${position}`;
+        }
+
+        break;
+      }
+    }
   }
+
+  return value;
 }
 
-function EventCard({ event, locale }: { event: Event; locale: string }) {
-  const tColors = getTrackColor(event.track);
-  const title = locale === 'th' && event.titleTh ? event.titleTh : event.title;
-  const description = locale === 'th' ? event.descriptionTh : event.description;
-  const location = locale === 'th' ? event.locationTh : event.location;
-  const type = locale === 'th' ? event.typeTh : event.type;
-  const trackName = locale === 'th' ? event.trackTh : event.track;
+const EVENT_TONES = {
+  ceremony: {
+    badge: "border-amber-300/25 bg-amber-300/10 text-amber-200",
+    dot: "bg-amber-300",
+    card: "border-amber-300/25 bg-[linear-gradient(135deg,rgba(245,158,11,0.12),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(252,211,77,0.9)] hover:border-amber-300/45",
+    mobile: "border-l-amber-300/85 bg-amber-300/[0.035]",
+  },
+  keynote: {
+    badge: "border-orange-300/25 bg-orange-300/10 text-orange-200",
+    dot: "bg-orange-300",
+    card: "border-orange-300/25 bg-[linear-gradient(135deg,rgba(234,88,12,0.13),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(251,146,60,0.9)] hover:border-orange-300/45",
+    mobile: "border-l-orange-300/85 bg-orange-300/[0.035]",
+  },
+  workshop: {
+    badge: "border-cyan-300/25 bg-cyan-300/10 text-cyan-100",
+    dot: "bg-cyan-300",
+    card: "border-cyan-300/25 bg-[linear-gradient(135deg,rgba(8,145,178,0.13),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(103,232,249,0.85)] hover:border-cyan-300/45",
+    mobile: "border-l-cyan-300/85 bg-cyan-300/[0.035]",
+  },
+  presentation: {
+    badge: "border-rose-300/25 bg-rose-300/10 text-rose-100",
+    dot: "bg-rose-300",
+    card: "border-rose-300/25 bg-[linear-gradient(135deg,rgba(225,29,72,0.12),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(253,164,175,0.88)] hover:border-rose-300/45",
+    mobile: "border-l-rose-300/85 bg-rose-300/[0.035]",
+  },
+  break: {
+    badge: "border-stone-300/20 bg-stone-200/8 text-stone-200",
+    dot: "bg-stone-300",
+    card: "border-stone-300/20 bg-[linear-gradient(135deg,rgba(168,162,158,0.09),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(214,211,209,0.72)] hover:border-stone-300/35",
+    mobile: "border-l-stone-300/70 bg-stone-200/[0.025]",
+  },
+  session: {
+    badge: "border-sky-300/25 bg-sky-300/10 text-sky-100",
+    dot: "bg-sky-300",
+    card: "border-sky-300/20 bg-[linear-gradient(135deg,rgba(14,116,144,0.1),rgba(13,36,85,0.94)_46%)] shadow-[inset_3px_0_0_rgba(125,211,252,0.8)] hover:border-sky-300/40",
+    mobile: "border-l-sky-300/80 bg-sky-300/[0.03]",
+  },
+} as const;
+
+function getEventTone(type: string) {
+  if (type === "Ceremony" || type === "Registration") {
+    return EVENT_TONES.ceremony;
+  }
+
+  if (type === "Keynote" || type === "Lecture" || type === "Lunch") {
+    return EVENT_TONES.keynote;
+  }
+
+  if (type === "Workshop" || type === "Activity") {
+    return EVENT_TONES.workshop;
+  }
+
+  if (
+    type === "Poster Presentation" ||
+    type === "Oral Presentation" ||
+    type === "Student Presentation"
+  ) {
+    return EVENT_TONES.presentation;
+  }
+
+  if (type === "Break") {
+    return EVENT_TONES.break;
+  }
+
+  return EVENT_TONES.session;
+}
+
+function EventContent({
+  event,
+  locale,
+  compact = false,
+}: {
+  event: Event;
+  locale: string;
+  compact?: boolean;
+}) {
+  const title = locale === "th" && event.titleTh ? event.titleTh : event.title;
+  const description =
+    locale === "th" && event.descriptionTh ? event.descriptionTh : event.description;
+  const location =
+    locale === "th" && event.locationTh ? event.locationTh : event.location;
+  const type = locale === "th" && event.typeTh ? event.typeTh : event.type;
+  const tone = getEventTone(event.type);
 
   return (
-    <div className="group relative bg-[#0b1a4a]/40 backdrop-blur-md border border-white/10 rounded-3xl p-6 md:p-8 hover:bg-[#0b1a4a]/60 hover:border-white/20 hover:shadow-[0_0_30px_rgba(212,175,55,0.05)] transition-all duration-500 overflow-hidden w-full">
-       {/* Left Color Strip Indicator */}
-       <div className={cn("absolute top-0 left-0 w-1.5 h-full transition-colors duration-500", tColors.strip)}></div>
-       
+    <article className="min-w-0">
+      <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+        <span
+          aria-hidden="true"
+          className={cn("size-1.5 rounded-full shadow-[0_0_10px_currentColor]", tone.dot)}
+        />
+        <span className="tabular-nums">{event.time}</span>
+        {type && (
+          <span
+            className={cn(
+              "rounded-full border px-2 py-0.5 text-[9px]",
+              tone.badge,
+            )}
+          >
+            {type}
+          </span>
+        )}
+        {event.group && (
+          <span className="rounded-full border border-white/14 bg-white/6 px-2 py-0.5 text-[9px] text-white/55">
+            {formatVenueGroupLabel(event.group)}
+          </span>
+        )}
+      </div>
 
+      <h4
+        className={cn(
+          "font-heading font-bold leading-snug text-white",
+          compact ? "text-[13px]" : "text-base sm:text-lg",
+        )}
+      >
+        {title}
+      </h4>
 
-       {/* Title & Description */}
-       <h4 className="text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 group-hover:text-gold transition-colors leading-snug lg:leading-tight pr-4">
-          {title}
-       </h4>
-       
-       {description && (
-          <p className="text-white/60 text-sm md:text-base font-light leading-relaxed mb-6 max-w-4xl whitespace-pre-wrap">
-             {description}
-          </p>
-       )}
+      {description && (
+        <p
+          className={cn(
+            "mt-2 whitespace-pre-wrap font-light leading-relaxed text-white/58",
+            compact ? "line-clamp-5 text-[11px]" : "text-sm",
+          )}
+        >
+          {description}
+        </p>
+      )}
 
-       <div className={cn(
-          "flex items-center gap-2 text-[10px] md:text-xs text-white/40 uppercase tracking-widest",
-          event.speakers && event.speakers.length > 0 ? "mb-6 border-b border-white/10 pb-6" : "mt-8"
-       )}>
-          <MapPin className="w-3.5 h-3.5" />
-          {location}
-       </div>
+      <div className="mt-3 flex items-start gap-1.5 text-[10px] leading-relaxed text-white/45">
+        <MapPin aria-hidden="true" className="mt-0.5 size-3 shrink-0 text-gold/70" />
+        <span>{location}</span>
+      </div>
 
-       {/* Speakers (Always visible, clean grid layout) */}
-       {event.speakers && event.speakers.length > 0 && (
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
-             {event.speakers.map((sp, idx) => (
-                 <div key={idx} className="flex items-center gap-4 group/speaker">
-                    {sp.image ? (
-                      <div className="w-12 h-12 md:w-14 md:h-14 relative rounded-full overflow-hidden border-2 border-white/10 group-hover/speaker:border-white/40 transition-colors shrink-0">
-                         <Image src={sp.image} alt={sp.name} fill sizes="56px" className="object-cover" />
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 md:w-14 md:h-14 relative rounded-full overflow-hidden border-2 border-white/10 group-hover/speaker:border-white/40 transition-colors shrink-0 bg-white/5 flex items-center justify-center">
-                         <span className="text-white/40 font-bold text-lg">
-                           {(locale === 'th' && sp.nameTh ? sp.nameTh : sp.name).charAt(0)}
-                         </span>
-                      </div>
-                    )}
-                    <div className="flex flex-col min-w-0 flex-1">
-                       <span className={`font-bold text-sm md:text-base text-white group-hover/speaker:text-gold transition-colors block ${event.id === 3 || event.id === 1202 || event.id === 14 ? "whitespace-nowrap" : "whitespace-pre-line"}`}>
-                          {locale === 'th' && sp.nameTh ? sp.nameTh : sp.name}
-                       </span>
-                       <span className="text-[9px] md:text-[10px] text-white/50 uppercase tracking-wider block mt-0.5">
-                          {locale === 'th' && sp.roleTh ? sp.roleTh : sp.role}
-                       </span>
-                    </div>
-                 </div>
-             ))}
-         </div>
-       )}
-    </div>
-  )
+      {event.speakers.length > 0 && (
+        <div className="mt-3 space-y-2 border-t border-white/8 pt-3">
+          {event.speakers.map((speaker, index) => {
+            const name =
+              locale === "th" && speaker.nameTh ? speaker.nameTh : speaker.name;
+            const role =
+              locale === "th" && speaker.roleTh ? speaker.roleTh : speaker.role;
+
+            return (
+              <div
+                key={`${speaker.name}-${index}`}
+                className="flex gap-2 text-[11px] leading-relaxed"
+              >
+                <Users
+                  aria-hidden="true"
+                  className="mt-0.5 size-3 shrink-0 text-gold/65"
+                />
+                <span className="text-white/72">
+                  {role && (
+                    <span className="mb-0.5 block font-semibold text-gold/75">
+                      {role}
+                    </span>
+                  )}
+                  <span className="block whitespace-pre-line">
+                    {formatSpeakerName(name)}
+                  </span>
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </article>
+  );
 }
 
 export default function EventScheduleSection() {
   const t = useTranslations("schedule");
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState(0);
-  const [activeTrack, setActiveTrack] = useState("JUPITER 4-7");
-  const [activeGroup, setActiveGroup] = useState("GROUP 1");
+  const [activeVenueGroup, setActiveVenueGroup] = useState<"rooms" | "innovation">(
+    "rooms",
+  );
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const currentDay = scheduleData[activeTab];
 
-  const INNOVATION_GROUPS = ["GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4"];
-
-  // Reset track when day changes
-  React.useEffect(() => {
-    setActiveTrack("JUPITER 4-7");
-  }, [activeTab]);
+  const allColumns = useMemo(
+    () => buildVenueColumns(currentDay.events, locale),
+    [currentDay.events, locale],
+  );
+  const desktopColumns = useMemo(
+    () =>
+      allColumns.filter((column) =>
+        activeVenueGroup === "rooms"
+          ? column.kind === "room"
+          : column.kind !== "room",
+      ),
+    [activeVenueGroup, allColumns],
+  );
+  const desktopColumnKeys = useMemo(
+    () => new Set(desktopColumns.map((column) => column.key)),
+    [desktopColumns],
+  );
+  const desktopEvents = useMemo(
+    () =>
+      currentDay.events.filter((event) =>
+        resolveVenueKeys(event).some((key) => desktopColumnKeys.has(key)),
+      ),
+    [currentDay.events, desktopColumnKeys],
+  );
+  const desktopLayout = useMemo(
+    () => buildScheduleLayout(desktopEvents),
+    [desktopEvents],
+  );
+  const mobileGroups = useMemo(
+    () => groupEventsForMobile(currentDay.events),
+    [currentDay.events],
+  );
+  const columnIndex = useMemo(
+    () =>
+      new Map(desktopColumns.map((column, index) => [column.key, index + 2])),
+    [desktopColumns],
+  );
+  const innovationColumns = desktopColumns.filter(
+    (column) => column.kind === "innovation",
+  );
+  const innovationStart =
+    desktopColumns.findIndex((column) => column.kind === "innovation") + 2;
+  const venueColumnWidth =
+    activeVenueGroup === "rooms"
+      ? "clamp(142px, 16vw, 210px)"
+      : "clamp(104px, 11.5vw, 185px)";
+  const tableColumns = `clamp(88px, 8vw, 116px) repeat(${desktopColumns.length}, minmax(${venueColumnWidth}, 1fr))`;
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
+      const media = gsap.matchMedia();
+
+      media.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
         gsap.fromTo(
           ".agenda-title",
           { opacity: 0, y: 50 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
+            duration: 1.1,
             ease: "power4.out",
             force3D: true,
             scrollTrigger: { trigger: ".agenda-title", start: "top 80%" },
-          }
+          },
         );
       });
-      return () => mm.revert();
+
+      return () => media.revert();
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
-  // Re-animate the timeline block when data changes
-  useGSAP(() => {
-    if (!containerRef.current) return;
-    const items = containerRef.current.querySelectorAll(".timeline-row");
-    
-    if (items.length > 0) {
-      gsap.fromTo(
-        items,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.1,
-          ease: "power3.out",
-          force3D: true,
-        }
-      );
-    }
-  }, [activeTab, activeTrack]);
+  useGSAP(
+    () => {
+      if (!containerRef.current) return;
 
-  const currentDay = scheduleData[activeTab];
+      const media = gsap.matchMedia();
 
-  // Filter events based on selected track
-  const filteredEvents = useMemo(() => {
-    return currentDay.events.filter(e => {
-      if (activeTrack === "INNOVATION ZONE") {
-        return e.track === "INNOVATION ZONE" && e.group === activeGroup;
-      }
-      return e.track === activeTrack;
-    });
-  }, [currentDay, activeTrack, activeGroup]);
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          containerRef.current?.querySelectorAll(".schedule-reveal") ?? [],
+          { opacity: 0, y: 18 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.55,
+            stagger: 0.025,
+            ease: "power3.out",
+            force3D: true,
+          },
+        );
+      });
 
-  // Group filtered events by time
-  const timeGroups = useMemo(() => {
-    const groups: { time: string, events: Event[] }[] = [];
-    filteredEvents.forEach(event => {
-      let group = groups.find(g => g.time === event.time);
-      if (!group) {
-        group = { time: event.time, events: [] };
-        groups.push(group);
-      }
-      group.events.push(event);
-    });
-    return groups;
-  }, [filteredEvents]);
+      return () => media.revert();
+    },
+    { scope: containerRef, dependencies: [activeTab, activeVenueGroup] },
+  );
 
   return (
     <section
       ref={sectionRef}
-      className="relative py-16 md:py-24 lg:py-32 bg-[linear-gradient(to_bottom,black_0%,#0b1a4a_35%,#451a03_65%,black_100%)] text-white overflow-hidden z-[2]"
+      className="relative z-[2] overflow-hidden bg-[linear-gradient(to_bottom,black_0%,#0b1a4a_35%,#451a03_65%,black_100%)] py-16 text-white md:py-24 lg:py-32"
     >
-      <div className="container mx-auto px-4 md:px-8 lg:px-12 max-w-7xl relative z-[1]">
-        
-        {/* Header */}
-        <div className="mb-12 sm:mb-16 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8 agenda-title">
-            <SectionTitle
-              title={t('sectionTitle')}
-              align="left"
-              theme="dark"
-            />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-35 [background-image:linear-gradient(rgba(202,155,82,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(202,155,82,0.04)_1px,transparent_1px)] [background-size:72px_72px]"
+      />
+
+      <div className="container relative z-[1] mx-auto max-w-[1800px] px-4 md:px-8 lg:px-10">
+        <div className="agenda-title mb-12 flex flex-col gap-6 sm:mb-16 md:mb-18 md:flex-row md:items-end md:justify-between">
+          <SectionTitle title={t("sectionTitle")} align="left" theme="dark" />
+          <p className="max-w-sm border-l border-gold/35 pl-4 text-xs leading-relaxed text-white/45">
+            <span className="md:hidden">{t("mobileHint")}</span>
+            <span className="hidden md:inline">{t("tableHint")}</span>
+          </p>
         </div>
 
-        {/* ─── Level 1 Navigation: Day Tabs ─── */}
-        <div className="day-tabs-container flex overflow-x-auto sm:flex-wrap gap-6 sm:gap-8 md:gap-16 pb-6 no-scrollbar">
-          {scheduleData.map((day, index) => (
-            <Button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              variant="ghost"
-              className="day-tab group flex flex-col items-start justify-start text-left cursor-pointer flex-shrink-0 h-auto p-0 hover:bg-transparent"
-            >
-              <div className="flex flex-col items-start gap-1 sm:gap-2">
-                <span 
-                  className={cn(
-                    "text-3xl sm:text-4xl md:text-5xl font-black uppercase tracking-tight transition-colors duration-500 leading-normal pt-2",
-                    activeTab === index ? "text-white" : "text-white/20 group-hover:text-white/60"
-                  )}
-                >
-                  {t(`day${index + 1}`)}
+        <div
+          className="day-tabs-container mb-8 flex gap-8 overflow-x-auto border-b border-white/10 pb-6 sm:flex-wrap md:mb-10 md:gap-14"
+          role="tablist"
+          aria-label={t("dayNavigationLabel")}
+        >
+          {scheduleData.map((day, index) => {
+            const date = locale === "th" && day.dateTh ? day.dateTh : day.date;
+
+            return (
+              <Button
+                key={day.day}
+                onClick={() => setActiveTab(index)}
+                variant="ghost"
+                role="tab"
+                aria-selected={activeTab === index}
+                aria-controls="conference-schedule-panel"
+                aria-label={`${t(`day${index + 1}`)} — ${date}`}
+                className="day-tab group h-auto shrink-0 cursor-pointer justify-start rounded-none p-0 text-left hover:bg-transparent focus-visible:ring-gold"
+              >
+                <span className="flex flex-col items-start gap-1 sm:gap-2">
+                  <span
+                    className={cn(
+                      "pt-2 text-3xl font-black uppercase leading-normal tracking-tight transition-colors duration-500 sm:text-4xl md:text-5xl",
+                      activeTab === index
+                        ? "text-white"
+                        : "text-white/20 group-hover:text-white/60",
+                    )}
+                  >
+                    {t(`day${index + 1}`)}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-[10px] font-bold uppercase tracking-[0.15em] transition-colors duration-500 sm:text-xs md:text-sm",
+                      activeTab === index
+                        ? "text-gold"
+                        : "text-white/20 group-hover:text-white/60",
+                    )}
+                  >
+                    {date}
+                  </span>
                 </span>
-                <span 
-                  className={cn(
-                    "text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-[0.15em] transition-colors duration-500",
-                    activeTab === index ? "text-gold" : "text-white/20 group-hover:text-white/60"
-                  )}
-                >
-                  {locale === "th" && day.dateTh ? day.dateTh : day.date}
-                </span>
-              </div>
-            </Button>
-          ))}
+              </Button>
+            );
+          })}
         </div>
 
-        {/* ─── Level 2 Navigation: Track Chips Filter ─── */}
-        <div className="flex overflow-x-auto gap-3 pb-8 mb-8 border-b border-white/10 no-scrollbar snap-x">
-          {TRACKS.map((track) => (
-            <button
-              key={track.id}
-              onClick={() => setActiveTrack(track.id)}
-              className={cn(
-                "snap-start whitespace-nowrap px-5 py-3 md:px-6 md:py-3.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 border flex-shrink-0",
-                activeTrack === track.id 
-                  ? "bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]" 
-                  : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white/80"
-              )}
-            >
-              {locale === 'th' ? track.labelTh : track.label}
-            </button>
-          ))}
-        </div>
+        <div
+          className="mb-7 hidden grid-cols-2 gap-6 border-b border-white/10 md:grid lg:gap-12"
+          role="group"
+          aria-label={t("venueGroupNavigationLabel")}
+        >
+          {([
+            ["rooms", t("venueGroupRooms")],
+            ["innovation", t("venueGroupInnovation")],
+          ] as const).map(([group, label]) => {
+            const isActive = activeVenueGroup === group;
 
-        {/* ─── Level 3 Navigation: Innovation Zone Groups ─── */}
-        {activeTrack === "INNOVATION ZONE" && (
-          <div className="flex overflow-x-auto gap-3 pb-8 mb-8 border-b border-white/10 no-scrollbar snap-x">
-            {INNOVATION_GROUPS.map((group) => (
+            return (
               <button
                 key={group}
-                onClick={() => setActiveGroup(group)}
+                type="button"
+                aria-pressed={isActive}
+                aria-controls="conference-schedule-panel"
+                onClick={() => setActiveVenueGroup(group)}
                 className={cn(
-                  "snap-start whitespace-nowrap px-4 py-2 md:px-5 md:py-2.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 border flex-shrink-0",
-                  activeGroup === group 
-                    ? "bg-gold text-black border-gold shadow-[0_0_15px_rgba(212,175,55,0.4)]" 
-                    : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white/80"
+                  "group relative min-h-16 cursor-pointer pb-5 text-left font-heading text-sm font-semibold leading-relaxed tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061332] lg:text-base",
+                  isActive
+                    ? "text-white"
+                    : "text-white/42 hover:text-white/78",
                 )}
               >
-                {group}
+                <span className="block text-[9px] font-black uppercase tracking-[0.18em] text-gold/60">
+                  {t("venueGroupLabel")}
+                </span>
+                <span className="mt-1.5 block">{label}</span>
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute inset-x-0 bottom-[-1px] h-0.5 origin-left bg-gold transition-transform duration-300",
+                    isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-40",
+                  )}
+                />
               </button>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
 
-        {/* ─── The Ultimate Vertical Timeline ─── */}
-        <div ref={containerRef} className="w-full flex flex-col gap-10 md:gap-20">
-          
-          {timeGroups.length > 0 ? (
-            timeGroups.map((group, groupIdx) => (
-              <div 
-                key={groupIdx} 
-                className="timeline-row grid grid-cols-1 lg:grid-cols-[240px_1fr] xl:grid-cols-[280px_1fr] gap-4 md:gap-10 lg:gap-12 pt-6 md:pt-0 relative"
+        <div
+          id="conference-schedule-panel"
+          ref={containerRef}
+          role="tabpanel"
+          className="relative"
+        >
+          {currentDay.events.length > 0 ? (
+            <>
+              <div
+                className="relative hidden md:block"
+                role="region"
+                aria-label={t("scheduleTableLabel")}
               >
-                {/* Time Column (Sticky on Desktop) */}
-                <div className="relative">
-                  {/* Vertical Line Connector (Desktop only) */}
-                  <div className="hidden lg:block absolute right-[-40px] xl:right-[-32px] top-4 bottom-[-100px] w-px bg-gradient-to-b from-white/20 to-transparent"></div>
-                  
-                  <div className="lg:sticky lg:top-32 lg:py-2 flex items-center lg:items-start gap-4">
-                     {/* Node dot (Desktop only) */}
-                     <div className="hidden lg:block absolute right-[-44px] xl:right-[-36px] top-6 w-2 h-2 rounded-full bg-gold shadow-[0_0_10px_rgba(212,175,55,0.8)]"></div>
-                     <div className="flex flex-row items-baseline gap-2 text-gold">
-                       <span className="text-4xl md:text-5xl font-black tracking-tighter">
-                         {group.time.split(" – ")[0]}
-                       </span>
-                       {group.time.split(" – ")[1] && (
-                         <span className="text-2xl md:text-3xl font-bold opacity-60 tracking-tight whitespace-nowrap">
-                           – {group.time.split(" – ")[1]}
-                         </span>
-                       )}
-                     </div>
+                <div
+                  className="schedule-scroll max-h-[78vh] overflow-auto overscroll-contain rounded-[1.75rem] border border-gold/25 bg-[#061332]/88 shadow-[0_30px_90px_rgba(0,0,0,0.36)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70"
+                  tabIndex={0}
+                >
+                  <div
+                    role="table"
+                    aria-label={`${t("scheduleTableLabel")} — ${
+                      activeVenueGroup === "rooms"
+                        ? t("venueGroupRooms")
+                        : t("venueGroupInnovation")
+                    }`}
+                    className="w-full"
+                  >
+                    <div
+                      role="row"
+                      className="sticky top-0 z-30 grid border-b border-gold/30 bg-[#091943]/96 backdrop-blur-xl"
+                      style={{
+                        gridTemplateColumns: tableColumns,
+                        gridTemplateRows: "32px 54px",
+                      }}
+                    >
+                      <div
+                        role="columnheader"
+                        className="sticky left-0 z-40 flex items-center gap-2 border-r border-gold/25 bg-[#0b1d4d] px-4 text-xs font-black uppercase tracking-[0.16em] text-gold"
+                        style={{ gridColumn: 1, gridRow: "1 / 3" }}
+                      >
+                        <CalendarClock aria-hidden="true" className="size-4" />
+                        {t("time")}
+                      </div>
+
+                      {desktopColumns
+                        .filter((column) => column.kind !== "innovation")
+                        .map((column) => {
+                          const gridColumn = columnIndex.get(column.key);
+
+                          return (
+                            <div
+                              key={column.key}
+                              role="columnheader"
+                              className="flex items-center justify-center border-r border-white/10 px-4 text-center"
+                              style={{ gridColumn, gridRow: "1 / 3" }}
+                            >
+                              <span className="text-xs font-black uppercase tracking-[0.08em] text-white">
+                                {column.label}
+                              </span>
+                            </div>
+                          );
+                        })}
+
+                      {innovationColumns.length > 0 && (
+                        <div
+                          role="columnheader"
+                          className="flex items-center justify-center border-b border-r border-white/10 bg-gold/8 px-4 text-center text-[10px] font-black uppercase leading-tight tracking-[0.18em] text-gold whitespace-pre-line"
+                          style={{
+                            gridColumn: `${innovationStart} / span ${innovationColumns.length}`,
+                            gridRow: 1,
+                          }}
+                        >
+                          {t("innovationZone")}
+                        </div>
+                      )}
+
+                      {innovationColumns.map((column) => (
+                        <div
+                          key={column.key}
+                          role="columnheader"
+                          className="flex items-center justify-center border-r border-white/10 px-3 text-center text-[11px] font-black uppercase tracking-[0.08em] text-white"
+                          style={{
+                            gridColumn: columnIndex.get(column.key),
+                            gridRow: 2,
+                          }}
+                        >
+                          {column.label}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div
+                      role="rowgroup"
+                      className="relative grid"
+                      style={{
+                        gridTemplateColumns: tableColumns,
+                        gridTemplateRows: `repeat(${Math.max(
+                          desktopLayout.boundaries.length - 1,
+                          1,
+                        )}, minmax(54px, auto))`,
+                      }}
+                    >
+                      {desktopLayout.boundaries.slice(0, -1).map((boundary, index) => (
+                        <React.Fragment key={boundary}>
+                          <div
+                            role="rowheader"
+                            className="schedule-reveal sticky left-0 z-20 border-r border-b border-white/10 bg-[#08173b]/98 px-4 py-3 text-xs font-black tabular-nums text-gold"
+                            style={{ gridColumn: 1, gridRow: index + 1 }}
+                          >
+                            {formatMinutes(boundary)}
+                          </div>
+                          <div
+                            aria-hidden="true"
+                            className="pointer-events-none z-0 border-b border-white/8"
+                            style={{
+                              gridColumn: `2 / ${desktopColumns.length + 2}`,
+                              gridRow: index + 1,
+                            }}
+                          />
+                        </React.Fragment>
+                      ))}
+
+                      {desktopLayout.cells.map((cell) => {
+                        const gridColumnIndexes = cell.columnKeys
+                          .map((key) => columnIndex.get(key))
+                          .filter((index): index is number => index !== undefined)
+                          .sort((left, right) => left - right);
+                        const gridColumnStart = gridColumnIndexes[0];
+                        const gridColumnEnd =
+                          gridColumnIndexes[gridColumnIndexes.length - 1];
+                        const cellTone = getEventTone(cell.events[0].type);
+
+                        if (!gridColumnStart || !gridColumnEnd) return null;
+
+                        return (
+                          <div
+                            key={cell.key}
+                            role="cell"
+                            className={cn(
+                              "schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border p-3 transition-colors duration-300",
+                              cellTone.card,
+                            )}
+                            style={{
+                              gridColumn: `${gridColumnStart} / ${gridColumnEnd + 1}`,
+                              gridRow: `${cell.startLine} / ${cell.endLine}`,
+                            }}
+                          >
+                            <div className="divide-y divide-white/10">
+                              {cell.events.map((event, index) => (
+                                <div
+                                  key={event.id}
+                                  className={cn(index > 0 && "pt-4", index > 0 && "mt-4")}
+                                >
+                                  <EventContent event={event} locale={locale} compact />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 
-                {/* Cards Column */}
-                <div className="flex flex-col gap-6 md:gap-8">
-                  {group.events.map(event => (
-                    <EventCard key={event.id} event={event} locale={locale} />
-                  ))}
-                </div>
+                {desktopLayout.fallbackEvents.length > 0 && (
+                  <div className="mt-5 rounded-2xl border border-gold/20 bg-[#08173b]/85 p-5">
+                    <h3 className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-gold">
+                      {t("otherVenue")}
+                    </h3>
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      {desktopLayout.fallbackEvents.map((event) => {
+                        const tone = getEventTone(event.type);
+
+                        return (
+                          <div
+                            key={event.id}
+                            className={cn(
+                              "schedule-reveal rounded-xl border p-4",
+                              tone.card,
+                            )}
+                          >
+                            <EventContent event={event} locale={locale} compact />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
-            ))
+
+              <div className="space-y-4 md:hidden">
+                {mobileGroups.map((group, groupIndex) => {
+                  const headingId = `mobile-time-${activeTab}-${groupIndex}`;
+
+                  return (
+                    <section
+                      key={`${group.timeLabel}-${groupIndex}`}
+                      className="schedule-reveal overflow-hidden rounded-2xl border border-white/10 bg-[#091943]/72 shadow-[0_18px_48px_rgba(0,0,0,0.2)]"
+                      aria-labelledby={headingId}
+                    >
+                      <div className="flex items-center gap-3 border-b border-gold/20 bg-[#0c2250]/82 px-4 py-3">
+                        <span
+                          className="h-7 w-1 rounded-full bg-gold"
+                          aria-hidden="true"
+                        />
+                        <h3
+                          id={headingId}
+                          className="font-heading text-lg font-black tabular-nums text-gold"
+                        >
+                          {group.timeLabel}
+                        </h3>
+                      </div>
+
+                      <div className="divide-y divide-white/10">
+                        {group.events.map((event) => {
+                          const isSpanningRooms = (event.spanTracks?.length ?? 0) > 1;
+                          const venue = allColumns.find(
+                            (column) => column.key === resolveVenueKey(event),
+                          );
+                          const venueLabel = isSpanningRooms
+                            ? locale === "th"
+                              ? event.locationTh
+                              : event.location
+                            : venue?.label ?? t("otherVenue");
+                          const tone = getEventTone(event.type);
+
+                          return (
+                            <div
+                              key={event.id}
+                              className={cn(
+                                "border-l-[3px] px-4 py-5",
+                                tone.mobile,
+                              )}
+                            >
+                              <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/6 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] text-white/68">
+                                {venueLabel}
+                              </div>
+                              <EventContent event={event} locale={locale} />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            </>
           ) : (
-            <div className="py-32 flex flex-col items-center justify-center text-center opacity-50">
-              <div className="w-20 h-20 border-2 border-dashed border-white/20 rounded-full flex items-center justify-center mb-6">
-                 <MapPin className="w-8 h-8 text-white/40" />
-              </div>
-              <h4 className="text-2xl font-bold mb-2">No Active Sessions</h4>
-              <p className="max-w-md text-white/60">
-                {locale === 'th' 
-                  ? 'ไม่มีการจัดประชุมหรือกิจกรรมในห้องที่ท่านเลือกสำหรับวันนี้' 
-                  : 'There are no sessions scheduled in this room for the selected day.'}
+            <div className="py-24 text-center">
+              <MapPin aria-hidden="true" className="mx-auto mb-5 size-9 text-gold/55" />
+              <h4 className="font-heading text-2xl font-bold text-white">
+                {t("emptyTitle")}
+              </h4>
+              <p className="mx-auto mt-2 max-w-md text-sm text-white/55">
+                {t("emptyDescription")}
               </p>
             </div>
           )}
-
         </div>
       </div>
     </section>
