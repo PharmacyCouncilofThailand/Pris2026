@@ -38,11 +38,11 @@ export default function Home() {
       </div> */}
 
       {/* Event Schedule */}
-      {/* <div className="w-full relative" id="agenda" style={{ zIndex: 2 }}>
+      <div className="w-full relative" id="agenda" style={{ zIndex: 2 }}>
         <InViewWrapper minHeight="800px">
           <EventScheduleSection />
         </InViewWrapper>
-      </div> */}
+      </div>
 
       {/* Sponsor Marquee */}
       <div className="w-full relative" style={{ zIndex: 2 }}>

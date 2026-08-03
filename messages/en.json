@@ -102,15 +102,15 @@
     "otherVenue": "Other venue",
     "emptyTitle": "No active sessions",
     "emptyDescription": "There are no sessions scheduled for this day.",
-    "innovationZone": "Innovation Zone",
+    "innovationZone": "FOYER\n(INNOVATION ZONE)",
     "scheduleTableLabel": "Conference schedule by time and venue",
     "dayNavigationLabel": "Select conference day",
     "tableHint": "Compare sessions across every room. Scroll horizontally to explore the complete programme.",
     "mobileHint": "Browse every session in chronological order with its room and venue clearly labeled.",
     "venueGroupNavigationLabel": "Select venue category",
     "venueGroupLabel": "Venue category",
-    "venueGroupRooms": "Jupiter 4–7, Jupiter 11, Jupiter 12, Jupiter 13",
-    "venueGroupInnovation": "Innovation Zone, Exhibition Area, Foyer"
+    "venueGroupRooms": "Jupiter 4–7  ·  Jupiter 11  ·  Jupiter 12  ·  Jupiter 13",
+    "venueGroupInnovation": "Innovation Zone  ·  Exhibition Area  ·  Foyer"
   },
   "highlightVideo": {
     "title": "Recent Memories",

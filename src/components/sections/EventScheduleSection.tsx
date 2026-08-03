@@ -15,12 +15,42 @@ import {
   buildScheduleLayout,
   buildVenueColumns,
   formatMinutes,
+  formatVenueGroupLabel,
   groupEventsForMobile,
   resolveVenueKey,
+  resolveVenueKeys,
 } from "./eventScheduleLayout";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+}
+
+function formatSpeakerName(value: string) {
+  const text = value.trim();
+  let depth = 0;
+
+  for (let index = text.length - 1; index >= 0; index -= 1) {
+    const character = text[index];
+
+    if (character === ")") {
+      depth += 1;
+    } else if (character === "(") {
+      depth -= 1;
+
+      if (depth === 0 && index > 0) {
+        const name = text.slice(0, index).trim();
+        const position = text.slice(index + 1, -1).trim();
+
+        if (name && position) {
+          return `${name}\n${position}`;
+        }
+
+        break;
+      }
+    }
+  }
+
+  return value;
 }
 
 const EVENT_TONES = {
@@ -75,7 +105,11 @@ function getEventTone(type: string) {
     return EVENT_TONES.workshop;
   }
 
-  if (type === "Poster Presentation") {
+  if (
+    type === "Poster Presentation" ||
+    type === "Oral Presentation" ||
+    type === "Student Presentation"
+  ) {
     return EVENT_TONES.presentation;
   }
 
@@ -123,7 +157,7 @@ function EventContent({
         )}
         {event.group && (
           <span className="rounded-full border border-white/14 bg-white/6 px-2 py-0.5 text-[9px] text-white/55">
-            {event.group}
+            {formatVenueGroupLabel(event.group)}
           </span>
         )}
       </div>
@@ -170,9 +204,15 @@ function EventContent({
                   aria-hidden="true"
                   className="mt-0.5 size-3 shrink-0 text-gold/65"
                 />
-                <span className="whitespace-pre-line text-white/72">
-                  {name}
-                  {role && <span className="text-white/38">{" · "}{role}</span>}
+                <span className="text-white/72">
+                  {role && (
+                    <span className="mb-0.5 block font-semibold text-gold/75">
+                      {role}
+                    </span>
+                  )}
+                  <span className="block whitespace-pre-line">
+                    {formatSpeakerName(name)}
+                  </span>
                 </span>
               </div>
             );
@@ -214,7 +254,7 @@ export default function EventScheduleSection() {
   const desktopEvents = useMemo(
     () =>
       currentDay.events.filter((event) =>
-        desktopColumnKeys.has(resolveVenueKey(event)),
+        resolveVenueKeys(event).some((key) => desktopColumnKeys.has(key)),
       ),
     [currentDay.events, desktopColumnKeys],
   );
@@ -376,7 +416,7 @@ export default function EventScheduleSection() {
                 aria-controls="conference-schedule-panel"
                 onClick={() => setActiveVenueGroup(group)}
                 className={cn(
-                  "group relative min-h-16 cursor-pointer pb-5 text-left font-heading text-sm font-semibold leading-snug transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061332] lg:text-base",
+                  "group relative min-h-16 cursor-pointer pb-5 text-left font-heading text-sm font-semibold leading-relaxed tracking-[0.01em] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#061332] lg:text-base",
                   isActive
                     ? "text-white"
                     : "text-white/42 hover:text-white/78",
@@ -463,7 +503,7 @@ export default function EventScheduleSection() {
                       {innovationColumns.length > 0 && (
                         <div
                           role="columnheader"
-                          className="flex items-center justify-center border-b border-r border-white/10 bg-gold/8 px-4 text-[10px] font-black uppercase tracking-[0.18em] text-gold"
+                          className="flex items-center justify-center border-b border-r border-white/10 bg-gold/8 px-4 text-center text-[10px] font-black uppercase leading-tight tracking-[0.18em] text-gold whitespace-pre-line"
                           style={{
                             gridColumn: `${innovationStart} / span ${innovationColumns.length}`,
                             gridRow: 1,
@@ -520,10 +560,16 @@ export default function EventScheduleSection() {
                       ))}
 
                       {desktopLayout.cells.map((cell) => {
-                        const gridColumn = columnIndex.get(cell.columnKey);
+                        const gridColumnIndexes = cell.columnKeys
+                          .map((key) => columnIndex.get(key))
+                          .filter((index): index is number => index !== undefined)
+                          .sort((left, right) => left - right);
+                        const gridColumnStart = gridColumnIndexes[0];
+                        const gridColumnEnd =
+                          gridColumnIndexes[gridColumnIndexes.length - 1];
                         const cellTone = getEventTone(cell.events[0].type);
 
-                        if (!gridColumn) return null;
+                        if (!gridColumnStart || !gridColumnEnd) return null;
 
                         return (
                           <div
@@ -534,7 +580,7 @@ export default function EventScheduleSection() {
                               cellTone.card,
                             )}
                             style={{
-                              gridColumn,
+                              gridColumn: `${gridColumnStart} / ${gridColumnEnd + 1}`,
                               gridRow: `${cell.startLine} / ${cell.endLine}`,
                             }}
                           >
@@ -606,9 +652,15 @@ export default function EventScheduleSection() {
 
                       <div className="divide-y divide-white/10">
                         {group.events.map((event) => {
+                          const isSpanningRooms = (event.spanTracks?.length ?? 0) > 1;
                           const venue = allColumns.find(
                             (column) => column.key === resolveVenueKey(event),
                           );
+                          const venueLabel = isSpanningRooms
+                            ? locale === "th"
+                              ? event.locationTh
+                              : event.location
+                            : venue?.label ?? t("otherVenue");
                           const tone = getEventTone(event.type);
 
                           return (
@@ -620,7 +672,7 @@ export default function EventScheduleSection() {
                               )}
                             >
                               <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/6 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] text-white/68">
-                                {venue?.label ?? t("otherVenue")}
+                                {venueLabel}
                               </div>
                               <EventContent event={event} locale={locale} />
                             </div>

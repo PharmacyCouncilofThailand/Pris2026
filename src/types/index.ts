@@ -35,6 +35,7 @@ export interface Event {
   typeTh: string;
   track?: string;
   trackTh?: string;
+  spanTracks?: string[];
   group?: string;
   speakers: EventSpeaker[];
 }

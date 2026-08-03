@@ -102,15 +102,15 @@
     "otherVenue": "สถานที่อื่น",
     "emptyTitle": "ไม่มีกิจกรรม",
     "emptyDescription": "ไม่มีกิจกรรมที่กำหนดไว้สำหรับวันนี้",
-    "innovationZone": "โซนนวัตกรรม",
+    "innovationZone": "FOYER\n(INNOVATION ZONE)",
     "scheduleTableLabel": "ตารางกำหนดการประชุมแยกตามเวลาและสถานที่",
     "dayNavigationLabel": "เลือกวันจัดประชุม",
     "tableHint": "เปรียบเทียบกิจกรรมของทุกห้อง และเลื่อนตารางในแนวนอนเพื่อดูรายละเอียดทั้งหมด",
     "mobileHint": "ดูกิจกรรมทั้งหมดเรียงตามเวลา พร้อมป้ายห้องและสถานที่ของแต่ละรายการ",
     "venueGroupNavigationLabel": "เลือกหมวดสถานที่จัดงาน",
     "venueGroupLabel": "หมวดสถานที่",
-    "venueGroupRooms": "Jupiter 4–7, Jupiter 11, Jupiter 12, Jupiter 13",
-    "venueGroupInnovation": "โซนนวัตกรรม, ลานนิทรรศการ, โถงโฟเยร์"
+    "venueGroupRooms": "Jupiter 4–7  ·  Jupiter 11  ·  Jupiter 12  ·  Jupiter 13",
+    "venueGroupInnovation": "โซนนวัตกรรม  ·  ลานนิทรรศการ  ·  โถงโฟเยร์"
   },
   "highlightVideo": {
     "title": "ความทรงจำที่ผ่านมา",

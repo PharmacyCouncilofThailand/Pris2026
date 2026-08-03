@@ -5,9 +5,11 @@ import vm from "node:vm";
 import {
   buildScheduleLayout,
   buildVenueColumns,
+  formatVenueGroupLabel,
   groupEventsForMobile,
   parseScheduleTime,
   resolveVenueKey,
+  resolveVenueKeys,
 } from "../src/components/sections/eventScheduleLayout.ts";
 
 const event = (overrides) => ({
@@ -24,6 +26,23 @@ const event = (overrides) => ({
   speakers: [],
   ...overrides,
 });
+
+function loadScheduleData() {
+  const source = readFileSync(
+    new URL("../src/data/scheduleData.ts", import.meta.url),
+    "utf8",
+  );
+  const executable = source
+    .replace(/^import\s+.+?;\s*$/m, "")
+    .replace(
+      "export const scheduleData: ScheduleDay[] =",
+      "scheduleData =",
+    );
+  const context = vm.createContext({ scheduleData: undefined });
+
+  vm.runInContext(executable, context);
+  return context.scheduleData;
+}
 
 test("parseScheduleTime accepts conference separators and rejects invalid ranges", () => {
   assert.deepEqual(parseScheduleTime("08:00 – 09:10"), { start: 480, end: 550 });
@@ -112,21 +131,7 @@ test("groupEventsForMobile groups matching starts and keeps unparseable times la
 });
 
 test("every source event is represented once by desktop and mobile layouts", () => {
-  const source = readFileSync(
-    new URL("../src/data/scheduleData.ts", import.meta.url),
-    "utf8",
-  );
-  const executable = source
-    .replace(/^import\s+.+?;\s*$/m, "")
-    .replace(
-      "export const scheduleData: ScheduleDay[] =",
-      "scheduleData =",
-    );
-  const context = vm.createContext({ scheduleData: undefined });
-
-  vm.runInContext(executable, context);
-
-  for (const day of context.scheduleData) {
+  for (const day of loadScheduleData()) {
     const desktop = buildScheduleLayout(day.events);
     const desktopIds = [
       ...desktop.cells.flatMap((cell) => cell.events.map((item) => item.id)),
@@ -143,4 +148,75 @@ test("every source event is represented once by desktop and mobile layouts", () 
     assert.equal(new Set(desktopIds).size, sourceIds.length);
     assert.equal(new Set(mobileIds).size, sourceIds.length);
   }
+});
+
+test("formatVenueGroupLabel displays Innovation Zone groups as stations", () => {
+  assert.equal(formatVenueGroupLabel("GROUP 1"), "STATION 1");
+  assert.equal(formatVenueGroupLabel("GROUP 4"), "STATION 4");
+});
+
+test("resolveVenueKeys preserves a single event across consecutive room columns", () => {
+  const spanningEvent = event({
+    track: "JUPITER 12",
+    spanTracks: ["JUPITER 12", "JUPITER 13"],
+  });
+
+  assert.deepEqual(resolveVenueKeys(spanningEvent), [
+    "track:JUPITER 12",
+    "track:JUPITER 13",
+  ]);
+  assert.equal(resolveVenueKey(spanningEvent), "track:JUPITER 12");
+});
+
+test("Day 1 follows the authoritative workbook venue mapping and required details", () => {
+  const day1 = loadScheduleData()[0];
+  const byId = new Map(day1.events.map((item) => [item.id, item]));
+
+  assert.equal(day1.events.length, 32);
+  assert.deepEqual(
+    [1002, 1010, 1011].map((id) => byId.get(id)?.track),
+    ["JUPITER 12", "JUPITER 12", "JUPITER 13"],
+  );
+  assert.deepEqual(Array.from(byId.get(1002)?.spanTracks ?? []), [
+    "JUPITER 12",
+    "JUPITER 13",
+  ]);
+  assert.deepEqual(Array.from(byId.get(1006)?.spanTracks ?? []), [
+    "JUPITER 4-7",
+    "JUPITER 11",
+  ]);
+  assert.match(byId.get(1010)?.descriptionTh ?? "", /วิทยาลัยคุ้มครองผู้บริโภค/);
+  assert.match(byId.get(1011)?.descriptionTh ?? "", /วิทยาลัยเภสัชกรรมสมุนไพร/);
+  assert.match(byId.get(1018)?.descriptionTh ?? "", /Committee:/);
+  assert.match(byId.get(1022)?.descriptionTh ?? "", /Committee:/);
+  assert.equal(byId.get(1027)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+});
+
+test("Day 2 follows the authoritative workbook schedule", () => {
+  const day2 = loadScheduleData()[1];
+  const byId = new Map(day2.events.map((item) => [item.id, item]));
+
+  assert.equal(day2.events.length, 28);
+  assert.equal(byId.get(231)?.track, "JUPITER 12");
+  assert.deepEqual(Array.from(byId.get(231)?.spanTracks ?? []), [
+    "JUPITER 12",
+    "JUPITER 13",
+  ]);
+  assert.equal(byId.get(241), undefined);
+  assert.deepEqual(
+    [224, 225, 242, 243, 212].map((id) => byId.get(id)?.time),
+    [
+      "13:00 – 14:00",
+      "14:00 – 15:30",
+      "13:00 – 14:00",
+      "14:00 – 15:30",
+      "16:00 – 16:30",
+    ],
+  );
+  assert.match(byId.get(221)?.descriptionTh ?? "", /TED FUND/);
+  assert.match(byId.get(224)?.descriptionTh ?? "", /เภสัชพันธุศาสตร์และเภสัชกรรมแม่นยำ/);
+  assert.match(byId.get(225)?.descriptionTh ?? "", /วิทยาลัยคุ้มครองผู้บริโภค/);
+  assert.match(byId.get(242)?.descriptionTh ?? "", /บรรณาธิการสมาคมเภสัชกรรมโรงพยาบาล/);
+  assert.equal(byId.get(257)?.group, "GROUP 3");
+  assert.equal(byId.get(251)?.time, "11:00 – 12:00");
 });

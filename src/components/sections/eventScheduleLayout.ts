@@ -15,6 +15,7 @@ export interface VenueColumn {
 export interface ScheduleCell {
   key: string;
   columnKey: string;
+  columnKeys: string[];
   start: number;
   end: number;
   startLine: number;
@@ -42,6 +43,10 @@ const STANDARD_TRACKS = [
 ] as const;
 
 const INNOVATION_GROUPS = ["GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4"] as const;
+
+export function formatVenueGroupLabel(group: string) {
+  return group.replace(/^GROUP\s+/i, "STATION ");
+}
 
 function toMinutes(hour: string, minute: string) {
   const hours = Number(hour);
@@ -83,7 +88,7 @@ export function formatMinutes(value: number) {
   return `${hours}:${minutes}`;
 }
 
-export function resolveVenueKey(event: Event) {
+function resolveSingleVenueKey(event: Event) {
   if (event.track === "INNOVATION ZONE" && event.group) {
     return `innovation:${event.group}`;
   }
@@ -102,6 +107,22 @@ export function resolveVenueKey(event: Event) {
   return "fallback:other";
 }
 
+export function resolveVenueKeys(event: Event) {
+  const spanKeys = event.spanTracks
+    ?.filter((track) =>
+      STANDARD_TRACKS.includes(track as (typeof STANDARD_TRACKS)[number]),
+    )
+    .map((track) => `track:${track}`);
+
+  return spanKeys && spanKeys.length > 0
+    ? [...new Set(spanKeys)]
+    : [resolveSingleVenueKey(event)];
+}
+
+export function resolveVenueKey(event: Event) {
+  return resolveVenueKeys(event)[0];
+}
+
 export function buildVenueColumns(events: Event[], locale: string): VenueColumn[] {
   const roomColumns = STANDARD_TRACKS.map((track) => ({
     key: `track:${track}`,
@@ -111,7 +132,7 @@ export function buildVenueColumns(events: Event[], locale: string): VenueColumn[
 
   const innovationColumns = INNOVATION_GROUPS.map((group) => ({
     key: `innovation:${group}`,
-    label: group,
+    label: formatVenueGroupLabel(group),
     eyebrow: "INNOVATION ZONE",
     kind: "innovation" as const,
   }));
@@ -157,8 +178,11 @@ function overlaps(left: ParsedTime, right: ParsedTime) {
 export function buildScheduleLayout(events: Event[]): ScheduleLayout {
   const parsed = events.flatMap((event) => {
     const time = parseScheduleTime(event.time);
+    const columnKeys = resolveVenueKeys(event);
 
-    return time ? [{ event, time, columnKey: resolveVenueKey(event) }] : [];
+    return time
+      ? [{ event, time, columnKey: columnKeys.join("|"), columnKeys }]
+      : [];
   });
   const fallbackEvents = events.filter((event) => !parseScheduleTime(event.time));
   const boundaries = [...new Set(parsed.flatMap(({ time }) => [time.start, time.end]))].sort(
@@ -213,6 +237,7 @@ export function buildScheduleLayout(events: Event[]): ScheduleLayout {
     return {
       key: `${group[0].columnKey}:${start}-${end}`,
       columnKey: group[0].columnKey,
+      columnKeys: group[0].columnKeys,
       start,
       end,
       startLine: boundaries.indexOf(start) + 1,
