@@ -17,7 +17,7 @@ export default function AbstractTimeline() {
 
   return (
     <section className="py-20 md:py-32 bg-[#FAFBFF] md:bg-white text-slate-900 overflow-hidden">
-      <div className="container mx-auto max-w-5xl px-6 md:px-8">
+      <div className="container mx-auto px-5 sm:px-6 lg:px-8 max-w-6xl">
         
         {/* Header Section */}
         <div className="mb-14 md:mb-20">
@@ -27,7 +27,7 @@ export default function AbstractTimeline() {
               {tp("timeline")}
             </p>
           </div>
-          <h2 className="font-outfit text-5xl sm:text-6xl md:text-[5.5rem] font-black tracking-tighter leading-[0.9]">
+          <h2 className="text-5xl sm:text-6xl md:text-[5.5rem] font-black tracking-tighter leading-[0.9]">
             {tp("importantDates")}
           </h2>
         </div>
@@ -56,7 +56,7 @@ export default function AbstractTimeline() {
                 </div>
 
                 <div className="md:w-1/2 md:text-right">
-                  <p className={`font-outfit text-sm md:text-[0.95rem] transition-colors duration-300 ${isFirstItem ? "text-red-500 font-semibold" : "text-slate-400 font-medium"}`}>
+                  <p className={`text-sm md:text-[0.95rem] transition-colors duration-300 ${isFirstItem ? "text-red-500 font-semibold" : "text-slate-400 font-medium"}`}>
                     {locale === "th" && item.dateTh ? item.dateTh : item.date}
                   </p>
                 </div>

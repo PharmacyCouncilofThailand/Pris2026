@@ -109,7 +109,7 @@ export default function AbstractStatus() {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-end gap-6">
             <div>
-              <h1 className="text-3xl md:text-5xl font-black text-white font-outfit uppercase tracking-tight mb-4">
+              <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight mb-4">
                 {t("title1")} <span className="text-gold">{t("title2")}</span>
               </h1>
               <p className="text-slate-400 font-medium">
@@ -248,7 +248,7 @@ function StatCard({ label, value, icon, color }: { label: string, value: string 
       </div>
       <div>
         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] mb-1">{label}</p>
-        <p className="text-3xl font-black text-blue-900 font-outfit">{value}</p>
+        <p className="text-3xl font-black text-blue-900">{value}</p>
       </div>
     </div>
   );

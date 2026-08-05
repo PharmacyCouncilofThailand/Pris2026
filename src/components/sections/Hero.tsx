@@ -493,9 +493,9 @@ export default function Hero() {
                 <div className="flex items-start justify-center gap-2.5 sm:justify-end sm:pt-1 md:portrait:justify-center max-md:landscape:justify-end">
                   <CalendarDays
                     aria-hidden="true"
-                    className="mt-0.5 h-5 w-5 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4"
+                    className="-mt-0.5 h-6 w-6 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-6 md:portrait:w-6 lg:h-6 lg:w-6 max-md:landscape:h-5 max-md:landscape:w-5"
                   />
-                  <p className="max-w-[16rem] text-center text-[1.05rem] font-black leading-tight tracking-[0.08em] text-white normal-case [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.08rem] max-md:landscape:text-right max-md:landscape:text-[0.82rem]">
+                  <p className="max-w-[16rem] text-center text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.1rem] max-md:landscape:text-right max-md:landscape:text-[0.88rem]">
                     {t("date")}
                   </p>
                 </div>
@@ -506,27 +506,29 @@ export default function Hero() {
 
                 {/* Venue */}
                 <div className="flex justify-center sm:justify-start md:portrait:justify-center max-md:landscape:justify-start">
-                  <div className="grid max-w-[18rem] grid-cols-[auto_1fr] gap-x-2.5 gap-y-1 text-center sm:text-left md:portrait:mx-auto md:portrait:text-center max-md:landscape:text-left">
+                  <div className="flex max-w-sm items-start gap-x-2.5 text-center sm:text-left md:portrait:mx-auto md:portrait:text-center max-md:landscape:text-left">
                     <MapPin
                       aria-hidden="true"
-                      className="row-start-1 h-5 w-5 shrink-0 self-center text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-5 md:portrait:w-5 lg:h-5 lg:w-5 max-md:landscape:h-4 max-md:landscape:w-4"
+                      className="mt-0.5 h-6 w-6 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-6 md:portrait:w-6 lg:h-6 lg:w-6 max-md:landscape:h-5 max-md:landscape:w-5"
                     />
-                    <p className="row-start-1 col-start-2 text-[1.05rem] font-black uppercase leading-none tracking-[0.14em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.08rem] max-md:landscape:text-[0.82rem]">
-                      {t("venueTitle")}
-                    </p>
-                    {t("venueLocationNameTh") ? (
-                      <p className="col-start-2 text-[0.98rem] font-bold leading-snug tracking-[0.02em] text-white normal-case [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.12rem] md:text-[1.2rem] lg:text-[1rem] max-md:landscape:text-[0.78rem]">
-                        {t("venueLocationNameTh")}
+                    <div className="flex flex-col gap-y-0.5">
+                      <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                        {t("venueTitle")}
                       </p>
-                    ) : null}
-                    {t("venueLocationNameEn") ? (
-                      <p className="col-start-2 text-[0.88rem] font-black uppercase leading-snug tracking-[0.11em] text-white/88 [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[0.98rem] md:text-[1.05rem] lg:text-[0.92rem] max-md:landscape:text-[0.72rem]">
-                        {t("venueLocationNameEn")}
+                      {t("venueLocationNameTh") ? (
+                        <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                          {t("venueLocationNameTh")}
+                        </p>
+                      ) : null}
+                      {t("venueLocationNameEn") ? (
+                        <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                          {t("venueLocationNameEn")}
+                        </p>
+                      ) : null}
+                      <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                        {t("venueRegion")}
                       </p>
-                    ) : null}
-                    <p className="col-start-2 text-[0.88rem] font-bold leading-snug tracking-[0.05em] text-white/82 normal-case [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[0.98rem] md:text-[1.05rem] lg:text-[0.92rem] max-md:landscape:text-[0.72rem]">
-                      {t("venueRegion")}
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -589,7 +591,7 @@ export default function Hero() {
 
         <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
           <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
-            <p className="text-center text-[0.62rem] font-black uppercase tracking-[0.26em] text-white sm:text-[0.68rem] sm:tracking-[0.34em] max-md:landscape:text-[0.52rem]">
+            <p className="text-center text-[1.08rem] font-bold uppercase tracking-[0.26em] text-white sm:text-[1.22rem] sm:tracking-[0.34em] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
               {t("countdownLabel")}
             </p>
             <Countdown className="mx-auto" />
@@ -617,7 +619,7 @@ export default function Hero() {
                 y="50%"
                 dominantBaseline="central"
                 textAnchor="middle"
-                className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] font-outfit tracking-tighter"
+                className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] tracking-tighter"
                 fill="black"
               >
                 {INTRO_CHARS.map((char, i) => (
@@ -644,7 +646,7 @@ export default function Hero() {
             y="50%"
             dominantBaseline="central"
             textAnchor="middle"
-            className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] font-outfit tracking-tighter"
+            className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] tracking-tighter"
             fill="transparent"
             pointerEvents="none"
           >

@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { Inter, Outfit, Noto_Sans_Thai } from "next/font/google";
+import { Outfit, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  adjustFontFallback: false,
-});
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -31,10 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className={`dark ${outfit.variable} ${notoSansThai.variable}`} suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${outfit.variable} ${notoSansThai.variable} font-sans antialiased min-h-screen bg-background text-foreground`}
+        className={`font-sans antialiased min-h-screen bg-background text-foreground`}
       >
         {children}
       </body>

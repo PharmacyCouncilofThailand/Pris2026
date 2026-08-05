@@ -132,7 +132,7 @@ export default function Header() {
                     {item.disabled ? (
                       <span className={cn(
                         navigationMenuTriggerStyle(),
-                        "bg-transparent transition-colors opacity-50 cursor-not-allowed",
+                        "bg-transparent transition-colors font-black opacity-50 cursor-not-allowed",
                         useDarkText ? "text-slate-900" : "text-white"
                       )}>
                         {t(item.labelKey as TranslationKey)}
@@ -144,7 +144,7 @@ export default function Header() {
                           prefetch={true}
                           className={cn(
                             navigationMenuTriggerStyle(),
-                            "bg-transparent transition-colors",
+                            "bg-transparent transition-colors font-black",
                             useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-cyan-400"
                           )}
                           onClick={() => {
@@ -162,7 +162,7 @@ export default function Header() {
                     ) : (
                       <>
                         <NavigationMenuTrigger className={cn(
-                          "bg-transparent transition-colors",
+                          "bg-transparent transition-colors font-black",
                           useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-cyan-400"
                         )}>
                           {t(item.labelKey as TranslationKey)}
@@ -187,7 +187,7 @@ export default function Header() {
                                     }}
                                   />
                                 }>
-                                  <div className="text-sm font-bold leading-none">
+                                  <div className="text-sm font-black leading-none">
                                     {t(child.labelKey as TranslationKey)}
                                   </div>
                                 </NavigationMenuLink>
@@ -217,7 +217,7 @@ export default function Header() {
               )}
             >
               {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
-              <span className="uppercase text-xs font-bold tracking-wider">
+              <span className="uppercase text-xs font-black tracking-wider">
                 {locale === "en" ? "TH" : "EN"}
               </span>
             </button>
@@ -232,7 +232,7 @@ export default function Header() {
                   href="/profile"
                   prefetch={true}
                   className={cn(
-                    "inline-flex h-10 items-center justify-center gap-2 rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                    "inline-flex h-10 items-center justify-center gap-2 rounded-full px-6 text-[11px] font-black uppercase tracking-widest transition-all duration-300",
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
@@ -251,7 +251,7 @@ export default function Header() {
                   href="/login"
                   prefetch={true}
                   className={cn(
-                    "text-[11px] font-bold uppercase tracking-widest transition-colors hover:text-blue-600",
+                    "text-[11px] font-black uppercase tracking-widest transition-colors hover:text-blue-600",
                     useDarkText ? "text-slate-900" : "text-white"
                   )}
                 >
@@ -261,7 +261,7 @@ export default function Header() {
                   href="/signup"
                   prefetch={true}
                   className={cn(
-                    "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-widest transition-all duration-300",
+                    "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-black uppercase tracking-widest transition-all duration-300",
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
@@ -288,7 +288,7 @@ export default function Header() {
             )}
           >
             {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
-            <span className="uppercase text-xs font-bold tracking-wider">
+            <span className="uppercase text-xs font-black tracking-wider">
               {locale === "en" ? "TH" : "EN"}
             </span>
           </button>

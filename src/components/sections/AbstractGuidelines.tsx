@@ -16,14 +16,14 @@ export default function AbstractGuidelines() {
       {/* General Information moved to Submission Guidelines */}
 
       {/* ══════ SUBMISSION GUIDELINES ══════ */}
-      <section className="relative px-6 md:px-12 py-20 border-t border-slate-200">
-        <div className="max-w-6xl mx-auto">
+      <section className="relative py-20 border-t border-slate-200">
+        <div className="container mx-auto px-5 sm:px-6 lg:px-8 max-w-6xl">
           <div className="mb-12">
             <div className="flex items-center gap-4 mb-4">
-              <span className="w-8 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
+              <div className="w-10 h-[2px] bg-[#0055FF]"></div>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#0055FF]">
                 {tp("submissionRules")}
-              </span>
+              </p>
             </div>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-gray-900">
               {tp("submissionGuidelines")}

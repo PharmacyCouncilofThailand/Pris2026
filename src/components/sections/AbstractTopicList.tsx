@@ -66,7 +66,7 @@ export default function AbstractTopicList() {
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(260px,0.78fr)_minmax(0,1.45fr)] gap-10 lg:gap-16 xl:gap-20 items-start lg:items-center">
           {/* Header Part */}
           <div className="topic-header max-w-xl lg:max-w-sm">
-            <h2 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-black text-slate-900 mb-4 font-outfit tracking-tight leading-[1.04]">
+            <h2 className="text-3xl sm:text-4xl lg:text-[2.65rem] font-black text-slate-900 mb-4 tracking-tight leading-[1.04]">
               {tp("topicsTitle")}
             </h2>
             <p className="text-base sm:text-lg lg:text-base text-slate-600 leading-relaxed">
@@ -82,7 +82,7 @@ export default function AbstractTopicList() {
                   key={item.id}
                   className="topic-item group grid grid-cols-[2.75rem_1fr] sm:grid-cols-[3.25rem_1fr] items-start gap-4 sm:gap-6 py-4 sm:py-5 lg:py-6 transition-colors duration-300 hover:bg-white/70"
                 >
-                  <div className="h-11 w-11 sm:h-12 sm:w-12 bg-white border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 font-bold text-base sm:text-lg font-outfit transition-colors duration-300 group-hover:border-[#0055FF] group-hover:text-[#0055FF]">
+                  <div className="h-11 w-11 sm:h-12 sm:w-12 bg-white border border-slate-300 flex items-center justify-center text-slate-900 shrink-0 font-bold text-base sm:text-lg transition-colors duration-300 group-hover:border-[#0055FF] group-hover:text-[#0055FF]">
                     {item.id.toString().padStart(2, '0')}
                   </div>
                   

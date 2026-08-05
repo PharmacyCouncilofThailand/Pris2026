@@ -192,7 +192,7 @@ export default function RegistrationCTASection() {
               <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-6 flex items-center gap-3 fade-up">
                 <span className="w-8 h-px bg-[#0055FF]"></span> {t("needToKnow")}
               </p>
-              <h3 className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-tighter fade-up leading-[0.9] break-words">
+              <h3 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tighter fade-up leading-[0.9] break-words">
                 {t.rich("criticalDates", {
                   br: () => <br className="hidden sm:block" />
                 })}
@@ -279,7 +279,7 @@ export default function RegistrationCTASection() {
       {/* Interactive Pricing Rows (Bespoke Table Layout) */}
       <div className="container mx-auto px-4 md:px-8 max-w-[1600px] pricing-wrapper">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end mb-12 md:mb-16 fade-up">
-          <h3 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter">
+          <h3 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter">
             {t.rich("tiersTitle", { br: () => <br/> })}
           </h3>
           <div className="flex items-center gap-4 mt-8 lg:mt-0">
@@ -380,7 +380,7 @@ export default function RegistrationCTASection() {
               <p className="text-xs uppercase tracking-[0.3em] font-bold text-[#FF5A00] mb-6 flex items-center gap-3">
                 <span className="w-8 h-px bg-[#0055FF]"></span> {t("policyLabel")}
               </p>
-              <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter leading-[0.9] break-words pr-8">
+              <h3 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter leading-[0.9] break-words pr-8">
                 {t("cancelTitle")}
               </h3>
             </div>
