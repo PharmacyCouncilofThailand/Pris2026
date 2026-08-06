@@ -36,9 +36,8 @@ export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const maskRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
-  const mainTextRef = useRef<SVGTextElement>(null);
-  const zoomTargetRef = useRef<SVGTSpanElement>(null);
+  const mainTextRef = useRef<HTMLSpanElement>(null);
+  const zoomTargetRef = useRef<HTMLSpanElement>(null);
   const hintRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const infoRef = useRef<HTMLDivElement>(null);
@@ -127,7 +126,7 @@ export default function Hero() {
 
   useGSAP(
     () => {
-      if (!maskRef.current || !svgRef.current) return;
+      if (!maskRef.current) return;
       heroCompleteRef.current = false;
 
       /* Returning visitor: skip all animation */
@@ -172,12 +171,12 @@ export default function Hero() {
 
       // Calculate zoom origin (center of "S")
       const calcOrigin = () => {
-        if (!maskRef.current || !svgRef.current || !zoomTargetRef.current) return;
-        const svg = svgRef.current.getBoundingClientRect();
+        if (!maskRef.current || !zoomTargetRef.current) return;
+        const container = maskRef.current.getBoundingClientRect();
         const tgt = zoomTargetRef.current.getBoundingClientRect();
-        if (svg.width === 0 || svg.height === 0) return;
-        const ox = ((tgt.left + tgt.width / 2 - svg.left) / svg.width) * 100;
-        const oy = ((tgt.top + tgt.height / 2 - svg.top) / svg.height) * 100;
+        if (container.width === 0 || container.height === 0) return;
+        const ox = ((tgt.left + tgt.width / 2 - container.left) / container.width) * 100;
+        const oy = ((tgt.top + tgt.height / 2 - container.top) / container.height) * 100;
         gsap.set(maskRef.current, { transformOrigin: `${ox}% ${oy}%` });
       };
       
@@ -272,7 +271,7 @@ export default function Hero() {
           .to(logoRef.current, { opacity: 1, y: 0, x: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
           .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 1.4);
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8);
       } else {
         // Desktop: Two-phase motion (syncs with the SVG mask scroll)
         tlAuto
@@ -280,7 +279,7 @@ export default function Hero() {
           .to(logoRef.current, { y: 0, x: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
           .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
           .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.9 }, 1.9);
+          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3);
       }
 
       // Wheel-driven zoom control
@@ -349,7 +348,7 @@ export default function Hero() {
       };
 
       // Phase 1 (Auto): Letters stagger in
-      const gradientLetters = svgRef.current.querySelectorAll(".gradient-letter");
+      const gradientLetters = maskRef.current!.querySelectorAll(".gradient-letter");
       
       if (shouldSkipIntro) {
         // Mobile/reduced-motion optimization: skip the SVG zoom intro.
@@ -417,7 +416,7 @@ export default function Hero() {
     >
       <video
         ref={videoRef}
-        src="/assets/Img/BG/BG LOOP.mp4"
+        src="https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20Hero%20Section/BG%20LOOP.mp4"
         autoPlay
         loop
         muted
@@ -599,67 +598,30 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* SVG Mask Container */}
+      {/* Text Mask – mix-blend-mode:screen for pixel-perfect crisp edges */}
       <div
         ref={maskRef}
         className="absolute inset-0 w-full h-full z-[1] pointer-events-none overflow-hidden will-change-transform transform-gpu"
-        style={{ backfaceVisibility: "hidden" }}
+        style={{ backfaceVisibility: "hidden", mixBlendMode: "screen" }}
       >
-        <svg
-          ref={svgRef}
-          className="w-full h-full absolute top-0 left-0"
-          width="100%"
-          height="100%"
-        >
-          <defs>
-            <mask id="textMask">
-              <rect width="100%" height="100%" fill="white" />
-              <text
-                x="50%"
-                y="50%"
-                dominantBaseline="central"
-                textAnchor="middle"
-                className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] tracking-tighter"
-                fill="black"
-              >
-                {INTRO_CHARS.map((char, i) => (
-                  <tspan
-                    key={`mask-${char}-${i}`}
-                    className="gradient-letter"
-                  >
-                    {char}
-                  </tspan>
-                ))}
-              </text>
-            </mask>
-          </defs>
-          <rect
-            width="100%"
-            height="100%"
-            fill="white"
-            mask="url(#textMask)"
-            pointerEvents="none"
-          />
-          <text
+        <div className="absolute inset-0 bg-white" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span
             ref={mainTextRef}
-            x="50%"
-            y="50%"
-            dominantBaseline="central"
-            textAnchor="middle"
-            className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] tracking-tighter"
-            fill="transparent"
-            pointerEvents="none"
+            className="font-black text-[17vw] sm:text-[14.5vw] md:text-[12.5vw] tracking-tighter leading-none select-none"
+            style={{ color: "black", textRendering: "geometricPrecision" }}
           >
             {INTRO_CHARS.map((char, i) => (
-              <tspan
-                key={`measure-${char}-${i}`}
+              <span
+                key={`char-${char}-${i}`}
                 ref={char === "S" ? zoomTargetRef : null}
+                className="gradient-letter inline-block"
               >
-                {char}
-              </tspan>
+                {char === " " ? "\u00A0" : char}
+              </span>
             ))}
-          </text>
-        </svg>
+          </span>
+        </div>
       </div>
 
       {/* Scroll indicator */}

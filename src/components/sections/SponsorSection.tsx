@@ -1,6 +1,13 @@
 "use client";
 
 import React, { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const sponsorsRow = [
   { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", twClass: "scale-[1.3]" },
@@ -17,18 +24,49 @@ const sponsorsRow = [
 export default function SponsorSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const marqueeRow = [...sponsorsRow, ...sponsorsRow, ...sponsorsRow];
+  const watermarkRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const marqueeContainerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    tl.fromTo(
+      watermarkRef.current,
+      { opacity: 0, scale: 0.8 },
+      { opacity: 1, scale: 1, duration: 1.2, ease: "power3.out" }
+    )
+    .fromTo(
+      subtitleRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+      "-=0.8"
+    )
+    .fromTo(
+      marqueeContainerRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+      "-=0.6"
+    );
+  }, { scope: sectionRef });
 
   return (
     <section ref={sectionRef} className="py-12 md:py-16 bg-black overflow-hidden relative z-10 flex flex-col items-center justify-center min-h-[250px]">
 
       {/* Center "SPONSORS" watermark */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+      <div ref={watermarkRef} className="absolute inset-0 flex items-center justify-center pointer-events-none z-10 opacity-0">
         <h2 className="text-[clamp(3.5rem,8vw,11rem)] font-black uppercase text-white/[0.03] tracking-tighter leading-none select-none whitespace-nowrap">
           OUR PARTNER
         </h2>
       </div>
 
-      <div className="relative z-20 mb-8 md:mb-12">
+      <div ref={subtitleRef} className="relative z-20 mb-8 md:mb-12 opacity-0">
         <h3 className="text-white/60 text-sm md:text-base font-medium tracking-[0.5em] uppercase flex items-center justify-center">
           <span className="inline-block w-8 md:w-16 h-px bg-gradient-to-r from-transparent to-white/30 mr-4"></span>
           Our Partners
@@ -37,7 +75,7 @@ export default function SponsorSection() {
       </div>
 
       {/* Marquee container */}
-      <div className="relative w-full z-20 overflow-hidden">
+      <div ref={marqueeContainerRef} className="relative w-full z-20 overflow-hidden opacity-0">
         {/* Edge fade masks */}
         <div className="absolute inset-y-0 left-0 w-16 md:w-40 bg-gradient-to-r from-black to-transparent z-30 pointer-events-none" />
         <div className="absolute inset-y-0 right-0 w-16 md:w-40 bg-gradient-to-l from-black to-transparent z-30 pointer-events-none" />

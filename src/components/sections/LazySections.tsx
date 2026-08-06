@@ -36,3 +36,8 @@ export const RecentMemoriesSection = dynamic(
   () => import("@/components/sections/RecentMemoriesSection"),
   { ssr: false }
 );
+
+export const VideoCarouselSection = dynamic(
+  () => import("@/components/sections/VideoCarouselSection"),
+  { ssr: false }
+);

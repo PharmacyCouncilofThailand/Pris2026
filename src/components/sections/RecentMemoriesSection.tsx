@@ -1,14 +1,42 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 import { Button } from "@/components/ui/button";
 import { column1, column2, column3, allImages } from "@/data/recentMemoriesData";
 
 export default function RecentMemoriesSection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const col1Ref = useRef<HTMLDivElement>(null);
+  const col2Ref = useRef<HTMLDivElement>(null);
+  const col3Ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 75%",
+        toggleActions: "play none none reverse",
+      },
+    });
+
+    // Stagger fade-in and slide-up the columns
+    tl.fromTo(
+      [col1Ref.current, col2Ref.current, col3Ref.current],
+      { opacity: 0, y: 100 },
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.2 }
+    );
+  }, { scope: sectionRef });
 
   // Lightbox
   const openLightbox = useCallback((src: string) => {
@@ -54,7 +82,7 @@ export default function RecentMemoriesSection() {
   // Column 3 is hidden on mobile and shown on md+
   return (
     <>
-      <section className="relative bg-black text-white overflow-hidden">
+      <section ref={sectionRef} className="relative bg-black text-white overflow-hidden">
 
         {/* Vertical Scrolling Gallery — uniform grid */}
         <div className="memories-gallery relative h-[600px] sm:h-[800px] md:h-[1000px] lg:h-[1100px] overflow-hidden z-10">
@@ -65,7 +93,7 @@ export default function RecentMemoriesSection() {
 
           <div className="flex gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4 md:px-8 h-full">
             {/* Column 1 — scrolls UP */}
-            <div className="flex-1 overflow-hidden relative">
+            <div ref={col1Ref} className="flex-1 overflow-hidden relative opacity-0">
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up">
                 {col1Items.map((src, i) => (
                   <div
@@ -88,7 +116,7 @@ export default function RecentMemoriesSection() {
             </div>
 
             {/* Column 2 — scrolls DOWN */}
-            <div className="flex-1 overflow-hidden relative">
+            <div ref={col2Ref} className="flex-1 overflow-hidden relative opacity-0">
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-down">
                 {col2Items.map((src, i) => (
                   <div
@@ -112,7 +140,7 @@ export default function RecentMemoriesSection() {
             </div>
 
             {/* Column 3 — scrolls UP (hidden on mobile, visible on md+) */}
-            <div className="hidden md:block flex-1 overflow-hidden relative">
+            <div ref={col3Ref} className="hidden md:block flex-1 overflow-hidden relative opacity-0">
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up-slow w-full">
                 {col3Items.map((src, i) => (
                   <div
