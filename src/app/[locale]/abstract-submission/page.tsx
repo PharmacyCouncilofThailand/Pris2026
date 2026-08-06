@@ -747,7 +747,7 @@ function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step1.title1")} <span className="text-orange-500/80">{t("step1.title2")}</span></h2>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step1.title1")} <span className="text-orange-500/80">{t("step1.title2")}</span></h2>
           <p className="text-slate-500 font-medium text-lg italic">{t("step1.subtitle")}</p>
         </div>
       </div>
@@ -797,7 +797,7 @@ function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFor
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step2.title1")}<span className="text-orange-500/80">{t("step2.title2")}</span></h2>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step2.title1")}<span className="text-orange-500/80">{t("step2.title2")}</span></h2>
           <p className="text-slate-500 font-medium text-lg italic">{t("step2.subtitle")}</p>
         </div>
         <button 
@@ -886,7 +886,7 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
   return (
     <div className="space-y-12">
       <div>
-        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step3.title1")} <span className="text-orange-500/80">{t("step3.title2")}</span></h2>
+        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step3.title1")} <span className="text-orange-500/80">{t("step3.title2")}</span></h2>
         <p className="text-slate-500 font-medium text-lg italic">{t("step3.subtitle")}</p>
         <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> {tu("requiredFieldHint")}</p>
       </div>
@@ -1096,7 +1096,7 @@ function Step4Content({
     <div className="space-y-12">
       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase font-outfit tracking-tight">{t("step4.title1")} <span className="text-orange-500/80">{t("step4.title2")}</span></h2>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step4.title1")} <span className="text-orange-500/80">{t("step4.title2")}</span></h2>
           <p className="text-slate-500 font-medium text-lg italic">{t("step4.subtitle")}</p>
           <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> {tu("requiredFieldHint")}</p>
         </div>

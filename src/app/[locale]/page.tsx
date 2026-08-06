@@ -8,7 +8,8 @@ import {
   SpeakerSection,
   SponsorSection,
   HighlightVideoSection,
-  RecentMemoriesSection
+  RecentMemoriesSection,
+  VideoCarouselSection
 } from "@/components/sections/LazySections";
 import InViewWrapper from "@/components/layout/InViewWrapper";
 
@@ -41,6 +42,13 @@ export default function Home() {
       <div className="w-full relative" id="agenda" style={{ zIndex: 2 }}>
         <InViewWrapper minHeight="800px">
           <EventScheduleSection />
+        </InViewWrapper>
+      </div>
+
+      {/* Video Carousel */}
+      <div className="w-full relative" style={{ zIndex: 2 }}>
+        <InViewWrapper minHeight="600px">
+          <VideoCarouselSection />
         </InViewWrapper>
       </div>
 
