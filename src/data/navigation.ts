@@ -59,6 +59,7 @@ export const navigationData: NavItem[] = [
         authRequired: true,
         children: [
             { labelKey: "hotelBookingForm", href: "/hotel-booking-form" },
+            { labelKey: "inviteLetter", href: "/invite-letter" },
         ],
     },
     {

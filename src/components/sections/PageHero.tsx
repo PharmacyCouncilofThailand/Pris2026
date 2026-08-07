@@ -3,6 +3,7 @@
 import React, { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { useLocale } from "next-intl";
 
 interface PageHeroProps {
   /** Small text above the title (e.g. "PRIS 2026") */
@@ -31,6 +32,10 @@ export default function PageHero({
   inlineTitle = false,
 }: PageHeroProps) {
   const heroRef = useRef<HTMLElement>(null!);
+  const locale = useLocale();
+  const isThai = locale === "th";
+  const eyebrowTracking = isThai ? "tracking-normal" : "tracking-[0.3em]";
+  const eyebrowSubTracking = isThai ? "tracking-normal" : "tracking-widest";
 
   useGSAP(
     () => {
@@ -67,6 +72,7 @@ export default function PageHero({
   return (
     <section
       ref={heroRef}
+      lang={locale}
       className="relative pt-40 md:pt-56 [@media(max-height:900px)]:pt-28 [@media(max-height:500px)]:pt-20 pb-20 md:pb-32 [@media(max-height:900px)]:pb-12 [@media(max-height:500px)]:pb-8 px-6 md:px-12 flex flex-col justify-end items-center text-center"
     >
       {/* Decorative BG Glows */}
@@ -81,12 +87,12 @@ export default function PageHero({
         {/* Eyebrow */}
         <div className="overflow-hidden mb-6 flex justify-center">
           <h4
-            className={`page-hero-sub ${eyebrowColor} tracking-[0.3em] uppercase text-xs md:text-sm font-semibold flex items-center gap-4`}
+            className={`page-hero-sub ${eyebrowColor} ${eyebrowTracking} uppercase text-xs md:text-sm font-semibold flex items-center gap-4`}
           >
             <span className={`w-8 h-px ${lineColor}`} />
             {eyebrow}
             {eyebrowSub && (
-              <span className={`${subColor} text-[10px] tracking-widest uppercase md:text-xs`}>
+              <span className={`${subColor} text-[10px] ${eyebrowSubTracking} uppercase md:text-xs`}>
                 — {eyebrowSub}
               </span>
             )}

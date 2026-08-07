@@ -6,7 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/routing";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronDown, ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
@@ -48,6 +48,15 @@ export default function Hero() {
 
   const t = useTranslations("hero");
   const tg = useTranslations("registrationGate");
+  const locale = useLocale();
+  const isThai = locale === "th";
+  const headingTracking = isThai ? "tracking-normal" : "tracking-[0.07em]";
+  const detailTracking = isThai ? "tracking-normal" : "tracking-[0.11em]";
+  const buttonTracking = isThai ? "tracking-normal" : "tracking-[0.16em] sm:tracking-[0.2em]";
+  const noticeTracking = isThai ? "tracking-normal" : "tracking-[0.04em]";
+  const countdownTracking = isThai ? "tracking-normal" : "tracking-[0.26em] sm:tracking-[0.34em]";
+  const scrollTracking = isThai ? "tracking-normal" : "tracking-[0.18em]";
+  const buttonLabelClass = "relative justify-self-center whitespace-nowrap text-[0.8rem] font-black leading-tight sm:text-base max-md:landscape:text-[0.68rem]";
   const organizerParts = t.raw("organizerParts") as string[];
   const { isAuthenticated } = useAuth();
 
@@ -412,6 +421,7 @@ export default function Hero() {
   return (
     <section 
       ref={containerRef}
+      lang={locale}
       className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:min-h-[100svh]"
     >
       <video
@@ -480,7 +490,7 @@ export default function Hero() {
 
           <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
             <div className="mt-4 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4 text-center flex justify-center w-full">
-              <h1 className="max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] tracking-[0.07em] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]">
+              <h1 className={`max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] ${headingTracking} text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]`}>
                 {t("headingLine1")}
                 <span className="block">{t("headingLine2")}</span>
               </h1>
@@ -494,7 +504,7 @@ export default function Hero() {
                     aria-hidden="true"
                     className="-mt-0.5 h-6 w-6 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-6 md:portrait:w-6 lg:h-6 lg:w-6 max-md:landscape:h-5 max-md:landscape:w-5"
                   />
-                  <p className="max-w-[16rem] text-center text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.1rem] max-md:landscape:text-right max-md:landscape:text-[0.88rem]">
+                  <p className={`max-w-[16rem] text-center text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.1rem] max-md:landscape:text-right max-md:landscape:text-[0.88rem]`}>
                     {t("date")}
                   </p>
                 </div>
@@ -511,20 +521,20 @@ export default function Hero() {
                       className="mt-0.5 h-6 w-6 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-6 md:portrait:w-6 lg:h-6 lg:w-6 max-md:landscape:h-5 max-md:landscape:w-5"
                     />
                     <div className="flex flex-col gap-y-0.5">
-                      <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                      <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
                         {t("venueTitle")}
                       </p>
                       {t("venueLocationNameTh") ? (
-                        <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                        <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
                           {t("venueLocationNameTh")}
                         </p>
                       ) : null}
                       {t("venueLocationNameEn") ? (
-                        <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                        <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
                           {t("venueLocationNameEn")}
                         </p>
                       ) : null}
-                      <p className="text-[1.08rem] font-black uppercase leading-tight tracking-[0.11em] text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+                      <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
                         {t("venueRegion")}
                       </p>
                     </div>
@@ -540,13 +550,13 @@ export default function Hero() {
                 <Link
                   href="/registration"
                   onClick={handleRegisterClick}
-                  className="group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center text-[0.8rem] font-black uppercase tracking-[0.16em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.26),inset_0_-18px_38px_rgba(140,43,0,0.22),0_0_30px_rgba(255,112,20,0.38),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-[#ffc078] hover:bg-[#ff7a1a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-18px_42px_rgba(140,43,0,0.24),0_0_48px_rgba(255,122,26,0.62),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 sm:text-base sm:tracking-[0.2em] md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]"
+                  className={`group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center text-[0.8rem] font-black uppercase ${buttonTracking} text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.26),inset_0_-18px_38px_rgba(140,43,0,0.22),0_0_30px_rgba(255,112,20,0.38),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-[#ffc078] hover:bg-[#ff7a1a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.32),inset_0_-18px_42px_rgba(140,43,0,0.24),0_0_48px_rgba(255,122,26,0.62),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 sm:text-base md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]`}
                 >
                   <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,221,177,0.52),transparent_58%)]" />
                   <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-75 transition group-hover:via-[#07101f]" />
                   <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-white/26 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                   <span className="relative justify-self-start h-2 w-2 rounded-full bg-white opacity-85 shadow-[0_0_18px_rgba(255,255,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
-                  <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]">{t("registerNow")}</span>
+                  <span className={`${buttonLabelClass} drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]`}>{t("registerNow")}</span>
                   <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-white/18 bg-white text-[#ff6a00] shadow-[0_0_16px_rgba(255,255,255,0.28)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#07101f] group-hover:text-white sm:h-8 sm:w-8">
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -557,19 +567,19 @@ export default function Hero() {
                   title={tg("registrationNotice")}
                   className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
-                  <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{tg("registrationNotice")}</span>
+                  <span className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}>{tg("registrationNotice")}</span>
                 </div>
               )}
               {ABSTRACT_OPEN ? (
                 <Link
                   href="/call-for-abstracts"
-                  className="group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-white/85 bg-white px-5 text-center text-[0.8rem] font-black uppercase tracking-[0.16em] text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_0_30px_rgba(255,255,255,0.24),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white hover:bg-[#f5fbff] hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_0_42px_rgba(255,255,255,0.38),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 sm:text-base sm:tracking-[0.2em] md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]"
+                  className={`group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-white/85 bg-white px-5 text-center text-[0.8rem] font-black uppercase ${buttonTracking} text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_0_30px_rgba(255,255,255,0.24),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white hover:bg-[#f5fbff] hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_0_42px_rgba(255,255,255,0.38),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]`}
                 >
                   <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.92),rgba(214,238,255,0.55)_48%,transparent_72%)]" />
                   <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#168fff] to-transparent opacity-80 transition group-hover:via-[#ff7a1a]" />
                   <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-[#168fff]/22 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                   <span className="relative justify-self-start h-2 w-2 rounded-full bg-[#168fff] opacity-80 shadow-[0_0_18px_rgba(22,143,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
-                  <span className="relative justify-self-center whitespace-nowrap drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]">{t("submitAbstract")}</span>
+                  <span className={`${buttonLabelClass} drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]`}>{t("submitAbstract")}</span>
                   <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-[#07101f]/10 bg-[#07101f] text-white shadow-[0_0_16px_rgba(22,143,255,0.25)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#168fff] sm:h-8 sm:w-8">
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -580,7 +590,7 @@ export default function Hero() {
                   title={tg("abstractNotice")}
                   className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-white bg-white px-5 text-center font-black text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
-                  <span className="relative whitespace-nowrap text-[0.78rem] tracking-[0.04em] sm:text-[0.95rem]">{tg("abstractNotice")}</span>
+                  <span className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}>{tg("abstractNotice")}</span>
                 </div>
               )}
             </div>
@@ -590,7 +600,7 @@ export default function Hero() {
 
         <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
           <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
-            <p className="text-center text-[1.08rem] font-bold uppercase tracking-[0.26em] text-white sm:text-[1.22rem] sm:tracking-[0.34em] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]">
+            <p className={`text-center text-[1.08rem] font-bold uppercase ${countdownTracking} text-white sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
               {t("countdownLabel")}
             </p>
             <Countdown className="mx-auto" />
@@ -631,7 +641,7 @@ export default function Hero() {
         style={{ opacity: 0 }}
       >
         <div className="flex flex-col items-center gap-1.5 px-4 text-center text-black">
-          <span className="text-[11px] sm:text-xs font-semibold leading-none tracking-[0.18em]">
+          <span className={`text-[11px] sm:text-xs font-semibold leading-none ${scrollTracking}`}>
             {t('scrollDown')}
           </span>
           <span className="text-[9px] sm:text-[10px] font-semibold leading-none tracking-[0.28em]">
