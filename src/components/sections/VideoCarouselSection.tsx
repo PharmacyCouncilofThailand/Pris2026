@@ -12,7 +12,7 @@ const SLIDES: VideoSlide[] = [
   { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/09.mp4", title: "" },
   { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/06.mp4", title: "" },
   { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/02.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/03.mp4", title: "" },
+  // { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/03.mp4", title: "" },
   { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/04.mp4", title: "" },
   { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/05.mp4", title: "" },
   { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/01.mp4", title: "" },
