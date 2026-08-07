@@ -19,6 +19,7 @@
     "sponsorship": "Sponsorship",
     "more": "Others",
     "hotelBookingForm": "Hotel Booking Form",
+    "inviteLetter": "Invitation Letter",
     "gallery": "Gallery",
     "contact": "Contact",
     "language": "Language",
@@ -491,6 +492,21 @@
         "description": "Room booking form for PRIS 2026 participants who plan to stay at Novotel."
       }
     }
+  },
+  "inviteLetter": {
+    "eyebrow": "Participant Documents",
+    "title1": "Invitation",
+    "title2": "Letter",
+    "subtitle": "Download the official PRIS 2026 invitation letter after signing in.",
+    "sectionEyebrow": "Official Document",
+    "cardTitle": "PRIS 2026 Invitation Letter",
+    "sectionDescription": "The official invitation letter for PRIS 2026 participants. Download the PDF and keep it for your records or event-related correspondence.",
+    "documentType": "Official invitation letter",
+    "documentMeta": "PDF · 1 file",
+    "accessNote": "Available to signed-in participants",
+    "downloadButton": "Download Invitation",
+    "fileNote": "PDF ready to download",
+    "documentLabel": "V.160 PRIS2026 invitation approval"
   },
   "sponsorship": {
     "pretitle": "PRIS 2026",

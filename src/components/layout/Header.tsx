@@ -32,6 +32,8 @@ export default function Header() {
   const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
   const locale = useLocale();
+  const isThai = locale === "th";
+  const authTracking = isThai ? "tracking-normal" : "tracking-widest";
   const router = useRouter();
   const t = useTranslations("common");
   type TranslationKey = Parameters<typeof t>[0];
@@ -65,6 +67,7 @@ export default function Header() {
     "/approved-abstracts",
     "/registration-policies",
     "/hotel-booking-form",
+    "/invite-letter",
     "/sponsorship",
     "/contact",
     "/login",
@@ -232,7 +235,8 @@ export default function Header() {
                   href="/profile"
                   prefetch={true}
                   className={cn(
-                    "inline-flex h-10 items-center justify-center gap-2 rounded-full px-6 text-[11px] font-black uppercase tracking-widest transition-all duration-300",
+                    "inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
+                    authTracking,
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
@@ -251,7 +255,8 @@ export default function Header() {
                   href="/login"
                   prefetch={true}
                   className={cn(
-                    "text-[11px] font-black uppercase tracking-widest transition-colors hover:text-blue-600",
+                    "shrink-0 whitespace-nowrap text-[11px] font-black uppercase transition-colors hover:text-blue-600",
+                    authTracking,
                     useDarkText ? "text-slate-900" : "text-white"
                   )}
                 >
@@ -261,7 +266,8 @@ export default function Header() {
                   href="/signup"
                   prefetch={true}
                   className={cn(
-                    "inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-black uppercase tracking-widest transition-all duration-300",
+                    "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
+                    authTracking,
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
@@ -366,7 +372,10 @@ export default function Header() {
                     <Link
                       href="/profile"
                       prefetch={true}
-                      className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center gap-2"
+                      className={cn(
+                        "flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white py-3.5 text-center text-[11px] font-bold uppercase text-black transition-colors hover:bg-blue-600 hover:text-white",
+                        authTracking
+                      )}
                     >
                       <User className="w-4 h-4" />
                       {t("myProfile")}
@@ -377,14 +386,20 @@ export default function Header() {
                     <Link
                       href="/login"
                       prefetch={true}
-                      className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest border border-white/20 text-white rounded-full hover:bg-white/10 transition-colors"
+                      className={cn(
+                        "w-full whitespace-nowrap rounded-full border border-white/20 py-3.5 text-center text-[11px] font-bold uppercase text-white transition-colors hover:bg-white/10",
+                        authTracking
+                      )}
                     >
                       {t("login")}
                     </Link>
                     <Link
                       href="/signup"
                       prefetch={true}
-                      className="w-full py-3.5 text-center text-[11px] font-bold uppercase tracking-widest bg-white text-black rounded-full hover:bg-blue-600 hover:text-white transition-colors"
+                      className={cn(
+                        "w-full whitespace-nowrap rounded-full bg-white py-3.5 text-center text-[11px] font-bold uppercase text-black transition-colors hover:bg-blue-600 hover:text-white",
+                        authTracking
+                      )}
                     >
                       {t("signUp")}
                     </Link>
