@@ -19,7 +19,7 @@ export const policyFaqs = [
     },
     {
         question: "What if I paid for workshops or gala dinner add-ons?",
-        questionTh: "หากฉันจ่ายเงินสำหรับเวิร์กชอปกหรืองานกาล่าดินเนอร์เพิ่มเติมจะทำอย่างไร?",
+        questionTh: "หากฉันจ่ายเงินสำหรับเวิร์กชอปหรืองานกาล่าดินเนอร์เพิ่มเติมจะทำอย่างไร?",
         answer: "Add-on purchases (workshops, gala dinner tickets) follow the same refund policy as the main registration. Partial cancellations are allowed.",
         answerTh: "การซื้อส่วนเสริม (เวิร์กชอป, บัตรงานกาล่าดินเนอร์) จะใช้นโยบายการขอคืนเงินเช่นเดียวกับการลงทะเบียนหลัก สามารถยกเลิกบางส่วนได้"
     },

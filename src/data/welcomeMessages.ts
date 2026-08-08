@@ -1,7 +1,7 @@
 export const messagesData = [
   {
     id: "president",
-    name: "Preecha Bhandtivej(R.Ph)",
+    name: "Preecha Bhandtivej (R.Ph)",
     thaiName: "ภก.ปรีชา พันธุ์ติเวช",
     role: "President, The Pharmacy Council of Thailand",
     thaiRole: "นายกสภาเภสัชกรรม",
