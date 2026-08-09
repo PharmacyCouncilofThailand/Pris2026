@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { 
@@ -26,15 +26,17 @@ import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import PageHero from "@/components/sections/PageHero";
+import {
+  ABSTRACT_SECTION_NAMES,
+  type AbstractSectionName,
+} from "@/lib/abstractWordCount";
+import { useAuthoritativeWordCount } from "./useAuthoritativeWordCount";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "";
 const MAX_ABSTRACT_FILES = 3;
 const MAX_ABSTRACT_FILE_SIZE = 30 * 1024 * 1024;
 const MAX_ABSTRACT_TOTAL_SIZE = MAX_ABSTRACT_FILE_SIZE * MAX_ABSTRACT_FILES;
-const TITLE_WORD_LIMIT = 30;
-const KEYWORD_LIMIT = 6;
-const SECTION_MIN_WORDS = 10;
 
 interface CategoryOption {
   id: number;
@@ -67,11 +69,6 @@ interface RevisionRequest {
   files?: RevisionRequestFile[];
 }
 
-type WordSegment = {
-  segment: string;
-  isWordLike?: boolean;
-};
-
 const BODY_REVISION_TOPICS = new Set(["background", "objective", "methods", "results", "conclusion", "documents"]);
 
 function useRevisionTopicLabel() {
@@ -97,79 +94,11 @@ function formatFileSize(size: number) {
   return `${(size / 1024 / 1024).toFixed(2)} MB`;
 }
 
-function getWordSegments(text: string): WordSegment[] | null {
-  const intlWithSegmenter = Intl as typeof Intl & {
-    Segmenter?: new (
-      locales?: string | string[],
-      options?: { granularity: "word" },
-    ) => { segment(input: string): Iterable<WordSegment> };
-  };
-
-  if (!intlWithSegmenter.Segmenter) return null;
-
-  const segmenter = new intlWithSegmenter.Segmenter(["th", "en"], {
-    granularity: "word",
-  });
-
-  return Array.from(segmenter.segment(text));
-}
-
-function countWords(text: string) {
-  const normalized = text.trim();
-  if (!normalized) return 0;
-
-  const segments = getWordSegments(normalized);
-  if (segments) {
-    return segments.filter((segment) => segment.isWordLike).length;
-  }
-
-  return normalized.split(/\s+/).filter((word) => word.length > 0).length;
-}
-
-function limitWords(text: string, limit: number) {
-  const segments = getWordSegments(text);
-  if (segments) {
-    let wordCount = 0;
-    let limitedText = "";
-
-    for (const segment of segments) {
-      if (segment.isWordLike && wordCount >= limit) break;
-      limitedText += segment.segment;
-      if (segment.isWordLike) wordCount += 1;
-    }
-
-    return limitedText;
-  }
-
-  const words = text.trim().split(/\s+/).filter((word) => word.length > 0);
-  if (words.length <= limit) return text;
-  return words.slice(0, limit).join(" ");
-}
-
-function parseKeywords(text: string) {
-  return text.split(",").map((keyword) => keyword.trim()).filter(Boolean);
-}
-
-function limitCommaSeparatedKeywords(text: string, limit: number) {
-  const parts = text.split(",");
-  const limitedParts: string[] = [];
-  let keywordCount = 0;
-
-  for (const part of parts) {
-    if (part.trim()) {
-      if (keywordCount >= limit) break;
-      keywordCount += 1;
-    }
-    limitedParts.push(part);
-  }
-
-  return limitedParts.join(",");
-}
-
 export default function AbstractSubmission() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCountingForNavigation, setIsCountingForNavigation] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [trackingId, setTrackingId] = useState("");
   const [categories, setCategories] = useState<CategoryOption[]>([]);
@@ -182,7 +111,6 @@ export default function AbstractSubmission() {
   const [revisionRequest, setRevisionRequest] = useState<RevisionRequest | null>(null);
   const t = useTranslations("abstractSubmission");
   const ts = useTranslations("abstractSubmissionToasts");
-  const tt = useTranslations("toasts");
   const tv = useTranslations("abstractSubmission.validation");
   const tu = useTranslations("abstractSubmission.ui");
   const getRevisionTopicLabel = useRevisionTopicLabel();
@@ -226,6 +154,34 @@ export default function AbstractSubmission() {
     abstract: { title: "", categoryId: undefined as number | undefined, category: "", type: "", keywords: "" },
     content: { background: "", objective: "", methods: "", results: "", conclusion: "" },
     files: [] as File[]
+  });
+
+  const wordCountInput = useMemo(
+    () => ({
+      title: formData.abstract.title,
+      keywords: formData.abstract.keywords,
+      background: formData.content.background,
+      objective: formData.content.objective,
+      methods: formData.content.methods,
+      results: formData.content.results,
+      conclusion: formData.content.conclusion,
+    }),
+    [
+      formData.abstract.keywords,
+      formData.abstract.title,
+      formData.content.background,
+      formData.content.conclusion,
+      formData.content.methods,
+      formData.content.objective,
+      formData.content.results,
+    ],
+  );
+
+  const authoritativeCount = useAuthoritativeWordCount({
+    apiUrl: API_URL,
+    token: token ?? null,
+    input: wordCountInput,
+    enabled: isAuthenticated && Boolean(token),
   });
 
   // Autofill user data when logged in
@@ -316,7 +272,7 @@ export default function AbstractSubmission() {
     return () => {
       isMounted = false;
     };
-  }, [editId, isEditMode, isEditParamReady, token]);
+  }, [editId, isEditMode, isEditParamReady, token, tu]);
 
   const steps = [
     { id: 1, label: t("steps.step1"), icon: <User className="w-5 h-5" /> },
@@ -367,8 +323,21 @@ export default function AbstractSubmission() {
     );
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let freshWordCount = authoritativeCount.result;
+
+    if (currentStep === 3 || currentStep === 4) {
+      setIsCountingForNavigation(true);
+      try {
+        freshWordCount = await authoritativeCount.refresh();
+      } catch {
+        toast.error(ts("wordCountUnavailable"));
+        return;
+      } finally {
+        setIsCountingForNavigation(false);
+      }
+    }
 
     // Step 1: Presenting Author — mirror API: firstName/lastName/email/affiliation required (min 1), email valid
     if (currentStep === 1) {
@@ -406,18 +375,23 @@ export default function AbstractSubmission() {
 
     // Step 3: title min 10 / max 500, category, presentationType, keywords required
     if (currentStep === 3) {
+      if (!freshWordCount) {
+        toast.error(ts("wordCountUnavailable"));
+        return;
+      }
       const { title, category, type, keywords } = formData.abstract;
-      const titleWordCount = countWords(title);
-      const keywordCount = parseKeywords(keywords).length;
+      const titleWordCount = freshWordCount.counts.title;
+      const keywordCount = freshWordCount.counts.keywords;
+      const { titleMax, keywordMax } = freshWordCount.limits;
       const missing: string[] = [];
       if (!title.trim()) missing.push(tv("title"));
       else if (title.trim().length < 10) missing.push(tv("titleMinChars"));
-      else if (titleWordCount > TITLE_WORD_LIMIT) missing.push(tv("titleMaxWords", { limit: TITLE_WORD_LIMIT }));
+      else if (titleWordCount > titleMax) missing.push(tv("titleMaxWords", { limit: titleMax }));
       else if (title.trim().length > 500) missing.push(tv("titleMaxChars"));
       if (!category.trim()) missing.push(tv("submissionTheme"));
       if (!type.trim()) missing.push(tv("presentationMode"));
       if (!keywords.trim()) missing.push(tv("keywords"));
-      else if (keywordCount > KEYWORD_LIMIT) missing.push(tv("keywordsMax", { limit: KEYWORD_LIMIT }));
+      else if (keywordCount > keywordMax) missing.push(tv("keywordsMax", { limit: keywordMax }));
       if (missing.length > 0) {
         setShowErrors(true);
         toast.error(ts("fixFields", { fields: missing.join(", ") }));
@@ -425,33 +399,43 @@ export default function AbstractSubmission() {
       }
     }
 
-    // Step 4: per-section min words + total words <= 300
+    // Step 4: validate section and total limits returned by the API.
     if (currentStep === 4) {
-      const sectionKeys = ['background', 'objective', 'methods', 'results', 'conclusion'];
+      if (!freshWordCount) {
+        toast.error(ts("wordCountUnavailable"));
+        return;
+      }
       const issues: string[] = [];
-      const sectionLabels: Record<string, string> = {
+      const sectionLabels: Record<AbstractSectionName, string> = {
         background: t("step4.background"),
         objective: tu("objective"),
         methods: t("step4.methods"),
         results: t("step4.results"),
         conclusion: tu("conclusion"),
       };
-      for (const k of sectionKeys) {
-        const v = ((formData.content as any)[k] || '').trim();
-        const label = sectionLabels[k] || k;
-        const sectionWords = countWords(v);
+      for (const k of ABSTRACT_SECTION_NAMES) {
+        const v = formData.content[k].trim();
+        const label = sectionLabels[k];
+        const sectionWords = freshWordCount.counts.sections[k];
         if (!v) issues.push(label);
-        else if (sectionWords < SECTION_MIN_WORDS) issues.push(tv("sectionMinWords", { label, min: SECTION_MIN_WORDS }));
+        else if (sectionWords < freshWordCount.limits.sectionMin) {
+          issues.push(tv("sectionMinWords", {
+            label,
+            min: freshWordCount.limits.sectionMin,
+          }));
+        }
       }
       if (issues.length > 0) {
         setShowErrors(true);
         toast.error(ts("fixFields", { fields: issues.join(", ") }));
         return;
       }
-      const totalText = sectionKeys.map(k => (formData.content as any)[k] || '').join(' ');
-      const totalWords = countWords(totalText);
-      if (totalWords > 300) {
-        toast.error(ts("wordLimitExceeded", { count: totalWords }));
+      const totalWords = freshWordCount.counts.total;
+      if (totalWords > freshWordCount.limits.totalMax) {
+        toast.error(ts("wordLimitExceeded", {
+          count: totalWords,
+          limit: freshWordCount.limits.totalMax,
+        }));
         return;
       }
       // File required (matches API: at least one abstract PDF is required)
@@ -638,7 +622,20 @@ export default function AbstractSubmission() {
               <div className="step-content">
                 {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} showErrors={showErrors} />}
                 {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} showErrors={showErrors} />}
-                {currentStep === 3 && <Step3Details data={formData.abstract} setFormData={setFormData} categories={categories} showErrors={showErrors} />}
+                {currentStep === 3 && (
+                  <Step3Details
+                    data={formData.abstract}
+                    setFormData={setFormData}
+                    categories={categories}
+                    showErrors={showErrors}
+                    titleWordCount={authoritativeCount.result?.counts.title ?? null}
+                    titleWordLimit={authoritativeCount.result?.limits.titleMax ?? null}
+                    keywordCount={authoritativeCount.result?.counts.keywords ?? null}
+                    keywordLimit={authoritativeCount.result?.limits.keywordMax ?? null}
+                    wordCountLoading={authoritativeCount.status === "loading"}
+                    wordCountStale={authoritativeCount.isStale}
+                  />
+                )}
                 {currentStep === 4 && (
                   <Step4Content
                     content={formData.content}
@@ -648,6 +645,12 @@ export default function AbstractSubmission() {
                     isEditMode={isEditMode}
                     existingFiles={existingFiles}
                     revisionRequest={revisionRequest}
+                    sectionWordCounts={authoritativeCount.result?.counts.sections ?? null}
+                    sectionWordMinimum={authoritativeCount.result?.limits.sectionMin ?? null}
+                    totalWords={authoritativeCount.result?.counts.total ?? null}
+                    totalWordLimit={authoritativeCount.result?.limits.totalMax ?? null}
+                    wordCountLoading={authoritativeCount.status === "loading"}
+                    wordCountStale={authoritativeCount.isStale}
                   />
                 )}
                 {currentStep === 5 && <Step5Review data={formData} isEditMode={isEditMode} trackingId={trackingId} />}
@@ -674,13 +677,15 @@ export default function AbstractSubmission() {
                 )}
                 <button 
                   onClick={currentStep === 5 ? handleSubmit : handleNext}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isCountingForNavigation}
                   className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? (
+                  {isCountingForNavigation ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /> {tu("wordCountChecking")}</>
+                  ) : isSubmitting ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> {isEditMode ? tu("resubmitting") : tu("submitting")}</>
                   ) : currentStep === 5 ? (isEditMode ? tu("resubmitRevised") : t("submitFinalAbstract")) : t("proceedToNextStage")}
-                  {!isSubmitting && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
+                  {!isSubmitting && !isCountingForNavigation && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
                 </button>
               </div>
             </div>
@@ -845,7 +850,29 @@ function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFor
 }
 
 // Sub-component: Step 3
-function Step3Details({ data, setFormData, categories, showErrors }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>>, categories: CategoryOption[], showErrors: boolean }) {
+function Step3Details({
+  data,
+  setFormData,
+  categories,
+  showErrors,
+  titleWordCount,
+  titleWordLimit,
+  keywordCount,
+  keywordLimit,
+  wordCountLoading,
+  wordCountStale,
+}: {
+  data: any,
+  setFormData: React.Dispatch<React.SetStateAction<any>>,
+  categories: CategoryOption[],
+  showErrors: boolean,
+  titleWordCount: number | null,
+  titleWordLimit: number | null,
+  keywordCount: number | null,
+  keywordLimit: number | null,
+  wordCountLoading: boolean,
+  wordCountStale: boolean,
+}) {
   const t = useTranslations("abstractSubmission");
   const tu = useTranslations("abstractSubmission.ui");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -863,15 +890,9 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    const nextValue =
-      name === "title"
-        ? limitWords(value, TITLE_WORD_LIMIT)
-        : name === "keywords"
-          ? limitCommaSeparatedKeywords(value, KEYWORD_LIMIT)
-          : value;
     setFormData((prev: any) => ({
       ...prev,
-      abstract: { ...prev.abstract, [name]: nextValue }
+      abstract: { ...prev.abstract, [name]: value }
     }));
   };
 
@@ -900,12 +921,22 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
             onChange={handleChange}
             placeholder={t("step3.abstractTitlePlaceholder")}
             required
-            error={showErrors && (data.title.trim().length < 10 || countWords(data.title) > TITLE_WORD_LIMIT || data.title.trim().length > 500)}
+            error={showErrors && (
+              data.title.trim().length < 10 ||
+              data.title.trim().length > 500 ||
+              (!wordCountStale && titleWordCount !== null && titleWordLimit !== null && titleWordCount > titleWordLimit)
+            )}
           />
           <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
-            countWords(data.title) >= TITLE_WORD_LIMIT ? "text-amber-500" : "text-slate-300"
+            !wordCountStale && titleWordCount !== null && titleWordLimit !== null && titleWordCount >= titleWordLimit
+              ? "text-amber-500"
+              : "text-slate-300"
           }`}>
-            {tu("titleWordCount", { current: countWords(data.title), limit: TITLE_WORD_LIMIT })}
+            {tu("titleWordCount", {
+              current: titleWordCount ?? "—",
+              limit: titleWordLimit ?? "—",
+            })}
+            {(wordCountLoading || wordCountStale) && ` · ${tu("wordCountStale")}`}
           </p>
         </div>
         
@@ -972,12 +1003,20 @@ function Step3Details({ data, setFormData, categories, showErrors }: { data: any
             onChange={handleChange}
             placeholder={tu("keywordsPlaceholderShort")}
             required
-            error={showErrors && (!data.keywords.trim() || parseKeywords(data.keywords).length > KEYWORD_LIMIT)}
+            error={showErrors && (
+              !data.keywords.trim() ||
+              (!wordCountStale && keywordCount !== null && keywordLimit !== null && keywordCount > keywordLimit)
+            )}
           />
           <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
-            parseKeywords(data.keywords).length >= KEYWORD_LIMIT ? "text-amber-500" : "text-slate-300"
+            !wordCountStale && keywordCount !== null && keywordLimit !== null && keywordCount >= keywordLimit
+              ? "text-amber-500"
+              : "text-slate-300"
           }`}>
-            {tu("keywordCount", { current: parseKeywords(data.keywords).length, limit: KEYWORD_LIMIT })}
+            {tu("keywordCount", {
+              current: keywordCount ?? "—",
+              limit: keywordLimit ?? "—",
+            })}
           </p>
         </div>
       </div>
@@ -994,6 +1033,12 @@ function Step4Content({
   isEditMode = false,
   existingFiles = [],
   revisionRequest = null,
+  sectionWordCounts,
+  sectionWordMinimum,
+  totalWords,
+  totalWordLimit,
+  wordCountLoading,
+  wordCountStale,
 }: {
   content: any,
   files: File[],
@@ -1002,6 +1047,12 @@ function Step4Content({
   isEditMode?: boolean,
   existingFiles?: ExistingAbstractFile[],
   revisionRequest?: RevisionRequest | null,
+  sectionWordCounts: Record<AbstractSectionName, number> | null,
+  sectionWordMinimum: number | null,
+  totalWords: number | null,
+  totalWordLimit: number | null,
+  wordCountLoading: boolean,
+  wordCountStale: boolean,
 }) {
   const t = useTranslations("abstractSubmission");
   const tu = useTranslations("abstractSubmission.ui");
@@ -1072,19 +1123,14 @@ function Step4Content({
     }));
   };
 
-  // Per-section word counts
-  const sectionWordCounts: Record<string, number> = {};
-  ['background', 'objective', 'methods', 'results', 'conclusion'].forEach(k => {
-    sectionWordCounts[k] = countWords(content[k] || '');
-  });
-
-  // Total word count across all sections
-  const totalWords = Object.values(sectionWordCounts).reduce((a, b) => a + b, 0);
-  const wordPercent = Math.min((totalWords / 300) * 100, 100);
+  const hasFreshWordCount = !wordCountStale && totalWords !== null && totalWordLimit !== null;
+  const wordPercent = totalWords !== null && totalWordLimit
+    ? Math.min((totalWords / totalWordLimit) * 100, 100)
+    : 0;
   const attachedSize = files.reduce((sum, file) => sum + file.size, 0);
   const hasFileError = showErrors && files.length === 0;
 
-  const sections = [
+  const sections: Array<{ key: AbstractSectionName; label: string }> = [
     { key: 'background', label: t("step4.background") },
     { key: 'objective', label: tu("objective") },
     { key: 'methods', label: t("step4.methods") },
@@ -1101,15 +1147,19 @@ function Step4Content({
           <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> {tu("requiredFieldHint")}</p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <div className={`px-5 py-3 rounded-2xl text-sm font-black ${totalWords > 300 ? 'bg-rose-50 text-rose-600' : totalWords >= 250 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-500'}`}>
-            {tu("wordsTotal", { current: totalWords })}
+          <div className={`px-5 py-3 rounded-2xl text-sm font-black ${hasFreshWordCount && totalWords > totalWordLimit ? 'bg-rose-50 text-rose-600' : hasFreshWordCount && totalWords >= totalWordLimit * 0.83 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-500'}`}>
+            {tu("wordsTotal", { current: totalWords ?? "—", limit: totalWordLimit ?? "—" })}
           </div>
           <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-300 ${totalWords > 300 ? 'bg-rose-500' : totalWords >= 250 ? 'bg-amber-400' : 'bg-emerald-400'}`}
+              className={`h-full rounded-full transition-all duration-300 ${hasFreshWordCount && totalWords > totalWordLimit ? 'bg-rose-500' : hasFreshWordCount && totalWords >= totalWordLimit * 0.83 ? 'bg-amber-400' : 'bg-emerald-400'}`}
               style={{ width: `${wordPercent}%` }}
             />
           </div>
+          <p className="max-w-xs text-right text-[10px] font-bold leading-relaxed text-slate-400">
+            {(wordCountLoading || wordCountStale) && `${tu("wordCountStale")} · `}
+            {tu("wordCountPolicyNote")}
+          </p>
         </div>
       </div>
 
@@ -1147,7 +1197,11 @@ function Step4Content({
       <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
         {sections.map(section => {
           const currentText = (content[section.key] || '').trim();
-          const hasError = showErrors && countWords(currentText) < SECTION_MIN_WORDS;
+          const currentCount = sectionWordCounts?.[section.key] ?? null;
+          const hasFreshSectionCount = !wordCountStale && currentCount !== null && sectionWordMinimum !== null;
+          const hasError = showErrors && (
+            !currentText || (hasFreshSectionCount && currentCount < sectionWordMinimum)
+          );
           return (
           <div key={section.key} className="space-y-4">
             <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span></label>
@@ -1158,6 +1212,13 @@ function Step4Content({
               className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${hasError ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
               placeholder={tu("elaboratePlaceholder", { label: section.label })}
             />
+            <p className="text-right text-[10px] font-black uppercase tracking-[2px] text-slate-300">
+              {tu("sectionWordCount", {
+                current: currentCount ?? "—",
+                min: sectionWordMinimum ?? "—",
+              })}
+              {(wordCountLoading || wordCountStale) && ` · ${tu("wordCountStale")}`}
+            </p>
           </div>
           );
         })}

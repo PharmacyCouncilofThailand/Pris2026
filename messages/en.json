@@ -317,8 +317,8 @@
       "preferPresentationMode": "Preferred Presentation Mode",
       "oral": "Oral",
       "poster": "Poster",
-      "keywords": "Key Terminologies (Semicolon separated)",
-      "keywordsPlaceholder": "Pharmacy; Clinical; Outcomes"
+      "keywords": "Key Terminologies (comma separated)",
+      "keywordsPlaceholder": "Pharmacy, Clinical, Outcomes"
     },
     "step4": {
       "title1": "Body &",
@@ -371,7 +371,11 @@
       "requiredFieldHint": "indicates a required field",
       "titleWordCount": "{current} / {limit} words",
       "keywordCount": "{current} / {limit} keywords",
-      "wordsTotal": "{current} / 300 words",
+      "wordsTotal": "{current} / {limit} words",
+      "sectionWordCount": "{current} words (minimum {min})",
+      "wordCountChecking": "Checking word count...",
+      "wordCountStale": "Updating word count",
+      "wordCountPolicyNote": "Counts come from the central service and may differ slightly from Microsoft Word.",
       "resubmissionComplete": "Resubmission Complete",
       "trackingId": "Tracking ID",
       "returnToHomepage": "Return to Homepage",
@@ -874,7 +878,8 @@
     "completeFields": "Please complete: {fields}",
     "coAuthorFields": "Co-Author #{index}: {fields}",
     "fixFields": "Please fix: {fields}",
-    "wordLimitExceeded": "Total word count ({count}) exceeds the 300-word limit.",
+    "wordLimitExceeded": "Total word count ({count}) exceeds the {limit}-word limit.",
+    "wordCountUnavailable": "The central word-count service is unavailable. Please try again.",
     "attachPdfEdit": "Please attach at least one replacement abstract PDF file before continuing.",
     "attachPdf": "Please attach at least one abstract PDF file before continuing.",
     "fileExceedsLimit": "{name} exceeds the 30MB file limit.",

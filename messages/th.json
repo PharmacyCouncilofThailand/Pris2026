@@ -317,8 +317,8 @@
       "preferPresentationMode": "รูปแบบการนำเสนอที่ต้องการ",
       "oral": "Oral",
       "poster": "Poster",
-      "keywords": "คำสำคัญ (คั่นด้วยเครื่องหมายอัฒภาค ;)",
-      "keywordsPlaceholder": "Pharmacy; Clinical; Outcomes"
+      "keywords": "คำสำคัญ (คั่นด้วยเครื่องหมายจุลภาค ,)",
+      "keywordsPlaceholder": "Pharmacy, Clinical, Outcomes"
     },
     "step4": {
       "title1": "เนื้อหา &",
@@ -371,7 +371,11 @@
       "requiredFieldHint": "หมายถึงช่องที่จำเป็นต้องกรอก",
       "titleWordCount": "{current} / {limit} คำ",
       "keywordCount": "{current} / {limit} คำสำคัญ",
-      "wordsTotal": "{current} / 300 คำ",
+      "wordsTotal": "{current} / {limit} คำ",
+      "sectionWordCount": "{current} คำ (ขั้นต่ำ {min})",
+      "wordCountChecking": "กำลังตรวจนับคำ...",
+      "wordCountStale": "กำลังอัปเดตจำนวนคำ",
+      "wordCountPolicyNote": "จำนวนคำอ้างอิงผลจากระบบกลาง และอาจต่างจาก Microsoft Word เล็กน้อย",
       "resubmissionComplete": "ส่งแก้ไขสำเร็จ",
       "trackingId": "รหัสติดตาม",
       "returnToHomepage": "กลับสู่หน้าหลัก",
@@ -874,7 +878,8 @@
     "completeFields": "กรุณากรอก: {fields}",
     "coAuthorFields": "ผู้ร่วมวิจัย #{index}: {fields}",
     "fixFields": "กรุณาแก้ไข: {fields}",
-    "wordLimitExceeded": "จำนวนคำรวม ({count}) เกิน 300 คำ",
+    "wordLimitExceeded": "จำนวนคำรวม ({count}) เกิน {limit} คำ",
+    "wordCountUnavailable": "ไม่สามารถตรวจนับคำกับระบบกลางได้ กรุณาลองอีกครั้ง",
     "attachPdfEdit": "กรุณาแนบไฟล์ PDF บทคัดย่อฉบับใหม่อย่างน้อย 1 ไฟล์ก่อนดำเนินการต่อ",
     "attachPdf": "กรุณาแนบไฟล์ PDF บทคัดย่ออย่างน้อย 1 ไฟล์ก่อนดำเนินการต่อ",
     "fileExceedsLimit": "{name} เกินขนาดไฟล์ 30MB",
