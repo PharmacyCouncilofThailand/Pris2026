@@ -1014,7 +1014,7 @@ function Step3Details({
               : "text-slate-300"
           }`}>
             {tu("keywordCount", {
-              current: keywordCount ?? "—",
+              current: wordCountStale ? "—" : (keywordCount ?? "—"),
               limit: keywordLimit ?? "—",
             })}
           </p>

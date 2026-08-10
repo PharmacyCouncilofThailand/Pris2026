@@ -4,7 +4,7 @@ import { fetchAbstractWordCount } from "./abstractWordCount.js";
 
 const responseFixture = {
   success: true as const,
-  policy: "intl-segmenter-th-en-v1",
+  policy: "ensemble-intl-pythainlp-50-50-v1",
   limits: { titleMax: 30, keywordMax: 6, sectionMin: 10, totalMax: 300 },
   counts: {
     title: 3,
@@ -85,5 +85,30 @@ test("throws the server error message for a non-success response", async () => {
       fakeFetch,
     ),
     /Invalid count payload/,
+  );
+});
+
+test("rejects counts produced by an outdated backend policy", async () => {
+  const fakeFetch: typeof fetch = async () =>
+    new Response(
+      JSON.stringify({
+        ...responseFixture,
+        policy: "intl-segmenter-th-en-v1",
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+  await assert.rejects(
+    fetchAbstractWordCount(
+      "https://api.example.test",
+      "jwt-token",
+      input,
+      undefined,
+      fakeFetch,
+    ),
+    /Unsupported abstract word count policy/,
   );
 });

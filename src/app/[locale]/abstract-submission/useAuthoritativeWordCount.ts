@@ -35,6 +35,12 @@ function isAbortError(error: unknown): boolean {
   return error instanceof Error && error.name === "AbortError";
 }
 
+function createStaleInputError(): Error {
+  const error = new Error("Abstract changed while counting words");
+  error.name = "AbortError";
+  return error;
+}
+
 export function useAuthoritativeWordCount({
   apiUrl,
   token,
@@ -81,6 +87,12 @@ export function useAuthoritativeWordCount({
           nextInput,
           controller.signal,
         );
+        if (
+          sequence !== requestSequenceRef.current ||
+          JSON.stringify(latestInputRef.current) !== nextSignature
+        ) {
+          throw createStaleInputError();
+        }
         if (sequence === requestSequenceRef.current) {
           setState({
             status: "ready",

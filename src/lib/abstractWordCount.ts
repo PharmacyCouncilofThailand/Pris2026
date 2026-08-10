@@ -6,6 +6,9 @@ export const ABSTRACT_SECTION_NAMES = [
   "conclusion",
 ] as const;
 
+export const ABSTRACT_WORD_COUNT_POLICY =
+  "ensemble-intl-pythainlp-50-50-v1" as const;
+
 export type AbstractSectionName = (typeof ABSTRACT_SECTION_NAMES)[number];
 
 export type AbstractWordCountRequest = {
@@ -31,7 +34,7 @@ export type AbstractWordCountIssue = {
 
 export type AbstractWordCountResponse = {
   success: true;
-  policy: string;
+  policy: typeof ABSTRACT_WORD_COUNT_POLICY;
   limits: {
     titleMax: number;
     keywordMax: number;
@@ -69,6 +72,11 @@ export async function fetchAbstractWordCount(
   const body = await response.json();
   if (!response.ok || body.success !== true) {
     throw new Error(body.error || "Unable to calculate abstract word count");
+  }
+  if (body.policy !== ABSTRACT_WORD_COUNT_POLICY) {
+    throw new Error(
+      `Unsupported abstract word count policy: ${String(body.policy || "missing")}`,
+    );
   }
   return body as AbstractWordCountResponse;
 }

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createElement } from "react";
+import { createElement, useEffect } from "react";
 import TestRenderer, { act } from "react-test-renderer";
 import type {
   AbstractWordCountRequest,
@@ -24,7 +24,7 @@ const input: AbstractWordCountRequest = {
 
 const response: AbstractWordCountResponse = {
   success: true,
-  policy: "intl-segmenter-th-en-v1",
+  policy: "ensemble-intl-pythainlp-50-50-v1",
   limits: { titleMax: 30, keywordMax: 6, sectionMin: 10, totalMax: 300 },
   counts: {
     title: 3,
@@ -56,7 +56,7 @@ test("debounces input and exposes the authoritative result", async () => {
   let latest: HookResult | null = null;
 
   function Probe() {
-    latest = useAuthoritativeWordCount({
+    const value = useAuthoritativeWordCount({
       apiUrl: "https://api.example.test",
       token: "jwt-token",
       input,
@@ -64,6 +64,9 @@ test("debounces input and exposes the authoritative result", async () => {
       debounceMs: 5,
       request,
     });
+    useEffect(() => {
+      latest = value;
+    }, [value]);
     return null;
   }
 
@@ -95,7 +98,7 @@ test("refresh bypasses a pending debounce", async () => {
   let latest: HookResult | null = null;
 
   function Probe() {
-    latest = useAuthoritativeWordCount({
+    const value = useAuthoritativeWordCount({
       apiUrl: "https://api.example.test",
       token: "jwt-token",
       input,
@@ -103,6 +106,9 @@ test("refresh bypasses a pending debounce", async () => {
       debounceMs: 60_000,
       request,
     });
+    useEffect(() => {
+      latest = value;
+    }, [value]);
     return null;
   }
 
@@ -120,5 +126,56 @@ test("refresh bypasses a pending debounce", async () => {
   assert.equal(current.status, "ready");
   assert.equal(current.isStale, false);
 
+  await act(async () => renderer.unmount());
+});
+
+test("rejects a refresh response when the abstract changes in flight", async () => {
+  let resolveRequest!: (value: AbstractWordCountResponse) => void;
+  const request: typeof fetchAbstractWordCount = async () =>
+    new Promise((resolve) => {
+      resolveRequest = resolve;
+    });
+  let latest: HookResult | null = null;
+  let currentInput = input;
+
+  function Probe() {
+    const value = useAuthoritativeWordCount({
+      apiUrl: "https://api.example.test",
+      token: "jwt-token",
+      input: currentInput,
+      enabled: true,
+      debounceMs: 60_000,
+      request,
+    });
+    useEffect(() => {
+      latest = value;
+    }, [value]);
+    return null;
+  }
+
+  let renderer: TestRenderer.ReactTestRenderer;
+  await act(async () => {
+    renderer = TestRenderer.create(createElement(Probe));
+  });
+
+  let refreshPromise: ReturnType<HookResult["refresh"]> | undefined;
+  await act(async () => {
+    refreshPromise = latest?.refresh();
+  });
+  currentInput = { ...input, background: "changed while counting" };
+  await act(async () => {
+    renderer.update(createElement(Probe));
+  });
+  let refreshError: unknown;
+  await act(async () => {
+    resolveRequest(response);
+    try {
+      await refreshPromise;
+    } catch (error) {
+      refreshError = error;
+    }
+  });
+
+  assert.match(String(refreshError), /changed while counting/);
   await act(async () => renderer.unmount());
 });
