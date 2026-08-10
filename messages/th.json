@@ -832,7 +832,11 @@
     "lastNamePlaceholder": "เช่น ใจดี",
     "emailPlaceholder": "you@example.com",
     "subjectPlaceholder": "เรื่องที่ต้องการสอบถาม",
-    "messagePlaceholder": "เขียนข้อความของคุณที่นี่..."
+    "messagePlaceholder": "เขียนข้อความของคุณที่นี่...",
+    "submitting": "กำลังส่ง...",
+    "submitSuccess": "ส่งข้อความเรียบร้อยแล้ว ทีมงานจะติดต่อกลับโดยเร็ว",
+    "submitError": "ไม่สามารถส่งข้อความได้ กรุณาลองใหม่อีกครั้ง",
+    "securityRequired": "กรุณายืนยันว่าคุณไม่ใช่โปรแกรมอัตโนมัติ"
   },
   "approvedAbstracts": {
     "eyebrow": "ค้นหาบทคัดย่อ",

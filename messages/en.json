@@ -832,7 +832,11 @@
     "lastNamePlaceholder": "e.g. Doe",
     "emailPlaceholder": "you@example.com",
     "subjectPlaceholder": "How can we help?",
-    "messagePlaceholder": "Write your message here..."
+    "messagePlaceholder": "Write your message here...",
+    "submitting": "Sending...",
+    "submitSuccess": "Your message has been sent. Our team will get back to you soon.",
+    "submitError": "Unable to send your message. Please try again.",
+    "securityRequired": "Please complete the security verification."
   },
   "approvedAbstracts": {
     "eyebrow": "Abstract Search",

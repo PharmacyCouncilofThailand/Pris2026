@@ -2,10 +2,12 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowUpRight } from "lucide-react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+import toast from "react-hot-toast";
 import PageHero from "@/components/sections/PageHero";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
 type PageCopy = {
   eyebrow: string;
@@ -35,6 +37,10 @@ export default function ContactPage() {
   const locale = useLocale();
   const tc = useTranslations("contactPage");
   const pageRef = useRef<HTMLDivElement>(null!);
+  const turnstileRef = useRef<TurnstileInstance>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 
   const copy: PageCopy =
     locale === "th"
@@ -89,6 +95,55 @@ export default function ContactPage() {
     document.body.classList.remove("hero-playing");
   }, []);
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (isSubmitting) return;
+
+    if (turnstileSiteKey && !turnstileToken) {
+      toast.error(tc("securityRequired"));
+      return;
+    }
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const firstName = String(formData.get("firstName") || "").trim();
+    const lastName = String(formData.get("lastName") || "").trim();
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${firstName} ${lastName}`.trim(),
+          email: String(formData.get("email") || "").trim(),
+          subject: String(formData.get("subject") || "").trim(),
+          message: String(formData.get("message") || "").trim(),
+          recaptchaToken: turnstileToken || undefined,
+        }),
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | { success?: boolean; error?: string }
+        | null;
+
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.error || "Contact form submission failed");
+      }
+
+      form.reset();
+      toast.success(tc("submitSuccess"));
+    } catch {
+      toast.error(tc("submitError"));
+    } finally {
+      turnstileRef.current?.reset();
+      setTurnstileToken(null);
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <main
       ref={pageRef}
@@ -131,37 +186,49 @@ export default function ContactPage() {
 
             {/* Right: Standard Unified Form Fields */}
             <div className="bg-white rounded-3xl p-8 md:p-10 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-fit">
-              <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
+              <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-3">
                     <label htmlFor="firstName" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formFirstName}</label>
-                    <input type="text" id="firstName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("firstNamePlaceholder")} />
+                    <input type="text" id="firstName" name="firstName" autoComplete="given-name" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("firstNamePlaceholder")} />
                   </div>
                   
                   <div className="flex flex-col gap-3">
                     <label htmlFor="lastName" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formLastName}</label>
-                    <input type="text" id="lastName" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("lastNamePlaceholder")} />
+                    <input type="text" id="lastName" name="lastName" autoComplete="family-name" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("lastNamePlaceholder")} />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <label htmlFor="email" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formEmail}</label>
-                  <input type="email" id="email" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("emailPlaceholder")} />
+                  <input type="email" id="email" name="email" autoComplete="email" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("emailPlaceholder")} />
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <label htmlFor="subject" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formSubject}</label>
-                  <input type="text" id="subject" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("subjectPlaceholder")} />
+                  <input type="text" id="subject" name="subject" required className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400" placeholder={tc("subjectPlaceholder")} />
                 </div>
 
                 <div className="flex flex-col gap-3">
                   <label htmlFor="message" className="text-xs md:text-sm font-bold text-slate-700 tracking-wide ml-1">{copy.formMessage}</label>
-                  <textarea id="message" required rows={4} className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400 resize-none leading-relaxed" placeholder={tc("messagePlaceholder")} />
+                  <textarea id="message" name="message" required rows={4} className="w-full px-5 py-4 bg-slate-50 hover:bg-slate-100/50 focus:bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-900 placeholder:text-slate-400 resize-none leading-relaxed" placeholder={tc("messagePlaceholder")} />
                 </div>
 
+                {turnstileSiteKey && (
+                  <div className="flex justify-start">
+                    <Turnstile
+                      ref={turnstileRef}
+                      siteKey={turnstileSiteKey}
+                      onSuccess={(token) => setTurnstileToken(token)}
+                      onExpire={() => setTurnstileToken(null)}
+                      onError={() => setTurnstileToken(null)}
+                    />
+                  </div>
+                )}
+
                 <div className="pt-4 mt-2">
-                  <button type="submit" className="group relative inline-flex items-center justify-between gap-8 bg-blue-600 text-white px-8 py-4 rounded-2xl overflow-hidden hover:bg-blue-700 hover:shadow-lg transition-all duration-300 w-full md:w-auto font-medium shadow-md shadow-blue-600/20">
-                    <span className="relative z-10 text-sm md:text-base font-bold tracking-wide">{copy.formSubmit}</span>
+                  <button type="submit" disabled={isSubmitting} aria-busy={isSubmitting} className="group relative inline-flex items-center justify-between gap-8 bg-blue-600 text-white px-8 py-4 rounded-2xl overflow-hidden hover:bg-blue-700 hover:shadow-lg transition-all duration-300 w-full md:w-auto font-medium shadow-md shadow-blue-600/20 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-blue-600 disabled:hover:shadow-none">
+                    <span className="relative z-10 text-sm md:text-base font-bold tracking-wide">{isSubmitting ? tc("submitting") : copy.formSubmit}</span>
                     <div className="relative z-10 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors duration-300">
                       <ArrowUpRight className="w-4 h-4 text-white group-hover:scale-110 transition-transform duration-300" />
                     </div>
