@@ -4,8 +4,8 @@ import { fetchAbstractWordCount } from "./abstractWordCount.js";
 
 const responseFixture = {
   success: true as const,
-  policy: "ensemble-intl-pythainlp-50-50-v1",
-  limits: { titleMax: 30, keywordMax: 6, sectionMin: 10, totalMax: 300 },
+  policy: "ensemble-intl-pythainlp-50-50-v2",
+  limits: { keywordMax: 6, sectionMin: 10, totalMax: 300 },
   counts: {
     title: 3,
     keywords: 2,

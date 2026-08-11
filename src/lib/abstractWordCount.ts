@@ -7,7 +7,7 @@ export const ABSTRACT_SECTION_NAMES = [
 ] as const;
 
 export const ABSTRACT_WORD_COUNT_POLICY =
-  "ensemble-intl-pythainlp-50-50-v1" as const;
+  "ensemble-intl-pythainlp-50-50-v2" as const;
 
 export type AbstractSectionName = (typeof ABSTRACT_SECTION_NAMES)[number];
 
@@ -23,7 +23,6 @@ export type AbstractWordCountRequest = {
 
 export type AbstractWordCountIssue = {
   code:
-    | "TITLE_TOO_LONG"
     | "TOO_MANY_KEYWORDS"
     | "SECTION_TOO_SHORT"
     | "TOTAL_TOO_LONG";
@@ -36,7 +35,6 @@ export type AbstractWordCountResponse = {
   success: true;
   policy: typeof ABSTRACT_WORD_COUNT_POLICY;
   limits: {
-    titleMax: number;
     keywordMax: number;
     sectionMin: number;
     totalMax: number;

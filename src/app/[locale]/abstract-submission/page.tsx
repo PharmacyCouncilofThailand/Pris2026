@@ -23,7 +23,7 @@ import {
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import PageHero from "@/components/sections/PageHero";
 import {
@@ -373,20 +373,18 @@ export default function AbstractSubmission() {
       }
     }
 
-    // Step 3: title min 10 / max 500, category, presentationType, keywords required
+    // Step 3: title min 10 / max 500 characters, category, presentationType, keywords required
     if (currentStep === 3) {
       if (!freshWordCount) {
         toast.error(ts("wordCountUnavailable"));
         return;
       }
       const { title, category, type, keywords } = formData.abstract;
-      const titleWordCount = freshWordCount.counts.title;
       const keywordCount = freshWordCount.counts.keywords;
-      const { titleMax, keywordMax } = freshWordCount.limits;
+      const { keywordMax } = freshWordCount.limits;
       const missing: string[] = [];
       if (!title.trim()) missing.push(tv("title"));
       else if (title.trim().length < 10) missing.push(tv("titleMinChars"));
-      else if (titleWordCount > titleMax) missing.push(tv("titleMaxWords", { limit: titleMax }));
       else if (title.trim().length > 500) missing.push(tv("titleMaxChars"));
       if (!category.trim()) missing.push(tv("submissionTheme"));
       if (!type.trim()) missing.push(tv("presentationMode"));
@@ -628,11 +626,8 @@ export default function AbstractSubmission() {
                     setFormData={setFormData}
                     categories={categories}
                     showErrors={showErrors}
-                    titleWordCount={authoritativeCount.result?.counts.title ?? null}
-                    titleWordLimit={authoritativeCount.result?.limits.titleMax ?? null}
                     keywordCount={authoritativeCount.result?.counts.keywords ?? null}
                     keywordLimit={authoritativeCount.result?.limits.keywordMax ?? null}
-                    wordCountLoading={authoritativeCount.status === "loading"}
                     wordCountStale={authoritativeCount.isStale}
                   />
                 )}
@@ -739,6 +734,7 @@ export default function AbstractSubmission() {
 // Sub-component: Step 1
 function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
   const t = useTranslations("abstractSubmission");
+  const locale = useLocale();
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -752,7 +748,11 @@ function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-12">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step1.title1")} <span className="text-orange-500/80">{t("step1.title2")}</span></h2>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">
+            {t("step1.title1")}
+            {locale === "en" ? " " : null}
+            <span className="text-orange-500/80">{t("step1.title2")}</span>
+          </h2>
           <p className="text-slate-500 font-medium text-lg italic">{t("step1.subtitle")}</p>
         </div>
       </div>
@@ -855,25 +855,20 @@ function Step3Details({
   setFormData,
   categories,
   showErrors,
-  titleWordCount,
-  titleWordLimit,
   keywordCount,
   keywordLimit,
-  wordCountLoading,
   wordCountStale,
 }: {
   data: any,
   setFormData: React.Dispatch<React.SetStateAction<any>>,
   categories: CategoryOption[],
   showErrors: boolean,
-  titleWordCount: number | null,
-  titleWordLimit: number | null,
   keywordCount: number | null,
   keywordLimit: number | null,
-  wordCountLoading: boolean,
   wordCountStale: boolean,
 }) {
   const t = useTranslations("abstractSubmission");
+  const locale = useLocale();
   const tu = useTranslations("abstractSubmission.ui");
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -907,7 +902,11 @@ function Step3Details({
   return (
     <div className="space-y-12">
       <div>
-        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step3.title1")} <span className="text-orange-500/80">{t("step3.title2")}</span></h2>
+        <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">
+          {t("step3.title1")}
+          {locale === "en" ? " " : null}
+          <span className="text-orange-500/80">{t("step3.title2")}</span>
+        </h2>
         <p className="text-slate-500 font-medium text-lg italic">{t("step3.subtitle")}</p>
         <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> {tu("requiredFieldHint")}</p>
       </div>
@@ -923,21 +922,9 @@ function Step3Details({
             required
             error={showErrors && (
               data.title.trim().length < 10 ||
-              data.title.trim().length > 500 ||
-              (!wordCountStale && titleWordCount !== null && titleWordLimit !== null && titleWordCount > titleWordLimit)
+              data.title.trim().length > 500
             )}
           />
-          <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
-            !wordCountStale && titleWordCount !== null && titleWordLimit !== null && titleWordCount >= titleWordLimit
-              ? "text-amber-500"
-              : "text-slate-300"
-          }`}>
-            {tu("titleWordCount", {
-              current: titleWordCount ?? "—",
-              limit: titleWordLimit ?? "—",
-            })}
-            {(wordCountLoading || wordCountStale) && ` · ${tu("wordCountStale")}`}
-          </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
