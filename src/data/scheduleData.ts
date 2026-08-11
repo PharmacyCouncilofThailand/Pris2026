@@ -162,7 +162,7 @@ export const scheduleData: ScheduleDay[] = [
         speakers: [
           {
             name: "Pharm. Chanakit Imbumrung",
-            nameTh: "ภญ.ชนากิตต์ อิ่มบำรุง"
+            nameTh: "ภญ.ชนากิตติ์ อิ่มบำรุง"
           },
           {
             name: "Pharm. Peerasarun Paitoon",

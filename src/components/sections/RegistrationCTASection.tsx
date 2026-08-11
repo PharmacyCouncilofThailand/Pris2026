@@ -303,7 +303,6 @@ export default function RegistrationCTASection() {
               </div>
               <div className="text-left lg:text-right flex flex-col items-start lg:items-end gap-1">
                 <div className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter whitespace-nowrap group-hover:text-black transition-colors duration-500">฿1,250</div>
-                <div className="text-lg font-medium text-black/30 group-hover:text-black/50 transition-colors duration-500 line-through">฿2,500</div>
               </div>
             </div>
           </div>
@@ -555,6 +554,9 @@ export default function RegistrationCTASection() {
             .registration-floating-cta-note {
               display: none;
             }
+          }
+          :lang(th) .registration-floating-cta-text {
+            letter-spacing: normal !important;
           }
           @keyframes gradient-shift {
             0%, 100% { background-position: 0% 50%; }

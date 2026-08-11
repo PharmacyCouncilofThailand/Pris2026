@@ -492,7 +492,7 @@ export default function Hero() {
             <div className="mt-4 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4 text-center flex justify-center w-full">
               <h1 className={`max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] ${headingTracking} text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]`}>
                 {t("headingLine1")}
-                <span className="block">{t("headingLine2")}</span>
+                {t("headingLine2") && <span className="block">{t("headingLine2")}</span>}
               </h1>
             </div>
 

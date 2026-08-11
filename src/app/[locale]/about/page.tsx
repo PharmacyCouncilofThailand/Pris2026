@@ -31,7 +31,7 @@ const orgCommittee = [
   { name: "Assoc. Prof. Sunee Lertsinudom", nameTh: "รศ.ภญ.สุณี เลิศสินอุดม", role: "Advisor", roleTh: "ที่ปรึกษา" },
   { name: "Pharm. Teerawit Bamrungsri", nameTh: "ภก.ธีรวิทย์ บำรุงศรี", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Pornpitak Komsin", nameTh: "ภก.พรพิทักษ์ กอมสิน", role: "Committee Member", roleTh: "ผู้ทำงาน" },
-  { name: "Pharm. Chanakit Imbumrung", nameTh: "ภญ.ชนาภิตต์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
+  { name: "Pharm. Chanakit Imbumrung", nameTh: "ภญ.ชนากิตติ์ อิ่มบำรุง", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Chomkanang Phumsaydon", nameTh: "ภญ.โฉมคนางค์ ภูมิสายดร", role: "Committee Member", roleTh: "ผู้ทำงาน" },
   { name: "Pharm. Apinan Watcharaphichart", nameTh: "ภก.อภินันท์ วัชราภิชาต", role: "Committee Member & Secretary", roleTh: "ผู้ทำงานและเลขานุการ" },
   { name: "Mr. Thanaphat Kitcharoen", nameTh: "นายธนพัฒน์ กิจเจริญ", role: "Committee Member & Assistant Secretary", roleTh: "ผู้ทำงานและผู้ช่วยเลขานุการ" },
