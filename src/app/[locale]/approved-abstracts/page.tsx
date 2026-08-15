@@ -109,7 +109,7 @@ export default function ApprovedAbstractsPage() {
               <span className="block hero-line pr-[0.15em]">{copy.title1}</span>
             </div>
             <div className="overflow-hidden py-2 -my-2 md:pl-2">
-              <span className="block hero-line text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-600 to-orange-500 pb-2 pr-[0.15em]">
+              <span className="block hero-line text-blue-600 pb-2 pr-[0.15em]">
                 {copy.title2}
               </span>
             </div>

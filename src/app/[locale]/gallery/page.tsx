@@ -118,7 +118,7 @@ export default function GalleryPage() {
                 </span>
               </div>
               <div className="overflow-hidden md:pl-2">
-                <span className="block gallery-hero-line text-transparent bg-clip-text bg-gradient-to-r from-gold via-orange-400 to-gold pr-[0.15em]">
+                <span className="block gallery-hero-line text-amber-400 pr-[0.15em]">
                   {tp("highlights")}
                 </span>
               </div>

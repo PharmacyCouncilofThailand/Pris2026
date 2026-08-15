@@ -54,7 +54,7 @@ export default function DetailedGuidelines() {
   return (
     <main
       ref={pageRef}
-      className="bg-white text-gray-900 overflow-hidden selection:bg-blue-500/20 min-h-screen"
+      className="bg-white text-slate-900 overflow-hidden selection:bg-blue-600 selection:text-white min-h-screen"
     >
 
 

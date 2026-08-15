@@ -647,7 +647,7 @@ export default function Hero() {
           <span className="text-[9px] sm:text-[10px] font-semibold leading-none tracking-[0.28em]">
             {t('scrollDownSecondary')}
           </span>
-          <ChevronDown className="mt-1 w-4 h-4 text-black animate-bounce" />
+          <ChevronDown className="mt-1 w-4 h-4 text-black animate-pulse opacity-80" />
         </div>
       </div>
 

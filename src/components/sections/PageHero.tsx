@@ -110,7 +110,7 @@ export default function PageHero({
           {title2 && (
             <div className="overflow-hidden py-2 -my-2 md:pl-2">
               <span
-                className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line text-transparent bg-clip-text bg-gradient-to-r ${gradientFrom} pb-2 pr-[0.15em]`}
+                className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line text-blue-600 pb-2 pr-[0.15em]`}
               >
                 {title2}
               </span>
