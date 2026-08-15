@@ -49,6 +49,54 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Thai typography baseline
+ *
+ * Thai glyphs do not benefit from the wide tracking used for Latin display
+ * labels. Keep the fix at the locale boundary so every page, including auth
+ * screens and shared chrome, receives the same Mac-safe typography.
+ */
+.locale-th {
+  font-family: var(--font-noto-sans-thai), var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+  font-kerning: normal;
+}
+
+.locale-th :where(.font-sans, .font-heading, .font-serif) {
+  font-family: var(--font-noto-sans-thai), var(--font-outfit), ui-sans-serif, system-ui, sans-serif !important;
+}
+
+.locale-th :where([class*="tracking-"]),
+.locale-th .text_button,
+.locale-th .cfa-floating-cta-text,
+.locale-th .registration-floating-cta-text {
+  letter-spacing: normal !important;
+}
+
+/* Avoid very thin or synthetic extremes for Thai glyphs on macOS. */
+.locale-th :where(.font-light) {
+  font-weight: 400 !important;
+}
+
+.locale-th :where(.font-normal) {
+  font-weight: 400 !important;
+}
+
+.locale-th :where(.font-medium) {
+  font-weight: 500 !important;
+}
+
+.locale-th :where(.font-semibold) {
+  font-weight: 600 !important;
+}
+
+.locale-th :where(.font-bold) {
+  font-weight: 700 !important;
+}
+
+.locale-th :where(.font-extrabold, .font-black) {
+  font-weight: 800 !important;
+}
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

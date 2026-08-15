@@ -162,7 +162,7 @@ export const scheduleData: ScheduleDay[] = [
         speakers: [
           {
             name: "Pharm. Chanakit Imbumrung",
-            nameTh: "ภญ.ชนากิตต์ อิ่มบำรุง"
+            nameTh: "ภญ.ชนากิตติ์ อิ่มบำรุง"
           },
           {
             name: "Pharm. Peerasarun Paitoon",
@@ -857,7 +857,7 @@ export const scheduleData: ScheduleDay[] = [
         id: 207,
         time: "12:00 – 12:30",
         title: "Lunch Symposium 1",
-        titleTh: "Lauch Symposium 1",
+        titleTh: "Lunch Symposium 1",
         location: "JUPITER 4-7",
         locationTh: "ห้อง JUPITER 4-7",
         type: "Lunch",
@@ -870,7 +870,7 @@ export const scheduleData: ScheduleDay[] = [
         id: 208,
         time: "12:30 – 13:00",
         title: "Lunch Symposium 2",
-        titleTh: "Lauch Symposium 2",
+        titleTh: "Lunch Symposium 2",
         location: "JUPITER 4-7",
         locationTh: "ห้อง JUPITER 4-7",
         type: "Lunch",
@@ -1186,8 +1186,8 @@ scheduleData[0].events = [
       { name: "Dr. Pharm. Pakakrong Kwankhao", nameTh: "ดร.ภญ.ผกากรอง ขวัญข้าว", role: "Moderator", roleTh: "ผู้ดำเนินรายการ" },
     ],
   },
-  day1Event(1012, "12:00 – 12:30", "Lauch Symposium 1", "Lauch Symposium 1", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
-  day1Event(1013, "12:30 – 13:00", "Lauch Symposium 2", "Lauch Symposium 2", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
+  day1Event(1012, "12:00 – 12:30", "Lunch Symposium 1", "Lunch Symposium 1", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
+  day1Event(1013, "12:30 – 13:00", "Lunch Symposium 2", "Lunch Symposium 2", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
   {
     ...day1Event(1014, "13:00 – 14:00", "Pharmacy in 2036", "Pharmacy in 2036", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Session", "เสวนา", "JUPITER 4-7"),
     speakers: [
@@ -1338,8 +1338,8 @@ scheduleData[1].events = [
     description: "Committee: College of Pharmacogenomics and Precision Pharmacy",
     descriptionTh: "Committee: วิทยาลัยเภสัชพันธุศาสตร์และเภสัชกรรมแม่นยำ",
   },
-  day1Event(207, "12:00 – 12:30", "Lauch Symposium 1", "Lauch Symposium 1", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
-  day1Event(208, "12:30 – 13:00", "Lauch Symposium 2", "Lauch Symposium 2", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
+  day1Event(207, "12:00 – 12:30", "Lunch Symposium 1", "Lunch Symposium 1", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
+  day1Event(208, "12:30 – 13:00", "Lunch Symposium 2", "Lunch Symposium 2", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Lunch", "บรรยาย", "JUPITER 4-7"),
   {
     ...day1Event(209, "13:00 – 14:00", "Digital Solutions: Key to Upgrading Pharmacy and Hospital Services", "หัวข้อ Digital Solutions: กุญแจสู่การยกระดับบริการร้านยาและโรงพยาบาล", "JUPITER 4-7", "ห้อง JUPITER 4-7", "Session", "เสวนา", "JUPITER 4-7"),
     speakers: [

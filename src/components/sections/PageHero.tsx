@@ -20,6 +20,8 @@ interface PageHeroProps {
   dark?: boolean;
   /** Place title1 and title2 on the same line */
   inlineTitle?: boolean;
+  /** Remove spacing between inline title parts */
+  inlineTitleTight?: boolean;
 }
 
 export default function PageHero({
@@ -30,6 +32,7 @@ export default function PageHero({
   subtitle,
   dark = false,
   inlineTitle = false,
+  inlineTitleTight = false,
 }: PageHeroProps) {
   const heroRef = useRef<HTMLElement>(null!);
   const locale = useLocale();
@@ -68,6 +71,16 @@ export default function PageHero({
   const gradientFrom = dark
     ? "from-white via-white to-white/60"
     : "from-blue-500 via-blue-600 to-orange-500";
+  const titleSize = inlineTitle
+    ? "text-[clamp(3rem,6vw,6.25rem)]"
+    : "text-5xl sm:text-7xl md:text-8xl lg:text-[8rem]";
+  const titlePartClass = inlineTitleTight
+    ? "overflow-hidden py-2 -my-2"
+    : "overflow-hidden py-2 -my-2 md:pl-2";
+  const titleSpanClass = inlineTitleTight
+    ? "inline-block page-hero-line"
+    : `${inlineTitle ? "inline-block" : "block"} page-hero-line pr-[0.15em]`;
+  const inlineTitleSpacing = inlineTitleTight ? "gap-x-0" : "gap-x-3 md:gap-x-6";
 
   return (
     <section
@@ -102,15 +115,15 @@ export default function PageHero({
 
         {/* Title */}
         <h1
-          className={`text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] [@media(max-height:500px)]:text-4xl font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 [@media(max-height:500px)]:mb-4 ${inlineTitle ? 'flex flex-row justify-center gap-x-3 md:gap-x-6' : ''}`}
+          className={`${titleSize} [@media(max-height:500px)]:text-4xl font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 [@media(max-height:500px)]:mb-4 ${inlineTitle ? `flex flex-row flex-wrap md:flex-nowrap justify-center gap-y-1 ${inlineTitleSpacing}` : ''}`}
         >
-          <div className="overflow-hidden py-2 -my-2 md:pl-2">
-            <span className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line pr-[0.15em]`}>{title1}</span>
+          <div className={titlePartClass}>
+            <span className={titleSpanClass}>{title1}</span>
           </div>
           {title2 && (
-            <div className="overflow-hidden py-2 -my-2 md:pl-2">
+            <div className={titlePartClass}>
               <span
-                className={`${inlineTitle ? 'inline-block' : 'block'} page-hero-line text-blue-600 pb-2 pr-[0.15em]`}
+                className={`${titleSpanClass} text-transparent bg-clip-text bg-gradient-to-r ${gradientFrom} pb-2`}
               >
                 {title2}
               </span>

@@ -55,6 +55,8 @@ export default function WelcomeMessagesPage() {
         title1={t("title1")}
         title2={t("title2")}
         subtitle={t("desc")}
+        inlineTitle
+        inlineTitleTight
       />
 
       {/* ─── Speaker Entries (Content Container Layout) ─── */}

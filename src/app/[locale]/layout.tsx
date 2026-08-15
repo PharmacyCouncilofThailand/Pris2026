@@ -29,25 +29,31 @@ export default async function LocaleLayout({
   return (
     <NextIntlClientProvider messages={messages}>
       <AuthProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if(history.scrollRestoration) history.scrollRestoration="manual";
-              window.scrollTo(0,0);
-              
-              const p = window.location.pathname.replace(/\\/$/, "");
-              if (p === "" || p === "/en" || p === "/th") {
-                document.body.classList.add("hero-playing");
-              }
-            `,
-          }}
-        />
-        <GlobalRefreshRedirect />
-        <PaymentReturnToast />
-        <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', padding: '12px 16px', fontSize: '14px' } }} />
-        <Header />
-        {children}
-        <Footer />
+        <div
+          lang={locale}
+          data-locale={locale}
+          className={locale === "th" ? "locale-th" : "locale-en"}
+        >
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if(history.scrollRestoration) history.scrollRestoration="manual";
+                window.scrollTo(0,0);
+
+                const p = window.location.pathname.replace(/\\/$/, "");
+                if (p === "" || p === "/en" || p === "/th") {
+                  document.body.classList.add("hero-playing");
+                }
+              `,
+            }}
+          />
+          <GlobalRefreshRedirect />
+          <PaymentReturnToast />
+          <Toaster position="top-right" toastOptions={{ duration: 4000, style: { borderRadius: '12px', padding: '12px 16px', fontSize: '14px' } }} />
+          <Header />
+          {children}
+          <Footer />
+        </div>
       </AuthProvider>
     </NextIntlClientProvider>
   );

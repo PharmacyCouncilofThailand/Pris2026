@@ -119,7 +119,7 @@ export const submissionGuidelines = {
   acknowledgementNote: "Notification of acceptance will be sent automatically to the abstract submitter only. Please contact the secretariat at pr@pharmacycouncil.org if you do not receive the confirmation email.",
   acknowledgementNoteTh: "การแจ้งผลการพิจารณาจะถูกส่งให้ผู้ส่งรายงานเท่านั้น กรุณาติดต่อเลขาธิการที่ pr@pharmacycouncil.org หากท่านไม่ได้รับอีเมลยืนยัน",
   reviewNote: "All submitted abstracts will be reviewed by the PRIS scientific committee according to the review process.",
-  reviewNoteTh: "บทคัดย่อทั้งหมดที่ส่งมาจะได้รับการพิจารณาโดยคณะกรรรมการวิชาการ PRIS ตามกระบวนการ",
+  reviewNoteTh: "บทคัดย่อทั้งหมดที่ส่งมาจะได้รับการพิจารณาโดยคณะกรรมการวิชาการ PRIS ตามกระบวนการ",
   noMediaNote: "Pictures/Graphs/Tables are not allowed.",
   noMediaNoteTh: "ไม่อนุญาตให้แนบรูปภาพ กราฟ หรือตาราง",
 
@@ -168,8 +168,8 @@ export const submissionGuidelines = {
       "Accepted abstracts whose presenting author does not register and pay in full by then will be automatically withdrawn.",
     ],
     acceptanceTh: [
-      "การแจ้งผลการพิจารณาจะถูกส่งให้ผู้ส่งรายการเท่านั้น",
-      "เมื่อได้รับแจ้งสถานะการรับผลงาน ผู้ส่งรายการต้องยืนยันการเข้าร่วมของผู้เสนอผลงานและแจ้งให้ผู้นำเสนอลงทะเบียนภายในวันที่ 30 มิถุนายน 2569 และชำระค่าลงทะเบียนเต็มจำนวนภายในวันที่ 30 มิถุนายน 2569",
+      "การแจ้งผลการพิจารณาจะถูกส่งให้ผู้ส่งรายงานเท่านั้น",
+      "เมื่อได้รับแจ้งสถานะการรับผลงาน ผู้ส่งรายงานต้องยืนยันการเข้าร่วมของผู้เสนอผลงานและแจ้งให้ผู้นำเสนอลงทะเบียนภายในวันที่ 30 มิถุนายน 2569 และชำระค่าลงทะเบียนเต็มจำนวนภายในวันที่ 30 มิถุนายน 2569",
       "บทคัดย่อที่ได้รับสถานะการรับจะถูกยกเลิกโดยอัตโนมัติหากผู้นำเสนอไม่ได้ลงทะเบียนและชำระค่าลงทะเบียนตามวันกำหนด",
     ],
     withdrawal: "Authors who want to withdraw an abstract should send a written request to the secretariat at pr@pharmacycouncil.org by 30th June 2026.",

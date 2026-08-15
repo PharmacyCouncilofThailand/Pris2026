@@ -6,6 +6,7 @@
     "dev": "next dev -H 0.0.0.0 -p 3001",
     "build": "next build",
     "start": "next start",
+    "test": "tsx --test src/**/*.test.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -34,9 +35,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/react-test-renderer": "^19.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "react-test-renderer": "^19.2.3",
     "tailwindcss": "^4",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }

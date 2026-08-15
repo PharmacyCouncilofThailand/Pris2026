@@ -13,8 +13,16 @@ import { useTranslations } from "next-intl";
 import PageHero from "@/components/sections/PageHero";
 
 const organizedByLogos = [
-  { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png" },
-  { id: 2, name: "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย", logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png" },
+  {
+    id: 1,
+    name: "Pharmacy Council of Thailand",
+    logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png",
+  },
+  {
+    id: 2,
+    name: "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
+    logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png",
+  },
 ];
 
 const partnerLogos = [
@@ -109,7 +117,9 @@ export default function SponsorshipPage() {
                   <img
                     src={sponsor.logo}
                     alt={sponsor.name}
-                    className="object-contain w-full h-full max-w-[100%] max-h-[100%]"
+                    className={`object-contain w-full h-full max-w-[100%] max-h-[100%] ${
+                      sponsor.id === 2 ? "scale-[1.6]" : "scale-125"
+                    }`}
                   />
                 </div>
               ))}
