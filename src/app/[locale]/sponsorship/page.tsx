@@ -35,25 +35,44 @@ const partnerLogos = [
   { id: 9, name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png" },
 ];
 
-const mockupSponsors = [
+const sponsorLogos = [
   {
-    tier: "Platinum Sponsors",
-    sponsors: [
-      { id: 101, name: "Google", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" },
-      { id: 102, name: "Microsoft", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" },
-    ]
+    id: 10,
+    name: "Berlin Pharmaceutical Industry",
+    logo: "/assets/Img/sponsors/Berlin pharmaceutical.jpg",
+    scaleClass: "scale-100",
   },
   {
-    tier: "Gold Sponsors",
-    sponsors: [
-      { id: 103, name: "Amazon", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg" },
-      { id: 104, name: "Meta", logo: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" },
-      { id: 105, name: "Apple", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" },
-    ]
-  }
+    id: 11,
+    name: "TILSNA",
+    logo: "/assets/Img/sponsors/S__109420674.jpg",
+    scaleClass: "scale-100",
+  },
+  {
+    id: 12,
+    name: "Novaceutical",
+    logo: "/assets/Img/sponsors/์Novaceutical.jpg",
+    scaleClass: "scale-105",
+  },
+  {
+    id: 13,
+    name: "ศิริเวชกรรม",
+    logo: "/assets/Img/sponsors/ศิริเวชกรรม.jpg",
+    scaleClass: "scale-[1.75]",
+  },
+  {
+    id: 14,
+    name: "ภิญโญฟาร์มาซี",
+    logo: "/assets/Img/sponsors/ภิญโญฟาร์มาซี.png",
+    scaleClass: "scale-[2.4]",
+  },
+  {
+    id: 15,
+    name: "บจก.ห้าม้าโอสถ",
+    logo: "/assets/Img/sponsors/บจก.ห้าม้าโอสถ-พื้นเขียว_1_.jpg",
+    scaleClass: "scale-[1.45]",
+  },
 ];
-
-const SHOW_MOCKUP_SPONSORS = false;
 
 export default function SponsorshipPage() {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -150,43 +169,31 @@ export default function SponsorshipPage() {
             </div>
           </div>
 
-          {SHOW_MOCKUP_SPONSORS && (
-            <div className="content-block mb-14">
-              <div className="text-center mb-10 md:mb-14">
-                <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37]">
-                  SPONSOR
-                </h2>
-              </div>
-              {mockupSponsors.map((tierData, index) => (
-                <div key={index} className="mb-14 last:mb-0">
-                  <div className="flex flex-col items-center text-center mb-8">
-                    <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gray-400 mb-4">
-                      {t("tierLabel")} {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-6 pb-4 border-b border-gray-200">
-                      {tierData.tier}
-                    </h2>
-                  </div>
-
-                  <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-20">
-                    {tierData.sponsors.map((sponsor) => (
-                      <div 
-                        key={sponsor.id} 
-                        className="relative flex items-center justify-center w-28 h-20 sm:w-40 sm:h-24 md:w-56 md:h-32"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={sponsor.logo}
-                          alt={sponsor.name}
-                          className="object-contain w-full h-full max-w-[80%] max-h-[80%]"
-                        />
-                      </div>
-                    ))}
+          {/* Sponsors */}
+          <div className="content-block mb-24">
+            <div className="flex flex-col items-center text-center mb-10 md:mb-14">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37] pb-4 border-b border-gray-200">
+                SPONSORS
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-10 max-w-5xl mx-auto">
+              {sponsorLogos.map((sponsor) => (
+                <div 
+                  key={sponsor.id} 
+                  className="relative flex items-center justify-center p-6 sm:p-8 bg-white rounded-2xl border border-gray-100 h-32 sm:h-40 md:h-44 overflow-hidden"
+                >
+                  <div className="relative flex items-center justify-center w-full h-full">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      className={`object-contain w-full h-full max-h-[90%] max-w-[90%] ${sponsor.scaleClass || ""}`}
+                    />
                   </div>
                 </div>
               ))}
             </div>
-          )}
+          </div>
 
         </div>
       </section>
@@ -194,11 +201,6 @@ export default function SponsorshipPage() {
       {/* ══════ BECOME A SPONSOR CTA ══════ */}
       <section className="relative px-6 md:px-12 pb-16 md:pb-24">
         <div className="max-w-4xl mx-auto content-block text-center">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <span className="w-12 h-px bg-orange-500" />
-            <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">{t("cta.pretitle")}</span>
-            <span className="w-12 h-px bg-orange-500" />
-          </div>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none text-gray-900 mb-8">
             {t("cta.title")}
           </h2>
