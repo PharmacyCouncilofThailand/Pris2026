@@ -8,6 +8,7 @@ import { galleryImages } from "@/data/galleryData";
 
 const quickLinks = [
   { labelKey: "home", href: "/" },
+  { labelKey: "agenda", href: "/agenda" },
   { labelKey: "innovationWork", href: "#" },
   { labelKey: "aboutPris", href: "/about" },
   { labelKey: "callForAbstracts", href: "/call-for-abstracts" },

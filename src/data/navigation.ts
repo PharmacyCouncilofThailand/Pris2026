@@ -26,7 +26,7 @@ export const navigationData: NavItem[] = [
     },
     {
         labelKey: "agenda",
-        href: "/#agenda",
+        href: "/agenda",
     },
     {
         labelKey: "callForAbstracts",

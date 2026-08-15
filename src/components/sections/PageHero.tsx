@@ -86,7 +86,7 @@ export default function PageHero({
     <section
       ref={heroRef}
       lang={locale}
-      className="relative pt-40 md:pt-56 [@media(max-height:900px)]:pt-28 [@media(max-height:500px)]:pt-20 pb-20 md:pb-32 [@media(max-height:900px)]:pb-12 [@media(max-height:500px)]:pb-8 px-6 md:px-12 flex flex-col justify-end items-center text-center"
+      className="relative overflow-hidden pt-40 md:pt-56 [@media(max-height:900px)]:pt-28 [@media(max-height:500px)]:pt-20 pb-20 md:pb-32 [@media(max-height:900px)]:pb-12 [@media(max-height:500px)]:pb-8 px-6 md:px-12 flex flex-col justify-end items-center text-center"
     >
       {/* Decorative BG Glows */}
       {!dark && (

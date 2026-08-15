@@ -31,16 +31,9 @@ export default function Home() {
         <WelcomeSection />
       </div>
 
-      {/* Speaker Section */}
-      {/* <div className="w-full relative" style={{ zIndex: 2 }}>
-        <InViewWrapper minHeight="100vh">
-          <SpeakerSection />
-        </InViewWrapper>
-      </div> */}
-
-      {/* Event Schedule */}
-      <div className="w-full relative" id="agenda" style={{ zIndex: 2 }}>
-        <InViewWrapper minHeight="800px">
+      {/* Event Schedule Preview */}
+      <div className="w-full relative" style={{ zIndex: 2 }}>
+        <InViewWrapper minHeight="600px">
           <EventScheduleSection />
         </InViewWrapper>
       </div>
