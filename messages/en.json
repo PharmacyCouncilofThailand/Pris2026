@@ -480,18 +480,60 @@
     "title2": "Booking Forms",
     "subtitle": "Download accommodation booking forms for PRIS 2026 partner hotels from this page.",
     "sectionTitle": "Accommodation Documents",
-    "sectionDescription": "Select your preferred hotel, download the form, and complete all required details before submitting it through the hotel's process.",
-    "downloadButton": "Download Form",
-    "cards": {
-      "ibis": {
-        "label": "Recommended Hotel",
-        "hotel": "Ibis",
-        "description": "Room booking form for PRIS 2026 participants who plan to stay at Ibis."
+    "sectionDescription": "Please select your organization category to download the appropriate hotel booking form at special PRIS 2026 rates.",
+    "step1Badge": "Step 1",
+    "step1Title": "Select Organization Type",
+    "step1Subtitle": "Choose your affiliation to view the applicable booking forms and rates.",
+    "step2Badge": "Step 2",
+    "step2Title": "Select Hotel & Download Form",
+    "step2Subtitle": "Download the form, complete the details, and send it directly to the hotel's reservation team.",
+    "categories": {
+      "government": {
+        "title": "Government Sector",
+        "subtitle": "For government officials, state enterprise, and academic personnel",
+        "badge": "Government Rate"
       },
-      "novotel": {
-        "label": "Recommended Hotel",
-        "hotel": "Novotel",
-        "description": "Room booking form for PRIS 2026 participants who plan to stay at Novotel."
+      "private": {
+        "title": "Private Sector",
+        "subtitle": "For corporate delegates, private entities, and general participants",
+        "badge": "Corporate Rate"
+      }
+    },
+    "currentSelection": "Selected category",
+    "changeCategory": "Change",
+    "downloadButton": "Download Form",
+    "fileType": "PDF Document",
+    "readyToDownload": "Official form ready to download",
+    "submissionNotice": {
+      "title": "Booking Instructions & Next Steps",
+      "step1": "1. Download and fill out the reservation form for your preferred hotel.",
+      "step2": "2. Send the completed form to the hotel's reservation email specified in the document.",
+      "step3": "3. Await booking confirmation directly from the hotel reservation team."
+    },
+    "cards": {
+      "government": {
+        "ibis": {
+          "label": "Government Sector",
+          "hotel": "Ibis Bangkok IMPACT",
+          "description": "Room reservation form for government and academic personnel attending PRIS 2026."
+        },
+        "novotel": {
+          "label": "Government Sector",
+          "hotel": "Novotel Bangkok IMPACT",
+          "description": "Room reservation form for government and academic personnel attending PRIS 2026."
+        }
+      },
+      "private": {
+        "ibis": {
+          "label": "Private Sector",
+          "hotel": "Ibis Bangkok IMPACT",
+          "description": "Room reservation form for corporate and general participants attending PRIS 2026 (Oct 28-30, 2026)."
+        },
+        "novotel": {
+          "label": "Private Sector",
+          "hotel": "Novotel Bangkok IMPACT",
+          "description": "Room reservation form for corporate and general participants attending PRIS 2026 (Oct 28-30, 2026)."
+        }
       }
     }
   },
