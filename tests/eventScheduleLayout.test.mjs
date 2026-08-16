@@ -172,7 +172,7 @@ test("Day 1 follows the authoritative workbook venue mapping and required detail
   const day1 = loadScheduleData()[0];
   const byId = new Map(day1.events.map((item) => [item.id, item]));
 
-  assert.equal(day1.events.length, 32);
+  assert.equal(day1.events.length, 35);
   assert.deepEqual(
     [1002, 1010, 1011].map((id) => byId.get(id)?.track),
     ["JUPITER 12", "JUPITER 12", "JUPITER 13"],
@@ -190,13 +190,16 @@ test("Day 1 follows the authoritative workbook venue mapping and required detail
   assert.match(byId.get(1018)?.descriptionTh ?? "", /Committee:/);
   assert.match(byId.get(1022)?.descriptionTh ?? "", /Committee:/);
   assert.equal(byId.get(1027)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(1033)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(1034)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(1035)?.descriptionTh, "คัดเลือก 6 ผลงาน");
 });
 
 test("Day 2 follows the authoritative workbook schedule", () => {
   const day2 = loadScheduleData()[1];
   const byId = new Map(day2.events.map((item) => [item.id, item]));
 
-  assert.equal(day2.events.length, 28);
+  assert.equal(day2.events.length, 31);
   assert.equal(byId.get(231)?.track, "JUPITER 12");
   assert.deepEqual(Array.from(byId.get(231)?.spanTracks ?? []), [
     "JUPITER 12",
@@ -217,6 +220,13 @@ test("Day 2 follows the authoritative workbook schedule", () => {
   assert.match(byId.get(224)?.descriptionTh ?? "", /เภสัชพันธุศาสตร์และเภสัชกรรมแม่นยำ/);
   assert.match(byId.get(225)?.descriptionTh ?? "", /วิทยาลัยคุ้มครองผู้บริโภค/);
   assert.match(byId.get(242)?.descriptionTh ?? "", /บรรณาธิการสมาคมเภสัชกรรมโรงพยาบาล/);
+  assert.match(byId.get(233)?.descriptionTh ?? "", /วิทยาลัยเภสัชกรรมสมุนไพร/);
   assert.equal(byId.get(257)?.group, "GROUP 3");
   assert.equal(byId.get(251)?.time, "11:00 – 12:00");
+  assert.equal(byId.get(226)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(234)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(244)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(251)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(253)?.descriptionTh, "คัดเลือก 6 ผลงาน");
+  assert.equal(byId.get(257)?.descriptionTh, "คัดเลือก 6 ผลงาน");
 });
