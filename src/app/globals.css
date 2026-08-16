@@ -188,27 +188,28 @@ html::-webkit-scrollbar {
 }
 
 .schedule-scroll {
-  scrollbar-color: rgba(202, 155, 82, 0.8) rgba(8, 23, 59, 0.85);
+  scrollbar-color: #cbd5e1 #f8fafc;
   scrollbar-width: thin;
 }
 
 .schedule-scroll::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
 }
 
 .schedule-scroll::-webkit-scrollbar-track {
-  background: rgba(8, 23, 59, 0.85);
+  background: #f8fafc;
+  border-radius: 999px;
 }
 
 .schedule-scroll::-webkit-scrollbar-thumb {
-  border: 2px solid rgba(8, 23, 59, 0.85);
+  border: 2px solid #f8fafc;
   border-radius: 999px;
-  background: rgba(202, 155, 82, 0.8);
+  background: #cbd5e1;
 }
 
 .schedule-scroll::-webkit-scrollbar-thumb:hover {
-  background: #ca9b52;
+  background: #94a3b8;
 }
 }
 
