@@ -957,6 +957,8 @@
     "attachPdf": "กรุณาแนบไฟล์ PDF บทคัดย่ออย่างน้อย 1 ไฟล์ก่อนดำเนินการต่อ",
     "fileExceedsLimit": "{name} เกินขนาดไฟล์ 30MB",
     "maxFiles": "แนบได้สูงสุด {count} ไฟล์ PDF",
-    "totalSizeExceeded": "ขนาดไฟล์รวมต้องไม่เกิน {size}"
+    "totalSizeExceeded": "ขนาดไฟล์รวมต้องไม่เกิน {size}",
+    "invalidAuthorEmail": "กรุณากรอกอีเมลของผู้นำเสนอให้ถูกต้อง",
+    "invalidCoAuthorEmail": "กรุณากรอกอีเมลของผู้ร่วมวิจัย #{index} ให้ถูกต้อง"
   }
 }

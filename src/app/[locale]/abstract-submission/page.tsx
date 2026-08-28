@@ -30,6 +30,12 @@ import {
   ABSTRACT_SECTION_NAMES,
   type AbstractSectionName,
 } from "@/lib/abstractWordCount";
+import {
+  findAbstractEmailValidationTarget,
+  isValidEmail,
+  normalizeCoAuthorEmails,
+  normalizeEmail,
+} from "@/lib/abstractSubmissionValidation";
 import { useAuthoritativeWordCount } from "./useAuthoritativeWordCount";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
@@ -324,7 +330,6 @@ export default function AbstractSubmission() {
   }
 
   const handleNext = async () => {
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let freshWordCount = authoritativeCount.result;
 
     if (currentStep === 3 || currentStep === 4) {
@@ -346,7 +351,7 @@ export default function AbstractSubmission() {
       if (!firstName.trim()) missing.push(tv("firstName"));
       if (!lastName.trim()) missing.push(tv("lastName"));
       if (!email.trim()) missing.push(tv("email"));
-      else if (!emailRe.test(email.trim())) missing.push(tv("validEmail"));
+      else if (!isValidEmail(email)) missing.push(tv("validEmail"));
       if (!affiliation.trim()) missing.push(tv("affiliation"));
       if (missing.length > 0) {
         setShowErrors(true);
@@ -363,7 +368,7 @@ export default function AbstractSubmission() {
         if (!ca.firstName.trim()) missing.push(tv("firstName"));
         if (!ca.lastName.trim()) missing.push(tv("lastName"));
         if (!ca.email.trim()) missing.push(tv("email"));
-        else if (!emailRe.test(ca.email.trim())) missing.push(tv("validEmail"));
+        else if (!isValidEmail(ca.email)) missing.push(tv("validEmail"));
         if (!ca.institution.trim()) missing.push(tv("institution"));
         if (missing.length > 0) {
           setShowErrors(true);
@@ -461,6 +466,32 @@ export default function AbstractSubmission() {
       return;
     }
 
+    const normalizedAuthorEmail = normalizeEmail(formData.author.email);
+    const normalizedCoAuthors = normalizeCoAuthorEmails(formData.coAuthors);
+
+    if (!isEditMode && !isValidEmail(normalizedAuthorEmail)) {
+      const message = ts("invalidAuthorEmail");
+      setCurrentStep(1);
+      setShowErrors(true);
+      setSubmitError(message);
+      toast.error(message);
+      return;
+    }
+
+    const invalidCoAuthorIndex = normalizedCoAuthors.findIndex(
+      (coAuthor) => !isValidEmail(coAuthor.email),
+    );
+    if (invalidCoAuthorIndex >= 0) {
+      const message = ts("invalidCoAuthorEmail", {
+        index: invalidCoAuthorIndex + 1,
+      });
+      setCurrentStep(2);
+      setShowErrors(true);
+      setSubmitError(message);
+      toast.error(message);
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitError("");
 
@@ -468,7 +499,7 @@ export default function AbstractSubmission() {
       const fd = new FormData();
       fd.append("firstName", formData.author.firstName);
       fd.append("lastName", formData.author.lastName);
-      fd.append("email", formData.author.email);
+      fd.append("email", normalizedAuthorEmail);
       fd.append("affiliation", formData.author.affiliation);
       if (formData.author.phone) fd.append("phone", formData.author.phone);
       fd.append("title", formData.abstract.title);
@@ -484,8 +515,8 @@ export default function AbstractSubmission() {
       fd.append("results", formData.content.results);
       fd.append("conclusion", formData.content.conclusion);
       if (EVENT_CODE) fd.append("eventCode", EVENT_CODE);
-      if (formData.coAuthors.length > 0) {
-        fd.append("coAuthors", JSON.stringify(formData.coAuthors));
+      if (normalizedCoAuthors.length > 0) {
+        fd.append("coAuthors", JSON.stringify(normalizedCoAuthors));
       }
       formData.files.forEach((file) => {
         fd.append("abstractFiles", file);
@@ -504,7 +535,31 @@ export default function AbstractSubmission() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        setSubmitError(data.error || (isEditMode ? tu("resubmissionFailed") : tu("submissionFailed")));
+        const emailTarget = findAbstractEmailValidationTarget(data.details);
+
+        if (emailTarget?.kind === "author" && !isEditMode) {
+          const message = ts("invalidAuthorEmail");
+          setCurrentStep(1);
+          setShowErrors(true);
+          setSubmitError(message);
+          toast.error(message);
+          return;
+        }
+
+        if (emailTarget?.kind === "coAuthor") {
+          const message = ts("invalidCoAuthorEmail", {
+            index: emailTarget.index + 1,
+          });
+          setCurrentStep(2);
+          setShowErrors(true);
+          setSubmitError(message);
+          toast.error(message);
+          return;
+        }
+
+        setSubmitError(
+          data.error || (isEditMode ? tu("resubmissionFailed") : tu("submissionFailed")),
+        );
         return;
       }
 

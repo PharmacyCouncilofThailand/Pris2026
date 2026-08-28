@@ -957,6 +957,8 @@
     "attachPdf": "Please attach at least one abstract PDF file before continuing.",
     "fileExceedsLimit": "{name} exceeds the 30MB file limit.",
     "maxFiles": "You can attach up to {count} PDF files.",
-    "totalSizeExceeded": "Total file size must not exceed {size}."
+    "totalSizeExceeded": "Total file size must not exceed {size}.",
+    "invalidAuthorEmail": "Please enter a valid email address for the presenting author.",
+    "invalidCoAuthorEmail": "Please enter a valid email address for co-author #{index}."
   }
 }
