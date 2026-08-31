@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MoveUpRight } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Link } from "@/i18n/routing";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import PageHero from "@/components/sections/PageHero";
-import { ABSTRACT_OPEN } from "@/lib/registrationGate";
+import { getAbstractGateState } from "@/lib/registrationGate";
 
 // Dynamic imports for the sections
 const AbstractTimeline = dynamic(() => import("@/components/sections/AbstractTimeline"), { ssr: false });
@@ -21,9 +19,11 @@ export default function CallForAbstractsPage() {
   const tg = useTranslations("registrationGate");
 
   const [isCtaDocked, setIsCtaDocked] = useState(false);
+  const [abstractOpen, setAbstractOpen] = useState(true);
 
   React.useEffect(() => {
     document.body.classList.remove("hero-playing");
+    window.requestAnimationFrame(() => setAbstractOpen(getAbstractGateState().open));
   }, []);
 
   useEffect(() => {
@@ -89,7 +89,7 @@ export default function CallForAbstractsPage() {
         className={`cfa-floating-cta ${isCtaDocked ? "absolute" : "fixed"} inset-x-0 z-40 flex justify-center px-3`}
       >
         <div className="cfa-floating-cta-inner flex flex-col items-center">
-          {ABSTRACT_OPEN ? (
+          {abstractOpen ? (
             <Link
               href="/abstract-submission"
               className="cfa-floating-cta-button group relative inline-flex items-center justify-center overflow-hidden rounded-full text-white shadow-2xl transition-all duration-500 hover:scale-[1.03] hover:shadow-[0_0_60px_rgba(0,85,255,0.35)] active:scale-[0.98] cursor-pointer"

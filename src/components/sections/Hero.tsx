@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,7 +10,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { ChevronDown, ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
-import { REGISTRATION_OPEN, ABSTRACT_OPEN } from "@/lib/registrationGate";
+import { REGISTRATION_OPEN, getAbstractGateState } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -59,6 +59,14 @@ export default function Hero() {
   const buttonLabelClass = "relative justify-self-center whitespace-nowrap text-[0.8rem] font-black leading-tight sm:text-base max-md:landscape:text-[0.68rem]";
   const organizerParts = t.raw("organizerParts") as string[];
   const { isAuthenticated } = useAuth();
+  const [abstractOpen, setAbstractOpen] = useState(true);
+
+  useEffect(() => {
+    const rafId = window.requestAnimationFrame(() => {
+      setAbstractOpen(getAbstractGateState().open);
+    });
+    return () => window.cancelAnimationFrame(rafId);
+  }, []);
 
   const heroCompleteRef = useRef<boolean>(false);
 
@@ -570,7 +578,7 @@ export default function Hero() {
                   <span className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}>{tg("registrationNotice")}</span>
                 </div>
               )}
-              {ABSTRACT_OPEN ? (
+              {abstractOpen ? (
                 <Link
                   href="/call-for-abstracts"
                   className={`group relative grid min-h-[64px] grid-cols-[1.75rem_1fr_1.75rem] items-center gap-3 overflow-hidden rounded-full border border-white/85 bg-white px-5 text-center text-[0.8rem] font-black uppercase ${buttonTracking} text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_0_30px_rgba(255,255,255,0.24),0_14px_34px_rgba(0,0,0,0.42)] transition duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:border-white hover:bg-[#f5fbff] hover:shadow-[inset_0_1px_0_rgba(255,255,255,1),0_0_42px_rgba(255,255,255,0.38),0_18px_42px_rgba(0,0,0,0.5)] active:translate-y-0 active:scale-[0.99] sm:min-h-[76px] sm:grid-cols-[2rem_1fr_2rem] sm:gap-4 sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px] max-md:landscape:text-[0.68rem]`}

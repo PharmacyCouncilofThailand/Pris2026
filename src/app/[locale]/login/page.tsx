@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
+import { normalizeLocalizedRedirectPath } from "@/lib/localizedRedirect";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
@@ -39,7 +40,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (isAuthenticated) {
       const urlParams = new URLSearchParams(window.location.search);
-      const redirect = urlParams.get('redirect') || '/';
+      const redirect = normalizeLocalizedRedirectPath(urlParams.get('redirect'));
       router.replace(redirect);
     }
   }, [isAuthenticated, router]);
@@ -156,7 +157,7 @@ export default function LoginPage() {
                 toast.success(tt("loginSuccess"));
                 login(data.user, data.token, rememberMe);
                 const urlParams = new URLSearchParams(window.location.search);
-                const redirect = urlParams.get('redirect') || '/';
+                const redirect = normalizeLocalizedRedirectPath(urlParams.get('redirect'));
                 router.push(redirect);
               } catch {
                 toast.error(tt("networkError"));

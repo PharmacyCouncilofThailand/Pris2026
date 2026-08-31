@@ -8,7 +8,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import PageHero from "@/components/sections/PageHero";
-import { ABSTRACT_OPEN } from "@/lib/registrationGate";
+import { getAbstractGateState } from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -21,6 +21,7 @@ export default function DetailedGuidelines() {
   const tg = useTranslations("registrationGate");
   const tp = useTranslations("abstractPage");
   const locale = useLocale();
+  const abstractOpen = currentDate ? getAbstractGateState(currentDate).open : true;
 
   useEffect(() => {
     // Set current date on the client side to avoid hydration mismatch
@@ -375,7 +376,7 @@ export default function DetailedGuidelines() {
             {t("ctaDesc")}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {ABSTRACT_OPEN ? (
+            {abstractOpen ? (
               <Link
                 href="/abstract-submission"
                 className="bg-blue-600 text-white font-bold px-8 py-4 rounded-full uppercase tracking-widest text-sm hover:bg-blue-700 transition-colors"

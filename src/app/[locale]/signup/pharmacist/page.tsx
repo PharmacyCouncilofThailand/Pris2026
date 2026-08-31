@@ -7,6 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
+import { normalizeLocalizedRedirectPath } from "@/lib/localizedRedirect";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || '';
@@ -177,7 +178,7 @@ export default function PharmacistSignUpPage() {
                 toast.success(tt("accountCreated"));
                 login(data.user, data.token);
                 const urlParams = new URLSearchParams(window.location.search);
-                const redirect = urlParams.get('redirect') || '/';
+                const redirect = normalizeLocalizedRedirectPath(urlParams.get('redirect'));
                 router.push(redirect);
               } catch {
                 toast.error(tt("networkError"));
@@ -222,6 +223,11 @@ export default function PharmacistSignUpPage() {
                 <input
                   type="text"
                   id="licenseNumber"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  onInput={(e) => {
+                    e.currentTarget.value = e.currentTarget.value.replace(/\D/g, "");
+                  }}
                   placeholder={t("licensePlaceholder")}
                   className="w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100"
                   required

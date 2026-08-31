@@ -163,13 +163,10 @@
     "criticalDates": "Special Offer",
     "periodEarly": "Jul 1 – Aug 31, 2026",
     "titleEarly": "Early Bird Registration",
-    "descEarly": "Secure your pass early to guarantee access at the absolute best rate. This is the optimal time to confirm your attendance.",
-    "periodRegular": "Sep 1 – Oct 31, 2026",
+    "descEarly": "Early Bird rate THB 1,250 during the original registration period. Participants who created an account and submitted a PRIS 2026 abstract by Aug 31, 23:59 may keep this rate through Sep 15, 23:59 (Bangkok time).",
+    "periodRegular": "Sep 1 – Oct 30, 2026",
     "titleRegular": "Regular Registration",
-    "descRegular": "Standard registration window. Rates increase to full price during this period.",
-    "periodClosed": "From Oct 16, 2026",
-    "titleClosed": "Late / On-site Registration",
-    "descClosed": "Final registration phase leading up to the event. Passes available at late registration rates.",
+    "descRegular": "Regular rate THB 2,500 applies from Sep 1 for participants who do not qualify for the Early Bird extension. Creating an account before Aug 31 alone is not sufficient; if the first PRIS 2026 abstract is submitted on or after Sep 1, the Regular rate applies. After Sep 15, 23:59 (Bangkok time), all targeted participants use the Regular rate.",
     "feature1Label": "Workshop",
     "feature1Title": "Policy\nWorkshop.",
     "feature1Desc": "Engage in deep discussions and collaborative sessions to shape the future of pharmacy policies and sustainable healthcare practices.",
@@ -179,9 +176,7 @@
     "tiersTitle": "Registration\nTiers",
     "tiersSubtitle": "Select your pass type",
     "tierEarlyLabel": "General • Jul 1 - Aug 31, 2026",
-    "tierRegLabel": "General • Sep 1 - Oct 31, 2026",
-    "tierLate": "Late Registration / On-site",
-    "tierLateLabel": "General • From Oct 16, 2026",
+    "tierRegLabel": "General • Sep 1 - Oct 30, 2026",
     "tierPostGrad": "Post Graduate",
     "tierPostGradLabel": "Master's & Ph.D. Level",
     "tierUnderGrad": "Under Graduate",
@@ -745,7 +740,7 @@
   },
   "registrationGate": {
     "registrationNotice": "Registration opens July 1, 2026",
-    "abstractNotice": "Abstract submission opens July 1, 2026"
+    "abstractNotice": "Abstract submission is closed"
   },
   "committee": {
     "title": "Committee",

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/routing";
 import { 
   Search, 
@@ -19,7 +19,7 @@ import { abstractStatusLabels } from "@/data/abstractData";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
-import { ABSTRACT_OPEN } from "@/lib/registrationGate";
+import { getAbstractGateState } from "@/lib/registrationGate";
 
 // Mock data for the dashboard
 const mockSubmissions = [
@@ -51,10 +51,18 @@ const mockSubmissions = [
 
 export default function AbstractStatus() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [abstractOpen, setAbstractOpen] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("abstractStatus");
   const tg = useTranslations("registrationGate");
   const locale = useLocale();
+
+  useEffect(() => {
+    const rafId = window.requestAnimationFrame(() => {
+      setAbstractOpen(getAbstractGateState().open);
+    });
+    return () => window.cancelAnimationFrame(rafId);
+  }, []);
 
   useGSAP(() => {
     gsap.from(".stat-card", {
@@ -116,7 +124,7 @@ export default function AbstractStatus() {
                 {t("desc")}
               </p>
             </div>
-            {ABSTRACT_OPEN ? (
+            {abstractOpen ? (
               <Link 
                 href="/abstract-submission" 
                 className="px-6 py-3 bg-gold text-black font-bold uppercase tracking-wider text-xs rounded-xl hover:bg-white transition-all shadow-lg shadow-gold/10"

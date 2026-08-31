@@ -30,7 +30,7 @@ export default function RegistrationCTASection() {
 
   const handleBuyTicket = useCallback(() => {
     if (!isAuthenticated || !token) {
-      const redirect = encodeURIComponent(`/${locale}/registration`);
+      const redirect = encodeURIComponent("/registration");
       router.push(`/${locale}/login?redirect=${redirect}`);
       return;
     }

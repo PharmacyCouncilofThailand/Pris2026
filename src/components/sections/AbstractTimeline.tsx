@@ -1,18 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { abstractTimeline } from "@/data/abstractData";
 import { useLocale, useTranslations } from "next-intl";
 
 export default function AbstractTimeline() {
-  const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const tp = useTranslations("abstractPage");
-  
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setCurrentDate(new Date());
-  }, []);
-
   const locale = useLocale();
 
   return (
@@ -35,14 +28,8 @@ export default function AbstractTimeline() {
         {/* Timeline List */}
         <div className="flex flex-col border-t border-slate-200">
           {abstractTimeline.map((item, index) => {
-            let isPastOrCurrent = false;
-            if (currentDate) {
-              const itemDate = new Date(item.date);
-              isPastOrCurrent = currentDate.getTime() >= itemDate.getTime();
-            }
-            
-            // First item gets specific red styling according to the design
-            const isFirstItem = index === 0;
+            // Highlight abstract submission windows (Round 1 and Round 2) in red.
+            const isSubmissionWindow = item.label.startsWith("Abstract Submission");
 
             return (
               <div
@@ -50,13 +37,13 @@ export default function AbstractTimeline() {
                 className="flex flex-col justify-between py-6 md:py-8 border-b border-slate-200 md:flex-row md:items-center transition-colors duration-300 hover:bg-slate-50"
               >
                 <div className="mb-3 md:mb-0 md:w-1/2">
-                  <h3 className={`text-base md:text-lg transition-colors duration-300 ${isFirstItem ? "text-red-600 font-bold" : "text-slate-800 font-medium"}`}>
+                  <h3 className={`text-base md:text-lg transition-colors duration-300 ${isSubmissionWindow ? "text-red-600 font-bold" : "text-slate-800 font-medium"}`}>
                     {locale === "th" && item.labelTh ? item.labelTh : item.label}
                   </h3>
                 </div>
 
                 <div className="md:w-1/2 md:text-right">
-                  <p className={`text-sm md:text-[0.95rem] transition-colors duration-300 ${isFirstItem ? "text-red-500 font-semibold" : "text-slate-400 font-medium"}`}>
+                  <p className={`text-sm md:text-[0.95rem] transition-colors duration-300 ${isSubmissionWindow ? "text-red-500 font-semibold" : "text-slate-400 font-medium"}`}>
                     {locale === "th" && item.dateTh ? item.dateTh : item.date}
                   </p>
                 </div>
