@@ -20,6 +20,14 @@ interface RegistrationInfo {
   regCode: string | null;
 }
 
+interface ReceiptTicketInfo {
+  eventCode: string;
+  eventName: string;
+  regCode: string;
+  ticketName: string;
+  receiptUrl: string | null;
+}
+
 interface StudentEligibilityInfo {
   id: number;
   eventCode: string;
@@ -96,6 +104,8 @@ export default function ProfilePage() {
   const [profileData, setProfileData] = useState(user);
   const [registration, setRegistration] = useState<RegistrationInfo | null>(null);
   const [registrationLoading, setRegistrationLoading] = useState(!!EVENT_CODE);
+  const [receiptTicket, setReceiptTicket] = useState<ReceiptTicketInfo | null>(null);
+  const [receiptLoading, setReceiptLoading] = useState(!!EVENT_CODE);
   const [studentEligibility, setStudentEligibility] = useState<StudentEligibilityInfo | null>(null);
   const [eligibilityLoading, setEligibilityLoading] = useState(false);
   const [eligibilitySubmitting, setEligibilitySubmitting] = useState(false);
@@ -134,6 +144,33 @@ export default function ProfilePage() {
       })
       .catch(() => {})
       .finally(() => setRegistrationLoading(false));
+  }, [token]);
+
+  useEffect(() => {
+    if (!token || !EVENT_CODE) return;
+
+    let cancelled = false;
+    fetch(`${API_URL}/api/payments/my-tickets`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled || !data.success || !Array.isArray(data.data)) return;
+        const currentEventTicket = data.data.find(
+          (ticket: ReceiptTicketInfo) => ticket.eventCode === EVENT_CODE
+        );
+        setReceiptTicket(currentEventTicket ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setReceiptTicket(null);
+      })
+      .finally(() => {
+        if (!cancelled) setReceiptLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [token]);
 
   const fetchStudentEligibility = async () => {
@@ -450,6 +487,128 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
+
+          {!registrationLoading && registration?.isRegistered && (
+            <section className="w-full overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-lg shadow-slate-200/40">
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
+                <div className="p-7 md:p-8 lg:p-9">
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50">
+                        <FileText className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="mb-1.5 text-[10px] font-black uppercase tracking-[2.5px] text-blue-600">
+                          {t("receipt.eyebrow")}
+                        </p>
+                        <h3 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
+                          {t("receipt.title")}
+                        </h3>
+                        <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-500">
+                          {t("receipt.description")}
+                        </p>
+                      </div>
+                    </div>
+
+                    {receiptLoading ? (
+                      <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        {t("receipt.loading")}
+                      </span>
+                    ) : receiptTicket?.receiptUrl ? (
+                      <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-emerald-700">
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {t("receipt.ready")}
+                      </span>
+                    ) : (
+                      <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
+                        <Clock3 className="h-3.5 w-3.5" />
+                        {t("receipt.unavailable")}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
+                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                        {t("receipt.registrationCode")}
+                      </p>
+                      <p className="mt-1.5 truncate font-mono text-sm font-bold tracking-wide text-slate-900">
+                        {receiptTicket?.regCode || memberCode}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
+                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                        {t("receipt.eventName")}
+                      </p>
+                      <p className="mt-1.5 truncate text-sm font-bold text-slate-900">
+                        {receiptTicket?.eventName || "PRIS 2026"}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
+                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                        {t("receipt.ticket")}
+                      </p>
+                      <p className="mt-1.5 truncate text-sm font-bold text-slate-900">
+                        {receiptTicket?.ticketName || "—"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col justify-between border-t border-slate-200 bg-slate-950 p-7 text-white lg:border-l lg:border-t-0 md:p-8">
+                  <div>
+                    <div className="mb-6 flex items-center justify-between">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+                        <FileText className="h-6 w-6 text-white" />
+                      </div>
+                      <span className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-[2px] text-slate-300">
+                        {t("receipt.fileType")}
+                      </span>
+                    </div>
+                    <p className="text-lg font-black tracking-tight">{t("receipt.title")}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                      PRIS 2026 · {receiptTicket?.regCode || memberCode}
+                    </p>
+                  </div>
+
+                  <div className="mt-7">
+                    {receiptLoading ? (
+                      <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-300">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        {t("receipt.loading")}
+                      </div>
+                    ) : receiptTicket?.receiptUrl ? (
+                      <a
+                        href={receiptTicket.receiptUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-950 shadow-lg transition-all hover:bg-blue-50 hover:text-blue-700"
+                      >
+                        <Download className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+                        {t("receipt.download")}
+                      </a>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          disabled
+                          className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-500"
+                        >
+                          <Download className="h-4 w-4" />
+                          {t("receipt.unavailable")}
+                        </button>
+                        <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
+                          {t("receipt.unavailableHint")}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
           {profileData.role === "pharmacist" && EVENT_CODE && (
             <div className="w-full bg-white rounded-[2rem] shadow-lg shadow-slate-200/40 border border-slate-200/70 overflow-hidden">
               <div className="p-7 md:p-8 border-b border-slate-100 flex flex-col lg:flex-row gap-4 lg:items-start lg:justify-between">
