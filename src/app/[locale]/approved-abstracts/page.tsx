@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import {
   Search,
   X,
-  Building2,
   User,
   Tag,
   AlertCircle,
@@ -478,17 +477,6 @@ export default function ApprovedAbstractsPage() {
                               </span>
                               <span className="text-gray-800 font-medium">
                                 {item.submitterName || t("notSpecified")}
-                              </span>
-                            </div>
-
-                            {/* Institution */}
-                            <div className="flex items-center gap-1.5">
-                              <Building2 className="size-3.5 text-blue-500 shrink-0" />
-                              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-400">
-                                {t("institutionField")}:
-                              </span>
-                              <span className="text-gray-800 font-medium">
-                                {item.affiliation || t("notSpecified")}
                               </span>
                             </div>
 
