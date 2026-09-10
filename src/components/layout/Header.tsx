@@ -79,7 +79,7 @@ export default function Header() {
   const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login") || pathname.startsWith("/profile") || pathname.startsWith("/abstracts/confirm");
   const useDarkText = isLightPage && !isScrolled;
 
-  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/forgot-password") || pathname.includes("/reset-password") || pathname.includes("/approved-abstracts")) {
+  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/forgot-password") || pathname.includes("/reset-password")) {
     return null;
   }
 
@@ -172,7 +172,7 @@ export default function Header() {
                           {t(item.labelKey as TranslationKey)}
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>
-                          <ul className="grid w-[250px] gap-2 p-4 bg-white rounded-lg shadow-xl border border-slate-100">
+                          <ul className="grid w-[260px] gap-2 p-4 bg-white rounded-lg shadow-xl border border-slate-100">
                             {item.children?.map((child) => (
                               <li key={child.labelKey}>
                                 <NavigationMenuLink render={
@@ -191,7 +191,7 @@ export default function Header() {
                                     }}
                                   />
                                 }>
-                                  <div className="text-sm font-black leading-none">
+                                  <div className="text-sm font-black leading-none whitespace-nowrap">
                                     {t(child.labelKey as TranslationKey)}
                                   </div>
                                 </NavigationMenuLink>

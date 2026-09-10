@@ -1,308 +1,531 @@
 "use client";
 
-import { useDeferredValue, useState, useEffect, useRef, useCallback, type ReactNode } from "react";
-import { useLocale, useTranslations } from "next-intl";
-import { Building2, ChevronDown, FileText, Search, User } from "lucide-react";
-import { approvedPosterAbstracts, type ApprovedPosterAbstract } from "@/data/approvedPosterAbstracts";
+import { useDeferredValue, useState, useEffect, useMemo } from "react";
+import { useTranslations } from "next-intl";
+import {
+  Search,
+  X,
+  Building2,
+  User,
+  Tag,
+  AlertCircle,
+  RotateCw,
+  FileText,
+  Calendar,
+  Clock,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import PageHero from "@/components/sections/PageHero";
+import {
+  filterAcceptedAbstracts,
+  extractDistinctCategories,
+  type AcceptedAbstract,
+  type DistinctCategory,
+} from "@/lib/acceptedAbstractsFilter";
 
-type PageCopy = {
-  eyebrow: string;
-  title1: string;
-  title2: string;
-  desc: string;
-  searchPlaceholder: string;
-  approvedBadge: string;
-  emptyTitle: string;
-  emptyDesc: string;
-  presenterField: string;
-  institutionField: string;
-  oralPresentation: string;
-  posterPresentation: string;
-  totalResults: string;
-  showMore: string;
-  showLess: string;
-};
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
 export default function ApprovedAbstractsPage() {
-  const locale = useLocale();
   const t = useTranslations("approvedAbstracts");
+
+  // Data fetching state
+  const [abstracts, setAbstracts] = useState<AcceptedAbstract[]>([]);
+  const [eventCategories, setEventCategories] = useState<DistinctCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+
+  // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearchQuery = useDeferredValue(searchQuery);
-  const heroRef = useRef<HTMLElement>(null!);
+  const [selectedType, setSelectedType] = useState<"all" | "oral" | "poster">("all");
+  const [selectedRound, setSelectedRound] = useState<"1" | "2">("1");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   useEffect(() => {
     document.body.classList.remove("hero-playing");
   }, []);
 
-  useGSAP(() => {
-      gsap.from(".hero-line", {
-        yPercent: 110,
-        stagger: 0.12,
-        duration: 1.6,
-        ease: "power4.out",
-        delay: 0.15,
-      });
-      gsap.from(".hero-sub", {
-        opacity: 0,
-        y: 30,
-        duration: 1.2,
-        ease: "power3.out",
-        delay: 0.8,
-      });
-  }, { scope: heroRef });
+  // Fetch accepted abstracts from API
+  useEffect(() => {
+    const controller = new AbortController();
+    setIsLoading(true);
+    setErrorMessage(null);
 
-  const copy: PageCopy = {
-    eyebrow: t("eyebrow"),
-    title1: t("title1"),
-    title2: t("title2"),
-    desc: t("desc"),
-    searchPlaceholder: t("searchPlaceholder"),
-    approvedBadge: t("approvedBadge"),
-    emptyTitle: t("emptyTitle"),
-    emptyDesc: t("emptyDesc"),
-    presenterField: t("presenterField"),
-    institutionField: t("institutionField"),
-    oralPresentation: t("oralPresentation"),
-    posterPresentation: t("posterPresentation"),
-    totalResults: t("totalResults"),
-    showMore: t("showMore"),
-    showLess: t("showLess"),
+    async function fetchAccepted() {
+      try {
+        const response = await fetch(`${API_URL}/api/abstracts/accepted`, {
+          signal: controller.signal,
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP_${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!data || !Array.isArray(data.abstracts)) {
+          throw new Error("MALFORMED_RESPONSE");
+        }
+
+        setAbstracts(data.abstracts);
+        if (Array.isArray(data.categories) && data.categories.length > 0) {
+          setEventCategories(data.categories);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
+        setErrorMessage(t("errorDesc"));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchAccepted();
+
+    return () => {
+      controller.abort();
+    };
+  }, [fetchTrigger, t]);
+
+  // Categories for the filter dropdown (all event categories if available, fallback to distinct categories)
+  const categories = useMemo(() => {
+    if (eventCategories.length > 0) {
+      return eventCategories;
+    }
+    return extractDistinctCategories(abstracts);
+  }, [eventCategories, abstracts]);
+
+  // Apply filters locally
+  const filteredAbstracts = useMemo(() => {
+    return filterAcceptedAbstracts(abstracts, {
+      search: deferredSearchQuery,
+      presentationType: selectedType,
+      round: selectedRound,
+      categoryId: selectedCategory,
+    });
+  }, [abstracts, deferredSearchQuery, selectedType, selectedRound, selectedCategory]);
+
+  const handleResetFilters = () => {
+    setSearchQuery("");
+    setSelectedType("all");
+    setSelectedRound("1");
+    setSelectedCategory("all");
   };
 
-  const normalizedQuery = deferredSearchQuery.trim().toLowerCase();
-  const filteredPosters = approvedPosterAbstracts.filter((poster) => {
-    if (!normalizedQuery) return true;
-
-    return [poster.id, poster.title, poster.presenter, poster.affiliation, poster.presentationType]
-      .join(" ")
-      .toLowerCase()
-      .includes(normalizedQuery);
-  });
-
   return (
-    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 font-sans">
-      
-      {/* ══════ COMPACT HERO — optimised for 16:9 kiosk ══════ */}
-      <section
-        ref={heroRef}
-        className="relative px-4 pt-8 pb-6 flex flex-col items-center text-center overflow-visible
-                   sm:px-6 sm:pt-12 sm:pb-8
-                   md:px-12 md:pt-16 md:pb-10"
-      >
-        {/* decorative bg glows */}
-        <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-blue-500/[0.04] rounded-full blur-[120px] pointer-events-none sm:w-[700px] sm:h-[700px] sm:blur-[180px]" />
-        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-orange-500/[0.04] rounded-full blur-[100px] pointer-events-none sm:w-[500px] sm:h-[500px] sm:blur-[150px]" />
+    <main className="relative min-h-screen overflow-hidden bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 font-sans">
+      {/* ══════ STANDARD PRIS 2026 PAGE HERO ══════ */}
+      <PageHero
+        eyebrow={t("eyebrow")}
+        eyebrowSub={t("heroSub")}
+        title1={t("title1")}
+        title2={t("title2")}
+        subtitle={t("desc")}
+      />
 
-        <div className="max-w-7xl mx-auto w-full relative z-10 text-center flex flex-col items-center">
-          <div className="hero-sub flex items-center gap-2 mb-3 sm:gap-4 sm:mb-5">
-            <span className="h-px w-6 bg-blue-600 sm:w-12" />
-            <span className="text-[8px] font-semibold tracking-[0.2em] uppercase text-blue-600 sm:text-[10px] sm:tracking-[0.3em]">PRIS 2026</span>
-            <span className="text-gray-400 text-[8px] tracking-[0.18em] uppercase sm:text-[10px] sm:tracking-widest">— {copy.eyebrow}</span>
+      {/* ══════ CONTENT CONTAINER ══════ */}
+      <section className="relative px-4 sm:px-6 md:px-12 pb-24 md:pb-32">
+        <div className="max-w-[1400px] mx-auto">
+          {/* ── Search & Filter Bar ── */}
+          <div className="relative z-20 mb-6 rounded-2xl border border-gray-200/80 bg-white p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+            {/* Search Input */}
+            <div className="relative mb-4">
+              <label htmlFor="abstract-search" className="sr-only">
+                {t("searchLabel")}
+              </label>
+              <div className="relative w-full">
+                <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 size-4 text-gray-400 sm:size-5" />
+                <input
+                  id="abstract-search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t("searchPlaceholder")}
+                  className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-xl pl-11 pr-11 text-sm md:text-base font-medium text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
+                    aria-label={t("clearSearch")}
+                  >
+                    <X className="size-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Filter Row: Type Buttons, Round Buttons, and Category Dropdown */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-1">
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Presentation Type Buttons */}
+                <div
+                  className="flex items-center gap-1.5"
+                  role="group"
+                  aria-label={t("filterType")}
+                >
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-1 hidden sm:inline-block">
+                    {t("filterType")}:
+                  </span>
+                  {(
+                    [
+                      { key: "all", label: t("filterAll") },
+                      { key: "oral", label: t("filterOral") },
+                      { key: "poster", label: t("filterPoster") },
+                    ] as const
+                  ).map((typeItem) => {
+                    const isSelected = selectedType === typeItem.key;
+                    return (
+                      <button
+                        key={typeItem.key}
+                        type="button"
+                        onClick={() => setSelectedType(typeItem.key)}
+                        aria-pressed={isSelected}
+                        className={cn(
+                          "h-9 px-3.5 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all cursor-pointer",
+                          isSelected
+                            ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20"
+                            : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300",
+                        )}
+                      >
+                        {typeItem.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <span className="hidden sm:inline-block text-gray-300">|</span>
+
+                {/* Round Filter Buttons (Round 1 & Round 2 only) */}
+                <div
+                  className="flex items-center gap-1.5"
+                  role="group"
+                  aria-label={t("filterRound")}
+                >
+                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider mr-1 hidden sm:inline-block">
+                    {t("filterRound")}:
+                  </span>
+                  {(
+                    [
+                      { key: "1" as const, label: t("filterRound1") },
+                      { key: "2" as const, label: t("filterRound2") },
+                    ] as const
+                  ).map((roundItem) => {
+                    const isSelected = selectedRound === roundItem.key;
+                    return (
+                      <button
+                        key={roundItem.key}
+                        type="button"
+                        onClick={() => setSelectedRound(roundItem.key)}
+                        aria-pressed={isSelected}
+                        className={cn(
+                          "h-9 px-3.5 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all cursor-pointer",
+                          isSelected
+                            ? roundItem.key === "1"
+                              ? "bg-emerald-600 text-white border-emerald-600 shadow-sm shadow-emerald-500/20"
+                              : "bg-purple-600 text-white border-purple-600 shadow-sm shadow-purple-500/20"
+                            : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300",
+                        )}
+                      >
+                        {roundItem.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Category Dropdown */}
+              <div className="flex items-center gap-2.5">
+                <label
+                  htmlFor="category-select"
+                  className="text-xs font-semibold text-gray-500 uppercase tracking-wider shrink-0"
+                >
+                  {t("filterCategory")}:
+                </label>
+                <select
+                  id="category-select"
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="h-9 min-w-[200px] max-w-full sm:max-w-xs bg-white border border-gray-200 rounded-xl px-3 text-xs sm:text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 cursor-pointer"
+                >
+                  <option value="all">{t("allCategories")}</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Active Round Schedule & Submission Period Details */}
+            <div
+              className={cn(
+                "mt-4 pt-3.5 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs transition-colors",
+                selectedRound === "1"
+                  ? "border-emerald-100 text-emerald-950"
+                  : "border-purple-100 text-purple-950",
+              )}
+            >
+              <div className="flex items-center gap-2.5">
+                <span
+                  className={cn(
+                    "inline-flex items-center justify-center size-6 rounded-lg shrink-0",
+                    selectedRound === "1"
+                      ? "bg-emerald-100/90 text-emerald-700"
+                      : "bg-purple-100/90 text-purple-700",
+                  )}
+                >
+                  <Calendar className="size-3.5" />
+                </span>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span className="font-bold text-gray-900">
+                    {selectedRound === "1" ? t("filterRound1") : t("filterRound2")}:
+                  </span>
+                  <span className="text-gray-600 font-medium">
+                    {selectedRound === "1" ? t("round1InfoText") : t("round2InfoText")}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border",
+                    selectedRound === "1"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : "bg-purple-50 text-purple-700 border-purple-200",
+                  )}
+                >
+                  <Clock className="size-3 shrink-0" />
+                  <span>
+                    {selectedRound === "1" ? t("round1Announcement") : t("round2Announcement")}
+                  </span>
+                </span>
+              </div>
+            </div>
           </div>
 
-          <h1 className="px-1 text-[2rem] font-black uppercase tracking-tighter leading-tight text-gray-900
-                         sm:text-5xl md:text-7xl lg:text-[6rem]">
-            <div className="overflow-hidden py-2 -my-2 md:pl-2">
-              <span className="block hero-line pr-[0.15em]">{copy.title1}</span>
+          {/* ── Results Count & Reset Bar ── */}
+          {!isLoading && !errorMessage && (
+            <div className="mb-4 flex items-center justify-between px-1 text-xs sm:text-sm font-medium text-gray-500">
+              <p aria-live="polite">
+                {t("resultsCount", {
+                  count: filteredAbstracts.length,
+                  total: abstracts.length,
+                })}
+              </p>
+              {(searchQuery || selectedType !== "all" || selectedRound !== "1" || selectedCategory !== "all") && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-blue-600 hover:text-blue-800 underline font-semibold cursor-pointer"
+                >
+                  {t("resetFilters")}
+                </button>
+              )}
             </div>
-            <div className="overflow-hidden py-2 -my-2 md:pl-2">
-              <span className="block hero-line text-blue-600 pb-2 pr-[0.15em]">
-                {copy.title2}
-              </span>
-            </div>
-          </h1>
-          
-          <p className="hero-sub mt-2 max-w-xl text-xs text-gray-500 font-light leading-relaxed px-2
-                        sm:mt-4 sm:max-w-2xl sm:text-sm sm:px-0 md:text-base">
-            {copy.desc}
-          </p>
-        </div>
-      </section>
-
-      {/* ══════ SEARCH & GRID — 16:9 optimised layout ══════ */}
-      <section className="relative px-4 pb-12 sm:px-6 sm:pb-16 md:pb-20">
-        <div className="max-w-[1600px] mx-auto">
-          
-          {/* Search Bar */}
-          <div className="relative z-20 mb-4 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]
-                         sm:mb-8 sm:rounded-2xl">
-            <div className="relative w-full">
-              <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-gray-400 sm:left-6 sm:size-5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder={copy.searchPlaceholder}
-                className="w-full bg-white py-3 pl-11 pr-4 text-sm font-medium text-gray-700 outline-none transition placeholder:text-gray-400 focus:bg-gray-50/50
-                          sm:py-4 sm:pl-14 sm:pr-6 sm:text-base"
-              />
-            </div>
-          </div>
-
-          {/* Results count */}
-          {normalizedQuery && (
-            <p className="mb-3 text-xs text-gray-400 font-medium tracking-wide sm:mb-4 sm:text-sm">
-              {filteredPosters.length} {copy.totalResults}
-            </p>
           )}
 
-          {filteredPosters.length > 0 ? (
-            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 sm:gap-4">
-              {filteredPosters.map((poster, index) => (
-                <PosterCard
-                  key={poster.id}
-                  poster={poster}
-                  index={index}
-                  copy={copy}
-                />
-              ))}
+          {/* ── Data States & Table ── */}
+          {isLoading ? (
+            <div className="py-24 text-center" aria-busy="true">
+              <div className="inline-block size-9 animate-spin rounded-full border-3 border-blue-600 border-t-transparent mb-4" />
+              <p className="text-sm font-medium text-gray-500">{t("loading")}</p>
             </div>
-          ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-gray-200 bg-gray-50/80 px-5 py-12 text-center
-                           sm:mt-10 sm:rounded-3xl sm:px-6 sm:py-20">
-              <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-full bg-white text-gray-400 shadow-[0_4px_20px_rgb(0,0,0,0.03)]
-                             sm:mb-6 sm:size-16">
-                <FileText className="size-6 sm:size-7" />
+          ) : errorMessage ? (
+            <div className="rounded-2xl border border-red-200 bg-red-50/60 p-8 text-center sm:p-12">
+              <AlertCircle className="size-11 text-red-500 mx-auto mb-3" />
+              <h2 className="text-lg font-bold text-gray-900">{t("errorTitle")}</h2>
+              <p className="mt-1.5 text-sm text-gray-600 max-w-md mx-auto">{errorMessage}</p>
+              <button
+                type="button"
+                onClick={() => setFetchTrigger((prev) => prev + 1)}
+                className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-blue-700 transition cursor-pointer shadow-md shadow-blue-500/20"
+              >
+                <RotateCw className="size-4" />
+                <span>{t("retry")}</span>
+              </button>
+            </div>
+          ) : abstracts.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/80 p-12 text-center sm:p-20">
+              <FileText className="size-12 text-gray-400 mx-auto mb-4" />
+              <h2 className="text-xl font-bold text-gray-900">{t("zeroRecordsTitle")}</h2>
+              <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">{t("zeroRecordsDesc")}</p>
+            </div>
+          ) : filteredAbstracts.length === 0 ? (
+            selectedRound === "2" && !searchQuery && selectedType === "all" && selectedCategory === "all" ? (
+              <div className="rounded-2xl border border-dashed border-purple-200 bg-purple-50/40 p-10 text-center sm:p-16">
+                <div className="inline-flex items-center justify-center size-14 rounded-2xl bg-purple-100 text-purple-600 mx-auto mb-3.5 shadow-xs">
+                  <Clock className="size-7" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">{t("round2EmptyTitle")}</h2>
+                <p className="mt-2 text-sm text-gray-600 max-w-lg mx-auto leading-relaxed">{t("round2EmptyDesc")}</p>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRound("1")}
+                  className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-emerald-700 transition cursor-pointer shadow-sm shadow-emerald-500/20"
+                >
+                  <span>{t("viewRound1Button")}</span>
+                </button>
               </div>
-              <h2 className="text-xl font-black tracking-tight text-gray-900 sm:text-2xl">{copy.emptyTitle}</h2>
-              <p className="mx-auto mt-3 max-w-xl text-sm text-gray-500 sm:mt-4 sm:text-base">
-                {copy.emptyDesc}
-              </p>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50/80 p-10 text-center sm:p-16">
+                <Search className="size-10 text-gray-400 mx-auto mb-3" />
+                <h2 className="text-lg font-bold text-gray-900">{t("emptyTitle")}</h2>
+                <p className="mt-2 text-sm text-gray-500 max-w-md mx-auto">{t("emptyDesc")}</p>
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition cursor-pointer"
+                >
+                  {t("resetFilters")}
+                </button>
+              </div>
+            )
+          ) : (
+            /* ── Table / Editorial List ── */
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
+              {/* Desktop Table Header */}
+              <div className="hidden lg:flex items-center px-6 py-3.5 bg-gray-50/90 border-b border-gray-200 text-xs font-bold uppercase tracking-wider text-gray-500">
+                <div className="w-52 shrink-0">{t("trackingIdCol")}</div>
+                <div className="flex-1 px-4">{t("researchTitleCol")}</div>
+                <div className="w-32 text-right shrink-0">{t("presentationCol")}</div>
+              </div>
+
+              {/* Table Rows */}
+              <ul className="divide-y divide-gray-100" role="list">
+                {filteredAbstracts.map((item) => {
+                  const isOral = item.presentationType.toLowerCase() === "oral";
+                  const itemRound = item.round ?? 1;
+
+                  return (
+                    <li
+                      key={item.id}
+                      className="px-5 sm:px-6 py-5 sm:py-6 hover:bg-blue-50/20 transition-colors duration-150"
+                    >
+                      <article className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 lg:gap-6">
+                        {/* Mobile Top Row: Tracking ID + Round + Presentation Badge */}
+                        <div className="flex lg:hidden items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-mono text-xs font-bold tracking-wider text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md border border-blue-100">
+                              {item.trackingId || t("notAssigned")}
+                            </span>
+                            <span
+                              className={cn(
+                                "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                                itemRound === 1
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : "bg-purple-50 text-purple-700 border-purple-200",
+                              )}
+                            >
+                              {itemRound === 1 ? t("round1Badge") : t("round2Badge")}
+                            </span>
+                          </div>
+                          <span
+                            className={cn(
+                              "inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs",
+                              isOral
+                                ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white"
+                                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
+                            )}
+                          >
+                            {isOral ? t("oralPresentation") : t("posterPresentation")}
+                          </span>
+                        </div>
+
+                        {/* Desktop Col 1: Tracking ID & Round Badge */}
+                        <div className="hidden lg:block w-52 shrink-0 pt-0.5">
+                          <div className="flex flex-col items-start gap-1.5">
+                            {item.trackingId ? (
+                              <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md border border-blue-100 inline-block">
+                                {item.trackingId}
+                              </span>
+                            ) : (
+                              <span className="text-xs italic text-gray-400">
+                                {t("notAssigned")}
+                              </span>
+                            )}
+                            <span
+                              className={cn(
+                                "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                                itemRound === 1
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                  : "bg-purple-50 text-purple-700 border-purple-200",
+                              )}
+                            >
+                              {itemRound === 1 ? t("round1Badge") : t("round2Badge")}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Col 2: Research Title & Metadata */}
+                        <div className="flex-1 lg:px-4 min-w-0">
+                          <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-snug break-words">
+                            {item.title}
+                          </h2>
+
+                          {/* Metadata row */}
+                          <div className="mt-2.5 flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-gray-600">
+                            {/* Submitter */}
+                            <div className="flex items-center gap-1.5">
+                              <User className="size-3.5 text-blue-500 shrink-0" />
+                              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-400">
+                                {t("submitterField")}:
+                              </span>
+                              <span className="text-gray-800 font-medium">
+                                {item.submitterName || t("notSpecified")}
+                              </span>
+                            </div>
+
+                            {/* Institution */}
+                            <div className="flex items-center gap-1.5">
+                              <Building2 className="size-3.5 text-blue-500 shrink-0" />
+                              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-400">
+                                {t("institutionField")}:
+                              </span>
+                              <span className="text-gray-800 font-medium">
+                                {item.affiliation || t("notSpecified")}
+                              </span>
+                            </div>
+
+                            {/* Category */}
+                            {item.categoryName && (
+                              <div className="flex items-center gap-1.5">
+                                <Tag className="size-3.5 text-blue-500 shrink-0" />
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-100/80 text-gray-700 border border-gray-200/60">
+                                  {item.categoryName}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Desktop Col 3: Presentation Badge */}
+                        <div className="hidden lg:flex w-32 shrink-0 justify-end pt-0.5">
+                          <span
+                            className={cn(
+                              "inline-flex items-center justify-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs",
+                              isOral
+                                ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white"
+                                : "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
+                            )}
+                          >
+                            {isOral ? t("oralPresentation") : t("posterPresentation")}
+                          </span>
+                        </div>
+                      </article>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           )}
         </div>
       </section>
     </main>
-  );
-}
-
-/* ══════════════════════════════════════════════════════
-   POSTER CARD — with 2-line title clamp + expand dropdown
-   ══════════════════════════════════════════════════════ */
-function PosterCard({
-  poster,
-  index,
-  copy,
-}: {
-  poster: ApprovedPosterAbstract;
-  index: number;
-  copy: PageCopy;
-}) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isClamped, setIsClamped] = useState(false);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-
-  // Detect if the title text overflows 2 lines
-  const checkClamp = useCallback(() => {
-    const el = titleRef.current;
-    if (!el) return;
-    // scrollHeight > clientHeight means content is clamped
-    setIsClamped(el.scrollHeight > el.clientHeight + 2);
-  }, []);
-
-  useEffect(() => {
-    checkClamp();
-    window.addEventListener("resize", checkClamp);
-    return () => window.removeEventListener("resize", checkClamp);
-  }, [checkClamp]);
-
-  return (
-    <article
-      className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-300
-                 sm:rounded-2xl sm:p-5
-                 hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] hover:border-blue-200"
-    >
-      {/* Type Marker (Oral vs Poster) */}
-      <div 
-        className={cn(
-          "absolute top-0 right-0 z-10 rounded-bl-lg px-2.5 py-1 text-[7px] font-bold uppercase tracking-[0.15em] shadow-sm transition-colors",
-          "sm:rounded-bl-xl sm:px-3.5 sm:py-1.5 sm:text-[9px] sm:tracking-[0.2em]",
-          poster.presentationType === "Oral" 
-            ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white" 
-            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-        )}
-      >
-        {poster.presentationType === "Oral" ? copy.oralPresentation : copy.posterPresentation}
-      </div>
-
-      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-blue-500 to-orange-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      
-      {/* Background number */}
-      <div className="pointer-events-none absolute bottom-2 right-3 text-[2rem] font-black tracking-tighter leading-none text-gray-50/80 group-hover:text-blue-50 transition-colors duration-300
-                     sm:bottom-3 sm:right-4 sm:text-[3.5rem]">
-        {String(index + 1).padStart(2, "0")}
-      </div>
-
-      <div className="relative z-10">
-        {/* Badge row */}
-        <div className="mb-1 flex flex-wrap items-center gap-2 pr-14 sm:mb-1.5 sm:gap-3 sm:pr-20">
-          <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-gray-600
-                          sm:px-2.5 sm:text-[9px]">
-            {copy.approvedBadge}
-          </span>
-          <p className="font-mono text-[9px] font-semibold tracking-widest text-blue-600 sm:text-[10px]">{poster.id}</p>
-        </div>
-
-        {/* Title — clamped to 2 lines */}
-        <h2
-          ref={titleRef}
-          className={cn(
-            "mt-2 text-sm font-bold leading-snug tracking-tight text-gray-900 transition-all duration-300",
-            "sm:mt-3 sm:text-base",
-            !isExpanded && "line-clamp-2"
-          )}
-        >
-          {poster.title}
-        </h2>
-
-        {/* Expand / Collapse toggle — only shows when title overflows */}
-        {(isClamped || isExpanded) && (
-          <button
-            onClick={() => setIsExpanded((prev) => !prev)}
-            className="mt-1 flex items-center gap-1 text-[10px] font-semibold text-blue-500 hover:text-blue-700 transition-colors 
-                       sm:text-xs sm:mt-1.5"
-          >
-            <span>{isExpanded ? copy.showLess : copy.showMore}</span>
-            <ChevronDown className={cn("size-3 transition-transform duration-200 sm:size-3.5", isExpanded && "rotate-180")} />
-          </button>
-        )}
-
-        {/* Info rows */}
-        <div className="mt-3 grid gap-2 border-t border-gray-100 pt-2.5
-                       sm:gap-3 sm:grid-cols-2 sm:pt-3 sm:mt-4">
-          <InfoRow icon={<User className="size-3 sm:size-3.5" />} label={copy.presenterField} value={poster.presenter} />
-          <InfoRow
-            icon={<Building2 className="size-3 sm:size-3.5" />}
-            label={copy.institutionField}
-            value={poster.affiliation}
-          />
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function InfoRow({
-  icon,
-  label,
-  value,
-  className,
-}: {
-  icon: ReactNode;
-  label: string;
-  value: string;
-  className?: string;
-}) {
-  return (
-    <div className={cn("flex flex-col gap-0.5", className)}>
-      <div className="flex items-center gap-1.5">
-        <div className="text-blue-400">{icon}</div>
-        <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-gray-400 sm:text-[9px] sm:tracking-[0.2em]">{label}</p>
-      </div>
-      <p className="pl-4 text-[11px] font-medium leading-relaxed text-gray-800 sm:pl-5 sm:text-xs">{value}</p>
-    </div>
   );
 }
