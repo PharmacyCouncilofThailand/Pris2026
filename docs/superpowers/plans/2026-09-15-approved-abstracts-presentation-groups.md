@@ -30,7 +30,7 @@
 - Consumes: `filteredAbstracts`, `selectedType`, existing translated presentation labels, and existing row markup
 - Produces: a grouped list only when `selectedType === "all"`; a flat list with unchanged row markup for a specific type
 
-- [ ] **Step 1: Define the fixed group order and shared presentation labels**
+- [x] **Step 1: Define the fixed group order and shared presentation labels**
 
 Add a typed order constant inside the page module and a translated label map inside the component:
 
@@ -50,11 +50,11 @@ const presentationLabels = {
 
 Use `presentationLabels[item.presentationType]` for the existing row badge so the group heading and row badge always use the same bilingual copy.
 
-- [ ] **Step 2: Extract the existing abstract row into a reusable renderer**
+- [x] **Step 2: Extract the existing abstract row into a reusable renderer**
 
 Move the current `filteredAbstracts.map` row body into a local `renderAbstractRow(item)` function without changing its fields, keys, mobile layout, desktop layout, or presentation badge colors. The function must continue to return the existing `<li key={item.id}>` and preserve `item.sequence ?? item.id`, tracking ID, title, submitter, category, round badge, and translated presentation label.
 
-- [ ] **Step 3: Add group headers without changing filtering**
+- [x] **Step 3: Add group headers without changing filtering**
 
 Replace the single flat map inside the existing results `<ul>` with this behavior:
 
@@ -84,7 +84,7 @@ Replace the single flat map inside the existing results `<ul>` with this behavio
 
 The group header must be a full-width list item with a 4px left accent, a light tinted background, and responsive padding. Use orange for `oral`, emerald for `highlighted-poster`, and blue for `poster`. The header must contain a semantic `<h3>`, keep the exact translated presentation label, and allow the label to wrap naturally on small screens.
 
-- [ ] **Step 4: Verify the focused behavior**
+- [x] **Step 4: Verify the focused behavior**
 
 Run:
 
@@ -104,11 +104,11 @@ Use the running local app to verify:
 4. `/en/approved-abstracts`: headers use the English translations.
 5. Viewport `331 × 802`: headers and rows remain within the viewport; `document.documentElement.scrollWidth === window.innerWidth`.
 
-- [ ] **Step 5: Run the production build**
+- [x] **Step 5: Run the production build**
 
 Run `npm run build` and expect the Next.js production build to complete successfully. A network permission may be required for the existing Google Fonts fetch; this does not change the feature scope.
 
-- [ ] **Step 6: Review and commit**
+- [x] **Step 6: Review and commit**
 
 Run `git diff --check` and `git status --short`, then commit only the page change:
 
