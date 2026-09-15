@@ -63,9 +63,9 @@ export default function ApprovedAbstractsPage() {
       <section className="relative px-4 sm:px-6 md:px-12 pb-24 md:pb-32">
         <div className="max-w-[1400px] mx-auto">
 
-          <div className="relative z-20 mb-6 rounded-2xl border border-gray-200/80 bg-white p-4 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+          <div className="relative z-20 mb-6 overflow-hidden rounded-[1.35rem] border border-gray-200/80 bg-white p-3.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:rounded-2xl sm:p-6">
 
-            <div className="relative mb-4">
+            <div className="relative mb-5 sm:mb-4">
               <label htmlFor="abstract-search" className="sr-only">
                 {t("searchLabel")}
               </label>
@@ -77,7 +77,7 @@ export default function ApprovedAbstractsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t("searchPlaceholder")}
-                  className="w-full h-12 bg-gray-50/50 border border-gray-200 rounded-xl pl-11 pr-11 text-sm md:text-base font-medium text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition"
+                  className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-11 pr-11 text-sm font-medium text-gray-900 placeholder:text-gray-400 transition focus:border-blue-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 sm:h-12 md:text-base"
                 />
                 {searchQuery && (
                   <button
@@ -92,11 +92,16 @@ export default function ApprovedAbstractsPage() {
               </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-1">
-              <div className="flex flex-wrap items-center gap-3">
-
+            <div className="flex flex-col gap-5 pt-0 lg:flex-row lg:items-end lg:justify-between lg:gap-6">
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 flex items-center gap-2 lg:hidden">
+                  <span className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-400">
+                    {t("filterType")}
+                  </span>
+                  <span aria-hidden="true" className="h-px flex-1 bg-gray-100" />
+                </div>
                 <div
-                  className="flex items-center gap-1.5"
+                  className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-1.5"
                   role="group"
                   aria-label={t("filterType")}
                 >
@@ -119,7 +124,7 @@ export default function ApprovedAbstractsPage() {
                         onClick={() => setSelectedType(typeItem.key)}
                         aria-pressed={isSelected}
                         className={cn(
-                          "h-9 px-3.5 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all cursor-pointer",
+                          "h-auto min-h-10 w-full px-2.5 py-2 text-[10px] font-black leading-tight tracking-[0.08em] rounded-xl border transition-all cursor-pointer whitespace-normal sm:h-9 sm:min-h-0 sm:w-auto sm:px-3.5 sm:py-0 sm:text-xs sm:leading-normal sm:tracking-wider sm:whitespace-nowrap",
                           isSelected
                             ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/20"
                             : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50 hover:border-gray-300",
@@ -130,11 +135,19 @@ export default function ApprovedAbstractsPage() {
                     );
                   })}
                 </div>
+              </div>
 
-                <span className="hidden sm:inline-block text-gray-300">|</span>
+              <span aria-hidden="true" className="hidden lg:inline-block text-gray-200">|</span>
 
+              <div className="min-w-0 flex-1 lg:flex-none">
+                <div className="mb-2 flex items-center gap-2 lg:hidden">
+                  <span className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-400">
+                    {t("filterRound")}
+                  </span>
+                  <span aria-hidden="true" className="h-px flex-1 bg-gray-100" />
+                </div>
                 <div
-                  className="flex items-center gap-1.5"
+                  className="grid w-full grid-cols-2 gap-2 sm:flex sm:items-center sm:gap-1.5"
                   role="group"
                   aria-label={t("filterRound")}
                 >
@@ -155,7 +168,7 @@ export default function ApprovedAbstractsPage() {
                         onClick={() => setSelectedRound(roundItem.key)}
                         aria-pressed={isSelected}
                         className={cn(
-                          "h-9 px-3.5 text-xs font-bold uppercase tracking-wider rounded-xl border transition-all cursor-pointer",
+                          "h-10 w-full px-3 text-[10px] font-black uppercase tracking-[0.08em] rounded-xl border transition-all cursor-pointer sm:h-9 sm:w-auto sm:px-3.5 sm:text-xs sm:tracking-wider",
                           isSelected
                             ? roundItem.key === "1"
                               ? "bg-emerald-600 text-white border-emerald-600 shadow-sm shadow-emerald-500/20"
@@ -170,10 +183,10 @@ export default function ApprovedAbstractsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex w-full flex-col gap-2 sm:flex-row sm:items-center sm:gap-2.5 lg:w-auto lg:min-w-[320px]">
                 <label
                   htmlFor="category-select"
-                  className="text-xs font-semibold text-gray-500 uppercase tracking-wider shrink-0"
+                  className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-400 sm:text-xs sm:font-semibold sm:tracking-wider sm:text-gray-500"
                 >
                   {t("filterCategory")}:
                 </label>
@@ -181,7 +194,7 @@ export default function ApprovedAbstractsPage() {
                   id="category-select"
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="h-9 min-w-[200px] max-w-full sm:max-w-xs bg-white border border-gray-200 rounded-xl px-3 text-xs sm:text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 cursor-pointer"
+                  className="h-10 w-full min-w-0 max-w-none bg-white border border-gray-200 rounded-xl px-3 text-xs sm:h-9 sm:max-w-xs sm:text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 cursor-pointer"
                 >
                   <option value="all">{t("allCategories")}</option>
                   {categories.map((cat) => (
@@ -195,13 +208,13 @@ export default function ApprovedAbstractsPage() {
 
             <div
               className={cn(
-                "mt-4 pt-3.5 border-t flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs transition-colors",
+                "mt-5 flex flex-col gap-3 border-t pt-4 text-xs transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-2.5",
                 selectedRound === "1"
                   ? "border-emerald-100 text-emerald-950"
                   : "border-purple-100 text-purple-950",
               )}
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex min-w-0 items-start gap-2.5">
                 <span
                   className={cn(
                     "inline-flex items-center justify-center size-6 rounded-lg shrink-0",
@@ -212,7 +225,7 @@ export default function ApprovedAbstractsPage() {
                 >
                   <Calendar className="size-3.5" />
                 </span>
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-0.5 leading-relaxed">
                   <span className="font-bold text-gray-900">
                     {selectedRound === "1" ? t("filterRound1") : t("filterRound2")}:
                   </span>
@@ -222,7 +235,7 @@ export default function ApprovedAbstractsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+              <div className="flex shrink-0 items-center gap-2 self-start sm:self-auto">
                 <span
                   className={cn(
                     "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border",
