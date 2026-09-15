@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { Fragment, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Search, X, User, Tag, Calendar, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,7 +9,14 @@ import { approvedRound1Abstracts } from "@/data/approvedRound1Abstracts";
 import {
   extractDistinctCategories,
   filterAcceptedAbstracts,
+  type AcceptedAbstract,
 } from "@/lib/acceptedAbstractsFilter";
+
+const presentationGroupOrder = [
+  "oral",
+  "highlighted-poster",
+  "poster",
+] as const;
 
 export default function ApprovedAbstractsPage() {
   const t = useTranslations("approvedAbstracts");
@@ -47,6 +54,153 @@ export default function ApprovedAbstractsPage() {
     setSelectedType("all");
     setSelectedRound("1");
     setSelectedCategory("all");
+  };
+
+  const presentationLabels = {
+    oral: t("oralPresentation"),
+    "highlighted-poster": t("highlightedPosterPresentation"),
+    poster: t("posterPresentation"),
+  } as const;
+
+  const presentationGroupStyles = {
+    oral: {
+      container: "border-l-orange-500 bg-orange-50/70",
+      marker: "bg-orange-500",
+      label: "text-orange-700",
+    },
+    "highlighted-poster": {
+      container: "border-l-emerald-500 bg-emerald-50/70",
+      marker: "bg-emerald-500",
+      label: "text-emerald-700",
+    },
+    poster: {
+      container: "border-l-blue-500 bg-blue-50/70",
+      marker: "bg-blue-500",
+      label: "text-blue-700",
+    },
+  } as const;
+
+  const renderAbstractRow = (item: AcceptedAbstract) => {
+    const presentationLabel = presentationLabels[item.presentationType];
+    const isOral = item.presentationType === "oral";
+    const isHighlightedPoster = item.presentationType === "highlighted-poster";
+    const itemRound = item.round ?? 1;
+
+    return (
+      <li
+        key={item.id}
+        className="px-5 sm:px-6 py-5 sm:py-6 hover:bg-blue-50/20 transition-colors duration-150"
+      >
+        <article className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 lg:gap-6">
+
+          <div className="flex lg:hidden items-center justify-between gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="inline-flex items-center justify-center min-w-7 px-2 py-1 rounded-md border border-gray-200 bg-gray-50 text-xs font-bold text-gray-600">
+                {item.sequence ?? item.id}
+              </span>
+              <span className="font-mono text-xs font-bold tracking-wider text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md border border-blue-100">
+                {item.trackingId || t("notAssigned")}
+              </span>
+              <span
+                className={cn(
+                  "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                  itemRound === 1
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-purple-50 text-purple-700 border-purple-200",
+                )}
+              >
+                {itemRound === 1 ? t("round1Badge") : t("round2Badge")}
+              </span>
+            </div>
+            <span
+              className={cn(
+                "inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs",
+                isOral
+                  ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white"
+                  : isHighlightedPoster
+                    ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white"
+                    : "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
+              )}
+            >
+              {presentationLabel}
+            </span>
+          </div>
+
+          <div className="hidden lg:flex w-16 shrink-0 items-start pt-0.5">
+            <span className="inline-flex items-center justify-center min-w-7 px-2 py-1 rounded-md border border-gray-200 bg-gray-50 text-xs font-bold text-gray-600">
+              {item.sequence ?? item.id}
+            </span>
+          </div>
+
+          <div className="hidden lg:block w-52 shrink-0 pt-0.5">
+            <div className="flex flex-col items-start gap-1.5">
+              {item.trackingId ? (
+                <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md border border-blue-100 inline-block">
+                  {item.trackingId}
+                </span>
+              ) : (
+                <span className="text-xs italic text-gray-400">
+                  {t("notAssigned")}
+                </span>
+              )}
+              <span
+                className={cn(
+                  "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                  itemRound === 1
+                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                    : "bg-purple-50 text-purple-700 border-purple-200",
+                )}
+              >
+                {itemRound === 1 ? t("round1Badge") : t("round2Badge")}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex-1 lg:px-4 min-w-0">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-snug break-words">
+              {item.title}
+            </h2>
+
+            <div className="mt-2.5 flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-gray-600">
+
+              <div className="flex items-center gap-1.5">
+                <User className="size-3.5 text-blue-500 shrink-0" />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-400">
+                  {t("submitterField")}:
+                </span>
+                <span className="text-gray-800 font-medium">
+                  {item.submitterName || t("notSpecified")}
+                </span>
+              </div>
+
+              {item.categoryName && (
+                <div className="flex items-center gap-1.5">
+                  <Tag className="size-3.5 text-blue-500 shrink-0" />
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-100/80 text-gray-700 border border-gray-200/60">
+                    {item.categoryName}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="hidden lg:flex w-44 shrink-0 justify-end pt-0.5">
+            <span
+              className={cn(
+                "inline-flex items-center justify-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs",
+                isOral
+                  ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white"
+                  : isHighlightedPoster
+                    ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white"
+                    : "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
+              )}
+            >
+              {presentationLabel}
+            </span>
+          </div>
+        </article>
+      </li>
+    );
   };
 
   return (
@@ -317,132 +471,53 @@ export default function ApprovedAbstractsPage() {
               </div>
 
               <ul className="divide-y divide-gray-100" role="list">
-                {filteredAbstracts.map((item) => {
-                  const presentationLabel = {
-                    oral: t("oralPresentation"),
-                    "highlighted-poster": t("highlightedPosterPresentation"),
-                    poster: t("posterPresentation"),
-                  }[item.presentationType];
-                  const isOral = item.presentationType === "oral";
-                  const isHighlightedPoster = item.presentationType === "highlighted-poster";
-                  const itemRound = item.round ?? 1;
+                {selectedType === "all" ? (
+                  presentationGroupOrder.map((presentationType) => {
+                    const groupItems = filteredAbstracts.filter(
+                      (item) => item.presentationType === presentationType,
+                    );
 
-                  return (
-                    <li
-                      key={item.id}
-                      className="px-5 sm:px-6 py-5 sm:py-6 hover:bg-blue-50/20 transition-colors duration-150"
-                    >
-                      <article className="flex flex-col lg:flex-row lg:items-start justify-between gap-3 lg:gap-6">
+                    if (groupItems.length === 0) {
+                      return null;
+                    }
 
-                        <div className="flex lg:hidden items-center justify-between gap-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="inline-flex items-center justify-center min-w-7 px-2 py-1 rounded-md border border-gray-200 bg-gray-50 text-xs font-bold text-gray-600">
-                              {item.sequence ?? item.id}
-                            </span>
-                            <span className="font-mono text-xs font-bold tracking-wider text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md border border-blue-100">
-                              {item.trackingId || t("notAssigned")}
-                            </span>
+                    const groupStyles = presentationGroupStyles[presentationType];
+
+                    return (
+                      <Fragment key={`presentation-group-${presentationType}`}>
+                        <li
+                          className={cn(
+                            "border-l-4 px-5 py-4 sm:px-6 lg:px-8",
+                            groupStyles.container,
+                          )}
+                        >
+                          <div className="flex items-center gap-3">
                             <span
-                              className={cn(
-                                "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                                itemRound === 1
-                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                  : "bg-purple-50 text-purple-700 border-purple-200",
-                              )}
-                            >
-                              {itemRound === 1 ? t("round1Badge") : t("round2Badge")}
-                            </span>
-                          </div>
-                          <span
-                            className={cn(
-                              "inline-flex items-center justify-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-xs",
-                              isOral
-                                ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white"
-                                : isHighlightedPoster
-                                  ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white"
-                                  : "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
-                            )}
-                          >
-                            {presentationLabel}
-                          </span>
-                        </div>
-
-                        <div className="hidden lg:flex w-16 shrink-0 items-start pt-0.5">
-                          <span className="inline-flex items-center justify-center min-w-7 px-2 py-1 rounded-md border border-gray-200 bg-gray-50 text-xs font-bold text-gray-600">
-                            {item.sequence ?? item.id}
-                          </span>
-                        </div>
-
-                        <div className="hidden lg:block w-52 shrink-0 pt-0.5">
-                          <div className="flex flex-col items-start gap-1.5">
-                            {item.trackingId ? (
-                              <span className="font-mono text-xs sm:text-sm font-bold tracking-wider text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md border border-blue-100 inline-block">
-                                {item.trackingId}
-                              </span>
-                            ) : (
-                              <span className="text-xs italic text-gray-400">
-                                {t("notAssigned")}
-                              </span>
-                            )}
-                            <span
-                              className={cn(
-                                "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                                itemRound === 1
-                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                  : "bg-purple-50 text-purple-700 border-purple-200",
-                              )}
-                            >
-                              {itemRound === 1 ? t("round1Badge") : t("round2Badge")}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex-1 lg:px-4 min-w-0">
-                          <h2 className="text-base sm:text-lg font-bold text-gray-900 leading-snug break-words">
-                            {item.title}
-                          </h2>
-
-                          <div className="mt-2.5 flex flex-wrap items-center gap-y-2 gap-x-5 text-xs text-gray-600">
-
-                            <div className="flex items-center gap-1.5">
-                              <User className="size-3.5 text-blue-500 shrink-0" />
-                              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-gray-400">
-                                {t("submitterField")}:
-                              </span>
-                              <span className="text-gray-800 font-medium">
-                                {item.submitterName || t("notSpecified")}
-                              </span>
+                              aria-hidden="true"
+                              className={cn("size-2 shrink-0 rounded-full", groupStyles.marker)}
+                            />
+                            <div className="min-w-0">
+                              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-gray-400">
+                                {t("filterType")}
+                              </p>
+                              <h3
+                                className={cn(
+                                  "mt-0.5 break-words text-sm font-black uppercase tracking-wider",
+                                  groupStyles.label,
+                                )}
+                              >
+                                {presentationLabels[presentationType]}
+                              </h3>
                             </div>
-
-                            {item.categoryName && (
-                              <div className="flex items-center gap-1.5">
-                                <Tag className="size-3.5 text-blue-500 shrink-0" />
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-100/80 text-gray-700 border border-gray-200/60">
-                                  {item.categoryName}
-                                </span>
-                              </div>
-                            )}
                           </div>
-                        </div>
-
-                        <div className="hidden lg:flex w-44 shrink-0 justify-end pt-0.5">
-                          <span
-                            className={cn(
-                              "inline-flex items-center justify-center px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs",
-                              isOral
-                                ? "bg-gradient-to-r from-orange-400 to-orange-500 text-white"
-                                : isHighlightedPoster
-                                  ? "bg-gradient-to-r from-emerald-400 to-emerald-500 text-white"
-                                  : "bg-gradient-to-r from-blue-500 to-blue-600 text-white",
-                            )}
-                          >
-                            {presentationLabel}
-                          </span>
-                        </div>
-                      </article>
-                    </li>
-                  );
-                })}
+                        </li>
+                        {groupItems.map(renderAbstractRow)}
+                      </Fragment>
+                    );
+                  })
+                ) : (
+                  filteredAbstracts.map(renderAbstractRow)
+                )}
               </ul>
             </div>
 
