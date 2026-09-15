@@ -29,22 +29,15 @@ export const navigationData: NavItem[] = [
         href: "/agenda",
     },
     {
-        labelKey: "callForAbstracts",
-        href: "/call-for-abstracts",
-        // children temporarily hidden
-        // children: [
-        //     { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
-        //     { labelKey: "acceptedAbstractsAnnouncement", href: "/approved-abstracts" },
-        // ],
+        labelKey: "abstracts",
+        children: [
+            { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
+            { labelKey: "acceptedAbstractsAnnouncement", href: "/approved-abstracts" },
+        ],
     },
     {
         labelKey: "registration",
         href: "/registration",
-        // children temporarily hidden
-        // children: [
-        //     { labelKey: "registrationInfo", href: "/registration" },
-        //     { labelKey: "policies", href: "/registration-policies" },
-        // ],
     },
     {
         labelKey: "sponsorship",

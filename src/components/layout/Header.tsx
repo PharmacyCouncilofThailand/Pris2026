@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Menu, ChevronDown, Globe, User, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -101,7 +100,6 @@ export default function Header() {
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
         <div className="flex items-center justify-between gap-3 xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4">
-          {/* Left: Logo */}
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link
               href="/"
@@ -127,7 +125,6 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Center: Desktop Navigation */}
           <div className="hidden xl:flex items-center justify-center xl:justify-self-center">
             <NavigationMenu>
               <NavigationMenuList className="gap-2">
@@ -207,7 +204,6 @@ export default function Header() {
             </NavigationMenu>
           </div>
 
-          {/* Right: Desktop Tools */}
           <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
             <button
               onClick={switchLocale}
@@ -226,7 +222,6 @@ export default function Header() {
               </span>
             </button>
 
-            {/* Auth Buttons */}
             {isLoggedIn ? (
               <div className={cn(
                 "flex items-center gap-4 border-l pl-4",
@@ -280,9 +275,7 @@ export default function Header() {
             )}
           </div>
 
-          {/* Mobile Navigation */}
           <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
-          {/* Mobile Language Switcher */}
           <button
             onClick={switchLocale}
             disabled={isPending}
@@ -367,7 +360,6 @@ export default function Header() {
                   </ul>
                 </nav>
 
-                {/* Mobile Auth Buttons */}
                 {isLoggedIn ? (
                   <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
                     <Link
