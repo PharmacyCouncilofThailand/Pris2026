@@ -37,6 +37,7 @@
 ใช้ shape ที่เข้ากันได้กับ `AcceptedAbstract` เพื่อ reuse filter helper โดยเพิ่มชนิด presentation ที่จำเป็นต่อ PDF:
 
 - `id`: เลขลำดับที่ไม่ซ้ำภายใน dataset โดยสร้าง key ที่คงที่จากประเภทและลำดับ
+- `sequence`: เลขลำดับที่แสดงใน PDF ซึ่งเริ่มที่ 1 ใหม่ในแต่ละประเภทการนำเสนอ
 - `trackingId`: ค่า Tracking ID ตาม PDF หรือ `null` สำหรับแถว `รอผลประกาศ`
 - `title`: ชื่อผลงานตาม PDF
 - `presentationType`: `oral | highlighted-poster | poster`

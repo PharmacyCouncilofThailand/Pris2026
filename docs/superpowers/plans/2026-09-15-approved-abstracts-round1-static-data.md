@@ -42,7 +42,7 @@
 
 **Interfaces:**
 - Produces `approvedRound1Abstracts: AcceptedAbstract[]`
-- Each item has `id: number`, `trackingId: string | null`, `title: string`, `presentationType: "oral" | "highlighted-poster" | "poster"`, `categoryId: number`, `categoryName: string`, `submitterName: string | null`, `affiliation: string | null`, and `round: 1`
+- Each item has `id: number`, `sequence: number`, `trackingId: string | null`, `title: string`, `presentationType: "oral" | "highlighted-poster" | "poster"`, `categoryId: number`, `categoryName: string`, `submitterName: string | null`, `affiliation: string | null`, and `round: 1`
 - Uses numeric IDs that remain unique even though the PDF numbering restarts per presentation section: Oral IDs `1–31`, Highlighted Poster IDs `101–139`, Poster IDs `201–249`
 
 - [ ] **Step 1: Write the failing dataset integrity test**
@@ -87,19 +87,19 @@ test("uses stable unique IDs and exact section ranges", () => {
   assert.deepEqual(
     approvedRound1Abstracts
       .filter((item) => item.presentationType === "oral")
-      .map((item) => item.id),
+      .map((item) => item.sequence),
     Array.from({ length: 31 }, (_, index) => index + 1),
   );
   assert.deepEqual(
     approvedRound1Abstracts
       .filter((item) => item.presentationType === "highlighted-poster")
-      .map((item) => item.id),
+      .map((item) => item.sequence),
     Array.from({ length: 39 }, (_, index) => index + 101),
   );
   assert.deepEqual(
     approvedRound1Abstracts
       .filter((item) => item.presentationType === "poster")
-      .map((item) => item.id),
+      .map((item) => item.sequence),
     Array.from({ length: 49 }, (_, index) => index + 201),
   );
 });
@@ -130,6 +130,7 @@ import type { AcceptedAbstract } from "@/lib/acceptedAbstractsFilter";
 export const approvedRound1Abstracts: AcceptedAbstract[] = [
   {
     id: 1,
+    sequence: 1,
     trackingId: null,
     title: "รอผลประกาศ",
     presentationType: "oral",
