@@ -2,7 +2,7 @@
 
 import { Fragment, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X, User, Tag, Calendar, Clock } from "lucide-react";
+import { Search, X, User, Tag, Calendar, Clock, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/sections/PageHero";
 import { approvedRound1Abstracts } from "@/data/approvedRound1Abstracts";
@@ -405,6 +405,34 @@ export default function ApprovedAbstractsPage() {
                 </span>
               </div>
             </div>
+
+            {selectedRound === "1" && (
+              <aside
+                aria-label={t("noteTitle")}
+                className="mt-4 rounded-xl border border-amber-200 bg-amber-50/80 px-3.5 py-3.5 text-amber-950 sm:px-4"
+              >
+                <div className="flex items-start gap-2.5">
+                  <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
+                    <Info className="size-3.5" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-700">
+                      {t("noteTitle")}
+                    </p>
+                    <ul className="mt-1.5 space-y-1 text-[11px] font-medium leading-relaxed text-amber-950 sm:text-xs">
+                      <li className="flex items-start gap-2">
+                        <span aria-hidden="true" className="mt-[0.45rem] size-1 shrink-0 rounded-full bg-amber-500" />
+                        <span>{t("revisionDeadlineNote")}</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span aria-hidden="true" className="mt-[0.45rem] size-1 shrink-0 rounded-full bg-amber-500" />
+                        <span>{t("pendingAnnouncementNote")}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </aside>
+            )}
           </div>
 
           <div className="mb-4 flex items-center justify-between px-1 text-xs sm:text-sm font-medium text-gray-500">
