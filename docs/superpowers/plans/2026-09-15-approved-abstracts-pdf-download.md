@@ -27,7 +27,7 @@
 **Interfaces:**
 - Produces: a static PDF served by Next.js at `/documents/approved-abstracts-round-1.pdf`.
 
-- [ ] **Step 1: Create the public documents directory**
+- [x] **Step 1: Create the public documents directory**
 
 Run from `D:\confer\confer\conference\Pris2026`:
 
@@ -37,7 +37,7 @@ New-Item -ItemType Directory -Force -Path 'public/documents'
 
 Expected: `public/documents` exists.
 
-- [ ] **Step 2: Copy the source PDF without transforming it**
+- [x] **Step 2: Copy the source PDF without transforming it**
 
 ```powershell
 Copy-Item -LiteralPath 'C:\Users\JaoNo\Downloads\1.ประกาศผลการคัดเลือกบทความวิชาการ รอบที่ 1.pdf' -Destination 'public/documents/approved-abstracts-round-1.pdf' -Force
@@ -45,7 +45,7 @@ Copy-Item -LiteralPath 'C:\Users\JaoNo\Downloads\1.ประกาศผลก�
 
 Expected: the target PDF exists under `public/documents`.
 
-- [ ] **Step 3: Verify source and target hashes**
+- [x] **Step 3: Verify source and target hashes**
 
 ```powershell
 Get-FileHash -Algorithm SHA256 -LiteralPath 'C:\Users\JaoNo\Downloads\1.ประกาศผลการคัดเลือกบทความวิชาการ รอบที่ 1.pdf','public/documents/approved-abstracts-round-1.pdf'
@@ -53,7 +53,7 @@ Get-FileHash -Algorithm SHA256 -LiteralPath 'C:\Users\JaoNo\Downloads\1.ปร�
 
 Expected: both SHA-256 hashes are identical.
 
-- [ ] **Step 4: Commit the unchanged asset**
+- [x] **Step 4: Commit the unchanged asset**
 
 ```powershell
 git add -- 'public/documents/approved-abstracts-round-1.pdf'
@@ -73,7 +73,7 @@ Expected: one commit contains only the copied PDF asset.
 - Consumes: the static URL `/documents/approved-abstracts-round-1.pdf` and the existing `useTranslations("approvedAbstracts")` instance.
 - Produces: two accessible links rendered above the filter card.
 
-- [ ] **Step 1: Add the two translation labels**
+- [x] **Step 1: Add the two translation labels**
 
 Add these keys inside the `approvedAbstracts` namespace:
 
@@ -91,7 +91,7 @@ Use these English values in `messages/en.json`:
 "downloadPdf": "Download PDF"
 ```
 
-- [ ] **Step 2: Add the document action row above the filters**
+- [x] **Step 2: Add the document action row above the filters**
 
 Render two links using the existing page card styling:
 
@@ -125,7 +125,7 @@ const approvedAbstractsPdfUrl = "/documents/approved-abstracts-round-1.pdf";
 
 Place this block after the page introduction and before the existing filter card. The `aria-label` identifies the action group without adding another visible control or heading.
 
-- [ ] **Step 3: Verify link semantics and layout**
+- [x] **Step 3: Verify link semantics and layout**
 
 Run:
 
@@ -137,7 +137,7 @@ npx eslint --no-warn-ignored 'src/app/[locale]/approved-abstracts/page.tsx'
 
 Expected: no whitespace, TypeScript, or scoped lint errors.
 
-- [ ] **Step 4: Commit the page and translations**
+- [x] **Step 4: Commit the page and translations**
 
 ```powershell
 git add -- 'src/app/[locale]/approved-abstracts/page.tsx' 'messages/th.json' 'messages/en.json'
@@ -158,7 +158,7 @@ Expected: one commit contains the two actions and both locale labels.
 - Consumes: the committed PDF asset and two rendered links.
 - Produces: verified Thai/English PDF access with unchanged abstract data.
 
-- [ ] **Step 1: Run the existing test suite**
+- [x] **Step 1: Run the existing test suite**
 
 ```powershell
 npm test
@@ -166,7 +166,7 @@ npm test
 
 Expected: all existing tests pass.
 
-- [ ] **Step 2: Run the production build**
+- [x] **Step 2: Run the production build**
 
 ```powershell
 npm run build
@@ -174,11 +174,11 @@ npm run build
 
 Expected: Next.js production build completes successfully.
 
-- [ ] **Step 3: Check both routes in the browser**
+- [x] **Step 3: Check both routes in the browser**
 
 Open `/th/approved-abstracts` and `/en/approved-abstracts` at desktop and 331px-wide mobile viewports. Confirm that each route shows exactly one View PDF link and one Download PDF link, the view link opens the PDF in a new tab, the download link points to the static asset, and the actions do not create horizontal overflow.
 
-- [ ] **Step 4: Confirm the final worktree**
+- [x] **Step 4: Confirm the final worktree**
 
 ```powershell
 git status --short
