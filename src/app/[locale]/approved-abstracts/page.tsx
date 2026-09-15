@@ -2,7 +2,7 @@
 
 import { Fragment, useDeferredValue, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search, X, User, Tag, Calendar, Clock, Info } from "lucide-react";
+import { Download, ExternalLink, Search, X, User, Tag, Calendar, Clock, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/sections/PageHero";
 import { approvedRound1Abstracts } from "@/data/approvedRound1Abstracts";
@@ -17,6 +17,8 @@ const presentationGroupOrder = [
   "highlighted-poster",
   "poster",
 ] as const;
+
+const approvedAbstractsPdfUrl = "/documents/approved-abstracts-round-1.pdf";
 
 export default function ApprovedAbstractsPage() {
   const t = useTranslations("approvedAbstracts");
@@ -216,6 +218,29 @@ export default function ApprovedAbstractsPage() {
 
       <section className="relative px-4 sm:px-6 md:px-12 pb-24 md:pb-32">
         <div className="max-w-[1400px] mx-auto">
+
+          <section
+            aria-label={t("pdfActionsLabel")}
+            className="mb-5 flex flex-col gap-2.5 rounded-2xl border border-slate-200 bg-white/90 p-3.5 shadow-sm sm:flex-row sm:items-center sm:justify-end sm:px-4"
+          >
+            <a
+              href={approvedAbstractsPdfUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-700 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto"
+            >
+              <ExternalLink aria-hidden="true" className="size-3.5" />
+              {t("viewPdf")}
+            </a>
+            <a
+              href={approvedAbstractsPdfUrl}
+              download="approved-abstracts-round-1.pdf"
+              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-3.5 text-xs font-bold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto"
+            >
+              <Download aria-hidden="true" className="size-3.5" />
+              {t("downloadPdf")}
+            </a>
+          </section>
 
           <div className="relative z-20 mb-6 overflow-hidden rounded-[1.35rem] border border-gray-200/80 bg-white p-3.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:rounded-2xl sm:p-6">
 
