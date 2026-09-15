@@ -1,8 +1,14 @@
+export type AcceptedPresentationType =
+  | "oral"
+  | "highlighted-poster"
+  | "poster";
+
 export interface AcceptedAbstract {
   id: number;
+  sequence?: number;
   trackingId: string | null;
   title: string;
-  presentationType: string;
+  presentationType: AcceptedPresentationType;
   categoryId: number;
   categoryName: string;
   submitterName: string | null;
@@ -17,7 +23,7 @@ export interface DistinctCategory {
 
 export interface AcceptedAbstractFilterOptions {
   search?: string;
-  presentationType?: "all" | "oral" | "poster";
+  presentationType?: "all" | AcceptedPresentationType;
   categoryId?: number | "all" | string;
   round?: "all" | 1 | 2 | string | number;
 }

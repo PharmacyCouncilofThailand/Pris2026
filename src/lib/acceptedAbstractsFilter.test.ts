@@ -108,6 +108,21 @@ test("filterAcceptedAbstracts: filters by presentationType", () => {
   assert.equal(all.length, 4);
 });
 
+test("filterAcceptedAbstracts: filters Highlighted Poster independently", () => {
+  const highlightedPoster = filterAcceptedAbstracts(
+    [
+      { ...sampleAbstracts[0], id: 5, presentationType: "highlighted-poster" },
+      ...sampleAbstracts,
+    ],
+    { presentationType: "highlighted-poster", round: 1 },
+  );
+
+  assert.deepEqual(
+    highlightedPoster.map((abstract) => abstract.id),
+    [5],
+  );
+});
+
 test("filterAcceptedAbstracts: filters by categoryId", () => {
   const cat10 = filterAcceptedAbstracts(sampleAbstracts, { categoryId: 10 });
   assert.equal(cat10.length, 2);
