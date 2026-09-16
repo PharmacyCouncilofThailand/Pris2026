@@ -931,16 +931,30 @@ const day2Events = [
     ...day1Event(
       223,
       "11:00 – 11:50",
-      "Leading the Future of Pharmacy: Innovation, Leadership and Health System Transformation",
-      "หัวข้อ Leading the Future of Pharmacy: Innovation, Leadership and Health System Transformation",
+      "CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
+      "หัวข้อ CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
       "JUPITER 11",
       "ห้อง JUPITER 11",
       "Session",
       "บรรยาย",
       "JUPITER 11"
     ),
-    description: "By the College of Pharmacy Management",
+    description: "By CPAT (College of Pharmacy Administration of Thailand)",
     descriptionTh: "โดย วิทยาลัยบริหารเภสัชกิจ",
+    speakers: [
+      {
+        name: "Asst. Prof. Dr. Pharm. Rungpetch Sakulbumrungsil",
+        nameTh: "ผศ.ดร.ภญ.รุ่งเพ็ชร สกุล บำรุงศิลป์",
+      },
+      {
+        name: "Pharm. Sutthiphong Nurit",
+        nameTh: "ภก.สุทธิพงศ์ หนูฤทธิ์",
+      },
+      {
+        name: "Assoc. Prof. Dr. Pharm. Korn Sornlertlamvanich",
+        nameTh: "รศ.ดร.ภก. กร ศรเลิศล้ำวาณิช",
+      },
+    ],
   },
   {
     ...day1Event(
@@ -1005,8 +1019,8 @@ const day2Events = [
     ...day1Event(
       232,
       "13:00 – 14:00",
-      "From Research to Manufacturing: Accelerating Pharmaceutical Innovation",
-      "หัวข้อ From Research to Manufacturing: Accelerating Pharmaceutical Innovation",
+      "Future Industrial Pharmacists",
+      "หัวข้อ Future Industrial Pharmacists",
       "JUPITER 12",
       "ห้อง JUPITER 12",
       "Session",
@@ -1015,6 +1029,12 @@ const day2Events = [
     ),
     description: "By the College of Industrial Pharmacy",
     descriptionTh: "โดย วิทยาลัยเภสัชกรรมอุตสาหการ",
+    speakers: [
+      {
+        name: "Pharm. Boonrak Thavornrungroj (College of Industrial Pharmacy)",
+        nameTh: "ภก.บุญรักษ์ ถาวรรุ่งโรจน์ (วิทยาลัยเภสัชกรรมอุตสาหการ)",
+      },
+    ],
   },
   {
     ...day1Event(
