@@ -221,25 +221,30 @@ export default function ApprovedAbstractsPage() {
 
           <section
             aria-label={t("pdfActionsLabel")}
-            className="mb-5 flex flex-col gap-2.5 rounded-2xl border border-slate-200 bg-white/90 p-3.5 shadow-sm sm:flex-row sm:items-center sm:justify-end sm:px-4"
+            className="mb-5 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm sm:p-5 lg:flex-row lg:items-center lg:justify-between"
           >
-            <a
-              href={approvedAbstractsPdfUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-700 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto"
-            >
-              <ExternalLink aria-hidden="true" className="size-3.5" />
-              {t("viewPdf")}
-            </a>
-            <a
-              href={approvedAbstractsPdfUrl}
-              download="approved-abstracts-round-1.pdf"
-              className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-3.5 text-xs font-bold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto"
-            >
-              <Download aria-hidden="true" className="size-3.5" />
-              {t("downloadPdf")}
-            </a>
+            <p className="min-w-0 max-w-4xl text-sm font-semibold leading-relaxed text-slate-800 sm:text-base">
+              {t("pdfDocumentTitle")}
+            </p>
+            <div className="flex w-full shrink-0 flex-col gap-2 sm:flex-row lg:w-auto">
+              <a
+                href={approvedAbstractsPdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-3.5 text-xs font-bold text-slate-700 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto"
+              >
+                <ExternalLink aria-hidden="true" className="size-3.5" />
+                {t("viewPdf")}
+              </a>
+              <a
+                href={approvedAbstractsPdfUrl}
+                download="approved-abstracts-round-1.pdf"
+                className="inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-3.5 text-xs font-bold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:w-auto"
+              >
+                <Download aria-hidden="true" className="size-3.5" />
+                {t("downloadPdf")}
+              </a>
+            </div>
           </section>
 
           <div className="relative z-20 mb-6 overflow-hidden rounded-[1.35rem] border border-gray-200/80 bg-white p-3.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:rounded-2xl sm:p-6">
@@ -434,23 +439,23 @@ export default function ApprovedAbstractsPage() {
             {selectedRound === "1" && (
               <aside
                 aria-label={t("noteTitle")}
-                className="mt-4 rounded-xl border border-amber-200 bg-amber-50/80 px-3.5 py-3.5 text-amber-950 sm:px-4"
+                className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-4 text-amber-950 shadow-sm shadow-amber-100 sm:px-5 sm:py-5"
               >
                 <div className="flex items-start gap-2.5">
-                  <span className="inline-flex size-6 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700">
-                    <Info className="size-3.5" />
+                  <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700 sm:size-9">
+                    <Info className="size-4 sm:size-[1.125rem]" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-amber-700">
+                    <h3 className="text-sm font-black tracking-wide text-amber-800 sm:text-base">
                       {t("noteTitle")}
-                    </p>
-                    <ul className="mt-1.5 space-y-1 text-[11px] font-medium leading-relaxed text-amber-950 sm:text-xs">
-                      <li className="flex items-start gap-2">
-                        <span aria-hidden="true" className="mt-[0.45rem] size-1 shrink-0 rounded-full bg-amber-500" />
+                    </h3>
+                    <ul className="mt-2 space-y-2 text-sm font-semibold leading-relaxed text-amber-950 sm:text-base">
+                      <li className="flex items-start gap-2.5">
+                        <span aria-hidden="true" className="mt-[0.55rem] size-1.5 shrink-0 rounded-full bg-amber-500" />
                         <span>{t("revisionDeadlineNote")}</span>
                       </li>
-                      <li className="flex items-start gap-2">
-                        <span aria-hidden="true" className="mt-[0.45rem] size-1 shrink-0 rounded-full bg-amber-500" />
+                      <li className="flex items-start gap-2.5">
+                        <span aria-hidden="true" className="mt-[0.55rem] size-1.5 shrink-0 rounded-full bg-amber-500" />
                         <span>{t("pendingAnnouncementNote")}</span>
                       </li>
                     </ul>
