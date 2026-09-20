@@ -6,6 +6,7 @@
  * closes automatically after the approved Round 2 deadline.
  */
 export const REGISTRATION_OPEN = true;
+export const ABSTRACT_OPEN = false;
 
 /** Notice shown on disabled CTAs while registration is not open. @deprecated Use i18n key registrationGate.registrationNotice */
 export const REGISTRATION_NOTICE = "เปิดลงทะเบียนวันที่ 1 กรกฎาคม 2569";
@@ -18,7 +19,15 @@ export interface AbstractGateState {
   phase: "round1" | "round2" | "closed";
 }
 
-export function getAbstractGateState(now: Date = new Date()): AbstractGateState {
+export function getAbstractGateState(
+  now: Date = new Date(),
+  overrideOpen?: boolean
+): AbstractGateState {
+  const isOpen = overrideOpen !== undefined ? overrideOpen : ABSTRACT_OPEN;
+  if (!isOpen) {
+    return { open: false, phase: "closed" };
+  }
+
   if (now < ABSTRACT_ROUND_2_START_AT) {
     return { open: true, phase: "round1" };
   }

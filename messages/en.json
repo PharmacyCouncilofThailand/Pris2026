@@ -742,7 +742,9 @@
   },
   "registrationGate": {
     "registrationNotice": "Registration opens July 1, 2026",
-    "abstractNotice": "Abstract submission is closed"
+    "abstractNotice": "Abstract submission is closed",
+    "abstractClosedDesc": "The abstract submission period for PRIS 2026 has now concluded. Thank you for your submissions. Please stay tuned for the results announcement.",
+    "viewAcceptedAbstracts": "View Accepted Abstracts"
   },
   "committee": {
     "title": "Committee",

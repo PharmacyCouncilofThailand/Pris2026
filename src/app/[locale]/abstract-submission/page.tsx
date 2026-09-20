@@ -26,6 +26,7 @@ import { useGSAP } from "@gsap/react";
 import { useLocale, useTranslations } from "next-intl";
 import toast from "react-hot-toast";
 import PageHero from "@/components/sections/PageHero";
+import { getAbstractGateState } from "@/lib/registrationGate";
 import {
   ABSTRACT_SECTION_NAMES,
   type AbstractSectionName,
@@ -119,6 +120,12 @@ export default function AbstractSubmission() {
   const ts = useTranslations("abstractSubmissionToasts");
   const tv = useTranslations("abstractSubmission.validation");
   const tu = useTranslations("abstractSubmission.ui");
+  const tg = useTranslations("registrationGate");
+  const [isAbstractOpen, setIsAbstractOpen] = useState(true);
+
+  useEffect(() => {
+    setIsAbstractOpen(getAbstractGateState().open);
+  }, []);
   const getRevisionTopicLabel = useRevisionTopicLabel();
   const router = useRouter();
   const { user, isAuthenticated, token } = useAuth();
@@ -608,7 +615,48 @@ export default function AbstractSubmission() {
             </div>
           )}
 
-          <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-16">
+          {!isEditMode && !isAbstractOpen ? (
+            <div className="bg-white border border-slate-200/80 rounded-3xl p-8 sm:p-14 text-center max-w-2xl mx-auto shadow-xl shadow-slate-200/50 my-12">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="w-8 h-8 text-amber-600" />
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 mb-4">
+                {tg("abstractNotice")}
+              </h3>
+              <p className="text-slate-600 text-sm sm:text-base leading-relaxed mb-6 max-w-lg mx-auto">
+                {tg("abstractClosedDesc")}
+              </p>
+              <div className="mb-8 flex justify-center">
+                <button
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  className="px-8 py-4 rounded-full bg-slate-200 text-slate-500 border border-slate-300 text-xs font-black uppercase tracking-widest cursor-not-allowed select-none inline-flex items-center gap-2.5 opacity-80"
+                >
+                  <AlertCircle className="w-4 h-4 text-slate-500" />
+                  <span>{tg("abstractNotice")}</span>
+                </button>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/call-for-abstracts"
+                  className="px-6 py-3.5 rounded-full bg-slate-900 text-white font-bold text-xs uppercase tracking-wider hover:bg-blue-600 transition-colors inline-flex items-center justify-center gap-2"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  {t("backBtn") || "Call for Abstracts"}
+                </Link>
+                <Link
+                  href="/approved-abstracts"
+                  className="px-6 py-3.5 rounded-full bg-blue-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-colors inline-flex items-center justify-center gap-2"
+                >
+                  {tg("viewAcceptedAbstracts")}
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-16">
             <div className="flex gap-4 items-start justify-center text-left max-w-3xl mx-auto">
               <Info className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
               <div>
@@ -727,19 +775,27 @@ export default function AbstractSubmission() {
                 )}
                 <button 
                   onClick={currentStep === 5 ? handleSubmit : handleNext}
-                  disabled={isSubmitting || isCountingForNavigation}
+                  disabled={isSubmitting || isCountingForNavigation || (!isEditMode && !isAbstractOpen)}
                   className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isCountingForNavigation ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> {tu("wordCountChecking")}</>
                   ) : isSubmitting ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> {isEditMode ? tu("resubmitting") : tu("submitting")}</>
-                  ) : currentStep === 5 ? (isEditMode ? tu("resubmitRevised") : t("submitFinalAbstract")) : t("proceedToNextStage")}
-                  {!isSubmitting && !isCountingForNavigation && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
+                  ) : !isEditMode && !isAbstractOpen ? (
+                    tg("abstractNotice")
+                  ) : currentStep === 5 ? (
+                    isEditMode ? tu("resubmitRevised") : t("submitFinalAbstract")
+                  ) : (
+                    t("proceedToNextStage")
+                  )}
+                  {!isSubmitting && !isCountingForNavigation && (isAbstractOpen || isEditMode) && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
                 </button>
               </div>
             </div>
           </div>
+            </>
+          )}
 
         </div>
       </section>
