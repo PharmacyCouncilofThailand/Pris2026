@@ -893,8 +893,8 @@ const day2Events = [
   day1Event(
     211,
     "15:30 – 16:00",
-    "Corporate Symposium",
-    "Corporate Symposium",
+    "Coffee Break",
+    "Coffee Break",
     "JUPITER 4-7",
     "ห้อง JUPITER 4-7",
     "Session",
