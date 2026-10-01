@@ -496,6 +496,7 @@ const day1Events = [
         nameTh:
           "ภก.ทรงสันต์ ทองคำ คณะอนุกรรมการนักบริหารรุ่นใหม่ สมาคมเภสัชกรรมการตลาด",
       },
+      {
         name: "Ms. Chawanya Songthep",
         nameTh:
           "นางสาวชวัลญา ทรงเทพ (AstraZeneca (Thailand) co., Ltd.)",
