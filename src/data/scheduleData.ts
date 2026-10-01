@@ -489,9 +489,13 @@ const day1Events = [
       {
         name: "Mr. Haranchai Paecharoenchai",
         nameTh:
-          "นายหรัณย์ชัย แพเจริญชัย (คณะเภสัชศาสตร์ มหาวิทยาลัยศรีนครินทรวิโรฒ)",
+          "ภก.หรัณย์ชัย แพเจริญชัย (คณะเภสัชศาสตร์ มหาวิทยาลัยศรีนครินทรวิโรฒ)",
       },
       {
+        name: "Mr. Songsan Thongkham",
+        nameTh:
+          "ภก.ทรงสันต์ ทองคำ คณะอนุกรรมการนักบริหารรุ่นใหม่ สมาคมเภสัชกรรมการตลาด",
+      },
         name: "Ms. Chawanya Songthep",
         nameTh:
           "นางสาวชวัลญา ทรงเทพ (AstraZeneca (Thailand) co., Ltd.)",
