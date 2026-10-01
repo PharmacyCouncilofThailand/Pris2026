@@ -73,7 +73,8 @@ export default function Header() {
     "/login",
     "/signup",
     "/profile",
-    "/registration"
+    "/registration",
+    "/sessions/confirm"
   ];
   const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login") || pathname.startsWith("/profile") || pathname.startsWith("/abstracts/confirm");
   const useDarkText = isLightPage && !isScrolled;
@@ -85,6 +86,13 @@ export default function Header() {
   const switchLocale = () => {
     const newLocale = locale === "en" ? "th" : "en";
     startTransition(() => {
+      if (pathname === "/sessions/confirm" && typeof window !== "undefined") {
+        router.replace(
+          { pathname, query: Object.fromEntries(new URLSearchParams(window.location.search).entries()) },
+          { locale: newLocale },
+        );
+        return;
+      }
       router.replace(pathname, { locale: newLocale });
     });
   };
