@@ -30,12 +30,12 @@
 
 .perforation::before {
   left: -14px;
-  clip-path: inset(0 0 0 calc(50% - 2px));
+  clip-path: inset(0 0 0 50%);
 }
 
 .perforation::after {
   right: -14px;
-  clip-path: inset(0 calc(50% - 2px) 0 0);
+  clip-path: inset(0 50% 0 0);
 }
 
 .ticket::after,
