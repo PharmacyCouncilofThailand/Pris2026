@@ -760,14 +760,6 @@ const day2Events = [
     description: "By College of Pharmacotherapy of Thailand",
     descriptionTh: "โดย วิทยาลัยเภสัชกรรมบำบัด",
   },
-      {
-        name: "President, Secretary-General and Board Members of the Pharmacy Council",
-        nameTh: "นายกสภาเภสัชกรรม/เลขาธิการสภาเภสัชกรรม/กรรมการสภาเภสัชกรรม",
-        role: "Chair",
-        roleTh: "Chair",
-      },
-    ],
-  },
   {
     ...day1Event(
       204,
