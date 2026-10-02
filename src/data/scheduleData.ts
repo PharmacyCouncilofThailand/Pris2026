@@ -42,21 +42,7 @@ const day1Events = [
     "Registration",
     "ลงทะเบียน",
     "JUPITER 4-7"
-  ),
-  {
-    ...day1Event(
-      1002,
-      "08:00 – 11:00",
-      "PSAT Health Hack 2026",
-      "PSAT Health Hack 2026 จัดโดย สมาพันธ์นิสิตนักศึกษาเภสัชศาสตร์แห่งประเทศไทย (สนภท.)",
-      "JUPITER 12–13",
-      "ห้อง JUPITER 12–13",
-      "Activity",
-      "กิจกรรม",
-      "JUPITER 12"
     ),
-    spanTracks: ["JUPITER 12", "JUPITER 13"],
-  },
   {
     ...day1Event(
       1003,
@@ -494,12 +480,12 @@ const day1Events = [
       {
         name: "Mr. Songsan Thongkham",
         nameTh:
-          "ภก.ทรงสันต์ ทองคำ คณะอนุกรรมการนักบริหารรุ่นใหม่ สมาคมเภสัชกรรมการตลาด",
+          "ภก.วิภูสิทธิ์ จันทร์ทอง ประธานคณะอนุกรรมการนักบริหารรุ่นใหม่ สมาคมเภสัชกรรมการตลาด",
       },
       {
         name: "Ms. Chawanya Songthep",
         nameTh:
-          "นางสาวชวัลญา ทรงเทพ (AstraZeneca (Thailand) co., Ltd.)",
+          "ภญ.ชวัลญา ทรงเทพ (AstraZeneca (Thailand) co., Ltd.)",
         role: "Moderator",
         roleTh: "ผู้ดำเนินรายการ",
       },
@@ -759,24 +745,21 @@ const day2Events = [
       },
     ],
   },
-  {
+{
     ...day1Event(
       203,
       "09:10 – 09:50",
-      "Keynote: Advancing Thailand Healthcare through Pharmacy Research and Innovation",
-      "ปาฐกถาพิเศษ หัวข้อ Advancing Thailand Healthcare through pharmacy research and innovation",
+      "Clinical Pharmacy",
+      "หัวข้อ Clinical Pharmacy",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
-      "Keynote",
-      "ปาฐกถาพิเศษ",
+      "Session",
+      "เสวนา",
       "JUPITER 4-7"
     ),
-    speakers: [
-      {
-        name: "Prof. Dr. Yotchanan Wongsawat (Deputy Prime Minister and Minister of Higher Education, Science, Research and Innovation)",
-        nameTh:
-          "ศ.ดร.ยศชนัน วงศ์สวัสดิ์ (รองนายกรัฐมนตรีและรัฐมนตรีว่าการกระทรวงอุดมศึกษา วิจัยและนวัตกรรม)",
-      },
+    description: "By College of Pharmacotherapy of Thailand",
+    descriptionTh: "โดย วิทยาลัยเภสัชกรรมบำบัด",
+  },
       {
         name: "President, Secretary-General and Board Members of the Pharmacy Council",
         nameTh: "นายกสภาเภสัชกรรม/เลขาธิการสภาเภสัชกรรม/กรรมการสภาเภสัชกรรม",
@@ -826,16 +809,27 @@ const day2Events = [
     ...day1Event(
       206,
       "11:00 – 11:50",
-      "Clinical Pharmacy",
-      "หัวข้อ Clinical Pharmacy",
+      "Keynote: Advancing Thailand Healthcare through Pharmacy Research and Innovation",
+      "ปาฐกถาพิเศษ หัวข้อ Advancing Thailand Healthcare through pharmacy research and innovation",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
-      "Session",
-      "เสวนา",
+      "Keynote",
+      "ปาฐกถาพิเศษ",
       "JUPITER 4-7"
     ),
-    description: "By College of Pharmacotherapy of Thailand",
-    descriptionTh: "โดย วิทยาลัยเภสัชกรรมบำบัด",
+    speakers: [
+      {
+        name: "Prof. Dr. Yotchanan Wongsawat (Deputy Prime Minister and Minister of Higher Education, Science, Research and Innovation)",
+        nameTh:
+          "ศ.ดร.ยศชนัน วงศ์สวัสดิ์ (รองนายกรัฐมนตรีและรัฐมนตรีว่าการกระทรวงอุดมศึกษา วิจัยและนวัตกรรม)",
+      },
+      {
+        name: "President, Secretary-General and Board Members of the Pharmacy Council",
+        nameTh: "นายกสภาเภสัชกรรม/เลขาธิการสภาเภสัชกรรม/กรรมการสภาเภสัชกรรม",
+        role: "Chair",
+        roleTh: "Chair",
+      },
+    ],
   },
   day1Event(
     207,
