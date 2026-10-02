@@ -1067,6 +1067,7 @@
     "enlarge": "Enlarge QR",
     "close": "Close",
     "scan": "Show this QR to event staff",
+    "sessionNote": "Use this same QR code to check in to every session.",
     "code": "Registration code",
     "type": "Ticket type",
     "select": "Choose entry ticket",

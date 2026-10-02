@@ -69,8 +69,37 @@
   background-repeat: no-repeat;
 }
 
-.qr {
+.scanSection {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px 28px;
+}
+
+.qrSlot {
   position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  container-type: size;
+}
+
+.scanHint {
+  flex-shrink: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.qr {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(100cqw, 100cqh);
+  aspect-ratio: 1;
   border: 2px solid #09090b;
   border-radius: 18px;
 }

@@ -143,13 +143,16 @@ export default function TicketPage() {
               <div aria-hidden="true" className={styles.perforation + " relative shrink-0"}>
                 <div className="absolute inset-x-5 top-1/2 -translate-y-1/2 flex items-center justify-between text-[7px] font-bold font-mono tracking-wide text-[#c2410c]"><span className="border border-[#ea580c] bg-white px-1 py-0.5">STUB COUPON · ENTRY SCAN</span><span className="inline-flex items-center gap-1 border border-zinc-950 bg-white px-1 py-0.5 text-zinc-950">TEAR HERE <Scissors size={9} /></span></div>
               </div>
-              <section aria-label={t("scan")} className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] justify-items-center gap-3 px-5 pb-7 pt-4">
-                <div className="grid h-full w-full min-w-0 place-items-center [container-type:size]">
-                  <div className={styles.qr + " aspect-square w-[min(100cqw,100cqh)] bg-white p-2"}>
+              <section aria-label={t("scan")} className={styles.scanSection}>
+                <div className={styles.qrSlot}>
+                  <div className={styles.qr + " bg-white p-2"}>
                     <QRCodeSVG value={ticket.regCode} size={230} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b" className="h-full w-full" role="img" aria-label={t("qrAlt", { code: ticket.regCode })} />
                   </div>
                 </div>
-                <p className="rounded-full border border-zinc-300 bg-zinc-100 px-3 py-1 text-center text-[clamp(10px,2.9cqw,12px)] font-bold leading-snug text-zinc-700">{t("scan")}</p>
+                <div className={styles.scanHint + " flex flex-col items-center gap-1.5 text-center"}>
+                  <p className="max-w-full rounded-full border border-zinc-300 bg-zinc-100 px-3 py-1 text-[clamp(10px,2.9cqw,12px)] font-bold leading-snug text-zinc-700">{t("scan")}</p>
+                  <p className="text-[clamp(10px,2.9cqw,12px)] leading-relaxed text-zinc-600">{t("sessionNote")}</p>
+                </div>
               </section>
             </article>
             <div className="mt-5 grid grid-cols-2 gap-3">
