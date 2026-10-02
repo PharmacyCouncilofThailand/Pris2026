@@ -84,7 +84,12 @@
     "venueLocationNameEn": "IMPACT MUANG THONG THANI",
     "venueRegion": "NONTHABURI, THAILAND",
     "countdownLabel": "COUNTDOWN TO PRIS 2026",
-    "organizerParts": ["Organized by", "The Pharmacy Council", "and", "The Royal College of Pharmacy of Thailand"]
+    "organizerParts": [
+      "Organized by",
+      "The Pharmacy Council",
+      "and",
+      "The Royal College of Pharmacy of Thailand"
+    ]
   },
   "welcome": {
     "welcomeMessages": "OFFICIAL ADDRESSES",
@@ -1047,5 +1052,32 @@
     "totalSizeExceeded": "Total file size must not exceed {size}.",
     "invalidAuthorEmail": "Please enter a valid email address for the presenting author.",
     "invalidCoAuthorEmail": "Please enter a valid email address for co-author #{index}."
+  },
+  "ticket": {
+    "title": "Entry ticket",
+    "confirmed": "Registration confirmed",
+    "loading": "Loading your entry ticket",
+    "loadError": "Could not load your ticket. Please try again.",
+    "empty": "No confirmed ticket found for this event",
+    "emptyHint": "Check your registration and confirmation status in your account.",
+    "retry": "Try again",
+    "profile": "View profile",
+    "registration": "Check registration",
+    "enlarge": "Enlarge QR",
+    "close": "Close",
+    "scan": "Show this QR to event staff",
+    "code": "Registration code",
+    "type": "Ticket type",
+    "select": "Choose entry ticket",
+    "date": "Event date",
+    "venue": "Venue",
+    "notAvailable": "Not provided",
+    "attendee": "Attendee",
+    "details": "Participation details",
+    "qrAlt": "QR for registration {code}",
+    "configuration": "Event configuration is missing",
+    "downloadQr": "Download QR (PNG)",
+    "downloadError": "Could not download the QR. Please try again.",
+    "confirmedShort": "Confirmed"
   }
 }

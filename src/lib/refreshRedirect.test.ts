@@ -20,3 +20,15 @@ test("ordinary routes still redirect reload to home", () => {
   assert.equal(shouldRedirectReload("/profile"), true);
   assert.equal(shouldRedirectReload("/th/profile"), true);
 });
+
+test("ticket and ticket-directed auth reloads stay in the journey", () => {
+  for (const path of ["/ticket", "/th/ticket", "/en/ticket/"]) {
+    assert.equal(shouldRedirectReload(path), false);
+  }
+  for (const path of ["/th/login", "/signup/student", "/en/signup/pending"]) {
+    assert.equal(shouldRedirectReload(path, "?redirect=%2Fticket"), false);
+  }
+  assert.equal(shouldRedirectReload("/login"), true);
+  assert.equal(shouldRedirectReload("/login", "?redirect=%2Fprofile"), true);
+  assert.equal(shouldRedirectReload("/profile"), true);
+});

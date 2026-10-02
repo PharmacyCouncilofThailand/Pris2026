@@ -3,6 +3,8 @@
 import React, { useEffect, useTransition } from "react";
 import Image from "next/image";
 import { Link, useRouter, usePathname } from "@/i18n/routing";
+import { normalizeLocalizedRedirectPath } from "@/lib/localizedRedirect";
+import { ticketReturnQuery } from "@/lib/entryTicket";
 import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 
@@ -15,7 +17,7 @@ export default function SignUpTypePage() {
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
-      router.replace(pathname, { locale: nextLocale });
+      router.replace({ pathname, query: Object.fromEntries(new URLSearchParams(window.location.search).entries()) }, { locale: nextLocale });
     });
   };
   const t = useTranslations("auth");
@@ -26,7 +28,7 @@ export default function SignUpTypePage() {
   // Redirect to home if already logged in
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/');
+      router.replace(normalizeLocalizedRedirectPath(new URLSearchParams(window.location.search).get("redirect")));
     }
   }, [isAuthenticated, router]);
 
@@ -107,7 +109,7 @@ export default function SignUpTypePage() {
 
             <div className="space-y-4 ">
               <Link 
-                href="/signup/student" 
+                href={{ pathname: "/signup/student", query: ticketReturnQuery(typeof window === "undefined" ? "" : window.location.search) }}
                 className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
               >
                 <div className="min-w-0">
@@ -120,7 +122,7 @@ export default function SignUpTypePage() {
               </Link>
 
               <Link 
-                href="/signup/pharmacist" 
+                href={{ pathname: "/signup/pharmacist", query: ticketReturnQuery(typeof window === "undefined" ? "" : window.location.search) }}
                 className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
               >
                 <div className="min-w-0">
@@ -133,7 +135,7 @@ export default function SignUpTypePage() {
               </Link>
 
               <Link 
-                href="/signup/healthcare" 
+                href={{ pathname: "/signup/healthcare", query: ticketReturnQuery(typeof window === "undefined" ? "" : window.location.search) }}
                 className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5 p-6 rounded-2xl bg-[#f8f9fc] border border-transparent hover:bg-white hover:border-gray-200 hover:shadow-lg transition-all duration-300"
               >
                 <div className="min-w-0">
@@ -148,7 +150,7 @@ export default function SignUpTypePage() {
 
             <div className="mt-12 text-center ">
               <p className="text-sm font-medium text-gray-500">{t("alreadyHaveAccount")} {" "}
-                <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
+                <Link href={{ pathname: "/login", query: ticketReturnQuery(typeof window === "undefined" ? "" : window.location.search) }} className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
                   {t("signIn")}
                 </Link>
               </p>

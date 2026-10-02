@@ -58,6 +58,7 @@ export default function Header() {
   }, []);
 
   const lightPages = [
+    "/ticket",
     "/agenda",
     "/abstract-submission",
     "/about",

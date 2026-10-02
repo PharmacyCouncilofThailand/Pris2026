@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState , useTransition } from "react";
 import Image from "next/image";
 import { Link, useRouter, usePathname } from "@/i18n/routing";
+import { ticketReturnQuery } from "@/lib/entryTicket";
 import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
@@ -19,7 +20,7 @@ export default function LoginPage() {
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
-      router.replace(pathname, { locale: nextLocale });
+      router.replace({ pathname, query: Object.fromEntries(new URLSearchParams(window.location.search).entries()) }, { locale: nextLocale });
     });
   };
   const t = useTranslations("auth");
@@ -229,7 +230,7 @@ export default function LoginPage() {
             <div className="mt-12 text-center ">
               <p className="text-sm font-medium text-gray-500">
                 {t("noAccount")}{" "}
-                <Link href="/signup" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">{t("signUp")}</Link>
+                <Link href={{ pathname: "/signup", query: ticketReturnQuery(typeof window === "undefined" ? "" : window.location.search) }} className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">{t("signUp")}</Link>
               </p>
             </div>
           </div>

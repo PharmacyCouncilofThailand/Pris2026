@@ -12,7 +12,7 @@ export default function PendingApprovalPage() {
   const switchLocale = () => {
     const nextLocale = locale === "en" ? "th" : "en";
     startTransitionLang(() => {
-      router.replace(pathname, { locale: nextLocale });
+      router.replace({ pathname, query: Object.fromEntries(new URLSearchParams(window.location.search).entries()) }, { locale: nextLocale });
     });
   };
   const t = useTranslations("auth");
