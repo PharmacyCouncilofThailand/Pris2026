@@ -127,7 +127,7 @@ export default function TicketPage() {
                 </select>
               </label>
             )}
-            <article id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col bg-white"}>
+            <article id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col"}>
               <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white px-3 pb-3 pt-6 min-[375px]:px-5 min-[375px]:pb-4 min-[375px]:pt-7 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset">
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="min-w-0 break-words text-[clamp(16px,4.8cqw,20px)] font-black tracking-tight leading-tight">{ticket.eventName || EVENT_CODE}<span className="ml-2 inline-block w-fit rounded-sm bg-[#ea580c] px-1.5 py-0.5 font-mono text-[8px] tracking-wider text-white">LIVE PASS</span></h2>
@@ -141,8 +141,8 @@ export default function TicketPage() {
                   <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">TICKET NO / REG ID</dt><dd className="mt-1 break-all font-mono font-bold leading-snug">{ticket.regCode}</dd></div>
                 </dl>
               </section>
-              <div aria-hidden="true" className={styles.perforation + " relative mt-3 shrink-0 border-t-2 border-dashed border-[#ea580c]"}>
-                <div className="absolute inset-x-5 -top-4 flex items-center justify-between text-[7px] font-bold font-mono tracking-wide text-[#c2410c]"><span className="border border-[#ea580c] bg-white px-1 py-0.5">STUB COUPON · ENTRY SCAN</span><span className="inline-flex items-center gap-1 border border-zinc-950 bg-white px-1 py-0.5 text-zinc-950">TEAR HERE <Scissors size={9} /></span></div>
+              <div aria-hidden="true" className={styles.perforation + " relative shrink-0"}>
+                <div className="absolute inset-x-5 top-1/2 -translate-y-1/2 flex items-center justify-between text-[7px] font-bold font-mono tracking-wide text-[#c2410c]"><span className="border border-[#ea580c] bg-white px-1 py-0.5">STUB COUPON · ENTRY SCAN</span><span className="inline-flex items-center gap-1 border border-zinc-950 bg-white px-1 py-0.5 text-zinc-950">TEAR HERE <Scissors size={9} /></span></div>
               </div>
               <section aria-label={t("scan")} className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] justify-items-center gap-3 px-5 pb-7 pt-4">
                 <div className="grid h-full w-full min-w-0 place-items-center [container-type:size]">
