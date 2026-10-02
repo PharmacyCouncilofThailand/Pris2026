@@ -11,21 +11,6 @@ export interface EntryTicket {
   details: string[];
 }
 
-export async function prepareTicketDownload(apiOrigin: string, token: string, registrationId: number, png: Blob, signal?: AbortSignal): Promise<string> {
-  const origin = apiOrigin.replace(/\/$/, "");
-  const response = await fetch(origin + "/api/ticket-exports/registrations/" + registrationId, {
-    method: "POST", headers: { Authorization: "Bearer " + token, "Content-Type": "image/png" },
-    body: png, cache: "no-store", signal,
-  });
-  if (!response.ok) throw new Error("Ticket export failed", { cause: response.status });
-  const body: unknown = await response.json();
-  if (!record(body) || body.success !== true || typeof body.path !== "string"
-    || !/^\/api\/ticket-exports\/[a-f0-9]{32}\.\d{13}\.[A-Za-z0-9_-]{43}$/.test(body.path)) {
-    throw new Error("Invalid ticket export response");
-  }
-  return origin + body.path;
-}
-
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
