@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Maximize2, Download, Scissors } from "lucide-react";
-import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
+import { QRCodeSVG } from "qrcode.react";
 import styles from "./ticket.module.css";
-import { useRouter } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { loadEntryTickets, type EntryTicket } from "@/lib/entryTicket";
 
@@ -18,7 +18,8 @@ export default function TicketPage() {
   const locale = useLocale();
   const t = useTranslations("ticket");
   const dialog = useRef<HTMLDialogElement>(null);
-  const downloadCanvas = useRef<HTMLCanvasElement>(null);
+  const ticketElement = useRef<HTMLElement>(null);
+  const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const requestKey = (token || "") + ":" + attempt;
@@ -111,7 +112,7 @@ export default function TicketPage() {
           <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 text-center">
             <h2 className="text-lg font-bold">{t("empty")}</h2>
             <p className="text-sm leading-relaxed text-slate-600">{t("emptyHint")}</p>
-
+            <Link href="/registration" className={action}>{t("buyTicket")}</Link>
           </div>
         ) : (
           <>
@@ -124,7 +125,7 @@ export default function TicketPage() {
                 </select>
               </label>
             )}
-            <article id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col"}>
+            <article ref={ticketElement} id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col"}>
               <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white px-3 pb-2 pt-5 min-[375px]:px-5 min-[375px]:pb-4 min-[375px]:pt-7 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset">
                 {title}
                 <div className="flex items-start justify-between gap-3">
@@ -153,23 +154,48 @@ export default function TicketPage() {
             </article>
             <div className="mt-5 grid grid-cols-2 gap-3">
               <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border-2 border-zinc-950 bg-white px-3 py-3 text-xs font-bold text-zinc-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-4" onClick={() => dialog.current?.showModal()}><Maximize2 size={17} aria-hidden="true" />{t("enlarge")}</button>
-              <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#ea580c] px-3 py-3 text-xs font-bold text-white shadow-md shadow-orange-600/25 hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4" onClick={() => {
+              <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#ea580c] px-3 py-3 text-xs font-bold text-white shadow-md shadow-orange-600/25 hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4" disabled={downloading} aria-busy={downloading} onClick={async () => {
+                if (downloading) return;
+                setDownloading(true);
+                let clone: HTMLElement | null = null;
                 try {
-                  const canvas = downloadCanvas.current;
-                  if (!canvas) throw new Error("QR is not ready");
+                  const node = ticketElement.current;
+                  if (!node) throw new Error("Ticket is not ready");
+                  await document.fonts.ready;
+                  const { toPng, getFontEmbedCSS } = await import("html-to-image");
+                  const info = node.querySelector("section");
+                  const exportHeight = node.getBoundingClientRect().height + (info ? Math.max(0, info.scrollHeight - info.clientHeight) : 0);
+                  clone = node.cloneNode(true) as HTMLElement;
+                  clone.removeAttribute("id");
+                  Object.assign(clone.style, {
+                    position: "fixed", left: "0", top: "0", transform: "translateX(-10000px)",
+                    width: exportHeight * 9 / 16 + "px",
+                    height: exportHeight + "px",
+                    filter: "none",
+                  });
+                  const cloneInfo = clone.querySelector<HTMLElement>("section");
+                  if (cloneInfo) cloneInfo.style.maxHeight = "none";
+                  node.parentElement?.append(clone);
+                  const png = await toPng(clone, {
+                    pixelRatio: 3,
+                    fontEmbedCSS: await getFontEmbedCSS(clone),
+                    style: { position: "relative", left: "0", top: "0", transform: "none" },
+                  });
                   const link = document.createElement("a");
-                  link.download = "PRIS2026-QR.png";
-                  link.href = canvas.toDataURL("image/png");
+                  link.download = "PRIS2026-Ticket.png";
+                  link.href = png;
                   document.body.append(link);
                   link.click();
                   link.remove();
                   setDownloadError(false);
                 } catch {
                   setDownloadError(true);
+                } finally {
+                  clone?.remove();
+                  setDownloading(false);
                 }
-              }}><Download size={17} className="shrink-0 text-white" aria-hidden="true" />{t("downloadQr")}</button>
+              }}><Download size={17} className="shrink-0 text-white" aria-hidden="true" />{t(downloading ? "downloading" : "downloadTicket")}</button>
             </div>
-            <div className="hidden" aria-hidden="true"><QRCodeCanvas ref={downloadCanvas} value={ticket.regCode} size={1024} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b" /></div>
             {downloadError && <p role="alert" className="mt-2 text-sm text-red-700">{t("downloadError")}</p>}
 
             {ticket.details.length > 0 && (

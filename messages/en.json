@@ -1060,6 +1060,7 @@
     "loadError": "Could not load your ticket. Please try again.",
     "empty": "No confirmed ticket found for this event",
     "emptyHint": "Check your registration and confirmation status in your account.",
+    "buyTicket": "Buy Ticket",
     "retry": "Try again",
     "profile": "View profile",
     "registration": "Check registration",
@@ -1076,8 +1077,9 @@
     "details": "Participation details",
     "qrAlt": "QR for registration {code}",
     "configuration": "Event configuration is missing",
-    "downloadQr": "Download QR (PNG)",
-    "downloadError": "Could not download the QR. Please try again.",
+    "downloadTicket": "Download Ticket (PNG)",
+    "downloading": "Saving...",
+    "downloadError": "Could not download the ticket. Please try again.",
     "confirmedShort": "Confirmed"
   }
 }
