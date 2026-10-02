@@ -215,7 +215,7 @@ export default function Header() {
           </div>
 
           <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
-            {!isTicketPage && <button
+            <button
               onClick={switchLocale}
               disabled={isPending}
               className={cn(
@@ -230,7 +230,7 @@ export default function Header() {
               <span className="uppercase text-xs font-black tracking-wider">
                 {locale === "en" ? "TH" : "EN"}
               </span>
-            </button>}
+            </button>
 
             {isLoggedIn ? (
               <div className={cn(
@@ -285,7 +285,7 @@ export default function Header() {
             )}
           </div>
 
-          {!isTicketPage && <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
+          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
           <button
             onClick={switchLocale}
             disabled={isPending}
@@ -303,7 +303,7 @@ export default function Header() {
             </span>
           </button>
 
-          <Sheet>
+          {!isTicketPage && <Sheet>
             <SheetTrigger
               className={cn(
                 "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
@@ -410,8 +410,8 @@ export default function Header() {
                 )}
               </div>
             </SheetContent>
-          </Sheet>
-        </div>}
+          </Sheet>}
+        </div>
         </div>
       </div>
     </header>

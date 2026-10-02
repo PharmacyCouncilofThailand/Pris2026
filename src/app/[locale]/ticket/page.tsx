@@ -86,15 +86,18 @@ export default function TicketPage() {
       ? formatter.formatRange(parsed, end) : formatter.format(parsed);
   };
   const action = "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0d1f4a] px-4 py-2 text-sm hover:bg-[#162e5c] transition-colors font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600";
+  const title = (
+    <div className="mb-2 text-center min-[375px]:mb-3">
+      <h1 className="text-[clamp(20px,5.7cqw,24px)] font-black tracking-tight leading-tight">{t("title")}</h1>
+      <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-zinc-500">PRIS 2026 Digital Attendance E-Stub</p>
+    </div>
+  );
 
   return (
     <main className="min-h-[100svh] bg-[#fafafa] px-4 pb-8 pt-20 text-zinc-950 sm:px-6">
 
       <div className="mx-auto w-full max-w-[420px]">
-        <div className="mb-5 text-center">
-          <h1 className="text-[26px] font-black tracking-tight leading-tight">{t("title")}</h1>
-          <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-zinc-500">PRIS 2026 Digital Attendance E-Stub</p>
-        </div>
+        {!ticket && title}
         {!EVENT_CODE ? (
           <p role="alert">{t("configuration")}</p>
         ) : !current ? (
@@ -122,12 +125,13 @@ export default function TicketPage() {
               </label>
             )}
             <article id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col"}>
-              <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white px-3 pb-3 pt-6 min-[375px]:px-5 min-[375px]:pb-4 min-[375px]:pt-7 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset">
+              <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white px-3 pb-2 pt-5 min-[375px]:px-5 min-[375px]:pb-4 min-[375px]:pt-7 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset">
+                {title}
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="min-w-0 break-words text-[clamp(16px,4.8cqw,20px)] font-black tracking-tight leading-tight">{ticket.eventName || EVENT_CODE}</h2>
                   <p className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-950 bg-zinc-950 px-2 py-1.5 text-[clamp(10px,2.9cqw,12px)] font-bold text-white"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" />{t("confirmedShort")}</p>
                 </div>
-                <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 border-t-2 border-zinc-950 pt-3 min-[375px]:mt-4 min-[375px]:gap-y-4 min-[375px]:pt-4">
+                <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-2 border-t-2 border-zinc-950 pt-2 min-[375px]:mt-4 min-[375px]:gap-y-4 min-[375px]:pt-4">
                   <div className="col-span-2 min-w-0 rounded-xl border-l-[5px] border-[#ea580c] bg-zinc-50 p-2 min-[375px]:p-3"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">HALL / ROOM · {t("venue")}</dt><dd className="mt-1 break-words font-extrabold leading-snug">{ticket.eventLocation || t("notAvailable")}</dd></div>
                   <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">DATE · {t("date")}</dt><dd className="mt-1 font-bold leading-snug">{date(ticket.eventStartDate, ticket.eventEndDate)}</dd></div>
                   <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">ATTENDEE · {t("attendee")}</dt><dd className="mt-1 break-words font-extrabold leading-snug">{name}</dd></div>
