@@ -1,0 +1,63 @@
+.ticket {
+  position: relative;
+  border: 2px solid #09090b;
+  border-radius: 26px;
+  box-shadow: 0 24px 48px -12px rgb(0 0 0 / 12%);
+}
+
+.ticket > section:first-child {
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(#ea580c 7px, #fff 7px);
+}
+
+.ticket > section:last-child {
+  border-radius: 0 0 24px 24px;
+}
+
+.perforation::before,
+.perforation::after {
+  content: "";
+  position: absolute;
+  top: -13px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #09090b;
+  border-radius: 50%;
+  background: #fafafa;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.perforation::before {
+  left: -14px;
+  clip-path: inset(0 0 0 calc(50% - 2px));
+}
+
+.perforation::after {
+  right: -14px;
+  clip-path: inset(0 calc(50% - 2px) 0 0);
+}
+
+.ticket::after,
+.qr::after {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  background:
+    linear-gradient(#ea580c, #ea580c) left top / 12px 2px,
+    linear-gradient(#ea580c, #ea580c) left top / 2px 12px,
+    linear-gradient(#ea580c, #ea580c) right top / 12px 2px,
+    linear-gradient(#ea580c, #ea580c) right top / 2px 12px,
+    linear-gradient(#ea580c, #ea580c) left bottom / 12px 2px,
+    linear-gradient(#ea580c, #ea580c) left bottom / 2px 12px,
+    linear-gradient(#ea580c, #ea580c) right bottom / 12px 2px,
+    linear-gradient(#ea580c, #ea580c) right bottom / 2px 12px;
+  background-repeat: no-repeat;
+}
+
+.qr {
+  position: relative;
+  border: 2px solid #09090b;
+  border-radius: 18px;
+}

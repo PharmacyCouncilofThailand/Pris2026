@@ -1,5 +1,10 @@
 # PRIS2026 incumbent visual system
 
+## Current ticket reference — orange with outlined notches
+
+Follow code (2).html / screen (3).png for the ticket only: white/#fafafa surfaces, black 2px frame, #ea580c accents, bold installed fonts, black confirmation, venue panel and framed QR. Keep shared Header unchanged and retain 9:16. Both middle cutouts mask the straight outer border and draw inward arcs with the same 2px black stroke. CSS pseudo-elements are decorative; real registration QR and PNG download remain. Verified synthetic data at 320px: no information/page overflow, QR contained and exact 9:16. ESLint/TypeScript passed. Screenshots remain local under ignored .impeccable. This reference supersedes earlier ticket color guidance below.
+
+
 ## Current visual authority — existing profile family
 
 The ticket now follows the existing profile palette and typography: #f4f6f8 ground, white card, slate text/QR, blue action and tier, emerald confirmation, inherited Noto Sans Thai/Outfit. Labels have a 10px floor and values a 12px floor. Detailed source audit and rationale: .impeccable/ticket-style-audit.md. This supersedes earlier reference-specific cream/navy/amber colors. Existing 9:16 geometry and data layout remain.

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Maximize2, UserRound, Download, Scissors } from "lucide-react";
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
+import styles from "./ticket.module.css";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { loadEntryTickets, type EntryTicket } from "@/lib/entryTicket";
@@ -87,18 +88,18 @@ export default function TicketPage() {
   const action = "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0d1f4a] px-4 py-2 text-sm hover:bg-[#162e5c] transition-colors font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600";
   const links = (
     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-      <Link href="/profile" className="inline-flex min-h-11 items-center justify-center gap-2 px-1 py-2 text-sm font-bold text-slate-900 hover:text-sky-700 focus-visible:outline-2 focus-visible:outline-offset-4"><UserRound aria-hidden="true" size={18} />{t("profile")}</Link>
+      <Link href="/profile" className="inline-flex min-h-11 items-center justify-center gap-2 px-1 py-2 text-sm font-bold text-zinc-950 hover:text-sky-700 focus-visible:outline-2 focus-visible:outline-offset-4"><UserRound aria-hidden="true" size={18} />{t("profile")}</Link>
       <Link href="/registration" className="inline-flex min-h-11 items-center justify-center text-center text-xs font-bold text-[#0d1f4a] underline underline-offset-4">{t("registration")}</Link>
     </div>
   );
 
   return (
-    <main className="min-h-[100svh] bg-[#f4f6f8] px-4 pb-8 pt-20 text-slate-900 sm:px-6">
+    <main className="min-h-[100svh] bg-[#fafafa] px-4 pb-8 pt-20 text-zinc-950 sm:px-6">
 
       <div className="mx-auto w-full max-w-[420px]">
         <div className="mb-5 text-center">
-          <h1 className="text-2xl font-bold tracking-tight leading-tight">{t("title")}</h1>
-          <p className="mt-1 text-xs font-medium text-slate-500">PRIS 2026 Digital Attendance E-Stub</p>
+          <h1 className="text-[26px] font-black tracking-tight leading-tight">{t("title")}</h1>
+          <p className="mt-1 text-[11px] font-bold uppercase tracking-wider text-zinc-500">PRIS 2026 Digital Attendance E-Stub</p>
         </div>
         {!EVENT_CODE ? (
           <p role="alert">{t("configuration")}</p>
@@ -120,41 +121,41 @@ export default function TicketPage() {
             {tickets.length > 1 && (
               <label className="mb-2 block text-xs font-semibold">
                 {t("select")}
-                <select value={String(ticket.registrationId)} className="mt-1 min-h-11 w-full rounded-xl border border-slate-300 bg-white px-3"
+                <select value={String(ticket.registrationId)} className="mt-1 min-h-11 w-full rounded-2xl border-2 border-zinc-950 bg-white px-3"
                   onChange={(event) => { dialog.current?.close(); setSelectedId(event.target.value); }}>
                   {tickets.map((row) => <option key={row.registrationId} value={row.registrationId}>{row.ticketName + " — " + row.regCode}</option>)}
                 </select>
               </label>
             )}
-            <article id="entry-ticket" className="@container flex aspect-[9/16] w-full flex-col overflow-hidden rounded-2xl bg-white shadow-lg shadow-slate-200/50">
-              <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white p-4 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset sm:p-5">
+            <article id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col bg-white"}>
+              <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white px-3 pb-3 pt-6 min-[375px]:px-5 min-[375px]:pb-4 min-[375px]:pt-7 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset">
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="min-w-0 break-words text-[clamp(16px,4.8cqw,20px)] font-bold tracking-tight leading-tight">{ticket.eventName || EVENT_CODE}</h2>
-                  <p className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1.5 text-[clamp(10px,2.9cqw,12px)] font-bold text-emerald-700"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-emerald-500" />{t("confirmedShort")}</p>
+                  <h2 className="min-w-0 break-words text-[clamp(16px,4.8cqw,20px)] font-black tracking-tight leading-tight">{ticket.eventName || EVENT_CODE}<span className="ml-2 inline-block w-fit rounded-sm bg-[#ea580c] px-1.5 py-0.5 font-mono text-[8px] tracking-wider text-white">LIVE PASS</span></h2>
+                  <p className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-950 bg-zinc-950 px-2 py-1.5 text-[clamp(10px,2.9cqw,12px)] font-bold text-white"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" />{t("confirmedShort")}</p>
                 </div>
-                <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-4 border-t border-slate-200/70 pt-4">
-                  <div className="col-span-2 min-w-0"><dt className="text-[clamp(10px,2.9cqw,12px)] font-semibold text-slate-500">HALL / ROOM · {t("venue")}</dt><dd className="mt-1 break-words font-bold leading-snug">{ticket.eventLocation || t("notAvailable")}</dd></div>
-                  <div className="min-w-0"><dt className="text-[clamp(10px,2.9cqw,12px)] font-semibold text-slate-500">DATE · {t("date")}</dt><dd className="mt-1 font-bold leading-snug">{date(ticket.eventStartDate, ticket.eventEndDate)}</dd></div>
-                  <div className="min-w-0"><dt className="text-[clamp(10px,2.9cqw,12px)] font-semibold text-slate-500">ATTENDEE · {t("attendee")}</dt><dd className="mt-1 break-words font-bold leading-snug">{name}</dd></div>
-                  <div className="min-w-0"><dt className="text-[clamp(10px,2.9cqw,12px)] font-semibold text-slate-500">TIER · {t("type")}</dt><dd className="mt-1 inline-block max-w-full break-words rounded-md border border-blue-100 bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700">{ticket.ticketName}</dd></div>
-                  <div className="min-w-0"><dt className="text-[clamp(10px,2.9cqw,12px)] font-semibold text-slate-500">TICKET NO / REG ID</dt><dd className="mt-1 break-all font-mono font-bold leading-snug">{ticket.regCode}</dd></div>
+                <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 border-t-2 border-zinc-950 pt-3 min-[375px]:mt-4 min-[375px]:gap-y-4 min-[375px]:pt-4">
+                  <div className="col-span-2 min-w-0 rounded-xl border-l-[5px] border-[#ea580c] bg-zinc-50 p-2 min-[375px]:p-3"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">HALL / ROOM · {t("venue")}</dt><dd className="mt-1 break-words font-extrabold leading-snug">{ticket.eventLocation || t("notAvailable")}</dd></div>
+                  <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">DATE · {t("date")}</dt><dd className="mt-1 font-bold leading-snug">{date(ticket.eventStartDate, ticket.eventEndDate)}</dd></div>
+                  <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">ATTENDEE · {t("attendee")}</dt><dd className="mt-1 break-words font-extrabold leading-snug">{name}</dd></div>
+                  <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">TIER · {t("type")}</dt><dd className="mt-1 inline-block max-w-full break-words rounded-sm bg-[#ea580c] px-2 py-1 text-xs font-extrabold uppercase text-white">{ticket.ticketName}</dd></div>
+                  <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5"><dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">TICKET NO / REG ID</dt><dd className="mt-1 break-all font-mono font-bold leading-snug">{ticket.regCode}</dd></div>
                 </dl>
               </section>
-              <div aria-hidden="true" className="relative mt-3 shrink-0 border-t-2 border-dashed border-slate-300 before:absolute before:-left-3 before:-top-3 before:h-6 before:w-6 before:rounded-full before:bg-[#f4f6f8] after:absolute after:-right-3 after:-top-3 after:h-6 after:w-6 after:rounded-full after:bg-[#f4f6f8]">
-                <div className="absolute inset-x-5 -top-4 flex items-center justify-between text-[8px] font-medium tracking-wider text-slate-500"><span>STUB COUPON · ENTRY SCAN</span><span className="inline-flex items-center gap-1">TEAR HERE <Scissors size={9} /></span></div>
+              <div aria-hidden="true" className={styles.perforation + " relative mt-3 shrink-0 border-t-2 border-dashed border-[#ea580c]"}>
+                <div className="absolute inset-x-5 -top-4 flex items-center justify-between text-[7px] font-bold font-mono tracking-wide text-[#c2410c]"><span className="border border-[#ea580c] bg-white px-1 py-0.5">STUB COUPON · ENTRY SCAN</span><span className="inline-flex items-center gap-1 border border-zinc-950 bg-white px-1 py-0.5 text-zinc-950">TEAR HERE <Scissors size={9} /></span></div>
               </div>
-              <section aria-label={t("scan")} className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] justify-items-center gap-3 p-4">
+              <section aria-label={t("scan")} className="grid min-h-0 flex-1 grid-rows-[minmax(0,1fr)_auto] justify-items-center gap-3 px-5 pb-7 pt-4">
                 <div className="grid h-full w-full min-w-0 place-items-center [container-type:size]">
-                  <div className="aspect-square w-[min(100cqw,100cqh)] rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-                    <QRCodeSVG value={ticket.regCode} size={230} level="M" marginSize={4} bgColor="#ffffff" fgColor="#0f172a" className="h-full w-full" role="img" aria-label={t("qrAlt", { code: ticket.regCode })} />
+                  <div className={styles.qr + " aspect-square w-[min(100cqw,100cqh)] bg-white p-2"}>
+                    <QRCodeSVG value={ticket.regCode} size={230} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b" className="h-full w-full" role="img" aria-label={t("qrAlt", { code: ticket.regCode })} />
                   </div>
                 </div>
-                <p className="text-center text-[clamp(10px,2.9cqw,12px)] font-medium leading-snug text-slate-500">{t("scan")}</p>
+                <p className="rounded-full border border-zinc-300 bg-zinc-100 px-3 py-1 text-center text-[clamp(10px,2.9cqw,12px)] font-bold leading-snug text-zinc-700">{t("scan")}</p>
               </section>
             </article>
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-3 text-xs font-bold text-slate-900 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-4" onClick={() => dialog.current?.showModal()}><Maximize2 size={17} aria-hidden="true" />{t("enlarge")}</button>
-              <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-3 py-3 text-xs font-bold text-white shadow-md shadow-blue-600/15 hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-4" onClick={() => {
+              <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border-2 border-zinc-950 bg-white px-3 py-3 text-xs font-bold text-zinc-950 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-4" onClick={() => dialog.current?.showModal()}><Maximize2 size={17} aria-hidden="true" />{t("enlarge")}</button>
+              <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#ea580c] px-3 py-3 text-xs font-bold text-white shadow-md shadow-orange-600/25 hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4" onClick={() => {
                 try {
                   const canvas = downloadCanvas.current;
                   if (!canvas) throw new Error("QR is not ready");
@@ -170,7 +171,7 @@ export default function TicketPage() {
                 }
               }}><Download size={17} className="shrink-0 text-white" aria-hidden="true" />{t("downloadQr")}</button>
             </div>
-            <div className="hidden" aria-hidden="true"><QRCodeCanvas ref={downloadCanvas} value={ticket.regCode} size={1024} level="M" marginSize={4} bgColor="#ffffff" fgColor="#0f172a" /></div>
+            <div className="hidden" aria-hidden="true"><QRCodeCanvas ref={downloadCanvas} value={ticket.regCode} size={1024} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b" /></div>
             {downloadError && <p role="alert" className="mt-2 text-sm text-red-700">{t("downloadError")}</p>}
             <div className="mt-2">{links}</div>
             {ticket.details.length > 0 && (
@@ -181,9 +182,9 @@ export default function TicketPage() {
                 </ul>
               </details>
             )}
-            <dialog ref={dialog} aria-labelledby="ticket-qr-heading" className="m-auto w-[380px] max-w-[calc(100vw-2rem)] rounded-2xl bg-white p-5 text-slate-900 backdrop:bg-black/60">
+            <dialog ref={dialog} aria-labelledby="ticket-qr-heading" className="m-auto w-[380px] max-w-[calc(100vw-2rem)] rounded-2xl bg-white p-5 text-zinc-950 backdrop:bg-black/60">
               <h2 id="ticket-qr-heading" className="mb-4 text-lg font-bold">{t("enlarge")}</h2>
-              <QRCodeSVG value={ticket.regCode} size={360} level="M" marginSize={4} bgColor="#ffffff" fgColor="#0f172a"
+              <QRCodeSVG value={ticket.regCode} size={360} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b"
                 className="h-auto w-full" role="img" aria-label={t("qrAlt", { code: ticket.regCode })} />
               <p className="my-4 break-all text-center font-mono font-bold">{ticket.regCode}</p>
               <form method="dialog"><button autoFocus className={action + " w-full"}>{t("close")}</button></form>
