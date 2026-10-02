@@ -211,7 +211,7 @@ export default function TicketPage() {
               <QRCodeSVG value={ticket.regCode} size={360} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b"
                 className="h-auto w-full" role="img" aria-label={t("qrAlt", { code: ticket.regCode })} />
               <p className="my-4 break-all text-center font-mono font-bold">{ticket.regCode}</p>
-              <form method="dialog"><button autoFocus className={action + " w-full"}>{t("close")}</button></form>
+              <form method="dialog"><button autoFocus className="min-h-11 w-full rounded-lg bg-[#ea580c] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600">{t("close")}</button></form>
             </dialog>
           </>
         )}
