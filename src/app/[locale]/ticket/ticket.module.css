@@ -1,7 +1,7 @@
 .ticket {
   position: relative;
   border-radius: 26px;
-  box-shadow: 0 24px 48px -12px rgb(0 0 0 / 12%);
+  filter: drop-shadow(0 12px 16px rgb(0 0 0 / 10%));
 }
 
 .ticket > section:first-child {
