@@ -1080,6 +1080,8 @@
     "downloadTicket": "Download Ticket (PNG)",
     "downloading": "Saving...",
     "downloadError": "Could not download the ticket. Please try again.",
+    "downloadHelp": "If the download does not start, open it in your browser. This link expires in 5 minutes.",
+    "openBrowser": "Open in browser",
     "confirmedShort": "Confirmed"
   }
 }

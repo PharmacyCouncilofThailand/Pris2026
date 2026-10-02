@@ -7,7 +7,7 @@ import { QRCodeSVG } from "qrcode.react";
 import styles from "./ticket.module.css";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
-import { loadEntryTickets, type EntryTicket } from "@/lib/entryTicket";
+import { loadEntryTickets, prepareTicketDownload, type EntryTicket } from "@/lib/entryTicket";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
@@ -21,6 +21,7 @@ export default function TicketPage() {
   const ticketElement = useRef<HTMLElement>(null);
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(false);
+  const [downloadLink, setDownloadLink] = useState<{ key: string; url: string } | null>(null);
   const [attempt, setAttempt] = useState(0);
   const requestKey = (token || "") + ":" + attempt;
   const [result, setResult] = useState<{ key: string; tickets?: EntryTicket[]; error?: boolean } | null>(null);
@@ -119,7 +120,7 @@ export default function TicketPage() {
             {tickets.length > 1 && (
               <label className="mb-2 block text-xs font-semibold">
                 {t("select")}
-                <select value={String(ticket.registrationId)} className="mt-1 min-h-11 w-full rounded-2xl border-2 border-zinc-950 bg-white px-3"
+                <select disabled={downloading} value={String(ticket.registrationId)} className="mt-1 min-h-11 w-full rounded-2xl border-2 border-zinc-950 bg-white px-3"
                   onChange={(event) => { dialog.current?.close(); setSelectedId(event.target.value); }}>
                   {tickets.map((row) => <option key={row.registrationId} value={row.registrationId}>{row.ticketName + " — " + row.regCode}</option>)}
                 </select>
@@ -157,16 +158,22 @@ export default function TicketPage() {
               <button className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-[#ea580c] px-3 py-3 text-xs font-bold text-white shadow-md shadow-orange-600/25 hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4" disabled={downloading} aria-busy={downloading} onClick={async () => {
                 if (downloading) return;
                 setDownloading(true);
+                setDownloadError(false);
+                setDownloadLink(null);
                 let clone: HTMLElement | null = null;
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), 30_000);
                 try {
                   const node = ticketElement.current;
                   if (!node) throw new Error("Ticket is not ready");
                   await document.fonts.ready;
-                  const { toPng, getFontEmbedCSS } = await import("html-to-image");
+                  const { toBlob, getFontEmbedCSS } = await import("html-to-image");
                   const info = node.querySelector("section");
                   const exportHeight = node.getBoundingClientRect().height + (info ? Math.max(0, info.scrollHeight - info.clientHeight) : 0);
                   clone = node.cloneNode(true) as HTMLElement;
                   clone.removeAttribute("id");
+                  clone.setAttribute("aria-hidden", "true");
+                  clone.inert = true;
                   Object.assign(clone.style, {
                     position: "fixed", left: "0", top: "0", transform: "translateX(-10000px)",
                     width: exportHeight * 9 / 16 + "px",
@@ -176,27 +183,41 @@ export default function TicketPage() {
                   const cloneInfo = clone.querySelector<HTMLElement>("section");
                   if (cloneInfo) cloneInfo.style.maxHeight = "none";
                   node.parentElement?.append(clone);
-                  const png = await toPng(clone, {
+                  const png = await toBlob(clone, {
                     pixelRatio: 3,
                     fontEmbedCSS: await getFontEmbedCSS(clone),
                     style: { position: "relative", left: "0", top: "0", transform: "none" },
                   });
+                  if (!png || !token) throw new Error("Ticket is not ready");
+                  const url = await prepareTicketDownload(API_URL, token, ticket.registrationId, png, controller.signal);
+                  setDownloadLink({ key: ticket.registrationId + ":" + locale, url });
                   const link = document.createElement("a");
-                  link.download = "PRIS2026-Ticket.png";
-                  link.href = png;
+                  link.href = url;
+                  link.referrerPolicy = "no-referrer";
                   document.body.append(link);
                   link.click();
                   link.remove();
                   setDownloadError(false);
-                } catch {
+                } catch (error) {
+                  if (error instanceof Error && error.cause === 401) {
+                    logout();
+                    router.replace("/login?redirect=%2Fticket");
+                  }
                   setDownloadError(true);
                 } finally {
+                  clearTimeout(timer);
                   clone?.remove();
                   setDownloading(false);
                 }
               }}><Download size={17} className="shrink-0 text-white" aria-hidden="true" />{t(downloading ? "downloading" : "downloadTicket")}</button>
             </div>
             {downloadError && <p role="alert" className="mt-2 text-sm text-red-700">{t("downloadError")}</p>}
+            {downloadLink?.key === ticket.registrationId + ":" + locale && (
+              <p className="mt-3 text-center text-xs leading-relaxed text-zinc-600">
+                {t("downloadHelp")} {" "}
+                <a href={downloadLink.url + "?openExternalBrowser=1"} referrerPolicy="no-referrer" className="inline-flex min-h-11 items-center font-bold text-[#c2410c] underline underline-offset-4">{t("openBrowser")}</a>
+              </p>
+            )}
 
             {ticket.details.length > 0 && (
               <details className="mt-2 rounded-lg border border-slate-200 bg-white px-3">
