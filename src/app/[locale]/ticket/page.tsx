@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Maximize2, UserRound, Download, Scissors } from "lucide-react";
+import { Maximize2, Download, Scissors } from "lucide-react";
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import styles from "./ticket.module.css";
-import { Link, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { loadEntryTickets, type EntryTicket } from "@/lib/entryTicket";
 
@@ -86,12 +86,6 @@ export default function TicketPage() {
       ? formatter.formatRange(parsed, end) : formatter.format(parsed);
   };
   const action = "inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-[#0d1f4a] px-4 py-2 text-sm hover:bg-[#162e5c] transition-colors font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600";
-  const links = (
-    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-      <Link href="/profile" className="inline-flex min-h-11 items-center justify-center gap-2 px-1 py-2 text-sm font-bold text-zinc-950 hover:text-sky-700 focus-visible:outline-2 focus-visible:outline-offset-4"><UserRound aria-hidden="true" size={18} />{t("profile")}</Link>
-      <Link href="/registration" className="inline-flex min-h-11 items-center justify-center text-center text-xs font-bold text-[#0d1f4a] underline underline-offset-4">{t("registration")}</Link>
-    </div>
-  );
 
   return (
     <main className="min-h-[100svh] bg-[#fafafa] px-4 pb-8 pt-20 text-zinc-950 sm:px-6">
@@ -114,7 +108,7 @@ export default function TicketPage() {
           <div className="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 text-center">
             <h2 className="text-lg font-bold">{t("empty")}</h2>
             <p className="text-sm leading-relaxed text-slate-600">{t("emptyHint")}</p>
-            {links}
+
           </div>
         ) : (
           <>
@@ -130,7 +124,7 @@ export default function TicketPage() {
             <article id="entry-ticket" className={styles.ticket + " @container flex aspect-[9/16] w-full flex-col"}>
               <section aria-label={t("details")} tabIndex={0} className="max-h-[62%] shrink-0 overflow-y-auto bg-white px-3 pb-3 pt-6 min-[375px]:px-5 min-[375px]:pb-4 min-[375px]:pt-7 text-[clamp(12px,3.5cqw,14px)] focus-visible:outline-2 focus-visible:outline-inset">
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="min-w-0 break-words text-[clamp(16px,4.8cqw,20px)] font-black tracking-tight leading-tight">{ticket.eventName || EVENT_CODE}<span className="ml-2 inline-block w-fit rounded-sm bg-[#ea580c] px-1.5 py-0.5 font-mono text-[8px] tracking-wider text-white">LIVE PASS</span></h2>
+                  <h2 className="min-w-0 break-words text-[clamp(16px,4.8cqw,20px)] font-black tracking-tight leading-tight">{ticket.eventName || EVENT_CODE}</h2>
                   <p className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-zinc-950 bg-zinc-950 px-2 py-1.5 text-[clamp(10px,2.9cqw,12px)] font-bold text-white"><span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-emerald-400" />{t("confirmedShort")}</p>
                 </div>
                 <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-3 border-t-2 border-zinc-950 pt-3 min-[375px]:mt-4 min-[375px]:gap-y-4 min-[375px]:pt-4">
@@ -173,7 +167,7 @@ export default function TicketPage() {
             </div>
             <div className="hidden" aria-hidden="true"><QRCodeCanvas ref={downloadCanvas} value={ticket.regCode} size={1024} level="M" marginSize={4} bgColor="#ffffff" fgColor="#09090b" /></div>
             {downloadError && <p role="alert" className="mt-2 text-sm text-red-700">{t("downloadError")}</p>}
-            <div className="mt-2">{links}</div>
+
             {ticket.details.length > 0 && (
               <details className="mt-2 rounded-lg border border-slate-200 bg-white px-3">
                 <summary className="min-h-11 cursor-pointer py-3 text-xs font-semibold">{t("details")}</summary>

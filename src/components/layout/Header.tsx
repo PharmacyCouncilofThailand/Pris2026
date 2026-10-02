@@ -30,6 +30,7 @@ export default function Header() {
   const { isAuthenticated: isLoggedIn } = useAuth();
   const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
+  const isTicketPage = pathname === "/ticket";
   const locale = useLocale();
   const isThai = locale === "th";
   const authTracking = isThai ? "tracking-normal" : "tracking-widest";
@@ -214,7 +215,7 @@ export default function Header() {
           </div>
 
           <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
-            <button
+            {!isTicketPage && <button
               onClick={switchLocale}
               disabled={isPending}
               className={cn(
@@ -229,7 +230,7 @@ export default function Header() {
               <span className="uppercase text-xs font-black tracking-wider">
                 {locale === "en" ? "TH" : "EN"}
               </span>
-            </button>
+            </button>}
 
             {isLoggedIn ? (
               <div className={cn(
@@ -284,7 +285,7 @@ export default function Header() {
             )}
           </div>
 
-          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
+          {!isTicketPage && <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
           <button
             onClick={switchLocale}
             disabled={isPending}
@@ -410,7 +411,7 @@ export default function Header() {
               </div>
             </SheetContent>
           </Sheet>
-        </div>
+        </div>}
         </div>
       </div>
     </header>
