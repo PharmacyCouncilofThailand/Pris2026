@@ -1,8 +1,16 @@
-import { ticketReturnQuery } from "./entryTicket";
+import { eventReturnQuery } from "./localizedRedirect";
 
 export function shouldRedirectReload(pathname: string, search = ""): boolean {
   const normalized = pathname.replace(/^\/(th|en)(?=\/|$)/, "").replace(/\/$/, "") || "/";
-  if (["/", "/sessions/confirm", "/ticket"].includes(normalized)) return false;
-  const authJourney = normalized === "/login" || normalized === "/signup" || normalized.startsWith("/signup/");
-  return !(authJourney && ticketReturnQuery(search));
+  const directReturn = eventReturnQuery(
+    `?redirect=${encodeURIComponent(normalized)}`,
+  );
+  if (normalized === "/" || normalized === "/sessions/confirm" || directReturn) {
+    return false;
+  }
+  const authJourney =
+    normalized === "/login" ||
+    normalized === "/signup" ||
+    normalized.startsWith("/signup/");
+  return !(authJourney && eventReturnQuery(search));
 }

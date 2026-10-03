@@ -78,7 +78,13 @@ export default function Header() {
     "/registration",
     "/sessions/confirm"
   ];
-  const isLightPage = lightPages.includes(pathname) || pathname.startsWith("/signup") || pathname.startsWith("/login") || pathname.startsWith("/profile") || pathname.startsWith("/abstracts/confirm");
+  const isLightPage =
+    lightPages.includes(pathname) ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/profile") ||
+    pathname.startsWith("/abstracts/confirm") ||
+    pathname.startsWith("/lucky-wheel");
   const useDarkText = isLightPage && !isScrolled;
 
   if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/forgot-password") || pathname.includes("/reset-password")) {

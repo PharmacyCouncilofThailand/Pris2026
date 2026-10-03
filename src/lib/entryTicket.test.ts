@@ -7,7 +7,7 @@ test("ticket journey retains a safe destination, reads owned confirmed PRIS data
   assert.equal(ticketReturnQuery("?redirect=https%3A%2F%2Fevil.test"), undefined);
   assert.equal(ticketReturnQuery("?redirect=%2Fprofile"), undefined);
   const originalFetch = globalThis.fetch;
-  const row = { registrationId: 1, regCode: "REG-DEMO", eventCode: "PRIS-2026",
+  const row = { registrationId: 1, eventId: 7, regCode: "REG-DEMO", eventCode: "PRIS-2026",
     eventName: "PRIS 2026", status: "confirmed", ticketName: "Early Bird", eventStartDate: null,
     eventEndDate: null, eventLocation: "IMPACT", includes: ["Main Stage"] };
   try {
@@ -23,6 +23,7 @@ test("ticket journey retains a safe destination, reads owned confirmed PRIS data
     const rows = await loadEntryTickets("https://api.example.test/", "test-token", "PRIS-2026");
     assert.equal(rows.length, 1);
     assert.equal(rows[0].regCode, "REG-DEMO");
+    assert.equal(rows[0].eventId, 7);
     assert.equal(rows[0].eventName, "PRIS 2026");
     assert.deepEqual(rows[0].details, ["Main Stage"]);
     globalThis.fetch = async () => Response.json({ success: true, data: [] });

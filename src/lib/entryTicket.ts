@@ -1,7 +1,8 @@
-import { normalizeLocalizedRedirectPath } from "./localizedRedirect";
+import { eventReturnQuery } from "./localizedRedirect";
 
 export interface EntryTicket {
   registrationId: number;
+  eventId: number;
   regCode: string;
   ticketName: string;
   eventName: string | null;
@@ -16,8 +17,9 @@ function record(value: unknown): value is Record<string, unknown> {
 }
 
 export function ticketReturnQuery(search: string): { redirect: "/ticket" } | undefined {
-  return normalizeLocalizedRedirectPath(new URLSearchParams(search).get("redirect")) === "/ticket"
-    ? { redirect: "/ticket" } : undefined;
+  return eventReturnQuery(search)?.redirect === "/ticket"
+    ? { redirect: "/ticket" }
+    : undefined;
 }
 
 export async function loadEntryTickets(
@@ -36,7 +38,8 @@ export async function loadEntryTickets(
     .map((value) => {
       const row = value as Record<string, unknown>;
       if (typeof row.registrationId !== "number" || !Number.isInteger(row.registrationId)
-        || row.registrationId < 1 || typeof row.regCode !== "string" || !row.regCode.trim()
+        || row.registrationId < 1 || typeof row.eventId !== "number" || !Number.isInteger(row.eventId)
+        || row.eventId < 1 || typeof row.regCode !== "string" || !row.regCode.trim()
         || typeof row.ticketName !== "string" || !row.ticketName.trim()) {
         throw new Error("Invalid confirmed registration");
       }
@@ -49,7 +52,7 @@ export async function loadEntryTickets(
       }
       if (record(row.galaTicket)) labels.push(row.galaTicket.name);
       return {
-        registrationId: row.registrationId, regCode: row.regCode, ticketName: row.ticketName,
+        registrationId: row.registrationId, eventId: row.eventId, regCode: row.regCode, ticketName: row.ticketName,
         eventName: typeof row.eventName === "string" ? row.eventName : null,
         eventStartDate: typeof row.eventStartDate === "string" ? row.eventStartDate : null,
         eventEndDate: typeof row.eventEndDate === "string" ? row.eventEndDate : null,

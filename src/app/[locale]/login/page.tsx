@@ -3,12 +3,15 @@
 import React, { useRef, useEffect, useState , useTransition } from "react";
 import Image from "next/image";
 import { Link, useRouter, usePathname } from "@/i18n/routing";
-import { ticketReturnQuery } from "@/lib/entryTicket";
+import {
+  eventReturnQuery,
+  normalizeLocalizedRedirectPath,
+} from "@/lib/localizedRedirect";
 import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
-import { normalizeLocalizedRedirectPath } from "@/lib/localizedRedirect";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002';
 
@@ -230,7 +233,7 @@ export default function LoginPage() {
             <div className="mt-12 text-center ">
               <p className="text-sm font-medium text-gray-500">
                 {t("noAccount")}{" "}
-                <Link href={{ pathname: "/signup", query: ticketReturnQuery(typeof window === "undefined" ? "" : window.location.search) }} className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">{t("signUp")}</Link>
+                <Link href={{ pathname: "/signup", query: eventReturnQuery(typeof window === "undefined" ? "" : window.location.search) }} className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">{t("signUp")}</Link>
               </p>
             </div>
           </div>

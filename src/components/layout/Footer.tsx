@@ -25,7 +25,12 @@ export default function Footer() {
   const tFooter = useTranslations("footer");
   const pathname = usePathname();
 
-  if (pathname === "/ticket" || pathname.includes("/login") || pathname.includes("/signup")) {
+  if (
+    pathname === "/ticket" ||
+    pathname.startsWith("/lucky-wheel") ||
+    pathname.includes("/login") ||
+    pathname.includes("/signup")
+  ) {
     return null;
   }
 
