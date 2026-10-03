@@ -29,6 +29,7 @@ test("ticket and Lucky Wheel auth-return reloads stay in their journeys", () => 
     "/lucky-wheel",
     "/th/lucky-wheel",
     "/en/lucky-wheel/history",
+    "/th/lucky-wheel/claim",
     "/th/lucky-wheel/rewards/123e4567-e89b-42d3-a456-426614174000",
   ]) {
     assert.equal(shouldRedirectReload(path), false, path);
@@ -36,6 +37,7 @@ test("ticket and Lucky Wheel auth-return reloads stay in their journeys", () => 
   for (const path of ["/th/login", "/signup/student", "/en/signup/pending"]) {
     assert.equal(shouldRedirectReload(path, "?redirect=%2Fticket"), false);
     assert.equal(shouldRedirectReload(path, "?redirect=%2Flucky-wheel"), false);
+    assert.equal(shouldRedirectReload(path, "?redirect=%2Flucky-wheel%2Fclaim"), false);
   }
   assert.equal(shouldRedirectReload("/en/login", "?redirect=%2Flucky-wheel"), false);
   assert.equal(shouldRedirectReload("/login"), true);

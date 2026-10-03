@@ -89,15 +89,11 @@ export default function LuckyWheelPage() {
           next.userId,
           targetEventId,
         );
-        if (next.existingSpin) {
-          clearPendingSpinRequest(sessionStorage, next.userId, targetEventId);
-          setResult(next.existingSpin);
-          setFrozenSegments(null);
-          setAnimateResult(false);
-          setPhase("idle");
-        } else if (pending) {
+        if (pending) {
           setPhase("unknown");
         } else {
+          setResult(next.latestSpin);
+          setFrozenSegments(null);
           setPhase("idle");
         }
         return next;
@@ -146,6 +142,20 @@ export default function LuckyWheelPage() {
       controller.abort();
     };
   }, [attempt, expireAuth, isAuthenticated, refreshEligibility, token]);
+
+  useEffect(() => {
+    if (!eventId || !isAuthenticated || animateResult || phase === "submitting" || phase === "reconciling") return;
+    const refreshOnReturn = () => { void refreshEligibility(eventId).catch(() => setLoadError(true)); };
+    const refreshOnVisible = () => {
+      if (document.visibilityState === "visible") refreshOnReturn();
+    };
+    window.addEventListener("focus", refreshOnReturn);
+    document.addEventListener("visibilitychange", refreshOnVisible);
+    return () => {
+      window.removeEventListener("focus", refreshOnReturn);
+      document.removeEventListener("visibilitychange", refreshOnVisible);
+    };
+  }, [eventId, isAuthenticated, animateResult, phase, refreshEligibility]);
 
   const currentSegments = useMemo(
     () => (eligibility ? renderSegments(eligibility) : []),
@@ -197,31 +207,49 @@ export default function LuckyWheelPage() {
       !eligibility ||
       !token ||
       !eventId ||
-      !eligibility.eligible ||
-      eligibility.configurationVersion === null ||
-      eligibility.poolRevision === null
+      animateResult ||
+      phase === "submitting" ||
+      phase === "reconciling" ||
+      phase === "unknown"
     ) {
+      return;
+    }
+    let latest: LuckyWheelEligibility;
+    try {
+      latest = await loadEligibility(API_URL, token, eventId);
+      setEligibility(latest);
+    } catch (error) {
+      await handleSpinError(error, eligibility.userId, eventId);
+      return;
+    }
+    if (!latest.eligible || latest.configurationVersion === null || latest.poolRevision === null || !latest.currentWindow) {
+      setPhase("idle");
+      return;
+    }
+    if (loadPendingSpinRequest(sessionStorage, latest.userId, eventId)) {
+      setPhase("unknown");
       return;
     }
     const request = getOrCreatePendingSpinRequest(
       sessionStorage,
-      eligibility.userId,
+      latest.userId,
       eventId,
-      eligibility.configurationVersion,
-      eligibility.poolRevision,
+      latest.configurationVersion,
+      latest.poolRevision,
+      latest.currentWindow.version,
     );
-    setFrozenSegments(currentSegments);
+    setFrozenSegments(renderSegments(latest));
     setResult(null);
     setAnimateResult(false);
     setPhase("submitting");
     try {
       const committed = await submitSpin(API_URL, token, request);
-      clearPendingSpinRequest(sessionStorage, eligibility.userId, eventId);
+      clearPendingSpinRequest(sessionStorage, latest.userId, eventId);
       setResult(committed.spin);
       setAnimateResult(true);
       setPhase("idle");
     } catch (error) {
-      await handleSpinError(error, eligibility.userId, eventId);
+      await handleSpinError(error, latest.userId, eventId);
     }
   };
 
@@ -319,7 +347,11 @@ export default function LuckyWheelPage() {
             reducedMotion={reducedMotion}
             onSpin={() => void spin()}
             onReconcile={() => void reconcile()}
-            onAnimationComplete={() => setAnimateResult(false)}
+            onAnimationComplete={() => {
+              setAnimateResult(false);
+              setFrozenSegments(null);
+              if (eventId) void refreshEligibility(eventId).catch(() => setLoadError(true));
+            }}
           />
         ) : null}
       </div>

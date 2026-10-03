@@ -39,12 +39,14 @@ function blockKey(code: LuckyWheelEligibility["blockCode"]) {
       return "registrationRequired";
     case "SESSION_CLOSED":
       return "sessionClosed";
+    case "DAY_WINDOW_CLOSED":
+      return "outsideWindow";
+    case "NO_CREDIT":
+      return "noCredit";
     case "WHEEL_PAUSED":
       return "paused";
     case "OUT_OF_STOCK":
       return "outOfStock";
-    case "ALREADY_SPUN":
-      return "alreadySpun";
     default:
       return "notReady";
   }
@@ -79,10 +81,11 @@ export function ActivityTicket({
 
   const winningId =
     phase === "idle" && result && animateResult ? result.segmentId : null;
-  const blockedMessage =
-    !eligibility.eligible && !result
-      ? t(blockKey(eligibility.blockCode) as Parameters<typeof t>[0])
-      : null;
+  const blockedMessage = !eligibility.eligible
+    ? eligibility.blockCode === "NO_CREDIT" && eligibility.hasExpiredPriorDayCredit
+      ? t("priorDayExpired")
+      : t(blockKey(eligibility.blockCode) as Parameters<typeof t>[0])
+    : null;
 
   return (
     <article className={styles.ticket}>
@@ -102,16 +105,22 @@ export function ActivityTicket({
               <CircleAlert className="h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
             )}
             <span>
-              {result
-                ? t("alreadySpun")
-                : eligibility.eligible
-                  ? t("ready")
-                  : blockedMessage}
+              {eligibility.eligible
+                ? t("readyCredits", { count: eligibility.spendableCredits })
+                : blockedMessage}
             </span>
           </div>
           <p className="mt-2 text-xs font-semibold text-zinc-500">
             {t("serverTime", { date: eligibility.playDate })}
           </p>
+          <p className="mt-1 text-sm font-semibold text-zinc-700">
+            {t("creditCounts", { held: eligibility.unspentCredits, spendable: eligibility.spendableCredits })}
+          </p>
+          {eligibility.currentWindow && <p className="mt-1 text-sm text-zinc-700">
+            {t("wheelDeadline", { dateTime: new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
+              timeZone: "Asia/Bangkok", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false,
+            }).format(new Date(eligibility.currentWindow.endAt)) })}
+          </p>}
         </div>
 
         <div className="mt-5">
@@ -182,7 +191,7 @@ export function ActivityTicket({
                   </p>
                   <Link
                     href={`/lucky-wheel/rewards/${result.id}`}
-                    className={`${styles.action} mt-4 inline-flex items-center justify-center`}
+                    className={`${eligibility.eligible ? styles.secondaryAction : styles.action} mt-4 inline-flex items-center justify-center`}
                   >
                     {t("viewProof")}
                   </Link>
@@ -190,7 +199,7 @@ export function ActivityTicket({
               ) : (
                 <>
                   <p className="text-lg font-black text-zinc-950">{t("noPrize")}</p>
-                  <p className="mt-1 text-sm text-zinc-600">{t("usedToday")}</p>
+                  <p className="mt-1 text-sm text-zinc-600">{t("creditSpent")}</p>
                   <Link
                     href="/lucky-wheel/history"
                     className={`${styles.secondaryAction} mt-4`}
@@ -200,6 +209,9 @@ export function ActivityTicket({
                   </Link>
                 </>
               )}
+              {eligibility.eligible && <button type="button" className={`${styles.action} mt-4`} onClick={onSpin}>
+                {t("spinAgain")}
+              </button>}
             </div>
           ) : eligibility.eligible ? (
             <button

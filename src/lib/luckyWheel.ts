@@ -30,6 +30,7 @@ export type LuckyWheelSpin = {
   eventId: number;
   userId: number;
   playDate: string;
+  creditClaimId: string | null;
   attendanceId: string;
   attendanceCheckedInAt: string;
   segmentId: string;
@@ -48,10 +49,11 @@ export type LuckyWheelBlockCode =
   | "REGISTRATION_REQUIRED"
   | "ACCOUNT_UNAVAILABLE"
   | "SESSION_CLOSED"
+  | "DAY_WINDOW_CLOSED"
+  | "NO_CREDIT"
   | "WHEEL_PAUSED"
   | "WHEEL_NOT_READY"
   | "OUT_OF_STOCK"
-  | "ALREADY_SPUN"
   | "WHEEL_UPDATED"
   | "IDEMPOTENCY_CONFLICT"
   | "REDEMPTION_CLOSED"
@@ -69,7 +71,11 @@ export type LuckyWheelEligibility = {
   paused: boolean;
   configuration: LuckyWheelConfiguration | null;
   availability: LuckyWheelSegment[];
-  existingSpin: LuckyWheelSpin | null;
+  unspentCredits: number;
+  spendableCredits: number;
+  hasExpiredPriorDayCredit: boolean;
+  currentWindow: { id: string; date: string; startAt: string; endAt: string; version: number } | null;
+  latestSpin: LuckyWheelSpin | null;
   requestId: string;
 };
 
@@ -150,10 +156,55 @@ export type PendingSpinRequest = {
   eventId: number;
   configurationVersion: number;
   poolRevision: number;
+  scheduleVersion: number;
   idempotencyKey: string;
 };
 
 export type StorageLike = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+
+export type WheelQrPreview = {
+  qrId: string;
+  name: string;
+  status: "open" | "closed";
+  date: string;
+  startAt: string;
+  currentDeadline: string;
+  scheduleVersion: number;
+};
+
+export type WheelQrClaim = {
+  created: boolean;
+  qrId: string;
+  qrName: string;
+  creditId: string;
+  date: string;
+  claimedAt: string;
+  currentDeadline: string;
+  state: "spendable" | "outside_window" | "blocked" | "spent" | "revoked" | "prior_day_expired";
+};
+
+const QR_CLAIM_STORAGE_KEY = "pris:lucky-wheel:pending-qr-claim";
+const QR_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function captureQrClaimFromFragment(storage: StorageLike, fragment: string): string | null {
+  if (fragment) {
+    const candidate = fragment.startsWith("#") ? fragment.slice(1) : fragment;
+    if (!QR_ID_PATTERN.test(candidate)) {
+      storage.removeItem(QR_CLAIM_STORAGE_KEY);
+      return null;
+    }
+    storage.setItem(QR_CLAIM_STORAGE_KEY, candidate);
+    return candidate;
+  }
+  const stored = storage.getItem(QR_CLAIM_STORAGE_KEY);
+  if (stored && QR_ID_PATTERN.test(stored)) return stored;
+  storage.removeItem(QR_CLAIM_STORAGE_KEY);
+  return null;
+}
+
+export function clearPendingQrClaim(storage: StorageLike): void {
+  storage.removeItem(QR_CLAIM_STORAGE_KEY);
+}
 
 export class LuckyWheelApiError extends Error {
   constructor(
@@ -256,6 +307,30 @@ export async function loadEligibility(
   );
 }
 
+export async function loadQrPreview(
+  apiOrigin: string,
+  token: string,
+  eventId: number,
+  qrId: string,
+  signal?: AbortSignal,
+): Promise<WheelQrPreview> {
+  if (!QR_ID_PATTERN.test(qrId)) throw new Error("Invalid wheel QR id");
+  return requestJson<WheelQrPreview>(endpoint(apiOrigin, eventId, `/qr-codes/${qrId}`), token, { signal });
+}
+
+export async function claimQrCredit(
+  apiOrigin: string,
+  token: string,
+  eventId: number,
+  qrId: string,
+  signal?: AbortSignal,
+): Promise<WheelQrClaim> {
+  if (!QR_ID_PATTERN.test(qrId)) throw new Error("Invalid wheel QR id");
+  return requestJson<WheelQrClaim>(endpoint(apiOrigin, eventId, "/credit-claims"), token, {
+    method: "POST", signal, body: JSON.stringify({ qrId }),
+  });
+}
+
 export async function loadWheel(
   apiOrigin: string,
   token: string,
@@ -291,6 +366,7 @@ export async function submitSpin(
         eventId: request.eventId,
         configurationVersion: request.configurationVersion,
         poolRevision: request.poolRevision,
+        scheduleVersion: request.scheduleVersion,
         idempotencyKey: request.idempotencyKey,
       }),
     },
@@ -358,6 +434,7 @@ export function loadPendingSpinRequest(
       value.eventId !== eventId ||
       !Number.isInteger(value.configurationVersion) ||
       !Number.isInteger(value.poolRevision) ||
+      !Number.isInteger(value.scheduleVersion) ||
       typeof value.idempotencyKey !== "string" ||
       !/^[0-9a-f-]{36}$/i.test(value.idempotencyKey)
     ) {
@@ -377,6 +454,7 @@ export function getOrCreatePendingSpinRequest(
   eventId: number,
   configurationVersion: number,
   poolRevision: number,
+  scheduleVersion: number,
 ): PendingSpinRequest {
   const existing = loadPendingSpinRequest(storage, userId, eventId);
   if (existing) return existing;
@@ -386,6 +464,7 @@ export function getOrCreatePendingSpinRequest(
     eventId,
     configurationVersion,
     poolRevision,
+    scheduleVersion,
     idempotencyKey: crypto.randomUUID(),
   };
   storage.setItem(pendingKey(userId, eventId), JSON.stringify(request));

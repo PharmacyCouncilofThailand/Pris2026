@@ -28,6 +28,9 @@ test("falls back to home for unsafe or missing redirects", () => {
 test("event return query preserves only ticket and bounded Lucky Wheel destinations", () => {
   assert.deepEqual(eventReturnQuery("?redirect=%2Fticket"), { redirect: "/ticket" });
   assert.deepEqual(eventReturnQuery("?redirect=%2Fth%2Flucky-wheel"), { redirect: "/lucky-wheel" });
+  assert.deepEqual(eventReturnQuery("?redirect=%2Fen%2Flucky-wheel%2Fclaim"), {
+    redirect: "/lucky-wheel/claim",
+  });
   assert.deepEqual(eventReturnQuery("?redirect=%2Fen%2Flucky-wheel%2Fhistory"), {
     redirect: "/lucky-wheel/history",
   });
@@ -43,6 +46,8 @@ test("event return query preserves only ticket and bounded Lucky Wheel destinati
     "?redirect=%2Fprofile",
     "?redirect=%2Flucky-wheel%2Frewards%2Fnot-a-uuid",
     "?redirect=%2Flucky-wheel%3Fnext%3D%2Fprofile",
+    "?redirect=%2Flucky-wheel%2Fclaim%23not-a-uuid",
+    "?redirect=%2Flucky-wheel%2Fclaim%2F123e4567-e89b-42d3-a456-426614174000",
   ]) {
     assert.equal(eventReturnQuery(search), undefined, search);
   }

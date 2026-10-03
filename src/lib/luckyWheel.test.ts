@@ -2,17 +2,85 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   LuckyWheelApiError,
+  captureQrClaimFromFragment,
+  clearPendingQrClaim,
+  claimQrCredit,
   clearPendingSpinRequest,
   getOrCreatePendingSpinRequest,
   loadEligibility,
   loadOwnSpin,
   loadOwnSpins,
+  loadQrPreview,
   loadPendingSpinRequest,
   loadWheel,
   resolveWheelImageUrl,
   submitSpin,
   type StorageLike,
 } from "./luckyWheel.js";
+
+const qrId = "123e4567-e89b-42d3-a456-426614174000";
+
+test("camera fragment stores one validated QR id for login and strips unsafe inputs", () => {
+  const storage = new MemoryStorage();
+  assert.equal(captureQrClaimFromFragment(storage, `#${qrId}`), qrId);
+  assert.equal(captureQrClaimFromFragment(storage, ""), qrId);
+  assert.equal(captureQrClaimFromFragment(storage, "#https://evil.test"), null);
+  assert.equal(captureQrClaimFromFragment(storage, ""), null);
+  assert.equal(captureQrClaimFromFragment(storage, `#${qrId}`), qrId);
+  clearPendingQrClaim(storage);
+  assert.equal(captureQrClaimFromFragment(storage, ""), null);
+});
+
+test("QR preview and first/duplicate claims use authenticated server endpoints", async () => {
+  const originalFetch = globalThis.fetch;
+  let claimCount = 0;
+  try {
+    globalThis.fetch = async (input, init) => {
+      assert.equal(new Headers(init?.headers).get("Authorization"), "Bearer token");
+      assert.equal(init?.cache, "no-store");
+      if (init?.method === "POST") {
+        assert.equal(String(input), "https://api.example.test/api/lucky-wheel/events/7/credit-claims");
+        assert.deepEqual(JSON.parse(String(init.body)), { qrId });
+        claimCount += 1;
+        return Response.json({
+          created: claimCount === 1, qrId, qrName: "Morning", creditId: "credit-1",
+          date: "2026-10-29", claimedAt: "2026-10-29T08:00:00.000Z",
+          currentDeadline: "2026-10-29T12:00:00.000Z", state: "spendable",
+        }, { status: claimCount === 1 ? 201 : 200 });
+      }
+      assert.equal(String(input), `https://api.example.test/api/lucky-wheel/events/7/qr-codes/${qrId}`);
+      return Response.json({ qrId, name: "Morning", status: "open", date: "2026-10-29",
+        startAt: "2026-10-29T02:00:00.000Z", currentDeadline: "2026-10-29T12:00:00.000Z",
+        scheduleVersion: 1 });
+    };
+    assert.equal((await loadQrPreview("https://api.example.test", "token", 7, qrId)).name, "Morning");
+    assert.equal((await claimQrCredit("https://api.example.test", "token", 7, qrId)).created, true);
+    assert.equal((await claimQrCredit("https://api.example.test", "token", 7, qrId)).created, false);
+    assert.equal(claimCount, 2);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("QR claim preserves server block codes and uncertain network outcomes", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    for (const code of ["WHEEL_NOT_READY", "CHECKIN_REQUIRED", "SESSION_CLOSED"]) {
+      globalThis.fetch = async () => Response.json({ code, error: code }, { status: 409 });
+      await assert.rejects(
+        claimQrCredit("https://api.example.test", "token", 7, qrId),
+        (error: unknown) => error instanceof LuckyWheelApiError && error.code === code,
+      );
+    }
+    globalThis.fetch = async () => { throw new TypeError("offline"); };
+    await assert.rejects(
+      claimQrCredit("https://api.example.test", "token", 7, qrId),
+      (error: unknown) => error instanceof LuckyWheelApiError && error.status === 0,
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
 
 class MemoryStorage implements StorageLike {
   private readonly values = new Map<string, string>();
@@ -52,7 +120,11 @@ const eligibility = {
     position: 0,
     remaining: 3,
   }],
-  existingSpin: null,
+  unspentCredits: 2,
+  spendableCredits: 2,
+  hasExpiredPriorDayCredit: false,
+  currentWindow: { id: qrId, date: "2026-10-29", startAt: "2026-10-29T02:00:00.000Z", endAt: "2026-10-29T12:00:00.000Z", version: 3 },
+  latestSpin: null,
   requestId: "req-1",
 };
 
@@ -121,13 +193,14 @@ test("loads authenticated eligibility/wheel state and preserves server errors", 
 
 test("spin submission sends only server-authoritative revision fields and reuses its request key", async () => {
   const storage = new MemoryStorage();
-  const first = getOrCreatePendingSpinRequest(storage, 11, 7, 4, 6);
-  const second = getOrCreatePendingSpinRequest(storage, 11, 7, 99, 99);
+  const first = getOrCreatePendingSpinRequest(storage, 11, 7, 4, 6, 3);
+  const second = getOrCreatePendingSpinRequest(storage, 11, 7, 99, 99, 9);
   assert.equal(second.idempotencyKey, first.idempotencyKey);
   assert.equal(second.configurationVersion, 4);
   assert.equal(second.poolRevision, 6);
+  assert.equal(second.scheduleVersion, 3);
 
-  const otherUser = getOrCreatePendingSpinRequest(storage, 12, 7, 4, 6);
+  const otherUser = getOrCreatePendingSpinRequest(storage, 12, 7, 4, 6, 3);
   assert.notEqual(otherUser.idempotencyKey, first.idempotencyKey);
 
   const originalFetch = globalThis.fetch;
@@ -140,6 +213,7 @@ test("spin submission sends only server-authoritative revision fields and reuses
         eventId: 7,
         configurationVersion: 4,
         poolRevision: 6,
+        scheduleVersion: 3,
         idempotencyKey: first.idempotencyKey,
       });
       assert.equal("segmentId" in body, false);
@@ -177,11 +251,14 @@ test("spin submission sends only server-authoritative revision fields and reuses
   assert.deepEqual(loadPendingSpinRequest(storage, 11, 7), first);
   clearPendingSpinRequest(storage, 11, 7);
   assert.equal(loadPendingSpinRequest(storage, 11, 7), null);
+  const next = getOrCreatePendingSpinRequest(storage, 11, 7, 4, 6, 4);
+  assert.notEqual(next.idempotencyKey, first.idempotencyKey);
+  assert.equal(next.scheduleVersion, 4);
 });
 
 test("network failure remains unknown and does not clear the pending request", async () => {
   const storage = new MemoryStorage();
-  const pending = getOrCreatePendingSpinRequest(storage, 11, 7, 4, 6);
+  const pending = getOrCreatePendingSpinRequest(storage, 11, 7, 4, 6, 3);
   const originalFetch = globalThis.fetch;
   try {
     globalThis.fetch = async () => {
@@ -195,6 +272,32 @@ test("network failure remains unknown and does not clear the pending request", a
         error.code === "NETWORK_ERROR",
     );
     assert.deepEqual(loadPendingSpinRequest(storage, 11, 7), pending);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("current schedule can close and reopen the same unspent credits; prior day stays expired", async () => {
+  const originalFetch = globalThis.fetch;
+  const closed = { ...eligibility, eligible: false, blockCode: "DAY_WINDOW_CLOSED",
+    unspentCredits: 2, spendableCredits: 0,
+    currentWindow: { ...eligibility.currentWindow, version: 4, endAt: "2026-10-29T10:00:00.000Z" } };
+  const reopened = { ...eligibility, eligible: true, blockCode: null,
+    unspentCredits: 2, spendableCredits: 2,
+    currentWindow: { ...eligibility.currentWindow, version: 5, endAt: "2026-10-29T13:00:00.000Z" } };
+  const priorDay = { ...eligibility, eligible: false, blockCode: "NO_CREDIT",
+    playDate: "2026-10-30", unspentCredits: 0, spendableCredits: 0,
+    hasExpiredPriorDayCredit: true, currentWindow: null };
+  const states = [closed, reopened, priorDay];
+  try {
+    globalThis.fetch = async () => Response.json(states.shift());
+    const first = await loadEligibility("https://api.example.test", "token", 7);
+    const second = await loadEligibility("https://api.example.test", "token", 7);
+    const third = await loadEligibility("https://api.example.test", "token", 7);
+    assert.deepEqual([first.unspentCredits, first.spendableCredits, first.currentWindow?.version], [2, 0, 4]);
+    assert.deepEqual([second.unspentCredits, second.spendableCredits, second.currentWindow?.version], [2, 2, 5]);
+    assert.equal(third.hasExpiredPriorDayCredit, true);
+    assert.equal(third.spendableCredits, 0);
   } finally {
     globalThis.fetch = originalFetch;
   }

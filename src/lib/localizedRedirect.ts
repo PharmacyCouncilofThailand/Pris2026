@@ -1,6 +1,6 @@
 const SUPPORTED_LOCALE_PREFIX = /^\/(?:en|th)(?=\/|\?|#|$)/;
 const REWARD_PROOF_PATH = /^\/lucky-wheel\/rewards\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const EVENT_RETURN_PATHS = new Set(["/ticket", "/lucky-wheel", "/lucky-wheel/history"]);
+const EVENT_RETURN_PATHS = new Set(["/ticket", "/lucky-wheel", "/lucky-wheel/claim", "/lucky-wheel/history"]);
 
 export function normalizeLocalizedRedirectPath(value: string | null | undefined): string {
   const redirect = value?.trim();
