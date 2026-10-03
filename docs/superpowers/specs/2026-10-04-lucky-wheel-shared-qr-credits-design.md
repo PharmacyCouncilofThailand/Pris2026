@@ -14,7 +14,7 @@ Each credit belongs to its QR's Bangkok date. Admin sets **one daily window** fo
 
 The completed API currently checks today's attendance and `spinByDay` inside `getEligibility` and `createSpin` (`conference-api/src/modules/lucky-wheel/service.ts`). `lucky_wheel_spins` requires attendance evidence and has a unique `(event_id, user_id, play_date)` index (`drizzle/0034_lucky_wheel.sql`). PRIS displays `existingSpin` as a terminal daily result (`Pris2026/src/app/[locale]/lucky-wheel/page.tsx` and `ActivityTicket.tsx`). The backoffice has wheel setup and reward collection but no QR-credit management.
 
-Keep the existing daily attendance tables, policies, scan routes, ticket QR, reports, and historical check-in data. **Do not remove attendance checks from the wheel**: the new rule replaces today's single-play entitlement with a QR credit while retaining registration, Main Session entitlement and active daily attendance as preconditions. `play_date` remains a Bangkok reporting date; it ceases to be a uniqueness key for new spins.
+Keep the existing daily attendance tables, policies, scan routes, ticket QR, reports, and historical check-in data. **Do not remove attendance checks from the wheel**: the new rule replaces today's single-play entitlement with a QR credit while retaining registration, Main Session entitlement and active daily attendance as preconditions. Replace the wheel's old Main Session start/end time gate with the admin's shared daily window for both claiming and spinning; the check-in scanner keeps its own Main Session time policy. `play_date` remains a Bangkok reporting date; it ceases to be a uniqueness key for new spins.
 
 ## Day schedule and QR lifecycle
 
