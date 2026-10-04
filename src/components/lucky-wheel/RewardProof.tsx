@@ -19,7 +19,6 @@ export function RewardProof({ detail }: Props) {
   const locale = useLocale();
   const [copied, setCopied] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
-  const [renderedAt] = useState(() => Date.now());
   const imageUrl = !imageFailed
     ? resolveWheelImageUrl(
         detail.prize.imageKey,
@@ -31,10 +30,6 @@ export function RewardProof({ detail }: Props) {
     dateStyle: "medium",
     timeStyle: "short",
   });
-  const deadlinePassed = Boolean(
-    detail.collectionDeadline &&
-      renderedAt >= new Date(detail.collectionDeadline).getTime(),
-  );
 
   if (!detail.rewardProof) {
     return (
@@ -136,33 +131,12 @@ export function RewardProof({ detail }: Props) {
               {detail.status === "redeemed" ? t("claimed") : t("unclaimed")}
             </dd>
           </div>
-          <div className="grid grid-cols-[120px_1fr] gap-3 py-3">
-            <dt className="font-bold text-zinc-500">{t("collectionInstructions")}</dt>
-            <dd className="flex gap-2 text-zinc-800">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
-              <span>
-                {detail.collectionInstructions
-                  ? locale === "th"
-                    ? detail.collectionInstructions.th
-                    : detail.collectionInstructions.en
-                  : "—"}
-              </span>
-            </dd>
-          </div>
-          <div className="grid grid-cols-[120px_1fr] gap-3 py-3">
-            <dt className="font-bold text-zinc-500">{t("deadline")}</dt>
-            <dd className={deadlinePassed ? "font-bold text-rose-800" : "text-zinc-800"}>
-              {detail.collectionDeadline
-                ? formatter.format(new Date(detail.collectionDeadline))
-                : "—"}
-            </dd>
-          </div>
         </dl>
 
-        {deadlinePassed && detail.status !== "redeemed" && (
-          <div className="rounded-xl bg-rose-50 p-4 text-sm leading-6 text-rose-950" role="alert">
-            <p className="font-black">{t("expired")}</p>
-            <p className="mt-1">{t("expiredHint")}</p>
+        {detail.status !== "redeemed" && (
+          <div className="flex items-start gap-3 rounded-xl bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-950">
+            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-orange-700" aria-hidden="true" />
+            <p>{t("pickupNotice")}</p>
           </div>
         )}
       </div>

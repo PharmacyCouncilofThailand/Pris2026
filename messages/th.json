@@ -110,6 +110,7 @@
     "owner": "ผู้ได้รับรางวัล",
     "awardedAt": "ได้รับรางวัลเมื่อ",
     "collectionInstructions": "จุดรับ / วิธีรับของ",
+    "pickupNotice": "ไปรับของที่จุดรับรางวัล",
     "deadline": "รับของได้ถึง",
     "claimStatus": "สถานะรับของ",
     "manualCode": "รหัสสำหรับเจ้าหน้าที่",

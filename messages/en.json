@@ -110,6 +110,7 @@
     "owner": "Reward owner",
     "awardedAt": "Awarded at",
     "collectionInstructions": "Collection point / instructions",
+    "pickupNotice": "Collect your prize at the prize collection point.",
     "deadline": "Collect by",
     "claimStatus": "Collection status",
     "manualCode": "Staff verification code",

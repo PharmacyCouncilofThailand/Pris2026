@@ -17,12 +17,13 @@ export type LuckyWheelConfigurationSegment = {
   imageId: string | null;
   enabled: boolean;
   position: number;
+  initialQuantity?: number;
 };
 
 export type LuckyWheelConfiguration = {
   segments: LuckyWheelConfigurationSegment[];
-  collectionInstructions: LocalizedText;
-  collectionDeadline: string;
+  collectionInstructions?: LocalizedText;
+  collectionDeadline?: string;
 };
 
 export type LuckyWheelSpin = {
