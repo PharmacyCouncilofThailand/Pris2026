@@ -10,9 +10,14 @@ Canonical plan: `../../plans/2026-10-05-lucky-wheel-daily-attendance-readiness.m
 - T04: **PASS** — approved NOWAIT amendment; setup/readiness/fence suites **8/8 PASS**, API build passed.
 - T05: **PASS** — authenticated setup route/state, strict bodies and replay; API suites **11/11 PASS**, build passed. T04 prerequisite re-test passed.
 - T06: **PASS** — wheel **29/29**, attendance/setup **11/11**, API build passed.
-- T07–T12: **PENDING**.
-- FINAL_VERIFY: **PENDING**.
-- API T01–T06 committed as `7a0851a`. No migration, operational attendance activation, QR opening, push or deployment.
+- T07: **PASS** — restored environment checks, real synthetic API setup and desktop/mobile dialog verified after approved resumption.
+- T08: **PASS** — UI guards/scanner refresh/build and T10 prerequisite route matrix verified.
+- T09: **PASS** — tests 63/63, scoped lint, TypeScript and production build.
+- T10: **PASS** — route/readers/attendance 3/3, API build; T08 dependency re-tested.
+- T11: **PASS** — approved stale-preview race amendment; wheel 29/29, attendance/setup/flow 16/16 and API build passed.
+- T12: **PASS** — scoped read-only runbook, backup/restore proof, authenticated Local repair and browser verification complete.
+- FINAL_VERIFY: **PASS** — wheel29/29, attendance18/18, PRIS63/63; API/Backoffice/PRIS builds and scoped lint/type checks pass.
+- API T01–T06 committed as `7a0851a`; T07–T12 API `03df628`, Backoffice `c6642f9`; participant/docs commit follows in Git history. Local daily activation/import completed as recorded below; no new migration, operational QR opening, push or deployment.
 
 ## Baseline
 
@@ -126,3 +131,103 @@ User approved proceeding with the most suitable approach. Canonical T04 now spec
 - A reward fixture initially failed because it also invoked createSpin without policy; fixed only that affected fixture, then reran the complete wheel suite.
 - Complete wheel suite **29/29 PASS**, zero skipped. Full-schema attendance/setup suite **11/11 PASS**, zero skipped. API build **PASS**.
 - No new migration or operational policy/QR changes. T01–T06 ready for their first commit batch.
+
+## T07 checkpoint — authenticated browser gate
+
+- Added the actual admin setup client/types, readiness card and reviewed native dialog. Unknown readiness is never displayed as ready. Network/BUSY retries retain the exact request/key; stale previews require reload and review; successful setup with a failed refresh is reported separately.
+- Scoped ESLint, `tsc --noEmit`, and Backoffice production build **PASS**.
+- Required browser verification redirected `http://localhost:3001/lucky-wheel` to `/login`. One attempt with the dev credentials displayed on the login page returned **Invalid email or password**. No authenticated setup card/dialog verification is claimed.
+- Stopped at the canonical plan's unavailable-authentication condition. T07 is not PASS; T08 has not started. Need the user to sign into Backoffice in the Codex in-app browser using an existing authorized admin account, then resume the visual gate.
+- Remaining T07 review: display the actual bound Main Session name and ID for initialized wheels (current page only loads the name during initialization), then rerun affected checks and browser validation.
+- No password reset, authentication bypass, operational setup, QR opening, container deletion, push or deployment. Current T07 changes remain uncommitted; T01–T06 commits retained.
+
+### T07 resumed after user login
+
+- Existing authorized admin login works. Actual PRIS state shows bound Main Session #1 (name PRIS 2026), 2 confirmed registrations, 2 entitlements, 1 pending historical import and runtime not ready. Activity is currently unpaused, so setup is disabled with the required pause explanation. No operational state was changed.
+- Fixed bound-session name loading for initialized wheels; the exact bound ID selects the name instead of choosing another Main Session. Scoped ESLint, TypeScript and production build rerun **PASS**.
+- Created a synthetic event #46 / Main Session #91 and synthetic admin in the guarded `attendance_readiness_test` database only. Started isolated API on 3102 and a source-copy Backoffice preview on 3101; existing API/Backoffice and their environments were not replaced or stopped. Preview artifacts are under `C:/Users/JaoNo/AppData/Local/Codex/attendance-readiness-20261005/backoffice-preview`.
+- Browser rejected `http://localhost:3101/login` with `net::ERR_BLOCKED_BY_CLIENT`. No dialog/mobile verification or mutation success is claimed. No attempt to bypass the browser restriction.
+- T07 remains BLOCKED; T08–T12 have not started. Need access to the isolated localhost preview in the Codex browser, or explicit approval of a different verification arrangement. Live pause/setup stays reserved for the reviewed T12 operational step.
+
+### Preview failure correction and environment incident
+
+- Later server logs established HTTP 500: Next.js resolved a cross-drive client entry as `./D:/.../app-next-dev.js`. The browser's ERR_BLOCKED_BY_CLIENT is not sufficient evidence of a browser access policy. The preceding hypothesis is superseded; do not ask the user to weaken browser protections.
+- Attempting to move the preview from C: to the workspace followed its node_modules junction and moved some Backoffice dependency files into the preview's physical node_modules directory. This was an unintended environment change; original tracked source and lockfiles were not moved. The move was interrupted.
+- Restoration copies the moved dependency files back to the exact original Backoffice node_modules path, retaining the source copy. No recursive delete was issued. Both agent-created preview API/server processes have been stopped; existing operational server processes and all database containers remain.
+- Stop at this unplanned environment incident as requested. T07 visual gate remains unverified; do not proceed to T08 or operational setup. Record restoration verification below before yielding.
+
+- Restoration completed with non-destructive robocopy `/E /COPY:DAT /XJ` (no MIR/PURGE/delete). Read-only comparison exit 2 means untouched extra files in original target are retained; no moved source files remain to copy or mismatch. Scoped ESLint, `tsc --noEmit`, production build and `npm ls next react eslint typescript --depth=0` all **PASS** after restoration. Source-copy and partial artifacts retained; no container/volume cleanup.
+- Recommended resumption: use the already prepared D:-drive preview with the original dependency junction in place; never move a directory containing a dependency junction. Start only agent-owned test servers against the isolated database, verify desktop/mobile/dialog, and then continue T08 if T07 passes. Await user confirmation because their instruction requires stopping on an unplanned multi-point environment impact.
+
+### T07 verified after approved resumption
+
+- User approved D:-drive preview. It now runs on 3101 with actual API 3102 against the guarded test DB. Preview base URL has no `/api` suffix because existing client endpoints already include their own route prefixes. No environment file was edited.
+- Real synthetic event #46 / Main Session #91: readiness shows 1 confirmed registration/entitlement, zero pending history. Dialog names the bound session, explains preservation and independent activity/QR state, and requires reason plus reviewed checkbox.
+- Actual setup API succeeded; refreshed state shows daily policy enabled and immutable counts, Admin #52 and audit timestamp. Wheel stays paused/unpublished; no QR opened. This is test data only.
+- Desktop dialog and mobile 390×844 dialog visually verified. Native dialog focus and disabled submit before review verified. API concurrency/idempotency/STALENESS remain covered by T04/T05; no browser fault injection claimed.
+- Screenshots retained in `C:/Users/JaoNo/AppData/Local/Codex/attendance-readiness-20261005/`: t07-dialog-desktop.png, t07-dialog-mobile.png, t07-success-mobile.png. Restored environment's lint/TypeScript/build PASS remains valid. T07 PASS; T08 started.
+
+## T08 verification and prerequisite exception
+
+- Open activity/Open QR now disabled for missing/unknown runtime readiness; handler guards match, backend remains authoritative. Preparation, close and download paths remain available. QR status remains independent.
+- Synthetic QR-A prepared through actual day/QR services, closed with zero claims. Test-only daily policy disabled: browser shows setup warning, Open QR disabled and Download PNG enabled; configured day loaded automatically. Mobile QR layout inspected.
+- Scanner with disabled policy shows no daily label; enabling only the synthetic policy and clicking stats refresh immediately loads daily mode and server date 2026-10-06. Switching to Workshop removes daily label; no workshop behavior change.
+- Scoped ESLint zero errors (two existing scanner hook warnings), TypeScript and Backoffice production build **PASS**.
+- Checkins reader source retains date-filtered pagination/export and daily undo using exact attendanceId. Real selected/assigned/check-all response and cancellation verification require T10's optional test DB injection and integration harness. This is recorded as the permitted later-prerequisite exception; T08 not final PASS yet. Continue T09, implement T10, then rerun T08 coverage before T11.
+
+## T09 verification
+
+- ATTENDANCE_SETUP_REQUIRED is preserved through client error normalization and maps to the specified TH/EN organizer configuration copy in wheel and claim views. CHECKIN_REQUIRED remains distinct and retains its ticket link; configuration error has user-triggered retry of the original server QR flow and no ticket ownership implication/local credit.
+- Existing wheel message mapping moved into the existing client module so code/message contract can be tested. Tests **63/63 PASS**, scoped ESLint/TypeScript/build PASS. An earlier overlapping build failed resolving a generated Google font module; the final sequential build passed without font/config changes.
+
+## T10 verification; T08 dependency closed
+
+- Real checkins plugin accepts optional database; production retains default DB/auth/URLs. Guarded fixture uses actual route writers and readers.
+- 100 concurrent selected scans produce one success and 99 original date/time/ID duplicates. Original entitlement/QR works today despite non-null legacy checked_in_at and previous-day evidence. No new ticket/session/grant.
+- Today cancellation leaves yesterday active; recheck creates a new daily ID. Cancelling yesterday leaves today's duplicate result unchanged. Legacy undo is rejected for daily mode. Reports count one entitled account and two attendance occurrences; exact date list/cancelled history IDs preserved.
+- Assigned staff denied before assignment and accepted afterward; check-all records Main Session daily and Workshop single, subsequent all-scan rejects duplicates. Nonconfirmed/no entitlement/unassigned/out-of-session requests reject. No duplicate active daily rows.
+- Test harness errors (missing default DATABASE_URL, guard correctly rejecting equal runtime/test DB, fixture UUID and actual registration enum) corrected in test setup only. Runtime default is a separate isolated test DB; injected operations use attendance_readiness_test. No operational DB query/mutation.
+- Route/readers/original attendance **3/3 PASS**, API build PASS. This supplies the prerequisite proof for T08's selected/assigned/check-all/date/undo coverage; T08 re-evaluated PASS before starting T11.
+
+## T11 partial verification and canonical conflict
+
+- New full-schema flow tests **2/2 PASS** and API build PASS: published prizes/day/closed QR → audited setup creates no fabricated attendance → actual scan route → open → QR-A once/replay and QR-B once → pre-spin cancellation blocks, actual recheck restores same credits → physical-stock exhaustion blocks even with no-prize segment → top-up → two distinct credit spends allocate two prizes → third spin NO_CREDIT. Post-spin cancellation preserves two results, two spent credits and stock remaining 8. QR download creates no claim and retains closed status. Setup audit exactly one; no duplicate QR/account grants.
+- Separate actual legacy timestamp/scanner import allows owned claim without another scan; original source timestamp, scanner and ticket unchanged. Thai midnight boundary assertions pass.
+- Test-only stock exhaustion uses an exact synthetic segment update because the currently approved stock API accepts top-ups only. Test helper cleanup expanded only for owned synthetic wheel children; no broad table reset or operational mutation.
+- Canonical T11 asks an in-flight legacy scanner to hold the shared fence while setup starts, then expects setup to import immediately after that scanner commits. T02/T04 simultaneously require a fingerprint that includes source timestamp/scanner, and STALE rejection whenever those previewed facts change.
+- Reproducer in `attendance-setup.integration.test.ts` executes the actual checkInSession inside an outer transaction holding the shared fence. PostgreSQL lock inspection confirms setup's ExclusiveLock waits; after scanner commits, actual setup returns **409 ATTENDANCE_SETUP_STALE**. Focused canonical-expectation test **1/1 FAIL**, documenting the contradiction rather than weakening the production revision check.
+- T11 is not PASS. No T12, final verification, operational repair, QR opening in Local/Railway, push/deploy or container deletion. T07–T11 working changes are uncommitted pending completion of the approved task batch.
+- Proposed narrow amendment: assert setup waits, then rejects the stale preview with zero policy/import/audit writes and preserves the committed legacy scan; Admin reloads/read-reviews a new revision and submits a new command/key; import succeeds exactly once. Keep original revision/fence/backend behavior. Await user approval before changing canonical T11 expectation and resuming its remaining coverage/full suites.
+
+## T11 amendment approved
+- User approved wait → STALE/zero writes → fresh reviewed revision/new key → exactly-once import and replay. Production revision/fence behavior unchanged; T11 resumed.
+
+## T11 completed
+- Actual legacy-scan barrier: setup waits, STALE rolls back all setup writes, source retained, refreshed command imports once and replays.
+- Actual setup transaction holds exclusive fence: queued scanner re-reads committed daily policy. Two active admins compete; one succeeds, the other receives STALE.
+- Real setup → scan → QR-A/B → two spins, temporary window closure/reopening, cancellation before/after spin and stock exhaustion/restock verified. Duplicate active daily rows/claims/spends and negative stock zero; original two grants preserved.
+- Existing service integration verifies prior-day credit expiry; full wheel load verifies 100 requests and final-unit allocation. Cancelled import never resurrected.
+- Sequential wheel 29/29 then attendance 16/16 PASS; API build PASS. T12 started.
+
+## T12 operational Local repair and browser proof
+- Re-read .env target: localhost:5432/confer_db, PostgreSQL16.14, confer-postgres-dev. One running Local API is tsx watch src/index.ts from the current conference-api checkout; real admin state exposes current readiness contract. No Railway activation/deployment.
+- Selected event1 PRIS-2026 / original active Main1, bound wheel v3/pool4. Confirmed2 and Main grants2, missing/null links0, one valid legacy import dated2026-10-05.
+- Full custom backup outside Git: C:/Users/JaoNo/AppData/Local/Codex/attendance-readiness-20261005/confer-db-before-attendance-setup-20261006.dump (391524 bytes), SHA256 56E6444CAA19B0669EB905EDEEB94EEF224B73564D9F25881DE93DDB63138CCC. Restored with pg_restore --exit-on-error into fresh local_restore_readiness_test in the task container: registrations2, grants5, QR5 preserved.
+- Catalog verified daily/source unique indexes, cancellation FKs/check, QR-account and credit-spend uniqueness, optional collection columns and activation trigger. Scoped read-only retired SQL executed successfully against reviewed Local IDs.
+- Authenticated existing Admin#1 through actual Backoffice: paused → reviewed current revision → setup audit16 imports1 → reload reports complete. Import exactly preserves source instant/scanner and Thai2026-10-05 date. Original registrations/grants/sessions/tickets/stock row digests unchanged; spins/credits/collections all0 before/after. No original password changed.
+- Local left paused deliberately. QR state unchanged: 4 historical Oct4 open; Oct5 QR1. closed; no Oct6 QR. No automatic QR opening, unpause or smoke prize allocation. Yesterday's imported attendance is not today's attendance.
+- Synthetic preview API network stopped before setup submission: dialog retains request and disables inputs; after API restart, same command succeeds with one matching audit row. Mobile scanner shows server2026-10-06 daily Main label without sidebar overlay. Screenshots retained privately.
+- PRIS synthetic account login uses actual login and existing Turnstile configuration. T09 regression found: configuration409 cleared pending QR; switching language/reloading made QR invalid. Reopened T09 and fixed only ATTENDANCE_SETUP_REQUIRED retention. Actual TH→EN→reload preserves Browser QR and enabled retry. npm test63/63, scoped lint/tsc PASS; production build pending before returning to T12.
+
+- T09 re-test complete: npm tests63/63, scoped ESLint, tsc and production build PASS. Browser TH→EN→reload asserts same QR visible and retry enabled (previously failed). Within approved T09 file scope; configuration error alone retains pending QR; other 4xx handling unchanged. T12 resumed.
+- Browser synthetic setup-error retry after actual setup now correctly returns CHECKIN_REQUIRED with ticket link. Actual Backoffice scanner Main91 checks in new synthetic account using READINESS-BROWSER; PRIS original QR claim succeeds once and owner History reads server-recorded test reward. Test allocation performed only through guarded synthetic service fixture, no operational prize allocated.
+
+## Final verification and delivery
+- Final sequential guarded wheel29/29 then attendance18/18 PASS, including actual imported-source cancellation held behind the shared fence: setup waits, STALE commits no audit, reviewed retry imports0 and preserves cancelled history. API build PASS.
+- Backoffice scoped ESLint zero errors (2 existing scanner hook warnings), tsc and production build PASS. PRIS63/63, scoped ESLint, tsc and production build PASS (existing middleware/test-renderer deprecation warnings). All diffs reviewed; diff --check passes.
+- Actual browser setup, uncertain request retry, server state reload, daily scanner desktop/mobile, participant setup-specific TH/EN recovery, QR claim, owner history/reward proof, and synthetic Open/Close QR controls verified. Claimed1/spent1 stays unchanged while QR toggles. Static pickup copy remains; no new hidden deadline.
+- Test fixtures parked: event46 READINESS-PREVIEW, wheel paused, Browser QR closed, original Synthetic QR-A closed. Only created preview services stopped. Original API3002 and PRIS3003 were not stopped/reconfigured; Local Backoffice3001 will be shown for handover.
+- Local final SQL: duplicate active daily/source/QR-account/credit-spend rows0, negative stock0. Policydaily/enabled; original wheelv3/pool4/stock unchanged. Current Thai day2026-10-06 has no attendance; imported2026-10-05 history does not grant today's eligibility. Local left paused and no Oct6 QR created.
+- Railway policy/deployment NOT VERIFIED, no activation attempted. Physical LINE iOS/Android, camera, slow-network/rotation and stagingR2 remain NOT VERIFIED/DEFERRED from prior scope; desktop browser transport-failure test does not claim these device checks.
+- Task container pris2026-attendance-readiness-test-20261005 and its one anonymous PostgreSQL volume retained pending explicit deletion approval under user requirement3. Full Local backup outside Git is retained; other original/historical Docker containers are untouched. Preview/artifact directories with node_modules junctions retained, never recursively moved/deleted.
+- T07–T12 implementation committed per affected repo with title/body; no push/deploy. API03df628, Backofficec6642f9; participant/docs hash reported at delivery (cannot embed its own future hash).

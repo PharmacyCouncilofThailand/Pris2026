@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Check, CircleAlert, History, Loader2, Ticket, Trophy } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { luckyWheelBlockMessageKey } from "@/lib/luckyWheel";
 import type {
   LuckyWheelEligibility,
   LuckyWheelSegment,
@@ -30,27 +31,6 @@ type Props = {
   onReconcile: () => void;
   onAnimationComplete: () => void;
 };
-
-function blockKey(code: LuckyWheelEligibility["blockCode"]) {
-  switch (code) {
-    case "CHECKIN_REQUIRED":
-      return "checkinRequired";
-    case "REGISTRATION_REQUIRED":
-      return "registrationRequired";
-    case "SESSION_CLOSED":
-      return "sessionClosed";
-    case "DAY_WINDOW_CLOSED":
-      return "outsideWindow";
-    case "NO_CREDIT":
-      return "noCredit";
-    case "WHEEL_PAUSED":
-      return "paused";
-    case "OUT_OF_STOCK":
-      return "outOfStock";
-    default:
-      return "notReady";
-  }
-}
 
 export function ActivityTicket({
   eligibility,
@@ -84,7 +64,7 @@ export function ActivityTicket({
   const blockedMessage = !eligibility.eligible
     ? eligibility.blockCode === "NO_CREDIT" && eligibility.hasExpiredPriorDayCredit
       ? t("priorDayExpired")
-      : t(blockKey(eligibility.blockCode) as Parameters<typeof t>[0])
+      : t(luckyWheelBlockMessageKey(eligibility.blockCode))
     : null;
 
   return (

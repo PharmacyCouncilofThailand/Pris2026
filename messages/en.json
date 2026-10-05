@@ -60,6 +60,7 @@
     "registrationRequired": "A confirmed registration for this event is required",
     "checkTicket": "View entry ticket",
     "checkinRequired": "Check in to today's Main Session before using your Lucky Wheel entry",
+    "attendanceSetupRequired": "The activity's check-in setup is not ready. Please contact staff.",
     "sessionClosed": "The Main Session is currently outside its play window",
     "outsideWindow": "Outside the currently configured wheel window",
     "noCredit": "No wheel credits today. Scan an activity QR to claim one.",

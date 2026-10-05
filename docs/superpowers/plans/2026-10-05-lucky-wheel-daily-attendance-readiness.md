@@ -419,11 +419,11 @@ Suggested title: `fix(lucky-wheel): require explicit daily attendance setup`.
 
 **Produces:** Explicit setup card and mutation UI using actual API.
 
-- [ ] Mirror public contracts exactly; add `api.luckyWheel.setupAttendance(token,eventId,input)`.
-- [ ] Render readiness card above wheel configuration with existing Backoffice cards/buttons/dialog patterns. Show Main Session name/ID, policy status, confirmed entitlement count, pending imports and blocker counts.
-- [ ] Readiness missing/error means unknown/unavailable, never green-ready. Disable setup when blockers, missing revision, busy, or wheel unpaused; explain required pause using the existing pause control.
-- [ ] Dialog states exact session, imported-history count, preservation of source data, and that QR/play remain controlled separately. Require reason and admin confirmation; do not expose arbitrary session/date/participant selectors.
-- [ ] Build request from server-bound session/revision, generated UUID and reason. Retain the exact request/key after an uncertain network result. Retry same request; do not silently generate a new key/revision while uncertain. On known STALE reload and require review/new confirmation; on successful replay show recorded result.
+- [x] Mirror public contracts exactly; add `api.luckyWheel.setupAttendance(token,eventId,input)`.
+- [x] Render readiness card above wheel configuration with existing Backoffice cards/buttons/dialog patterns. Show Main Session name/ID, policy status, confirmed entitlement count, pending imports and blocker counts.
+- [x] Readiness missing/error means unknown/unavailable, never green-ready. Disable setup when blockers, missing revision, busy, or wheel unpaused; explain required pause using the existing pause control.
+- [x] Dialog states exact session, imported-history count, preservation of source data, and that QR/play remain controlled separately. Require reason and admin confirmation; do not expose arbitrary session/date/participant selectors.
+- [x] Build request from server-bound session/revision, generated UUID and reason. Retain the exact request/key after an uncertain network result. Retry same request; do not silently generate a new key/revision while uncertain. On known STALE reload and require review/new confirmation; on successful replay show recorded result.
 
 ```ts
 const input = pendingRequest ?? {
@@ -434,9 +434,9 @@ const input = pendingRequest ?? {
 };
 ```
 
-- [ ] After success reload admin state, display imported/alreadyImported/alreadyCovered counts and actor/time from audit. A refresh failure reports setup succeeded but state needs reload; never report mutation failure or automatically repeat with a new key.
-- [ ] Expose recognized blocker labels in Thai and explain that data conflicts require admin reconciliation. No fake repair/missing-entitlement grant action is added.
-- [ ] Run scoped ESLint, tsc --noEmit and production build; inspect desktop/mobile layout against real synthetic API state before marking visual verification PASS.
+- [x] After success reload admin state, display imported/alreadyImported/alreadyCovered counts and actor/time from audit. A refresh failure reports setup succeeded but state needs reload; never report mutation failure or automatically repeat with a new key.
+- [x] Expose recognized blocker labels in Thai and explain that data conflicts require admin reconciliation. No fake repair/missing-entitlement grant action is added.
+- [x] Run scoped ESLint, tsc --noEmit and production build; inspect desktop/mobile layout against real synthetic API state before marking visual verification PASS.
 
 **Gate:** No local fake readiness; action review/uncertain retry/stale flow correct and accessible.
 
@@ -448,13 +448,13 @@ const input = pendingRequest ?? {
 
 **Produces:** Correct prerequisite warnings, server-day scanning UI, clear independent QR state.
 
-- [ ] Disable Open activity/Open QR when runtimeReady=false and explain setup requirement. Keep Pause, Close QR, QR download and preparation paths usable. Backend guards from T06 remain authoritative.
-- [ ] Keep QR status separate from policy. A closed QR must say closed; enabling attendance never opens it. Configured day selection/download behavior from previous work remains unchanged.
-- [ ] Scanner label for daily Main Session: `Main Session — เช็คอินวันที่ <serverDate>`. Use API date, not browser Date.now to determine attendance day.
-- [ ] Ensure refreshing stats or reselecting Main Session after setup refreshes attendanceMode. Do not hide a single-session response while displaying a misleading daily label.
-- [ ] Verify selected session, assigned session and check-all responses show daily attendance ID/date for Main Session and single mode for the workshop.
-- [ ] Verify checkins list/date filter/export and undo target the correct daily attendance ID. Only fix defects established during this verification; don't redesign unrelated reports.
-- [ ] Run scoped ESLint, tsc and Backoffice build; browser verify warnings, dialog, scanner server date and mobile layout.
+- [x] Disable Open activity/Open QR when runtimeReady=false and explain setup requirement. Keep Pause, Close QR, QR download and preparation paths usable. Backend guards from T06 remain authoritative.
+- [x] Keep QR status separate from policy. A closed QR must say closed; enabling attendance never opens it. Configured day selection/download behavior from previous work remains unchanged.
+- [x] Scanner label for daily Main Session: `Main Session — เช็คอินวันที่ <serverDate>`. Use API date, not browser Date.now to determine attendance day.
+- [x] Ensure refreshing stats or reselecting Main Session after setup refreshes attendanceMode. Do not hide a single-session response while displaying a misleading daily label.
+- [x] Verify selected session, assigned session and check-all responses show daily attendance ID/date for Main Session and single mode for the workshop.
+- [x] Verify checkins list/date filter/export and undo target the correct daily attendance ID. Only fix defects established during this verification; don't redesign unrelated reports.
+- [x] Run scoped ESLint, tsc and Backoffice build; browser verify warnings, dialog, scanner server date and mobile layout.
 
 **Gate:** Admin cannot overlook missing policy; QR status is explicit; scanners display mode/date returned by server.
 
@@ -466,13 +466,13 @@ const input = pendingRequest ?? {
 
 **Produces:** Consistent TH/EN system-configuration message, preserving participant checks.
 
-- [ ] Add new code to type/error coverage and message mapping for claim and eligibility.
-- [ ] Thai copy: `กิจกรรมยังตั้งค่าระบบเช็คอินไม่ครบ กรุณาติดต่อเจ้าหน้าที่`.
-- [ ] English copy: `The activity's check-in setup is not ready. Please contact staff.`
-- [ ] For this configuration error do not tell the participant to check in again or imply ticket ownership is invalid. Keep CHECKIN_REQUIRED's ticket link for genuine missing daily attendance.
-- [ ] Add a user-triggered retry to the configuration-error claim state. Re-read/claim the same QR through existing authenticated flow; no credit is created locally. Preserve uncertain-outcome handling and per-QR duplicate protection.
-- [ ] Test error normalization and code/message mapping for configuration vs check-in vs closed QR; keep non-owner and network tests unchanged.
-- [ ] Run npm test, scoped ESLint, tsc --noEmit and production build in PRIS.
+- [x] Add new code to type/error coverage and message mapping for claim and eligibility.
+- [x] Thai copy: `กิจกรรมยังตั้งค่าระบบเช็คอินไม่ครบ กรุณาติดต่อเจ้าหน้าที่`.
+- [x] English copy: `The activity's check-in setup is not ready. Please contact staff.`
+- [x] For this configuration error do not tell the participant to check in again or imply ticket ownership is invalid. Keep CHECKIN_REQUIRED's ticket link for genuine missing daily attendance.
+- [x] Add a user-triggered retry to the configuration-error claim state. Re-read/claim the same QR through existing authenticated flow; no credit is created locally. Preserve uncertain-outcome handling and per-QR duplicate protection.
+- [x] Test error normalization and code/message mapping for configuration vs check-in vs closed QR; keep non-owner and network tests unchanged.
+- [x] Run npm test, scoped ESLint, tsc --noEmit and production build in PRIS.
 
 **Gate:** Attendee receives accurate cause and can retry after admin repair without duplicate rights.
 
@@ -484,14 +484,14 @@ const input = pendingRequest ?? {
 
 **Produces:** Real route-level regression proof without mocking the attendance write.
 
-- [ ] Import existing db as defaultDb and resolve `const db = options.database ?? defaultDb` inside the route plugin. Production registration passes no override. Do not replace authentication/authorization or change URL contracts.
-- [ ] Register real checkins plugin in Fastify with guarded test database and an authenticated synthetic request actor. Use actual synthetic registrations/entitlements; avoid stubbing checkInSession.
-- [ ] Test selected Main Session, assigned staff Main Session and checkInAll paths. Assert daily response, persisted daily ID and server attendance date; workshop remains single.
-- [ ] Test 100 concurrent scans: one active daily row; first timestamp preserved; duplicates return ALREADY_CHECKED_IN with original date/time.
-- [ ] Test a previous day's daily row and unchanged original QR/entitlement: today's scan creates today's row even when legacy checked_in_at is non-null.
-- [ ] Test daily cancellation/re-check-in and date-scoped reports: cancellation on today does not change yesterday; one active row after re-check-in; unique attendees and occurrence totals retain different meanings.
-- [ ] Test confirmed status, missing entitlement, unassigned staff and session-time rejection. None creates history.
-- [ ] Run real-route flow/readers/attendance tests against attendance_readiness_test and API build.
+- [x] Import existing db as defaultDb and resolve `const db = options.database ?? defaultDb` inside the route plugin. Production registration passes no override. Do not replace authentication/authorization or change URL contracts.
+- [x] Register real checkins plugin in Fastify with guarded test database and an authenticated synthetic request actor. Use actual synthetic registrations/entitlements; avoid stubbing checkInSession.
+- [x] Test selected Main Session, assigned staff Main Session and checkInAll paths. Assert daily response, persisted daily ID and server attendance date; workshop remains single.
+- [x] Test 100 concurrent scans: one active daily row; first timestamp preserved; duplicates return ALREADY_CHECKED_IN with original date/time.
+- [x] Test a previous day's daily row and unchanged original QR/entitlement: today's scan creates today's row even when legacy checked_in_at is non-null.
+- [x] Test daily cancellation/re-check-in and date-scoped reports: cancellation on today does not change yesterday; one active row after re-check-in; unique attendees and occurrence totals retain different meanings.
+- [x] Test confirmed status, missing entitlement, unassigned staff and session-time rejection. None creates history.
+- [x] Run real-route flow/readers/attendance tests against attendance_readiness_test and API build.
 
 **Gate:** Actual API scan paths and reports work after explicit setup; no fixture-only shortcut proves the flow.
 
@@ -503,14 +503,14 @@ const input = pendingRequest ?? {
 
 **Produces:** End-to-end evidence and cutover concurrency proof.
 
-- [ ] Build synthetic confirmed account/entitlement, paused published wheel, initial physical prize stock, today's server-derived day window and initially closed QR. Do not seed daily history for the main happy path.
-- [ ] Before setup: open/unpause/claim/eligibility are blocked by ATTENDANCE_SETUP_REQUIRED, with no mutation.
-- [ ] Run admin setup, assert no attendance invented for a user with no legacy timestamp, then scan through actual checkins route. Open activity and reviewed QR through real admin services/routes.
-- [ ] Claim QR-A once, claim it again, claim QR-B once; assert two credits total and one per QR/account. Spin twice; assert two credits spent and stock allocated twice. A third spin must require credit.
-- [ ] Test import path separately: actual legacy timestamp/scanner → setup → owned QR claim succeeds without asking for a duplicate scan; source timestamp and original ticket remain unchanged.
-- [ ] Test cancellation before an unspent credit's spin blocks without spending; same-day re-check-in restores usability of the original credit but does not allow another QR-A claim. Cancellation after committed spin does not refund rights/stock or remove reward.
-- [ ] Test paused/out-of-stock/closed QR/outside window and prior-day expiry; reject with correct code and no unintended credit/stock mutation. QR download never grants a credit or opens QR.
-- [ ] Midnight pure boundary assertions plus DB tests with previous-day rows:
+- [x] Build synthetic confirmed account/entitlement, paused published wheel, initial physical prize stock, today's server-derived day window and initially closed QR. Do not seed daily history for the main happy path.
+- [x] Before setup: open/unpause/claim/eligibility are blocked by ATTENDANCE_SETUP_REQUIRED, with no mutation.
+- [x] Run admin setup, assert no attendance invented for a user with no legacy timestamp, then scan through actual checkins route. Open activity and reviewed QR through real admin services/routes.
+- [x] Claim QR-A once, claim it again, claim QR-B once; assert two credits total and one per QR/account. Spin twice; assert two credits spent and stock allocated twice. A third spin must require credit.
+- [x] Test import path separately: actual legacy timestamp/scanner → setup → owned QR claim succeeds without asking for a duplicate scan; source timestamp and original ticket remain unchanged.
+- [x] Test cancellation before an unspent credit's spin blocks without spending; same-day re-check-in restores usability of the original credit but does not allow another QR-A claim. Cancellation after committed spin does not refund rights/stock or remove reward.
+- [x] Test paused/out-of-stock/closed QR/outside window and prior-day expiry; reject with correct code and no unintended credit/stock mutation. QR download never grants a credit or opens QR.
+- [x] Midnight pure boundary assertions plus DB tests with previous-day rows:
 
 ```ts
 assert.equal(bangkokDay(new Date("2026-10-05T16:59:59.999Z")), "2026-10-05");
@@ -519,9 +519,9 @@ assert.equal(bangkokDay(new Date("2026-10-05T17:00:00.000Z")), "2026-10-06");
 
 Do not mutate a shared server clock. Derive today's integration windows from PostgreSQL clock; clients do not nominate attendance dates.
 
-- [ ] Hold setup's exclusive fence, queue scans, release and assert scans re-read daily policy. Hold an in-flight legacy scan's shared fence, start setup and assert setup waits then imports that proven committed legacy scan. Add cancelled-source and two-admin setup races.
-- [ ] Recheck SQL invariants: duplicate active daily attendance=0; duplicate account/QR claims=0; duplicate credit spends=0; negative stock=0; original entitlement/ticket count unchanged; source data unchanged; setup audit exactly once.
-- [ ] Run complete wheel suite on wheel_readiness_test, then attendance flow suites on attendance_readiness_test; no parallel destructive fixtures.
+- [x] Hold setup's exclusive fence, queue scans, release and assert scans re-read daily policy. Hold an in-flight legacy scan's shared fence, start setup and assert setup waits then rejects ATTENDANCE_SETUP_STALE with zero setup writes and preserves the committed scan. Reload/review the new revision and submit a new command/key; import succeeds exactly once, including replay (user-approved T11 amendment). Add cancelled-source and two-admin setup races.
+- [x] Recheck SQL invariants: duplicate active daily attendance=0; duplicate account/QR claims=0; duplicate credit spends=0; negative stock=0; original entitlement/ticket count unchanged; source data unchanged; setup audit exactly once.
+- [x] Run complete wheel suite on wheel_readiness_test, then attendance flow suites on attendance_readiness_test; no parallel destructive fixtures.
 
 **Gate:** Proven flow starts with missing policy and ends with server-recorded claims/spins; race protections survive real concurrent connections.
 
@@ -533,16 +533,16 @@ Do not mutate a shared server clock. Derive today's integration windows from Pos
 
 **Produces:** Current runbook, reproducible evidence, explicit environment state, committed implementation.
 
-- [ ] Update runbook to current shared-QR-credit rules and simplified prize pickup. Remove obsolete once-per-day spin, mandatory collection deadline and zero-initial-stock instructions.
-- [ ] Make readiness SQL explicitly scoped to reviewed `event_id`/`main_session_id`, with identity/PRIS/Main Session mismatch rejection. Do not use hardcoded Local IDs or dump participant details into generic logs.
-- [ ] Replace the historical standalone backfill mutation entry point with a clearly documented scoped read-only candidate/conflict inventory. Actual activation/import must use the audited admin service, avoiding an unfenced second live writer. Retain the file; do not silently execute historical write SQL from the new runbook. Adapt the old attendance integration test to exercise import through setup rather than expecting the retired unscoped SQL writer.
-- [ ] Deployment order: backup/restore proof → verify 0033–0036 → deploy every writer with shared fence → verify version and paused wheel → review readiness → admin setup/import → validate daily scanning → configure/open appropriate day QR → controlled claim/spin verification.
-- [ ] Record rollback behavior: leave schema/history/source data intact; pause wheel and close new claims if needed. Do not revert daily policy or restore an old single-session writer after live daily attendance without a separate reviewed incident decision.
-- [ ] Before any Local repair, re-read DATABASE_URL target without showing credentials; confirm selected event/session by code and wheel binding, not prior observations. Take targeted/full backup and verify it. Use an authenticated admin through the new endpoint; record actual actor/reason and pre/post evidence. The implementation request must authorize this operational step; if authorization is absent, finish code/tests and ask once with concrete target details.
-- [ ] For the photographed Local incident, import only proven legacy history via setup. Do not open today's QR automatically. If opening that QR has been explicitly authorized, use the existing admin status endpoint for the exact named/date-reviewed QR. Otherwise report its closed state as an intentional remaining operational action.
-- [ ] Railway activation is a separate environment step. If newest writer deployment is not verified, record schema-ready but policy not enabled. Do not push/deploy or enable policy there under a Local-only implementation request.
-- [ ] Verify actual browser UI against authenticated Local/test API: setup preview, uncertain retry, state reload, daily scanner, claim error distinction, open QR, owned credits/history. Never alter admin passwords to bypass a login blocker. Ask user to log in or record the check as NOT VERIFIED and stop the dependent gate.
-- [ ] Run final automated commands, with each API suite's TEST_DATABASE_URL set to its guarded test target:
+- [x] Update runbook to current shared-QR-credit rules and simplified prize pickup. Remove obsolete once-per-day spin, mandatory collection deadline and zero-initial-stock instructions.
+- [x] Make readiness SQL explicitly scoped to reviewed `event_id`/`main_session_id`, with identity/PRIS/Main Session mismatch rejection. Do not use hardcoded Local IDs or dump participant details into generic logs.
+- [x] Replace the historical standalone backfill mutation entry point with a clearly documented scoped read-only candidate/conflict inventory. Actual activation/import must use the audited admin service, avoiding an unfenced second live writer. Retain the file; do not silently execute historical write SQL from the new runbook. Adapt the old attendance integration test to exercise import through setup rather than expecting the retired unscoped SQL writer.
+- [x] Deployment order: backup/restore proof → verify 0033–0036 → deploy every writer with shared fence → verify version and paused wheel → review readiness → admin setup/import → validate daily scanning → configure/open appropriate day QR → controlled claim/spin verification.
+- [x] Record rollback behavior: leave schema/history/source data intact; pause wheel and close new claims if needed. Do not revert daily policy or restore an old single-session writer after live daily attendance without a separate reviewed incident decision.
+- [x] Before any Local repair, re-read DATABASE_URL target without showing credentials; confirm selected event/session by code and wheel binding, not prior observations. Take targeted/full backup and verify it. Use an authenticated admin through the new endpoint; record actual actor/reason and pre/post evidence. The implementation request must authorize this operational step; if authorization is absent, finish code/tests and ask once with concrete target details.
+- [x] For the photographed Local incident, import only proven legacy history via setup. Do not open today's QR automatically. If opening that QR has been explicitly authorized, use the existing admin status endpoint for the exact named/date-reviewed QR. Otherwise report its closed state as an intentional remaining operational action.
+- [x] Railway activation is a separate environment step. If newest writer deployment is not verified, record schema-ready but policy not enabled. Do not push/deploy or enable policy there under a Local-only implementation request.
+- [x] Verify actual browser UI against authenticated Local/test API: setup preview, uncertain retry, state reload, daily scanner, claim error distinction, open QR, owned credits/history. Never alter admin passwords to bypass a login blocker. Ask user to log in or record the check as NOT VERIFIED and stop the dependent gate.
+- [x] Run final automated commands, with each API suite's TEST_DATABASE_URL set to its guarded test target:
 
 ```powershell
 # conference-api, destructive wheel fixtures only
@@ -568,9 +568,9 @@ npm run build
 
 Run commands from their owning repo; check every exit code rather than letting PowerShell continue after a failure. If a named test file is consolidated into another listed file during implementation, update the canonical command and ledger before running; no phantom test evidence.
 
-- [ ] Inspect all diffs, git diff --check, schema/data invariants and coverage matrix below. Mark every gate with actual evidence, including any prerequisite re-tests.
-- [ ] Commit T07–T12 per repo with title/body, and API remainder since T06. Suggested titles: `feat(backoffice): add reviewed daily attendance setup`, `fix(pris): distinguish incomplete attendance setup`, `test(lucky-wheel): verify attendance cutover through QR and spin`.
-- [ ] Verify Git status after commits; no push/deploy. Report all commit hashes, test results and actual environment policy/QR state. Ask before container/volume deletion; retain backups. Code completion and live event activation are separate outcomes.
+- [x] Inspect all diffs, git diff --check, schema/data invariants and coverage matrix below. Mark every gate with actual evidence, including any prerequisite re-tests.
+- [x] Commit T07–T12 per repo with title/body, and API remainder since T06. Suggested titles: `feat(backoffice): add reviewed daily attendance setup`, `fix(pris): distinguish incomplete attendance setup`, `test(lucky-wheel): verify attendance cutover through QR and spin`.
+- [x] Verify Git status after commits; no push/deploy. Report all commit hashes, test results and actual environment policy/QR state. Ask before container/volume deletion; retain backups. Code completion and live event activation are separate outcomes.
 
 **Gate:** Automated checks pass; browser results honestly recorded; authorized data repair verified; runbook no longer bypasses audited/fenced setup; commits complete.
 

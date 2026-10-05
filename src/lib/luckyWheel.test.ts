@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 import {
   LuckyWheelApiError,
+  luckyWheelBlockMessageKey,
   captureQrClaimFromFragment,
   clearPendingQrClaim,
   claimQrCredit,
@@ -19,6 +21,16 @@ import {
 } from "./luckyWheel.js";
 
 const qrId = "123e4567-e89b-42d3-a456-426614174000";
+
+test("configuration failure has distinct TH/EN copy from check-in and unavailable QR", () => {
+  const key = luckyWheelBlockMessageKey("ATTENDANCE_SETUP_REQUIRED");
+  const th = JSON.parse(readFileSync(new URL("../../messages/th.json", import.meta.url), "utf8")).luckyWheel;
+  const en = JSON.parse(readFileSync(new URL("../../messages/en.json", import.meta.url), "utf8")).luckyWheel;
+  assert.equal(th[key], "กิจกรรมยังตั้งค่าระบบเช็คอินไม่ครบ กรุณาติดต่อเจ้าหน้าที่");
+  assert.equal(en[key], "The activity's check-in setup is not ready. Please contact staff.");
+  assert.notEqual(key, luckyWheelBlockMessageKey("CHECKIN_REQUIRED"));
+  assert.notEqual(key, luckyWheelBlockMessageKey("WHEEL_NOT_READY"));
+});
 
 test("camera fragment stores one validated QR id for login and strips unsafe inputs", () => {
   const storage = new MemoryStorage();
@@ -65,7 +77,7 @@ test("QR preview and first/duplicate claims use authenticated server endpoints",
 test("QR claim preserves server block codes and uncertain network outcomes", async () => {
   const originalFetch = globalThis.fetch;
   try {
-    for (const code of ["WHEEL_NOT_READY", "CHECKIN_REQUIRED", "SESSION_CLOSED"]) {
+    for (const code of ["ATTENDANCE_SETUP_REQUIRED", "WHEEL_NOT_READY", "CHECKIN_REQUIRED", "SESSION_CLOSED"]) {
       globalThis.fetch = async () => Response.json({ code, error: code }, { status: 409 });
       await assert.rejects(
         claimQrCredit("https://api.example.test", "token", 7, qrId),
