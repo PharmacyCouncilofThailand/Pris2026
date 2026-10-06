@@ -706,6 +706,19 @@
     "fileNote": "PDF ready to download",
     "documentLabel": "V.160 PRIS2026 invitation approval"
   },
+    "oralPosterCriteria": {
+    "eyebrow": "Presentation Guidelines",
+    "title1": "Oral & Poster",
+    "title2": "Assessment Criteria",
+    "subtitle": "Review the official assessment criteria for Oral and Poster presentations at PRIS 2026.",
+    "sectionEyebrow": "Official Guidelines",
+    "cardTitle": "Oral and Poster Presentation Assessment Criteria",
+    "sectionDescription": "View the official criteria for evaluating Oral and Poster presentations. The PDF is available to view here or download for later reference.",
+    "documentType": "Presentation criteria",
+    "documentMeta": "PDF · PRIS 2026",
+    "downloadButton": "Download Assessment Criteria",
+    "fileNote": "PDF ready to download"
+  },
   "sponsorship": {
     "pretitle": "PRIS 2026",
     "pretitleSub": "Partners",
