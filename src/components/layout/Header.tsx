@@ -24,6 +24,7 @@ import {
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { navigationData } from "@/data/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { posterReturnPath } from "@/lib/localizedRedirect";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -62,6 +63,7 @@ export default function Header() {
     "/ticket",
     "/agenda",
     "/abstract-submission",
+    "/poster-submission",
     "/about",
     "/call-for-abstracts",
     "/welcome-messages",
@@ -95,6 +97,10 @@ export default function Header() {
   const switchLocale = () => {
     const newLocale = locale === "en" ? "th" : "en";
     startTransition(() => {
+      if (pathname === "/poster-submission" && typeof window !== "undefined") {
+        router.replace(posterReturnPath(window.location.search) || pathname, { locale: newLocale });
+        return;
+      }
       if (pathname === "/sessions/confirm" && typeof window !== "undefined") {
         router.replace(
           { pathname, query: Object.fromEntries(new URLSearchParams(window.location.search).entries()) },
