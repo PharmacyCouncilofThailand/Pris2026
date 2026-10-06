@@ -53,7 +53,7 @@ export const navigationData: NavItem[] = [
         children: [
             { labelKey: "hotelBookingForm", href: "/hotel-booking-form" },
             { labelKey: "inviteLetter", href: "/invite-letter" },
-            { labelKey: "oralPosterPresentationCriteria", href: "public/documents/OralnPosterRule.pdf" },
+            { labelKey: "oralPosterPresentationCriteria", href: "/oral-poster-presentation-criteria" },
         ],
     },
     {
