@@ -10,16 +10,16 @@ if (typeof window !== "undefined") {
 }
 
 const partnersRow = [
-  { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/Partner/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", twClass: "scale-[1.3]" },
-  { id: 2, name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/Partner/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", twClass: "scale-[1.65]" },
-  { id: 3, name: "Pharmacy Administration College", logo: "/assets/Img/Partner/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png" },
-  { id: 4, name: "Consumer Protection Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยคุ้มครอง.png", twClass: "scale-[1.65]" },
-  { id: 5, name: "Community Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมชุมชน.png" },
-  { id: 6, name: "Herbal Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png" },
-  { id: 7, name: "Industrial Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png" },
-  { id: 8, name: "Pharmacotherapy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชบำบัด.png", twClass: "scale-[1.65]" },
-  { id: 9, name: "CPPGX", logo: "/assets/Img/Partner/CPPGX.png", twClass: "scale-[1.1]" },
-  { id: 10, name: "The Pharmacy Council Foundation", logo: "/assets/Img/Partner/มูลนิธิสภาเภสัชกรรม.png", twClass: "scale-[1.1]" },
+  { id: 1, name: "Pharmacy Council of Thailand", logo: "/assets/Img/Partner/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png", twClass: "scale-[1.15]" },
+  { id: 2, name: "Royal College of Pharmacy of Thailand", logo: "/assets/Img/Partner/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png", twClass: "scale-[1.15]" },
+  { id: 3, name: "Pharmacy Administration College", logo: "/assets/Img/Partner/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png", twClass: "scale-100" },
+  { id: 4, name: "Consumer Protection Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยคุ้นครอง 2.png", twClass: "scale-100" },
+  { id: 5, name: "Community Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมชุมชน.png", twClass: "scale-100" },
+  { id: 6, name: "Herbal Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png", twClass: "scale-100" },
+  { id: 7, name: "Industrial Pharmacy College", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png", twClass: "scale-100" },
+  { id: 8, name: "Pharmacotherapy College", logo: "/assets/Img/Partner/วิทยาลัยบำบัด 2.png", twClass: "scale-100" },
+  { id: 9, name: "CPPGX", logo: "/assets/Img/Partner/CPPGX.png", twClass: "scale-100" },
+  { id: 10, name: "The Pharmacy Council Foundation", logo: "/assets/Img/Partner/มูลนิธิสภาเภสัชกรรม.png", twClass: "scale-100" },
 ];
 
 const universitiesRow = [
