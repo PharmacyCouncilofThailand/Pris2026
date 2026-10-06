@@ -12,6 +12,7 @@ import {
   claimQrCredit,
   clearPendingQrClaim,
   loadQrPreview,
+  luckyWheelBlockMessageKey,
   type WheelQrClaim,
   type WheelQrPreview,
 } from "@/lib/luckyWheel";
@@ -103,7 +104,7 @@ export default function WheelClaimPage() {
           return;
         }
         if (error instanceof LuckyWheelApiError && error.status >= 400 && error.status < 500 && error.status !== 429) {
-          clearPendingQrClaim(sessionStorage);
+          if (error.code !== "ATTENDANCE_SETUP_REQUIRED") clearPendingQrClaim(sessionStorage);
           setErrorCode(error.code);
           return;
         }
@@ -143,6 +144,7 @@ export default function WheelClaimPage() {
   const loading = !ready || (Boolean(qrId) && !claim && !errorCode && Boolean(EVENT_CODE));
   const statusText = !EVENT_CODE ? t("claimUnavailable")
     : invalid ? t("claimInvalid")
+      : errorCode === "ATTENDANCE_SETUP_REQUIRED" ? t(luckyWheelBlockMessageKey(errorCode))
       : errorCode === "CHECKIN_REQUIRED" ? t("checkinRequired")
         : errorCode === "REGISTRATION_REQUIRED" ? t("registrationRequired")
           : errorCode === "SESSION_CLOSED" || errorCode === "DAY_WINDOW_CLOSED" ? t("claimOutsideWindow")
@@ -191,7 +193,7 @@ export default function WheelClaimPage() {
             {uncertain && <p className="mt-3 text-sm leading-relaxed text-[#4b5563]">{t("claimRetryHint")}</p>}
 
             <div className="mt-7 flex flex-col gap-3">
-              {uncertain && <button type="button" onClick={() => setAttempt((value) => value + 1)} className="min-h-12 rounded-xl bg-[#ea580c] px-5 py-3 text-center font-bold text-white hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ea580c]">{t("retry")}</button>}
+              {(uncertain || errorCode === "ATTENDANCE_SETUP_REQUIRED") && <button type="button" onClick={() => setAttempt((value) => value + 1)} className="min-h-12 rounded-xl bg-[#ea580c] px-5 py-3 text-center font-bold text-white hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ea580c]">{t("retry")}</button>}
               {claim && <Link href="/lucky-wheel" className="flex min-h-12 items-center justify-center rounded-xl bg-[#ea580c] px-5 py-3 text-center font-bold text-white hover:bg-[#c2410c] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ea580c]">{t("claimGoWheel")}</Link>}
               {errorCode === "CHECKIN_REQUIRED" && <Link href="/ticket" className="flex min-h-12 items-center justify-center rounded-xl border border-[#111827] px-5 py-3 text-center font-semibold text-[#111827] hover:bg-[#fafafa] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#ea580c]">{t("checkTicket")}</Link>}
             </div>

@@ -46,6 +46,7 @@ export type LuckyWheelSpin = {
 };
 
 export type LuckyWheelBlockCode =
+  | "ATTENDANCE_SETUP_REQUIRED"
   | "CHECKIN_REQUIRED"
   | "REGISTRATION_REQUIRED"
   | "ACCOUNT_UNAVAILABLE"
@@ -59,6 +60,20 @@ export type LuckyWheelBlockCode =
   | "IDEMPOTENCY_CONFLICT"
   | "REDEMPTION_CLOSED"
   | "ADMIN_REQUIRED";
+
+export function luckyWheelBlockMessageKey(code: LuckyWheelBlockCode | null) {
+  switch (code) {
+    case "ATTENDANCE_SETUP_REQUIRED": return "attendanceSetupRequired";
+    case "CHECKIN_REQUIRED": return "checkinRequired";
+    case "REGISTRATION_REQUIRED": return "registrationRequired";
+    case "SESSION_CLOSED": return "sessionClosed";
+    case "DAY_WINDOW_CLOSED": return "outsideWindow";
+    case "NO_CREDIT": return "noCredit";
+    case "WHEEL_PAUSED": return "paused";
+    case "OUT_OF_STOCK": return "outOfStock";
+    default: return "notReady";
+  }
+}
 
 export type LuckyWheelEligibility = {
   eventId: number;

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { Gift } from "lucide-react";
 import { resolveWheelImageUrl, type LuckyWheelSegment } from "@/lib/luckyWheel";
 import {
   buildWheelSectors,
@@ -48,6 +50,8 @@ export function Wheel({
   onAnimationComplete,
   ariaLabel,
 }: Props) {
+  const locale = useLocale();
+  const t = useTranslations("luckyWheel");
   const sectors = useMemo(() => buildWheelSectors(segments), [segments]);
   const [rotation, setRotation] = useState(0);
   const [animate, setAnimate] = useState(false);
@@ -83,7 +87,9 @@ export function Wheel({
 
   return (
     <div className={styles.wheelFrame}>
-      <div className={styles.pointer} aria-hidden="true" />
+      <svg className={styles.pointer} viewBox="0 0 32 42" aria-hidden="true">
+        <path d="M 2 2 H 30 L 16 40 Z" fill="#f45100" stroke="#09090b" strokeWidth="2.5" strokeLinejoin="round" />
+      </svg>
       <svg
         viewBox="0 0 200 200"
         role="img"
@@ -94,23 +100,15 @@ export function Wheel({
           if (event.propertyName === "transform") onAnimationComplete?.();
         }}
       >
-        <circle cx="100" cy="100" r="97" fill="#fff" stroke="#18181b" strokeWidth="4" />
         {sectors.map((sector, index) => {
           const segment = segments[index];
           const soldOut =
             segment.kind === "prize" &&
             segment.remaining !== null &&
             segment.remaining <= 0;
-          const selected = segment.id === winningSegmentId;
-          const fill = soldOut
-            ? "#e4e4e7"
-            : segment.kind === "no_prize"
-              ? "#f4f4f5"
-              : index % 2 === 0
-                ? "#ffedd5"
-                : "#fff";
-          const labelPoint = polar(61, sector.centerAngle + 90);
-          const imagePoint = polar(39, sector.centerAngle + 90);
+          const imagePoint = polar(segments.length <= 2 ? 44 : 62, sector.centerAngle + 90);
+          const imageSize = segments.length > 10 ? 16 : segments.length > 6 ? 25 : 36;
+          const labelWidth = segments.length > 10 ? 30 : segments.length > 6 ? 38 : 52;
           const imageUrl =
             segment.kind === "prize" && !failedImages.has(segment.id)
               ? resolveWheelImageUrl(segment.imageKey, imageBase)
@@ -121,18 +119,18 @@ export function Wheel({
               <title>{`${segment.name.th} / ${segment.name.en}`}</title>
               <path
                 d={wedge(sector.startAngle + 90, sector.endAngle + 90)}
-                fill={selected ? "#fed7aa" : fill}
+                fill="#fff"
                 stroke="#18181b"
-                strokeWidth="1.5"
+                strokeWidth="0.9"
               />
               {imageUrl ? (
                 <image
                   href={imageUrl}
-                  x={imagePoint.x - 12}
-                  y={imagePoint.y - 12}
-                  width="24"
-                  height="24"
-                  preserveAspectRatio="xMidYMid slice"
+                  x={imagePoint.x - imageSize / 2}
+                  y={imagePoint.y - imageSize / 2 - 6}
+                  width={imageSize}
+                  height={imageSize}
+                  preserveAspectRatio="xMidYMid meet"
                   onError={() =>
                     setFailedImages((current) => {
                       const next = new Set(current);
@@ -141,55 +139,24 @@ export function Wheel({
                     })
                   }
                 />
-              ) : segment.kind === "no_prize" ? (
-                <text
-                  x={imagePoint.x}
-                  y={imagePoint.y + 5}
-                  textAnchor="middle"
-                  fontSize="18"
-                  fontWeight="800"
-                  fill="#52525b"
-                >
-                  —
-                </text>
               ) : (
-                <>
-                  <circle
-                    cx={imagePoint.x}
-                    cy={imagePoint.y}
-                    r="9"
-                    fill="#fafafa"
-                    stroke="#71717a"
-                    strokeWidth="1.5"
-                  />
-                  <text
-                    x={imagePoint.x}
-                    y={imagePoint.y + 4}
-                    textAnchor="middle"
-                    fontSize="11"
-                    fontWeight="800"
-                    fill="#71717a"
-                    aria-hidden="true"
-                  >
-                    ·
-                  </text>
-                </>
+                <Gift x={imagePoint.x - imageSize * 0.3} y={imagePoint.y - imageSize * 0.3 - 6} width={imageSize * 0.6} height={imageSize * 0.6} color="#18181b" strokeWidth={1.6} aria-hidden="true" />
               )}
-              <text
-                x={labelPoint.x}
-                y={labelPoint.y + 4}
-                textAnchor="middle"
-                fontSize={segments.length > 10 ? "8" : "10"}
-                fontWeight="800"
-                fill={soldOut ? "#71717a" : "#18181b"}
+              <foreignObject
+                x={imagePoint.x - labelWidth / 2}
+                y={imagePoint.y + imageSize / 2 - 5}
+                width={labelWidth}
+                height={32}
               >
-                {index + 1}
-              </text>
+                <div className={styles.wheelLabel} style={{ fontSize: segments.length > 10 ? 5 : segments.length > 6 ? 6 : 7.5 }}>
+                  <span>{segment.name[locale === "th" ? "th" : "en"]}</span>
+                  {(soldOut || !segment.enabled) && <span className={styles.wheelBadge}>{t(!segment.enabled ? "unavailableSegment" : "soldOutPrize")}</span>}
+                </div>
+              </foreignObject>
             </g>
           );
         })}
-        <circle cx="100" cy="100" r="18" fill="#fff" stroke="#18181b" strokeWidth="3" />
-        <circle cx="100" cy="100" r="5" fill="#ea580c" />
+        <circle cx="100" cy="100" r="94" fill="none" stroke="#09090b" strokeWidth="1.3" />
       </svg>
       <div className={styles.hub} aria-hidden="true" />
     </div>

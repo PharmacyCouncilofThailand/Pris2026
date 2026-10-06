@@ -1,70 +1,18 @@
-.ticket {
-  position: relative;
-  overflow: hidden;
-  border: 2px solid #18181b;
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 18px 42px rgba(24, 24, 27, 0.12);
-}
-
-.ticket::before {
-  content: "";
-  display: block;
-  height: 7px;
-  background: #ea580c;
-}
-
-.seam {
-  position: relative;
-  margin-inline: -1px;
-  height: 34px;
-  border-top: 2px dashed #ea580c;
-  border-bottom: 2px dashed #ea580c;
-  background: #fff7ed;
-}
-
-.seam::before,
-.seam::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 24px;
-  height: 24px;
-  border: 2px solid #18181b;
-  border-radius: 999px;
-  background: #fafafa;
-  transform: translateY(-50%);
-  z-index: 2;
-}
-
-.seam::before {
-  left: -14px;
-}
-
-.seam::after {
-  right: -14px;
-}
-
 .wheelFrame {
   position: relative;
-  width: min(100%, 360px);
+  width: min(100%, 440px);
   margin-inline: auto;
   aspect-ratio: 1;
-  padding: 10px;
 }
 
 .pointer {
   position: absolute;
   z-index: 5;
   left: 50%;
-  top: -1px;
-  width: 0;
-  height: 0;
+  top: -2%;
+  width: 8%;
+  height: 11%;
   transform: translateX(-50%);
-  border-left: 16px solid transparent;
-  border-right: 16px solid transparent;
-  border-top: 28px solid #18181b;
-  filter: drop-shadow(0 3px 2px rgba(24, 24, 27, 0.18));
 }
 
 .wheelSvg {
@@ -83,13 +31,69 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 54px;
-  height: 54px;
+  width: 9%;
+  height: 9%;
   transform: translate(-50%, -50%);
-  border: 3px solid #18181b;
+  border: 2px solid #09090b;
   border-radius: 999px;
-  background: #fff;
-  box-shadow: 0 5px 14px rgba(24, 24, 27, 0.14);
+  background: radial-gradient(circle, #f45100 0 42%, #fff 45%);
+}
+
+.wheelLabel {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1px;
+  color: #09090b;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.wheelBadge {
+  border-radius: 999px;
+  background: #71717a;
+  padding: 1px 5px;
+  color: #fff;
+  font-size: 0.85em;
+}
+
+.activityTicket.activityTicket {
+  filter: none;
+}
+
+.activityTicket .activitySeam {
+  position: relative;
+  mask-image: none;
+}
+
+.activityTicket .activitySeam::before,
+.activityTicket .activitySeam::after {
+  background: #fafafa;
+}
+
+.wheelLabel > span:first-child {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.activityTicket .action {
+  min-height: 52px;
+  border: 1.5px solid #09090b;
+  border-radius: 13px;
+  background: #f45100;
+  font-size: clamp(1.125rem, 4vw, 1.5rem);
+}
+
+.activityTicket .action:hover:not(:disabled) {
+  background: #dd4800;
+}
+
+.activityTicket .action:disabled {
+  background: #d4d4d8;
 }
 
 .action {
