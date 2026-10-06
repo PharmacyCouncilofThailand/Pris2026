@@ -16,61 +16,210 @@ const organizedByLogos = [
   {
     id: 1,
     name: "Pharmacy Council of Thailand",
-    logo: "/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png",
+    logo: "/assets/Img/Partner/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png",
   },
   {
     id: 2,
     name: "ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
-    logo: "/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png",
+    logo: "/assets/Img/Partner/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png",
   },
 ];
 
 const partnerLogos = [
-  { id: 3, name: "วิทยาลัยเภสัชบำบัด", logo: "/assets/Img/sponsors/วิทยาลัยบำบัด 2.png" },
-  { id: 4, name: "วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png" },
-  { id: 5, name: "วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png" },
-  { id: 6, name: "วิทยาลัยเภสัชกรรมชุมชน", logo: "/assets/Img/sponsors/วิทยาลัยเภสัชกรรมชุมชน.png" },
-  { id: 7, name: "วิทยาลัยคุ้มครอง", logo: "/assets/Img/sponsors/วิทยาลัยคุ้นครอง 2.png" },
-  { id: 8, name: "วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย", logo: "/assets/Img/sponsors/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png" },
-  { id: 9, name: "CPPGX", logo: "/assets/Img/sponsors/CPPGX.png" },
+  { id: 3, name: "วิทยาลัยเภสัชบำบัด", logo: "/assets/Img/Partner/วิทยาลัยบำบัด 2.png" },
+  { id: 4, name: "วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png" },
+  { id: 5, name: "วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png" },
+  { id: 6, name: "วิทยาลัยเภสัชกรรมชุมชน", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมชุมชน.png" },
+  { id: 7, name: "วิทยาลัยคุ้มครอง", logo: "/assets/Img/Partner/วิทยาลัยคุ้นครอง 2.png" },
+  { id: 8, name: "วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย", logo: "/assets/Img/Partner/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png" },
+  { id: 9, name: "CPPGX", logo: "/assets/Img/Partner/CPPGX.png" },
+  { id: 10, name: "มูลนิธิสภาเภสัชกรรม", logo: "/assets/Img/Partner/มูลนิธิสภาเภสัชกรรม.png" },
+];
+
+const universityLogos = [
+  { id: 1, name: "มหาวิทยาลัยขอนแก่น", logo: "/assets/Img/University/มหาวิทยาลัยขอนแก่น.png" },
+  { id: 2, name: "มหาวิทยาลัยเชียงใหม่", logo: "/assets/Img/University/มหาวิทยาลัยเชียงใหม่.webp" },
+  { id: 3, name: "มหาวิทยาลัยนเรศวร", logo: "/assets/Img/University/มหาวิทยาลัยนเรศวร.png" },
+  { id: 4, name: "มหาวิทยาลัยบูรพา", logo: "/assets/Img/University/มหาวิทยาลัยบูรพา.webp" },
+  { id: 5, name: "มหาวิทยาลัยปทุมธานี", logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.png" },
+  { id: 6, name: "มหาวิทยาลัยรังสิต", logo: "/assets/Img/University/มหาวิทยาลัยรังสิต.png", scaleClass: "scale-[1.9]" },
+  { id: 7, name: "มหาวิทยาลัยสงขลานครินทร์", logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.png", scaleClass: "scale-[1.45]" },
 ];
 
 const sponsorLogos = [
   {
-    id: 10,
+    id: 1,
     name: "Berlin Pharmaceutical Industry",
     logo: "/assets/Img/sponsors/Berlin pharmaceutical.jpg",
-    scaleClass: "scale-100",
+    scaleClass: "scale-[1.15]",
   },
   {
-    id: 11,
+    id: 2,
     name: "TILSNA",
     logo: "/assets/Img/sponsors/S__109420674.jpg",
     scaleClass: "scale-100",
   },
   {
-    id: 12,
+    id: 3,
     name: "Novaceutical",
-    logo: "/assets/Img/sponsors/์Novaceutical.jpg",
-    scaleClass: "scale-105",
+    logo: "/assets/Img/sponsors/Novaceutical.jpg",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 4,
+    name: "ศิริเวชกรรม",
+    logo: "/assets/Img/sponsors/ศิริเวชกรรม.jpg",
+    scaleClass: "scale-[1.3]",
+  },
+  {
+    id: 5,
+    name: "ภิญโญฟาร์มาซี",
+    logo: "/assets/Img/sponsors/ภิญโญฟาร์มาซี.png",
+    scaleClass: "scale-[1.25]",
+  },
+  {
+    id: 6,
+    name: "บริษัท ห้าม้า โอสถ จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทห้าม้า โอสถ จำกัด.jpeg",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 7,
+    name: "บริษัท แอสตร้าเซนเนก้า (ประเทศไทย) จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท แอสตร้าเซนเนก้า (ประเทศไทย).webp",
+    scaleClass: "scale-[1.1]",
+  },
+  {
+    id: 8,
+    name: "องค์การเภสัชกรรม (GPO)",
+    logo: "/assets/Img/sponsors/gpo.png",
+    scaleClass: "scale-[1.1]",
+  },
+  {
+    id: 9,
+    name: "Telehealth Thailand",
+    logo: "/assets/Img/sponsors/telehealth-thailand.png",
+    scaleClass: "scale-[1.15]",
+  },
+  {
+    id: 10,
+    name: "MP Group",
+    logo: "/assets/Img/sponsors/mp-group.png",
+    scaleClass: "scale-[1.1]",
+  },
+  {
+    id: 11,
+    name: "NIA Academy",
+    logo: "/assets/Img/sponsors/nia-academy.png",
+    scaleClass: "scale-[1.15]",
+  },
+  {
+    id: 12,
+    name: "Circlife Medical",
+    logo: "/assets/Img/sponsors/circlife-medical.png",
+    scaleClass: "scale-[1.2]",
   },
   {
     id: 13,
-    name: "ศิริเวชกรรม",
-    logo: "/assets/Img/sponsors/ศิริเวชกรรม.jpg",
-    scaleClass: "scale-[1.75]",
+    name: "OLIC (Thailand)",
+    logo: "/assets/Img/sponsors/olic.png",
+    scaleClass: "scale-[1.2]",
   },
   {
     id: 14,
-    name: "ภิญโญฟาร์มาซี",
-    logo: "/assets/Img/sponsors/ภิญโญฟาร์มาซี.png",
-    scaleClass: "scale-[2.4]",
+    name: "บริษัท แอ๊บบ๊อต ลาบอแรตอรีส จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท แอ๊บบ๊อต ลาบอแรตอรีส จำกั.png",
+    scaleClass: "scale-[1.2]",
   },
   {
     id: 15,
-    name: "บจก.ห้าม้าโอสถ",
-    logo: "/assets/Img/sponsors/บจก.ห้าม้าโอสถ-พื้นเขียว_1_.jpg",
-    scaleClass: "scale-[1.45]",
+    name: "บริษัท บางกอกแล็ป แอนด์ คอสเมติก จำกัด (มหาชน)",
+    logo: "/assets/Img/sponsors/บริษัท บางกอกแล็ป แอนด์ คอสเมติก จำกัด (มหาชน).png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 16,
+    name: "บริษัท เนสท์ อัพ (ประเทศไทย) จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท เนสท์ อัพ (ประเทศไทย) จำกัด.png",
+    scaleClass: "scale-[1.15]",
+  },
+  {
+    id: 17,
+    name: "บริษัท เอไซ (ประเทศไทย) มาร์เก็ตติ้ง จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท เอไซ (ประเทศไทย) มาร์เก็ตติ้ง จำกัด (รอ cf).png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 18,
+    name: "บริษัท เอ็มพี เฮลท์แคร์ จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท เอ็มพี เอลท์แคร์ จำกัด.png",
+    scaleClass: "scale-[1.25]",
+  },
+  {
+    id: 19,
+    name: "บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด.jpg",
+    scaleClass: "scale-[1.25]",
+  },
+  {
+    id: 20,
+    name: "บริษัท ชุมชนเภสัชกรรม จำกัด (มหาชน)",
+    logo: "/assets/Img/sponsors/บริษัทชุมชนเภสัชกรรมจำกัด  (มหาชน).png",
+    scaleClass: "scale-[1.25]",
+  },
+  {
+    id: 21,
+    name: "บริษัท ดีจีโฟร์ จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทดีจีโฟร์ จำกัด.png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 22,
+    name: "บริษัท บุญซัพพลาย จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทบุญซัพพลาย จำกัด.png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 23,
+    name: "บริษัท ศิริราชบํารุงเวช จํากัด",
+    logo: "/assets/Img/sponsors/บริษัทศิริราชบํารุงเวช จํากัด.png",
+    scaleClass: "scale-[1.25]",
+  },
+  {
+    id: 24,
+    name: "บริษัท อินโนซุส จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทอินโนซุส.png",
+    scaleClass: "scale-[2.1]",
+  },
+  {
+    id: 25,
+    name: "บริษัท เกร๊ทเตอร์มายบาซิน จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทเกร๊ทเตอร์มายบาซิน จำกัด.png",
+    scaleClass: "scale-[1.25]",
+  },
+  {
+    id: 26,
+    name: "บริษัท แอโรแคร์ จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทแอโรแคร์จํากัด.png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 27,
+    name: "บริษัท ไทยโอลบา เฮลท์แคร์ จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทไทยโอลบา เฮลท์แคร์ จำกัด.png",
+    scaleClass: "scale-[1.15]",
+  },
+  {
+    id: 28,
+    name: "บริษัท ไทยโอซูกะ จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทไทโอซูกะ.png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 29,
+    name: "บริษัท ไบโอจีนีเทค จำกัด",
+    logo: "/assets/Img/sponsors/บริษัทไบโอจีนีเทค.png",
+    scaleClass: "scale-100",
   },
 ];
 
@@ -169,6 +318,30 @@ export default function SponsorshipPage() {
             </div>
           </div>
 
+          {/* University */}
+          <div className="content-block mb-24">
+            <div className="flex flex-col items-center text-center mb-10 md:mb-14">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37] pb-4 border-b border-gray-200">
+                UNIVERSITY
+              </h2>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-14">
+              {universityLogos.map((uni) => (
+                <div 
+                  key={uni.id} 
+                  className="relative flex items-center justify-center w-24 h-20 sm:w-32 sm:h-24 md:w-44 md:h-32"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={uni.logo}
+                    alt={uni.name}
+                    className={`object-contain w-full h-full max-w-[90%] max-h-[90%] ${uni.scaleClass || ""}`}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Sponsors */}
           <div className="content-block mb-24">
             <div className="flex flex-col items-center text-center mb-10 md:mb-14">
@@ -176,20 +349,18 @@ export default function SponsorshipPage() {
                 SPONSORS
               </h2>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 md:gap-10 max-w-5xl mx-auto">
+            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-14 max-w-7xl mx-auto">
               {sponsorLogos.map((sponsor) => (
                 <div 
                   key={sponsor.id} 
-                  className="relative flex items-center justify-center p-6 sm:p-8 bg-white rounded-2xl border border-gray-100 h-32 sm:h-40 md:h-44 overflow-hidden"
+                  className="relative flex items-center justify-center w-24 h-16 sm:w-32 sm:h-20 md:w-40 md:h-24 lg:w-44 lg:h-28"
                 >
-                  <div className="relative flex items-center justify-center w-full h-full">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={sponsor.logo}
-                      alt={sponsor.name}
-                      className={`object-contain w-full h-full max-h-[90%] max-w-[90%] ${sponsor.scaleClass || ""}`}
-                    />
-                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    className={`object-contain w-full h-full max-h-[90%] max-w-[90%] ${sponsor.scaleClass || ""}`}
+                  />
                 </div>
               ))}
             </div>

@@ -115,7 +115,15 @@ export default function VideoCarouselSection() {
   };
 
   return (
-    <section className="relative w-full py-10 md:py-24 flex flex-col justify-center items-center bg-black overflow-hidden">
+    <section className="relative w-full py-12 md:py-24 flex flex-col justify-center items-center bg-[linear-gradient(to_bottom,#020617_0%,#091842_35%,#1e1005_70%,#020617_100%)] overflow-hidden">
+      {/* Background Decorative Grid & Ambient Glows */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(212,175,55,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(212,175,55,0.05)_1px,transparent_1px)] [background-size:72px_72px]"
+      />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-blue-600/15 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-orange-500/15 rounded-full blur-[120px] pointer-events-none" />
+
       <style>{`
         .carousel-track { --slide-width: 90%; }
         @media (min-width: 768px) { .carousel-track { --slide-width: 75%; } }
@@ -124,7 +132,7 @@ export default function VideoCarouselSection() {
       `}</style>
 
       {/* Carousel Track */}
-      <div className="relative w-full">
+      <div className="relative w-full z-10">
 
         {/* Slides Container — overflow visible so side panels peek */}
         <div
@@ -198,8 +206,8 @@ export default function VideoCarouselSection() {
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-center mt-6 md:mt-10 px-2">
-        <div className="inline-flex items-center gap-3 md:gap-6 px-4 md:px-6 py-2.5 md:py-3.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.2)] max-w-full overflow-x-auto select-none focus:outline-none">
+      <div className="flex items-center justify-center mt-6 md:mt-10 px-2 relative z-10">
+        <div className="inline-flex items-center gap-3 md:gap-6 px-4 md:px-6 py-2.5 md:py-3.5 rounded-full bg-white/10 backdrop-blur-md border border-white/10 shadow-[0_4px_24px_rgba(0,0,0,0.2)] max-w-full overflow-x-auto select-none focus:outline-none text-white">
           {/* Play/Pause Button */}
           <button
             onClick={togglePlayPause}

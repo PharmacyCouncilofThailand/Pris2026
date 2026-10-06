@@ -13,11 +13,6 @@ export const navigationData: NavItem[] = [
         href: "/",
     },
     {
-        labelKey: "innovationWork",
-        href: "#",
-        disabled: true,
-    },
-    {
         labelKey: "about",
         children: [
             { labelKey: "aboutPris", href: "/about" },
