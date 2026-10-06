@@ -69,6 +69,7 @@ export default function Header() {
     "/approved-abstracts",
     "/registration-policies",
     "/hotel-booking-form",
+    "/oral-poster-presentation-criteria",
     "/invite-letter",
     "/sponsorship",
     "/contact",
