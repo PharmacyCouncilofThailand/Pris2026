@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { History, Loader2, RotateCcw } from "lucide-react";
+import { Loader2, RotateCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
@@ -79,7 +79,7 @@ export default function LuckyWheelPage() {
   }, [logout, router]);
 
   const refreshEligibility = useCallback(
-    async (targetEventId: number) => {
+    async (targetEventId: number, preserveResult = false) => {
       if (!token) return null;
       try {
         const next = await loadEligibility(API_URL, token, targetEventId);
@@ -92,7 +92,7 @@ export default function LuckyWheelPage() {
         if (pending) {
           setPhase("unknown");
         } else {
-          setResult(next.latestSpin);
+          if (!preserveResult) setResult(null);
           setFrozenSegments(null);
           setPhase("idle");
         }
@@ -283,21 +283,20 @@ export default function LuckyWheelPage() {
       <div className="mx-auto w-full max-w-[560px]">
         <nav
           aria-label={t("title")}
-          className="mb-4 flex min-h-11 items-center justify-center gap-1 rounded-xl border-2 border-zinc-950 bg-white p-1"
+          className="mb-4 grid grid-cols-2 border-y border-zinc-200 bg-white"
         >
           <Link
             href="/lucky-wheel"
             aria-current="page"
-            className="flex min-h-10 flex-1 items-center justify-center rounded-lg bg-zinc-950 px-3 text-sm font-extrabold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="relative flex min-h-12 items-center justify-center px-3 text-base font-extrabold after:absolute after:inset-x-5 after:bottom-0 after:h-1 after:rounded-full after:bg-[#f45100] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
-            {t("navWheel")}
+            {t("wheelTab")}
           </Link>
           <Link
             href="/lucky-wheel/history"
-            className="flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-3 text-sm font-extrabold text-zinc-800 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="flex min-h-12 items-center justify-center px-3 text-base font-bold text-zinc-500 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
-            <History className="h-4 w-4" aria-hidden="true" />
-            {t("navHistory")}
+            {t("myRewardsTab")}
           </Link>
         </nav>
 
@@ -350,7 +349,7 @@ export default function LuckyWheelPage() {
             onAnimationComplete={() => {
               setAnimateResult(false);
               setFrozenSegments(null);
-              if (eventId) void refreshEligibility(eventId).catch(() => setLoadError(true));
+              if (eventId) void refreshEligibility(eventId, true).catch(() => setLoadError(true));
             }}
           />
         ) : null}

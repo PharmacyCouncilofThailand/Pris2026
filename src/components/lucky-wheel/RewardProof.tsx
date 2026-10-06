@@ -9,6 +9,7 @@ import {
   type OwnedLuckyWheelSpin,
 } from "@/lib/luckyWheel";
 import styles from "./wheel.module.css";
+import ticketStyles from "@/app/[locale]/ticket/ticket.module.css";
 
 type Props = {
   detail: OwnedLuckyWheelSpin;
@@ -33,22 +34,27 @@ export function RewardProof({ detail }: Props) {
 
   if (!detail.rewardProof) {
     return (
-      <section className={`${styles.ticket} p-6 text-center`}>
-        <h1 className="text-2xl font-black text-zinc-950">{t("rewardProofTitle")}</h1>
-        <p className="mt-4 text-sm leading-6 text-zinc-700">{t("noProof")}</p>
-      </section>
+      <article className={`${ticketStyles.ticket} ${styles.activityTicket}`}>
+        <section className="px-4 pb-4 pt-7 text-center sm:px-5 sm:pt-9">
+          <h1 className="text-2xl font-black text-zinc-950">{t("rewardProofTitle")}</h1>
+        </section>
+        <div className={`${ticketStyles.perforation} ${styles.activitySeam}`} aria-hidden="true" />
+        <section className="px-4 pb-5 pt-2 text-center sm:px-5 sm:pb-6">
+          <p className="text-sm leading-6 text-zinc-700">{t("noProof")}</p>
+        </section>
+      </article>
     );
   }
 
   return (
-    <article className={styles.ticket}>
-      <div className="px-5 pb-5 pt-5 sm:px-7">
+    <article className={`${ticketStyles.ticket} ${styles.activityTicket}`}>
+      <section className="px-4 pb-4 pt-7 sm:px-5 sm:pt-9">
         <h1 className="text-center text-[clamp(1.5rem,7vw,2rem)] font-black tracking-[-0.025em] text-zinc-950">
           {t("rewardProofTitle")}
         </h1>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-[120px_1fr] sm:items-center">
-          <div className="mx-auto grid h-28 w-28 place-items-center overflow-hidden rounded-xl border-2 border-zinc-950 bg-zinc-100">
+        <div className="mt-5 grid grid-cols-[clamp(84px,22vw,112px)_minmax(0,1fr)] items-center gap-3 sm:gap-4">
+          <div className="grid aspect-square w-full place-items-center overflow-hidden rounded-xl border-2 border-zinc-950 bg-zinc-100">
             {imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -63,22 +69,22 @@ export function RewardProof({ detail }: Props) {
               </span>
             )}
           </div>
-          <div className="text-center sm:text-left">
+          <div className="min-w-0 break-words text-left">
             <p className="text-xl font-black text-zinc-950">{detail.prize.name.th}</p>
             <p className="mt-1 text-sm text-zinc-500">{detail.prize.name.en}</p>
             <dl className="mt-3 space-y-2 text-sm">
-              <div className="flex items-start justify-center gap-2 sm:justify-start">
+              <div className="flex items-start gap-2">
                 <UserRound className="mt-0.5 h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
-                <div>
+                <div className="min-w-0">
                   <dt className="sr-only">{t("owner")}</dt>
                   <dd className="font-bold text-zinc-800">
                     {detail.owner.firstName} {detail.owner.lastName}
                   </dd>
                 </div>
               </div>
-              <div className="flex items-start justify-center gap-2 sm:justify-start">
+              <div className="flex items-start gap-2">
                 <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
-                <div>
+                <div className="min-w-0">
                   <dt className="sr-only">{t("awardedAt")}</dt>
                   <dd className="text-zinc-700">{formatter.format(new Date(detail.prize.awardedAt))}</dd>
                 </div>
@@ -86,12 +92,12 @@ export function RewardProof({ detail }: Props) {
             </dl>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className={styles.seam} aria-hidden="true" />
+      <div className={`${ticketStyles.perforation} ${styles.activitySeam}`} aria-hidden="true" />
 
-      <div className="space-y-5 px-5 py-6 sm:px-7">
-        <div className={styles.proofQr}>
+      <section className="space-y-5 px-4 pb-5 pt-2 sm:px-5 sm:pb-6">
+        <div className={`${styles.proofQr} rounded-[18px]`}>
           <QRCodeSVG
             value={detail.rewardProof.qrPayload}
             size={260}
@@ -139,7 +145,7 @@ export function RewardProof({ detail }: Props) {
             <p>{t("pickupNotice")}</p>
           </div>
         )}
-      </div>
+      </section>
     </article>
   );
 }
