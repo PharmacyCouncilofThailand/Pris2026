@@ -72,8 +72,8 @@ export default function PageHero({
     ? "from-white via-white to-white/60"
     : "from-blue-500 via-blue-600 to-orange-500";
   const titleSize = inlineTitle
-    ? "text-[clamp(3rem,6vw,6.25rem)]"
-    : "text-5xl sm:text-7xl md:text-8xl lg:text-[8rem]";
+    ? "text-[clamp(2.2rem,5vw,6.25rem)]"
+    : "text-3xl sm:text-5xl md:text-7xl lg:text-[8rem]";
   const titlePartClass = inlineTitleTight
     ? "overflow-hidden py-2 -my-2"
     : "overflow-hidden py-2 -my-2 md:pl-2";
@@ -86,7 +86,7 @@ export default function PageHero({
     <section
       ref={heroRef}
       lang={locale}
-      className="relative overflow-hidden pt-40 md:pt-56 [@media(max-height:900px)]:pt-28 [@media(max-height:500px)]:pt-20 pb-20 md:pb-32 [@media(max-height:900px)]:pb-12 [@media(max-height:500px)]:pb-8 px-6 md:px-12 flex flex-col justify-end items-center text-center"
+      className="relative overflow-hidden pt-32 sm:pt-40 md:pt-56 [@media(max-height:900px)]:pt-28 [@media(max-height:500px)]:pt-20 pb-12 sm:pb-20 md:pb-32 [@media(max-height:900px)]:pb-10 [@media(max-height:500px)]:pb-8 px-4 sm:px-6 md:px-12 flex flex-col justify-end items-center text-center"
     >
       {/* Decorative BG Glows */}
       {!dark && (

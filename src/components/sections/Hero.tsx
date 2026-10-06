@@ -466,7 +466,7 @@ export default function Hero() {
             <div className="flex translate-y-6 items-center justify-center gap-4 sm:gap-6 lg:gap-5 md:portrait:gap-5 max-md:landscape:translate-y-3 max-md:landscape:gap-3">
               <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
                 <Image
-                  src="/assets/Img/sponsors/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png"
+                  src="/assets/Img/Partner/Logo_Pharmacycouncil_2568_2-2_Artboard 2.png"
                   alt="The Pharmacy Council of Thailand"
                   fill
                   sizes="112px"
@@ -475,7 +475,7 @@ export default function Hero() {
               </div>
               <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
                 <Image
-                  src="/assets/Img/sponsors/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png"
+                  src="/assets/Img/Partner/Logo_ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย_2-02.png"
                   alt="Royal College of Pharmacy of Thailand"
                   fill
                   sizes="112px"
