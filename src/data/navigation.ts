@@ -33,6 +33,7 @@ export const navigationData: NavItem[] = [
         children: [
             { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
             { labelKey: "acceptedAbstractsAnnouncement", href: "/approved-abstracts" },
+            { labelKey: "oralPosterPresentationCriteria", href: "/documents/OralnPosterRule.pdf" },
         ],
     },
     {
