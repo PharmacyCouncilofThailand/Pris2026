@@ -157,6 +157,7 @@
     "sponsorship": "ผู้สนับสนุน",
     "more": "อื่นๆ",
     "hotelBookingForm": "แบบฟอร์มจองห้องพัก",
+    "oralPosterPresentationCriteria": "เกณฑ์การประเมินผลงาน",
     "inviteLetter": "หนังสือเชิญเข้าร่วมงาน",
     "gallery": "แกลเลอรี",
     "contact": "ติดต่อเรา",
@@ -718,6 +719,19 @@
     "downloadButton": "ดาวน์โหลดหนังสือเชิญ",
     "fileNote": "ไฟล์ PDF พร้อมดาวน์โหลด",
     "documentLabel": "ว.160 ปชสและอนุมัติ PRIS2026"
+  },
+    "oralPosterCriteria": {
+    "eyebrow": "เกณฑ์การนำเสนอ",
+    "title1": "เกณฑ์การประเมิน",
+    "title2": "Oral & Poster",
+    "subtitle": "เกณฑ์อย่างเป็นทางการสำหรับการประเมินการนำเสนอ Oral และ Poster ในงาน PRIS 2026",
+    "sectionEyebrow": "เกณฑ์การประเมินอย่างเป็นทางการ",
+    "cardTitle": "เกณฑ์การประเมิน Oral and Poster Presentation",
+    "sectionDescription": "ดูเกณฑ์การประเมินการนำเสนอ Oral และ Poster อย่างเป็นทางการ สามารถเปิดดูเอกสารบนหน้านี้หรือดาวน์โหลดเพื่อใช้อ้างอิงภายหลัง",
+    "documentType": "เกณฑ์การนำเสนอ",
+    "documentMeta": "PDF · PRIS 2026",
+    "downloadButton": "ดาวน์โหลดเกณฑ์การประเมิน",
+    "fileNote": "ไฟล์ PDF พร้อมดาวน์โหลด"
   },
   "sponsorship": {
     "pretitle": "PRIS 2026",
