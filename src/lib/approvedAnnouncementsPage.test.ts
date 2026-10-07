@@ -46,13 +46,13 @@ test('announcement reload clamps the last page after the API source shrinks', as
     assert.equal(renderer.root.findAllByType('article').length, 1);
     assert.ok(renderer.root.findAllByType('article')[0].findAllByType('h2')[0].children.includes('Synthetic 21'));
     rows = rows.slice(0, 3);
-    let cleanup: ReturnType<EffectCallback> = undefined;
+    const replay: { cleanup: ReturnType<EffectCallback> } = { cleanup: undefined };
     assert.ok(reloadEffect);
-    await act(async () => { cleanup = reloadEffect!(); });
+    await act(async () => { replay.cleanup = reloadEffect!(); });
     assert.equal(renderer.root.findAllByType('article').length, 3);
     assert.ok(renderer.root.findAllByType('article')[0].findAllByType('h2')[0].children.includes('Synthetic 1'));
     assert.equal(renderer.root.findAllByType('nav').length, 0);
-    if (typeof cleanup === 'function') cleanup();
+    if (typeof replay.cleanup === 'function') replay.cleanup();
   } finally {
     if (renderer) await act(async () => renderer?.unmount());
     React.useEffect = originalEffect;
