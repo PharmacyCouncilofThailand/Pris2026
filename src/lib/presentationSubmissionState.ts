@@ -1,20 +1,20 @@
-import type { OwnerPosterDto } from '@/types/posters';
+import type { OwnerPresentationDto } from '@/types/presentations';
 
 export function fileProblem(file: File): string | null {
-  if (file.size < 1) return 'POSTER_FILE_EMPTY';
-  if (file.size > 30 * 1024 * 1024) return 'POSTER_FILE_TOO_LARGE';
+  if (file.size < 1) return 'PRESENTATION_FILE_EMPTY';
+  if (file.size > 30 * 1024 * 1024) return 'PRESENTATION_FILE_TOO_LARGE';
   const extension = /\.pdf$/i.test(file.name);
   const mime = file.type.toLowerCase();
   return extension && ['', 'application/octet-stream', 'application/pdf'].includes(mime)
-    ? null : 'POSTER_FILE_TYPE';
+    ? null : 'PRESENTATION_FILE_TYPE';
 }
 
-export type PosterFileSelection = { file: File; key: string };
-export function selectPosterFile(file: File, previous: PosterFileSelection | null = null): PosterFileSelection {
+export type PresentationFileSelection = { file: File; key: string };
+export function selectPresentationFile(file: File, previous: PresentationFileSelection | null = null): PresentationFileSelection {
   return previous?.file === file ? previous : { file, key: crypto.randomUUID() };
 }
 
-export function submissionState(state: { loading: boolean; owner: OwnerPosterDto | null; selected: boolean;
+export function submissionState(state: { loading: boolean; owner: OwnerPresentationDto | null; selected: boolean;
   sending: boolean; received: boolean; progress?: number }) {
   return state.loading ? 'loading' : state.received ? 'received' : state.sending
     ? (state.progress ?? 0) >= 100 ? 'checking' : 'uploading'

@@ -3,7 +3,7 @@ import test from "node:test";
 import {
   eventReturnQuery,
   normalizeLocalizedRedirectPath,
-  posterReturnPath,
+  presentationReturnPath,
 } from "./localizedRedirect.js";
 
 test("keeps locale-relative internal redirects unchanged", () => {
@@ -13,41 +13,41 @@ test("keeps locale-relative internal redirects unchanged", () => {
 
 test("poster return accepts only a positive safe abstract ID and optional UUID request", () => {
   const requestId = "123e4567-e89b-42d3-a456-426614174000";
-  assert.equal(posterReturnPath("?abstractId=501"), "/poster-submission?abstractId=501");
-  assert.equal(posterReturnPath(`?requestId=${requestId}&abstractId=00501`),
-    `/poster-submission?abstractId=501&requestId=${requestId}`);
+  assert.equal(presentationReturnPath("?abstractId=501"), "/presentation-submission?abstractId=501");
+  assert.equal(presentationReturnPath(`?requestId=${requestId}&abstractId=00501`),
+    `/presentation-submission?abstractId=501&requestId=${requestId}`);
   for (const search of [
     "", "?abstractId=0", "?abstractId=-1", "?abstractId=1.5", "?abstractId=1e3",
     "?abstractId=9007199254740992", "?abstractId=501&abstractId=502",
     "?abstractId=501&next=https://evil.invalid", "?abstractId=501&email=owner@example.com",
     "?abstractId=501&requestId=", "?abstractId=501&requestId=not-a-uuid",
     `?abstractId=501&requestId=${requestId}&requestId=${requestId}`,
-  ]) assert.equal(posterReturnPath(search), null, search);
+  ]) assert.equal(presentationReturnPath(search), null, search);
 });
 
 test("poster auth journeys retain a validated locale-relative return path", () => {
-  const path = "/poster-submission?abstractId=501&requestId=123e4567-e89b-42d3-a456-426614174000";
+  const path = "/presentation-submission?abstractId=501&requestId=123e4567-e89b-42d3-a456-426614174000";
   for (const locale of ["", "/th", "/en"]) {
     const search = `?redirect=${encodeURIComponent(locale + path)}`;
     assert.deepEqual(eventReturnQuery(search), { redirect: path });
     assert.equal(normalizeLocalizedRedirectPath(eventReturnQuery(search)?.redirect), path);
   }
   for (const path of [
-    "/poster-submission", "/poster-submission?abstractId=0",
-    "/poster-submission?abstractId=501&next=https://evil.invalid",
-    "/poster-submission?abstractId=501#fragment",
-    "//evil.invalid/poster-submission?abstractId=501",
-    "https://evil.invalid/poster-submission?abstractId=501",
-    "/foo/../poster-submission?abstractId=501",
+    "/presentation-submission", "/presentation-submission?abstractId=0",
+    "/presentation-submission?abstractId=501&next=https://evil.invalid",
+    "/presentation-submission?abstractId=501#fragment",
+    "//evil.invalid/presentation-submission?abstractId=501",
+    "https://evil.invalid/presentation-submission?abstractId=501",
+    "/foo/../presentation-submission?abstractId=501",
   ]) assert.equal(eventReturnQuery(`?redirect=${encodeURIComponent(path)}`), undefined, path);
   for (const path of [
-    "/th/poster-submission?abstractId=0",
-    "/en/poster-submission?abstractId=501&email=owner@example.com",
-    "/poster-submission?abstractId=501&next=https://evil.invalid",
-    "/poster-submission?abstractId=501#fragment",
+    "/th/presentation-submission?abstractId=0",
+    "/en/presentation-submission?abstractId=501&email=owner@example.com",
+    "/presentation-submission?abstractId=501&next=https://evil.invalid",
+    "/presentation-submission?abstractId=501#fragment",
   ]) assert.equal(normalizeLocalizedRedirectPath(path), "/", path);
-  assert.equal(normalizeLocalizedRedirectPath("/th/poster-submission?abstractId=00501"),
-    "/poster-submission?abstractId=501");
+  assert.equal(normalizeLocalizedRedirectPath("/th/presentation-submission?abstractId=00501"),
+    "/presentation-submission?abstractId=501");
 });
 
 test("strips an existing supported locale before next-intl navigation", () => {
@@ -59,10 +59,10 @@ test("strips an existing supported locale before next-intl navigation", () => {
 
 test("direct login rejects alternate paths that resolve to poster submission", () => {
   for (const path of [
-    "/foo/../poster-submission", "/foo/%2e%2e/poster-submission",
-    "/foo/.%2E/poster-submission", "/foo/%2E./poster-submission",
-    "/poster-submission/", "/poster-submission//",
-    "/poster-submission/.", "/poster-submission/%2e/",
+    "/foo/../presentation-submission", "/foo/%2e%2e/presentation-submission",
+    "/foo/.%2E/presentation-submission", "/foo/%2E./presentation-submission",
+    "/presentation-submission/", "/presentation-submission//",
+    "/presentation-submission/.", "/presentation-submission/%2e/",
   ]) {
     for (const locale of ["", "/th", "/en"]) {
       for (const search of [

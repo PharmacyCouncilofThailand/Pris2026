@@ -32,9 +32,9 @@ export function normalizeLocalizedRedirectPath(value: string | null | undefined)
   const destination = new URL(withoutLocale, "https://internal.invalid");
   if (destination.origin !== "https://internal.invalid") return "/";
   const resolvedPath = destination.pathname.replace(/\/+$/, "");
-  if (resolvedPath === "/poster-submission") {
-    if (withoutLocale.split(/[?#]/)[0] !== "/poster-submission") return "/";
-    return withoutLocale.includes("#") ? "/" : posterReturnPath(withoutLocale.slice("/poster-submission".length)) || "/";
+  if (resolvedPath === "/presentation-submission") {
+    if (withoutLocale.split(/[?#]/)[0] !== "/presentation-submission") return "/";
+    return withoutLocale.includes("#") ? "/" : presentationReturnPath(withoutLocale.slice("/presentation-submission".length)) || "/";
   }
 
   return withoutLocale;
@@ -47,8 +47,8 @@ export function eventReturnQuery(
   if (!raw || raw.includes("\\")) return undefined;
 
   const redirect = normalizeLocalizedRedirectPath(raw);
-  if (redirect.split("?")[0] === "/poster-submission" && !redirect.includes("#")) {
-    const path = posterReturnPath(redirect.slice("/poster-submission".length));
+  if (redirect.split("?")[0] === "/presentation-submission" && !redirect.includes("#")) {
+    const path = presentationReturnPath(redirect.slice("/presentation-submission".length));
     return path ? { redirect: path } : undefined;
   }
   if (EVENT_RETURN_PATHS.has(redirect) || REWARD_PROOF_PATH.test(redirect)) {
@@ -57,7 +57,7 @@ export function eventReturnQuery(
   return undefined;
 }
 
-export function posterReturnPath(search: string): string | null {
+export function presentationReturnPath(search: string): string | null {
   const query = new URLSearchParams(search);
   if ([...query.keys()].some((key) => key !== "abstractId" && key !== "requestId")) return null;
   const abstractId = query.get("abstractId");
@@ -72,5 +72,5 @@ export function posterReturnPath(search: string): string | null {
   ) return null;
   const normalized = new URLSearchParams({ abstractId: String(Number(abstractId)) });
   if (requestId) normalized.set("requestId", requestId);
-  return `/poster-submission?${normalized}`;
+  return `/presentation-submission?${normalized}`;
 }

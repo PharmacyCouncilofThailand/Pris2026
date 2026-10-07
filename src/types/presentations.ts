@@ -9,7 +9,7 @@ export type UploadDto = { id: string; version: number; fileName: string; mimeTyp
 export type RevisionDto = { id: string; details: string; closesAt: string; status: RevisionStatus;
   createdAt: string; requestedBy: number; submittedAt: string | null; cancelledAt: string | null;
   cancelledBy: number | null; cancellationReason: string | null };
-export type OwnerPosterDto = { abstractId: number; trackingId: string; title: string; submitterName: string;
+export type OwnerPresentationDto = { abstractId: number; trackingId: string; title: string; submitterName: string;
   presentationType: AnnouncementType; categoryName: string; round: number; serverNow: string;
   mainClosesAt: string; canUpload: boolean; blockCode: string | null; mode: 'initial' | 'revision' | 'locked';
   selectedRequest: RevisionDto | null; currentUpload: UploadDto | null; uploads: UploadDto[] };

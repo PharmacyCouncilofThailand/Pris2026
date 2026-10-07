@@ -3,7 +3,7 @@ import test from 'node:test';
 import { createRequire, Module } from 'node:module';
 import type { EffectCallback, DependencyList } from 'react';
 import type { ReactTestRenderer } from 'react-test-renderer';
-import type { Announcement } from '../types/posters';
+import type { Announcement } from '../types/presentations';
 
 const require = createRequire(import.meta.url);
 const testGlobal = globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean };

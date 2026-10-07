@@ -1,4 +1,4 @@
-import type { Announcement, OwnerPosterDto, UploadDto } from '@/types/posters';
+import type { Announcement, OwnerPresentationDto, UploadDto } from '@/types/presentations';
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002').replace(/\/$/, '');
 
@@ -9,42 +9,42 @@ export async function getApprovedAnnouncements(signal?: AbortSignal): Promise<An
   return json.data;
 }
 
-export class PosterApiError extends Error {
+export class PresentationApiError extends Error {
   constructor(public readonly code: string, public readonly status: number) {
     super(code);
-    this.name = 'PosterApiError';
+    this.name = 'PresentationApiError';
   }
 }
 
 const errorCode = (code: unknown, fallback: string) =>
   typeof code === 'string' && /^[A-Z][A-Z0-9_]*$/.test(code) ? code : fallback;
 
-export async function getOwnerPoster(token: string, abstractId: number, requestId?: string, signal?: AbortSignal): Promise<OwnerPosterDto> {
+export async function getOwnerPresentation(token: string, abstractId: number, requestId?: string, signal?: AbortSignal): Promise<OwnerPresentationDto> {
   const query = requestId ? `?requestId=${encodeURIComponent(requestId)}` : '';
   let response: Response;
   try {
-    response = await fetch(`${API_BASE}/api/abstracts/${abstractId}/poster${query}`, {
+    response = await fetch(`${API_BASE}/api/abstracts/${abstractId}/presentation${query}`, {
       signal, cache: 'no-store', headers: { Authorization: `Bearer ${token}` },
     });
-  } catch { throw new PosterApiError('POSTER_LOAD_FAILED', 0); }
+  } catch { throw new PresentationApiError('PRESENTATION_LOAD_FAILED', 0); }
   const body = await response.json().catch(() => null);
   if (!response.ok || body?.success !== true || body?.data?.abstractId !== abstractId) {
-    throw new PosterApiError(errorCode(body?.code, 'POSTER_LOAD_FAILED'), response.status);
+    throw new PresentationApiError(errorCode(body?.code, 'PRESENTATION_LOAD_FAILED'), response.status);
   }
   return body.data;
 }
 
-export type PosterUploadInput = { token: string; abstractId: number; requestId: string | null; file: File;
+export type PresentationUploadInput = { token: string; abstractId: number; requestId: string | null; file: File;
   key: string; onProgress: (percentage: number) => void; signal?: AbortSignal };
 
-export function uploadPoster(input: PosterUploadInput): Promise<{ upload: UploadDto; replayed: boolean }> {
+export function uploadPresentation(input: PresentationUploadInput): Promise<{ upload: UploadDto; replayed: boolean }> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const abort = () => xhr.abort();
     const cleanup = () => { input.signal?.removeEventListener('abort', abort); xhr.upload.onprogress = null; };
-    const unknown = () => { cleanup(); reject(new PosterApiError('POSTER_NETWORK_UNKNOWN', 0)); };
+    const unknown = () => { cleanup(); reject(new PresentationApiError('PRESENTATION_NETWORK_UNKNOWN', 0)); };
     if (input.signal?.aborted) { unknown(); return; }
-    xhr.open('POST', `${API_BASE}/api/abstracts/${input.abstractId}/poster-uploads`);
+    xhr.open('POST', `${API_BASE}/api/abstracts/${input.abstractId}/presentation-uploads`);
     xhr.setRequestHeader('Authorization', `Bearer ${input.token}`);
     xhr.setRequestHeader('Idempotency-Key', input.key);
     xhr.timeout = 180_000;
@@ -57,11 +57,11 @@ export function uploadPoster(input: PosterUploadInput): Promise<{ upload: Upload
       if (!xhr.status) { unknown(); return; }
       let body;
       try { body = JSON.parse(xhr.responseText); }
-      catch { reject(new PosterApiError('POSTER_NETWORK_UNKNOWN', xhr.status)); return; }
+      catch { reject(new PresentationApiError('PRESENTATION_NETWORK_UNKNOWN', xhr.status)); return; }
       if (xhr.status >= 200 && xhr.status < 300 && body?.success === true &&
         typeof body?.data?.upload?.id === 'string' && typeof body?.data?.replayed === 'boolean') resolve(body.data);
-      else reject(new PosterApiError(errorCode(body?.code,
-        xhr.status >= 200 && xhr.status < 300 ? 'POSTER_NETWORK_UNKNOWN' : 'POSTER_UPLOAD_FAILED'), xhr.status));
+      else reject(new PresentationApiError(errorCode(body?.code,
+        xhr.status >= 200 && xhr.status < 300 ? 'PRESENTATION_NETWORK_UNKNOWN' : 'PRESENTATION_UPLOAD_FAILED'), xhr.status));
     };
     const form = new FormData();
     form.append('file', input.file);

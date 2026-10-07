@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/sections/PageHero";
-import { getApprovedAnnouncements } from "@/lib/posterApi";
-import type { Announcement } from "@/types/posters";
+import { getApprovedAnnouncements } from "@/lib/presentationApi";
+import type { Announcement } from "@/types/presentations";
 import {
   extractDistinctCategories,
   filterAcceptedAbstracts,

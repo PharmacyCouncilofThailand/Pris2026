@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { CheckCircle2, Clock3, Download, FileText, UploadCloud } from 'lucide-react';
 import PageHero from '@/components/sections/PageHero';
-import type { OwnerPosterDto } from '@/types/posters';
-import { fileProblem, submissionState } from '@/lib/posterSubmissionState';
+import type { OwnerPresentationDto } from '@/types/presentations';
+import { fileProblem, submissionState } from '@/lib/presentationSubmissionState';
 
-export function PosterWorkspace(p: { owner: OwnerPosterDto; file: File | null; onFile: (file: File | null) => void;
+export function PresentationWorkspace(p: { owner: OwnerPresentationDto; file: File | null; onFile: (file: File | null) => void;
   onSubmit: () => void; sending: boolean; progress: number; error: string | null }) {
-  const t = useTranslations('poster'), locale = useLocale(), o = p.owner;
+  const t = useTranslations('presentation'), locale = useLocale(), o = p.owner;
   const [preview, setPreview] = useState<string | null>(null);
   useEffect(() => {
     // Fix preview media type so an empty browser MIME cannot make selected HTML execute in a PDF frame.
@@ -24,7 +24,7 @@ export function PosterWorkspace(p: { owner: OwnerPosterDto; file: File | null; o
     dateStyle: 'long', timeStyle: 'medium', timeZone: 'Asia/Bangkok',
   }).format(new Date(iso));
   const state = submissionState({ loading: false, owner: o, selected: !!p.file, sending: p.sending, received: false, progress: p.progress });
-  const block = `blocks.${o.blockCode ?? 'POSTER_ALREADY_SUBMITTED'}`;
+  const block = `blocks.${o.blockCode ?? 'PRESENTATION_ALREADY_SUBMITTED'}`;
   const close = o.selectedRequest?.closesAt ?? o.mainClosesAt;
   return <main className="min-h-screen bg-[#fafafa] pb-24 text-slate-900 selection:bg-gold selection:text-black">
     <PageHero title1={t(o.selectedRequest ? 'revisionHeroTitle' : 'heroTitle')} title2="Poster" inlineTitle inlineTitleTight />
@@ -47,8 +47,8 @@ export function PosterWorkspace(p: { owner: OwnerPosterDto; file: File | null; o
             {o.selectedRequest.cancellationReason && <p className="mt-2 break-words text-sm">{t('cancellationReason')}: {o.selectedRequest.cancellationReason}</p>}
           </div>}
         </section>
-        <section className="min-w-0 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-[0_40px_100px_rgba(0,0,0,0.03)] sm:rounded-[2.5rem] sm:p-10" aria-labelledby="poster-upload">
-          <h2 id="poster-upload" tabIndex={-1} className="text-xl font-black tracking-tight text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4">{t('uploadTitle')}</h2><p className="mt-2 text-sm leading-relaxed text-slate-600">{t('requirements')}</p>
+        <section className="min-w-0 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-[0_40px_100px_rgba(0,0,0,0.03)] sm:rounded-[2.5rem] sm:p-10" aria-labelledby="presentation-upload">
+          <h2 id="presentation-upload" tabIndex={-1} className="text-xl font-black tracking-tight text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4">{t('uploadTitle')}</h2><p className="mt-2 text-sm leading-relaxed text-slate-600">{t('requirements')}</p>
           <a href="https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Poster%20Template.zip" target="_blank" rel="noopener noreferrer"
             className="mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-900 transition-colors hover:border-gold hover:bg-gold/5 focus-visible:outline-2 focus-visible:outline-offset-4 motion-reduce:transition-none">
             <Download size={18} aria-hidden="true" />{t('downloadTemplate')}
@@ -74,7 +74,7 @@ export function PosterWorkspace(p: { owner: OwnerPosterDto; file: File | null; o
             </div>}
             {p.sending && <div className="mt-5" role="status" aria-live="polite"><progress className="w-full accent-slate-900" max={100} value={p.progress} aria-label={t('sending')} /><p className="mt-1 text-sm">{t(state === 'checking' ? 'checking' : 'sending')}</p></div>}
             <button className="mt-7 w-full rounded-2xl bg-slate-950 px-6 py-4 text-sm font-bold text-white shadow-lg transition-colors hover:bg-gold hover:text-black focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-slate-900 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
-              disabled={!p.file || p.sending || !!fileProblem(p.file)} onClick={p.onSubmit}>{t(p.error === 'POSTER_NETWORK_UNKNOWN' ? 'retryUpload' : 'submit')}</button>
+              disabled={!p.file || p.sending || !!fileProblem(p.file)} onClick={p.onSubmit}>{t(p.error === 'PRESENTATION_NETWORK_UNKNOWN' ? 'retryUpload' : 'submit')}</button>
           </> : <p className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/70 p-5 text-sm font-medium leading-relaxed text-slate-600" role="status">{t.has(block) ? t(block) : t('loadError')}</p>}
           {p.error && <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800" role="alert">{t.has(`errors.${p.error}`) ? t(`errors.${p.error}`) : t('uploadError')}</p>}
         </section>
