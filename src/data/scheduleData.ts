@@ -950,7 +950,7 @@ const day2Events = [
     speakers: [
       {
         name: "Asst. Prof. Dr. Pharm. Rungpetch Sakulbumrungsil",
-        nameTh: "ผศ.ดร.ภญ.รุ่งเพ็ชร สกุล บำรุงศิลป์",
+        nameTh: "ผศ.ดร.ภญ.รุ่งเพ็ชร สกุลบำรุงศิลป์",
       },
       {
         name: "Pharm. Sutthiphong Nurit",
@@ -958,7 +958,7 @@ const day2Events = [
       },
       {
         name: "Assoc. Prof. Dr. Pharm. Korn Sornlertlamvanich",
-        nameTh: "รศ.ดร.ภก. กร ศรเลิศล้ำวาณิช",
+        nameTh: "รศ.ดร.ภก.กร ศรเลิศล้ำวาณิช",
       },
     ],
   },
