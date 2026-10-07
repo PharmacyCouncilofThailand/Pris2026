@@ -1,8 +1,9 @@
 import type { AnnouncementType, OwnerPresentationDto } from '@/types/presentations';
+import { PRESENTATION_LIMITS } from './presentationLimits';
 
 export function fileProblem(file: File, type: AnnouncementType): string | null {
   if (file.size < 1) return 'PRESENTATION_FILE_EMPTY';
-  if (file.size > (type === 'oral' ? 52_428_800 : 31_457_280)) return 'PRESENTATION_FILE_TOO_LARGE';
+  if (file.size > PRESENTATION_LIMITS[type === 'oral' ? 'oral' : 'poster'].bytes) return 'PRESENTATION_FILE_TOO_LARGE';
   const extension = /\.pdf$/i.test(file.name);
   const mime = file.type.toLowerCase();
   return extension && ['', 'application/octet-stream', 'application/pdf'].includes(mime)

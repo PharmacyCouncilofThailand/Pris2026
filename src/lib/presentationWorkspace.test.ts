@@ -45,6 +45,8 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.equal(heading.props.className.includes('md:flex-nowrap'), false);
       assert.ok(gradient.props.className.split(' ').includes('block'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().selected));
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsPoster.replace('{maxMB}', '30')));
+      assert.equal(JSON.stringify(renderer!.toJSON()).includes('{maxMB}'), false);
       const templateLink = renderer!.root.findAllByType('a').find(node => node.props.href === 'https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Poster%20Template.zip');
       assert.ok(templateLink);
       assert.ok(templateLink.children.includes(messages().downloadPosterTemplate));
@@ -85,7 +87,8 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       const oralOwner = { ...revision, presentationType: 'oral', currentUpload: oralUpload, uploads: [oralUpload, previousOral] };
       await act(async () => renderer!.update(React.createElement(PresentationWorkspace, { ...props, owner: oralOwner, file: null, error: 'PRESENTATION_PDF_PAGE_COUNT' })));
       assert.ok(renderer!.root.findByType('h1').findAllByType('span').some(node => node.children.includes(messages().oral)));
-      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsOral));
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsOral.replace('{maxMB}', '50')));
+      assert.equal(JSON.stringify(renderer!.toJSON()).includes('{maxMB}'), false);
       assert.ok(JSON.stringify(renderer!.toJSON()).includes('50'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().pageRuleOral));
       assert.equal(JSON.stringify(renderer!.toJSON()).includes(oralUpload.storedFileName), false);
@@ -93,7 +96,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.ok(oralTemplate?.children.includes(messages().downloadOralTemplate));
       for (const version of [oralUpload, previousOral]) assert.ok(renderer!.root.findAllByType('a').some(node => node.props.href === version.fileUrl && node.children.includes('slides.pdf')));
       await act(async () => renderer!.update(React.createElement(PresentationWorkspace, { ...props, owner: oralOwner, error: 'PRESENTATION_FILE_TOO_LARGE' })));
-      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().errors.PRESENTATION_FILE_TOO_LARGE.replace('{maxMiB}', '50')));
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().errors.PRESENTATION_FILE_TOO_LARGE.replace('{maxMB}', '50')));
       await act(async () => renderer!.unmount());
     }
     await act(async () => { renderer = create(React.createElement(PresentationSuccessDialog, { upload: { ...upload, fileName: '<img onerror=attack>.pdf' }, owner, onClose: () => { cancel++; } }), {
