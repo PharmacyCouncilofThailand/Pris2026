@@ -88,6 +88,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       await act(async () => renderer!.update(React.createElement(PresentationWorkspace, { ...props, owner: oralOwner, file: null, error: 'PRESENTATION_PDF_PAGE_COUNT' })));
       assert.ok(renderer!.root.findByType('h1').findAllByType('span').some(node => node.children.includes(messages().oral)));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsOral.replace('{maxMB}', '50')));
+      assert.equal(JSON.stringify(renderer!.toJSON()).includes(locale === 'th' ? 'อย่างน้อย 2 หน้า' : 'at least 2 pages'), false);
       assert.equal(JSON.stringify(renderer!.toJSON()).includes('{maxMB}'), false);
       assert.ok(JSON.stringify(renderer!.toJSON()).includes('50'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().pageRuleOral));
@@ -104,6 +105,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
     }); });
     assert.equal(modal, 1);
     const tree = JSON.stringify(renderer!.toJSON());
+    assert.ok(tree.includes(messages().receiptNotice));
     assert.ok(tree.includes('<img onerror=attack>.pdf'));
     assert.ok(tree.includes('11:00:00')); // server receivedAt displayed in Bangkok, not browser clock
     assert.equal(renderer!.root.findAllByType('img').length, 0);

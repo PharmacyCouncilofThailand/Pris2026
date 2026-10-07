@@ -1260,7 +1260,7 @@
     "selected": "File selected, not submitted",
     "received": "The system has received your presentation file.",
     "ownerRequired": "Please sign in with the account used to submit this work's abstract.",
-    "receiptNotice": "Your file has been saved. A receipt email will be sent. Do not upload again if the email does not arrive.",
+    "receiptNotice": "File saved. Please await email; no need to resend.",
     "loginRequired": "Sign in to submit your presentation.",
     "login": "Sign in",
     "switchAccount": "Switch account",
@@ -1295,11 +1295,11 @@
     "version": "Version",
     "uploadError": "Unable to submit. Check the current status and try again.",
     "oral": "Oral Presentation",
-    "requirementsOral": "One PDF file, at least 2 pages, maximum {maxMB} MB, without password protection.",
+    "requirementsOral": "One PDF file, maximum {maxMB} MB, without password protection.",
     "requirementsPoster": "One PDF file, exactly 1 page, maximum {maxMB} MB, without password protection.",
     "downloadOralTemplate": "Download Oral Template (.ZIP)",
     "downloadPosterTemplate": "Download Poster Template (.ZIP)",
-    "pageRuleOral": "at least 2 pages",
+    "pageRuleOral": "a valid page count",
     "pageRulePoster": "exactly 1 page"
   }
 }
