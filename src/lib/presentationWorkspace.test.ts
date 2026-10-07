@@ -47,6 +47,9 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().selected));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsPoster.replace('{maxMB}', '30')));
       for (const key of ['preparationTitlePoster', 'posterDimensions', 'posterImages', 'posterTemplate'] as const) assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages()[key]));
+      const rules = renderer!.root.findByType('ol').findAllByType('li').map(node => node.children.join(''));
+      assert.deepEqual(rules, [messages().posterTemplate, messages().posterDimensions, messages().posterImages,
+        messages().requirementsPoster.replace('{maxMB}', '30'), messages().pdfNoPassword]);
       assert.equal(JSON.stringify(renderer!.toJSON()).includes('{maxMB}'), false);
       const templateLink = renderer!.root.findAllByType('a').find(node => node.props.href === 'https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Poster%20Template.zip');
       assert.ok(templateLink);
