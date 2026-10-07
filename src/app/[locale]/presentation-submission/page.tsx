@@ -60,10 +60,10 @@ function OwnerSubmission({ token, abstractId, requestId, returnPath }: { token: 
     if (busy.current) return;
     uncertainAttempt.current = null;
     setConfirmOpen(false);
-    setSelected(file ? selectPresentationFile(file) : null); setReceipt(null); setProgress(0); setError(file ? fileProblem(file) : null);
+    setSelected(file ? selectPresentationFile(file) : null); setReceipt(null); setProgress(0); setError(file ? fileProblem(file, owner.presentationType) : null);
   };
   const submit = async () => {
-    if (!selected || !owner.canUpload || busy.current || fileProblem(selected.file)) return;
+    if (!selected || !owner.canUpload || busy.current || fileProblem(selected.file, owner.presentationType)) return;
     setConfirmOpen(false);
     busy.current = true; setSending(true); setError(null); setProgress(0);
     const controller = new AbortController(); uploadController.current = controller;

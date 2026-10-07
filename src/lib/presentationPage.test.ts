@@ -15,8 +15,8 @@ test('page preserves ambiguous retry file/key, creates modal only for server rec
   const paths = ['next-intl', 'next/navigation', '../i18n/routing', '../context/AuthContext', './presentationApi', 'gsap', '@gsap/react'].map(path => require.resolve(path));
   const oldModules = paths.map(path => require.cache[path]);
   const original = { window: globalThis.window, document: globalThis.document, HTMLElement: globalThis.HTMLElement, act: globals.IS_REACT_ACT_ENVIRONMENT };
-  const receipt: UploadDto = { id: 'u1', version: 1, fileName: 'synthetic.pdf', mimeType: 'application/pdf', sizeBytes: 5,
-    publicUrl: 'https://example.invalid/file.pdf', receivedAt: '2026-10-07T00:00:00Z', revisionRequestId: null };
+  const receipt: UploadDto = { id: 'u1', version: 1, fileName: 'synthetic.pdf', mimeType: 'application/pdf', sizeBytes: 5, storedFileName: 'synthetic.pdf', storageProvider: 'r2', driveFileId: null,
+    fileUrl: 'https://example.invalid/file.pdf', receivedAt: '2026-10-07T00:00:00Z', revisionRequestId: null };
   const owner: OwnerPresentationDto = { abstractId: 51, trackingId: 'SYNTHETIC-P001', title: 'Owner 51 synthetic', submitterName: 'Synthetic', presentationType: 'poster', categoryName: 'Synthetic', round: 1,
     serverNow: '2026-10-07T00:00:00Z', mainClosesAt: '2026-10-15T17:00:00Z', canUpload: true, blockCode: null, mode: 'initial', currentUpload: null, uploads: [], selectedRequest: null };
   let query = new URLSearchParams('abstractId=51'), token: string | null = 'synthetic-token', renderer: ReactTestRenderer | undefined;
@@ -24,7 +24,7 @@ test('page preserves ambiguous retry file/key, creates modal only for server rec
   let current = owner, wrong = false, lostCommit = false;
   const router = { replace: (path: string) => redirects.push(path) }, logout = () => { token = null; };
   const lookup = (key: string) => key.split('.').reduce<unknown>((value, name) => value && typeof value === 'object' ? (value as Record<string, unknown>)[name] : undefined, en.presentation);
-  const t = Object.assign((key: string) => String(lookup(key) ?? key), { has: (key: string) => !!lookup(key) });
+  const t = Object.assign((key: string, values: Record<string, string | number> = {}) => String(lookup(key) ?? key).replace(/\{(\w+)\}/g, (_match, name: string) => String(values[name] ?? `{${name}}`)), { has: (key: string) => !!lookup(key) });
   try {
     globals.IS_REACT_ACT_ENVIRONMENT = true;
     globalThis.window = { addEventListener() {}, removeEventListener() {}, location: { reload() {} } } as unknown as Window & typeof globalThis;

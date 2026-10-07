@@ -26,7 +26,7 @@ export function PresentationSuccessDialog({ upload, owner, onClose }: { upload: 
     <dl className="mt-6 space-y-4 rounded-2xl bg-slate-50 p-5 text-sm"><div><dt className="mb-1 text-xs font-bold text-slate-500">{t('tracking')}</dt><dd>{owner.trackingId}</dd></div>
       <div><dt className="mb-1 text-xs font-bold text-slate-500">{t('work')}</dt><dd className="break-words">{owner.title}</dd></div><div><dt className="mb-1 text-xs font-bold text-slate-500">{t('file')}</dt><dd className="break-all">{upload.fileName}</dd></div>
       <div><dt className="mb-1 text-xs font-bold text-slate-500">{t('receivedAt')}</dt><dd>{received} {t('thaiTime')}</dd></div></dl>
-    <a href={upload.publicUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block text-sm font-bold text-blue-700 underline underline-offset-4">{t('viewFile')}</a>
+    <a href={upload.fileUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block text-sm font-bold text-blue-700 underline underline-offset-4">{t('viewFile')}</a>
     <p className="mt-5 text-sm leading-relaxed text-slate-600">{t('receiptNotice')}</p>
     <button autoFocus onClick={onClose} className="mt-6 w-full rounded-2xl bg-slate-950 px-5 py-4 text-sm font-bold text-white transition-colors hover:bg-gold hover:text-black motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4">{t('close')}</button>
   </dialog>;

@@ -67,7 +67,8 @@ class MockXhr {
 }
 
 const receipt: UploadDto = { id: 'synthetic-upload', version: 1, fileName: 'x.pdf', mimeType: 'application/pdf',
-  sizeBytes: 1, publicUrl: 'https://example.invalid/x.pdf', receivedAt: '2026-10-07T00:00:00Z', revisionRequestId: null };
+  sizeBytes: 1, storedFileName: 'x.pdf', storageProvider: 'r2', driveFileId: null,
+  fileUrl: 'https://example.invalid/x.pdf', receivedAt: '2026-10-07T00:00:00Z', revisionRequestId: null };
 
 test('XHR multipart, progress, receipts, known rejection, ambiguous retries, tampered scope and cancellation', async () => {
   const original = globalThis.XMLHttpRequest;

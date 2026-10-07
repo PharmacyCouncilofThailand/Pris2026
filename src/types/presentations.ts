@@ -1,4 +1,4 @@
-// Public DTOs copied from the authoritative API poster contract; no announcement data.
+// Public DTOs copied from the authoritative API presentation contract; no announcement data.
 export type AnnouncementType = 'oral' | 'poster' | 'highlighted-poster';
 export type RevisionStatus = 'open' | 'submitted' | 'expired' | 'cancelled';
 export type Announcement = { id: number; sequence?: number; trackingId: string | null;

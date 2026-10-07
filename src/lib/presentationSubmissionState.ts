@@ -1,8 +1,8 @@
-import type { OwnerPresentationDto } from '@/types/presentations';
+import type { AnnouncementType, OwnerPresentationDto } from '@/types/presentations';
 
-export function fileProblem(file: File): string | null {
+export function fileProblem(file: File, type: AnnouncementType): string | null {
   if (file.size < 1) return 'PRESENTATION_FILE_EMPTY';
-  if (file.size > 30 * 1024 * 1024) return 'PRESENTATION_FILE_TOO_LARGE';
+  if (file.size > (type === 'oral' ? 52_428_800 : 31_457_280)) return 'PRESENTATION_FILE_TOO_LARGE';
   const extension = /\.pdf$/i.test(file.name);
   const mime = file.type.toLowerCase();
   return extension && ['', 'application/octet-stream', 'application/pdf'].includes(mime)
