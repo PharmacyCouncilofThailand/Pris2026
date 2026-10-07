@@ -1207,7 +1207,7 @@
     "confirmedShort": "ยืนยันแล้ว"
   },
   "presentation": {
-    "heroTitle": "ส่งไฟล์",
+    "heroTitle": "ส่งไฟล์นำเสนอ",
     "revisionHeroTitle": "ส่งไฟล์แก้ไข",
     "errors": {
       "PRESENTATION_FILE_EMPTY": "ไฟล์ว่าง กรุณาเลือกไฟล์ใหม่",
