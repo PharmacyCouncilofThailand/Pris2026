@@ -1060,8 +1060,14 @@ const day2Events = [
     descriptionTh: "โดย วิทยาลัยเภสัชกรรมอุตสาหการ",
     speakers: [
       {
-        name: "Pharm. Boonrak Thavornrungroj (College of Industrial Pharmacy)",
+        name: "Pharm.Boonrak Thavornrungroj (College of Industrial Pharmacy)",
         nameTh: "ภก.บุญรักษ์ ถาวรรุ่งโรจน์ (วิทยาลัยเภสัชกรรมอุตสาหการ)",
+      },
+      {
+        name: "Assoc.Prof.Dr.Sathit Puttipipatkhachorn (President, College of Industrial Pharmacy)",
+        nameTh: "รศ.ดร.ภก.สาธิต พุทธิพิพัฒน์ขจร (ประธานวิทยาลัยเภสัชกรรมอุตสาหการ)",
+        role: "Chair",
+        roleTh: "Chair",
       },
     ],
   },
@@ -1107,8 +1113,16 @@ const day2Events = [
       "บรรยาย",
       "JUPITER 13"
     ),
-    description: "By editors of the Hospital Pharmacy Association",
-    descriptionTh: "โดย บรรณาธิการสมาคมเภสัชกรรมโรงพยาบาล",
+    speakers: [
+      {
+        name: "Assoc. Prof. Dr. Busaba Jindawisak (Editor, Thai Journal of Hospital Pharmacy)",
+        nameTh: "รศ.ดร.ภญ.บุษบา จินดาวิจักษณ์ (บรรณาธิการ วารสารเภสัชกรรมโรงพยาบาล)",
+      },
+      {
+        name: "Asst. Prof. Dr. Charoen Trisak (Editor, Thai Pharmaceutical and Health Science Journal)",
+        nameTh: "ผศ.ดร.ภก.เจริญ ตรีศักดิ์ (บรรณาธิการ วารสารไทยเภสัชศาสตร์และวิทยาการสุขภาพ)",
+      },
+    ],  
   },
   {
     ...day1Event(
