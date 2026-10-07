@@ -11,15 +11,17 @@ import { fileProblem, selectPosterFile, type PosterFileSelection } from '@/lib/p
 import type { OwnerPosterDto, UploadDto } from '@/types/posters';
 import { PosterWorkspace } from '@/components/posters/PosterWorkspace';
 import { PosterSuccessDialog } from '@/components/posters/PosterSuccessDialog';
+import { PosterConfirmDialog } from '@/components/posters/PosterConfirmDialog';
 
 const panelClass = 'min-h-[60vh] bg-[#fafafa] px-6 pb-20 pt-32 text-slate-900';
-const buttonClass = 'mt-5 rounded-xl bg-[#020617] px-5 py-3 text-white hover:bg-[#ca9b52] hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4';
+const buttonClass = 'mt-5 rounded-2xl bg-slate-950 px-6 py-4 text-sm font-bold text-white transition-colors hover:bg-gold hover:text-black motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4';
 
 function OwnerSubmission({ token, abstractId, requestId, returnPath }: { token: string; abstractId: number; requestId?: string; returnPath: string }) {
   const t = useTranslations('poster'), router = useRouter(), { logout } = useAuth();
   const [owner, setOwner] = useState<OwnerPosterDto | null>(null), [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<PosterFileSelection | null>(null), [sending, setSending] = useState(false);
   const [progress, setProgress] = useState(0), [receipt, setReceipt] = useState<UploadDto | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const uploadController = useRef<AbortController | null>(null), busy = useRef(false);
   const uncertainAttempt = useRef<{ previousUploadId: string | null; requestId: string | null } | null>(null);
   const acceptOwner = useCallback((value: OwnerPosterDto) => {
@@ -57,10 +59,12 @@ function OwnerSubmission({ token, abstractId, requestId, returnPath }: { token: 
   const select = (file: File | null) => {
     if (busy.current) return;
     uncertainAttempt.current = null;
+    setConfirmOpen(false);
     setSelected(file ? selectPosterFile(file) : null); setReceipt(null); setProgress(0); setError(file ? fileProblem(file) : null);
   };
   const submit = async () => {
     if (!selected || !owner.canUpload || busy.current || fileProblem(selected.file)) return;
+    setConfirmOpen(false);
     busy.current = true; setSending(true); setError(null); setProgress(0);
     const controller = new AbortController(); uploadController.current = controller;
     try {
@@ -89,7 +93,8 @@ function OwnerSubmission({ token, abstractId, requestId, returnPath }: { token: 
       }
     }
   };
-  return <><PosterWorkspace owner={owner} file={selected?.file ?? null} onFile={select} onSubmit={submit} sending={sending} progress={progress} error={error} />
+  return <><PosterWorkspace owner={owner} file={selected?.file ?? null} onFile={select} onSubmit={() => setConfirmOpen(true)} sending={sending} progress={progress} error={error} />
+    {confirmOpen && selected && owner.canUpload && !sending && <PosterConfirmDialog fileName={selected.file.name} onConfirm={submit} onClose={() => setConfirmOpen(false)} />}
     {receipt && <PosterSuccessDialog owner={owner} upload={receipt} onClose={() => setReceipt(null)} />}</>;
 }
 

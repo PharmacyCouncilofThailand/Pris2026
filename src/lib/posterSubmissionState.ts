@@ -3,9 +3,9 @@ import type { OwnerPosterDto } from '@/types/posters';
 export function fileProblem(file: File): string | null {
   if (file.size < 1) return 'POSTER_FILE_EMPTY';
   if (file.size > 30 * 1024 * 1024) return 'POSTER_FILE_TOO_LARGE';
-  const extension = /\.(png|pdf)$/i.exec(file.name)?.[1].toLowerCase();
+  const extension = /\.pdf$/i.test(file.name);
   const mime = file.type.toLowerCase();
-  return extension && ['', 'application/octet-stream', extension === 'png' ? 'image/png' : 'application/pdf'].includes(mime)
+  return extension && ['', 'application/octet-stream', 'application/pdf'].includes(mime)
     ? null : 'POSTER_FILE_TYPE';
 }
 

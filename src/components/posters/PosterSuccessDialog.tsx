@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { CheckCircle2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { OwnerPosterDto, UploadDto } from '@/types/posters';
 
@@ -19,13 +20,14 @@ export function PosterSuccessDialog({ upload, owner, onClose }: { upload: Upload
     dateStyle: 'long', timeStyle: 'medium', timeZone: 'Asia/Bangkok',
   }).format(new Date(upload.receivedAt));
   return <dialog ref={ref} onCancel={e => { e.preventDefault(); onClose(); }} aria-labelledby="poster-receipt-title"
-    className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 shadow-xl backdrop:bg-black/40">
-    <h2 id="poster-receipt-title" className="text-2xl font-semibold">{t('received')}</h2>
-    <dl className="mt-5 space-y-4 text-sm"><div><dt className="text-slate-500">{t('tracking')}</dt><dd>{owner.trackingId}</dd></div>
-      <div><dt className="text-slate-500">{t('work')}</dt><dd className="break-words">{owner.title}</dd></div><div><dt className="text-slate-500">{t('file')}</dt><dd className="break-all">{upload.fileName}</dd></div>
-      <div><dt className="text-slate-500">{t('version')}</dt><dd>{upload.version}</dd></div><div><dt className="text-slate-500">{t('receivedAt')}</dt><dd>{received} {t('thaiTime')}</dd></div></dl>
-    <a href={upload.publicUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block underline">{t('viewFile')}</a>
+    className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg overflow-y-auto rounded-[2rem] border border-slate-100 bg-white p-6 text-slate-900 shadow-2xl backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm sm:rounded-[2.5rem] sm:p-10">
+    <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50"><CheckCircle2 size={32} aria-hidden="true" className="text-emerald-500" /></div>
+    <h2 id="poster-receipt-title" className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">{t('received')}</h2>
+    <dl className="mt-6 space-y-4 rounded-2xl bg-slate-50 p-5 text-sm"><div><dt className="mb-1 text-xs font-bold text-slate-500">{t('tracking')}</dt><dd>{owner.trackingId}</dd></div>
+      <div><dt className="mb-1 text-xs font-bold text-slate-500">{t('work')}</dt><dd className="break-words">{owner.title}</dd></div><div><dt className="mb-1 text-xs font-bold text-slate-500">{t('file')}</dt><dd className="break-all">{upload.fileName}</dd></div>
+      <div><dt className="mb-1 text-xs font-bold text-slate-500">{t('receivedAt')}</dt><dd>{received} {t('thaiTime')}</dd></div></dl>
+    <a href={upload.publicUrl} target="_blank" rel="noopener noreferrer" className="mt-5 inline-block text-sm font-bold text-blue-700 underline underline-offset-4">{t('viewFile')}</a>
     <p className="mt-5 text-sm leading-relaxed text-slate-600">{t('receiptNotice')}</p>
-    <button autoFocus onClick={onClose} className="mt-6 w-full rounded-xl bg-[#020617] px-5 py-3 text-white hover:bg-[#ca9b52] hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4">{t('close')}</button>
+    <button autoFocus onClick={onClose} className="mt-6 w-full rounded-2xl bg-slate-950 px-5 py-4 text-sm font-bold text-white transition-colors hover:bg-gold hover:text-black motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-4">{t('close')}</button>
   </dialog>;
 }

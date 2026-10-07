@@ -18,6 +18,8 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
   const React = require('react') as typeof import('react');
   const { act, create } = require('react-test-renderer') as typeof import('react-test-renderer');
   const path = require.resolve('next-intl'), previous = require.cache[path], originalDocument = globalThis.document;
+  const animationPaths = ['gsap', '@gsap/react'].map(name => require.resolve(name));
+  const originalAnimations = animationPaths.map(path => require.cache[path]);
   const originalAct = globals.IS_REACT_ACT_ENVIRONMENT, originalHTMLElement = globalThis.HTMLElement;
   let locale = 'en', renderer: ReactTestRenderer | undefined, modal = 0, closed = 0, cancel = 0, focused = 0;
   const messages = () => locale === 'th' ? th.poster : en.poster;
@@ -26,6 +28,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
   const translator = Object.assign((key: string) => { const value = lookup(key); assert.ok(value, `missing ${locale} poster.${key}`); return value; }, { has: (key: string) => !!lookup(key) });
   try {
     globals.IS_REACT_ACT_ENVIRONMENT = true;
+    animationPaths.forEach((path, index) => { const fake = new Module(path); fake.exports = index === 0 ? { from() {} } : { useGSAP() {} }; require.cache[path] = fake; });
     const intlModule = new Module(path); intlModule.exports = { useTranslations: () => translator, useLocale: () => locale }; require.cache[path] = intlModule;
     class FocusTarget { isConnected = true; focus() { focused++; } }
     globalThis.HTMLElement = FocusTarget as unknown as typeof HTMLElement;
@@ -35,7 +38,26 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
     const props = { owner, file: new File(['selected'], '<script>.pdf', { type: 'application/pdf' }), onFile: () => {}, onSubmit: () => {}, sending: false, progress: 0, error: null };
     for (locale of ['en', 'th']) {
       await act(async () => { renderer = create(React.createElement(PosterWorkspace, props)); });
+      const heading = renderer!.root.findByType('h1');
+      assert.ok(heading.findAllByType('span').some(node => node.children.includes(messages().heroTitle)));
+      const gradient = heading.findAllByType('span').find(node => node.children.includes('Poster'))!;
+      assert.ok(gradient.props.className.includes('bg-gradient-to-r'));
+      assert.ok(heading.props.className.includes('md:flex-nowrap'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().selected));
+      const templateLink = renderer!.root.findAllByType('a').find(node => node.props.href === 'https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Poster%20Template.zip');
+      assert.ok(templateLink);
+      assert.ok(templateLink.children.includes(messages().downloadTemplate));
+      assert.equal(templateLink.props.rel, 'noopener noreferrer');
+      assert.equal(renderer!.root.findAllByType('input').length, 0);
+      assert.equal(renderer!.root.findAllByType('iframe').length, 1);
+      assert.equal(renderer!.root.findAllByType('dt').some(node => node.children.includes(messages().round) || node.children.includes(messages().version)), false);
+      assert.equal(renderer!.root.findAllByType('a').some(node => String(node.props.href).startsWith('mailto:')), false);
+      await act(async () => renderer!.update(React.createElement(PosterWorkspace, { ...props, file: null })));
+      assert.equal(renderer!.root.findAllByType('input').length, 1);
+      assert.equal(renderer!.root.findByType('input').props.accept, 'application/pdf,.pdf');
+      assert.equal(JSON.stringify(renderer!.toJSON()).includes('PNG'), false);
+      assert.equal(renderer!.root.findAllByType('iframe').length, 0);
+      await act(async () => renderer!.update(React.createElement(PosterWorkspace, props)));
       assert.equal(JSON.stringify(renderer!.toJSON()).includes(messages().received), false);
       await act(async () => renderer!.update(React.createElement(PosterWorkspace, { ...props, sending: true, progress: 100 })));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().checking));
@@ -45,13 +67,15 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
         assert.equal(renderer!.root.findAllByType('input').length, 0);
         assert.equal(renderer!.root.findAllByType('button').length, 0);
       }
-      const revision = { ...owner, mode: 'revision', currentUpload: upload, uploads: [upload, { ...upload, id: 'u0', version: 0 }],
+      const legacyUpload: UploadDto = { ...upload, id: 'u0', version: 0, fileName: 'legacy.png', mimeType: 'image/png', publicUrl: 'https://example.invalid/legacy.png' };
+      const revision = { ...owner, mode: 'revision', currentUpload: upload, uploads: [upload, legacyUpload],
         selectedRequest: { id: 'r1', details: 'Keep original while revising\nSynthetic detail', closesAt: '2026-10-20T17:00:00Z', status: 'open', createdAt: '2026-10-07T00:00:00Z', requestedBy: 1,
           submittedAt: null, cancelledAt: null, cancelledBy: null, cancellationReason: null } };
       await act(async () => renderer!.update(React.createElement(PosterWorkspace, { ...props, owner: revision, file: null, error: 'POSTER_FILE_INVALID' })));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes('Synthetic detail'));
-      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().revisionTitle));
-      assert.equal(renderer!.root.findAllByType('a').filter(node => node.props.href === upload.publicUrl).length, 2);
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().revisionHeroTitle));
+      assert.equal(renderer!.root.findAllByType('a').filter(node => node.props.href === upload.publicUrl).length, 1);
+      assert.equal(renderer!.root.findAllByType('a').some(node => node.props.href === legacyUpload.publicUrl), true);
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().errors.POSTER_FILE_INVALID));
       await act(async () => renderer!.unmount());
     }
@@ -63,6 +87,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
     assert.ok(tree.includes('<img onerror=attack>.pdf'));
     assert.ok(tree.includes('11:00:00')); // server receivedAt displayed in Bangkok, not browser clock
     assert.equal(renderer!.root.findAllByType('img').length, 0);
+    assert.equal(renderer!.root.findAllByType('dt').some(node => node.children.includes(messages().version)), false);
     assert.equal(renderer!.root.findByType('dialog').props['aria-labelledby'], 'poster-receipt-title');
     assert.ok(renderer!.root.findByType('dialog').props.className.split(' ').includes('m-auto'));
     assert.equal(renderer!.root.findByType('button').props.autoFocus, true);
@@ -76,6 +101,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
   } finally {
     if (renderer) await act(async () => renderer?.unmount());
     globalThis.document = originalDocument; globalThis.HTMLElement = originalHTMLElement; globals.IS_REACT_ACT_ENVIRONMENT = originalAct;
+    animationPaths.forEach((path, index) => { if (originalAnimations[index]) require.cache[path] = originalAnimations[index]; else delete require.cache[path]; });
     if (previous) require.cache[path] = previous; else delete require.cache[path];
   }
 });

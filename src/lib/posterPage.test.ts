@@ -12,7 +12,7 @@ const globals = globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: b
 test('page preserves ambiguous retry file/key, creates modal only for server receipt and clears scope on account/query changes', async () => {
   const React = require('react') as typeof import('react'), { act, create } = require('react-test-renderer') as typeof import('react-test-renderer');
   const api = require('./posterApi') as typeof import('./posterApi');
-  const paths = ['next-intl', 'next/navigation', '../i18n/routing', '../context/AuthContext', './posterApi'].map(path => require.resolve(path));
+  const paths = ['next-intl', 'next/navigation', '../i18n/routing', '../context/AuthContext', './posterApi', 'gsap', '@gsap/react'].map(path => require.resolve(path));
   const oldModules = paths.map(path => require.cache[path]);
   const original = { window: globalThis.window, document: globalThis.document, HTMLElement: globalThis.HTMLElement, act: globals.IS_REACT_ACT_ENVIRONMENT };
   const receipt: UploadDto = { id: 'u1', version: 1, fileName: 'synthetic.pdf', mimeType: 'application/pdf', sizeBytes: 5,
@@ -39,7 +39,7 @@ test('page preserves ambiguous retry file/key, creates modal only for server rec
           current = { ...owner, canUpload: false, blockCode: 'POSTER_ALREADY_SUBMITTED', currentUpload: receipt, uploads: [receipt] };
           if (lostCommit) throw new api.PosterApiError('POSTER_NETWORK_UNKNOWN', 502);
           return { upload: receipt, replayed: true };
-        } } ];
+        } }, { from() {} }, { useGSAP() {} } ];
     paths.forEach((path, i) => { const fake = new Module(path); fake.exports = exports[i]; require.cache[path] = fake; });
     const Page = require('../app/[locale]/poster-submission/page').default;
     const createPage = () => create(React.createElement(Page), { createNodeMock: element => element.type === 'dialog' ? { showModal() {}, close() {} } : null });
@@ -47,18 +47,41 @@ test('page preserves ambiguous retry file/key, creates modal only for server rec
     const file = new File(['bytes'], 'synthetic.pdf', { type: 'application/pdf' });
     await act(async () => renderer!.root.findByType('input').props.onChange({ target: { files: [file], value: 'fakepath' } }));
     const submit = () => renderer!.root.findAllByType('button').find(node => node.children.includes(en.poster.submit) || node.children.includes(en.poster.retryUpload))!;
+    const confirm = () => renderer!.root.findAllByType('button').find(node => node.children.includes(en.poster.confirmSubmit))!;
+    const sendConfirmed = async () => {
+      const previousAttempts = attempts.length;
+      await act(async () => { await submit().props.onClick(); });
+      assert.equal(attempts.length, previousAttempts, 'opening the warning does not upload');
+      assert.equal(renderer!.root.findByType('dialog').props['aria-labelledby'], 'poster-confirm-title');
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes(en.poster.confirmNotice));
+      await act(async () => { await confirm().props.onClick(); });
+    };
     await act(async () => { await submit().props.onClick(); });
+    assert.equal(attempts.length, 0);
+    await act(async () => renderer!.root.findAllByType('button').find(node => node.children.includes(en.poster.checkAgain))!.props.onClick());
+    assert.equal(renderer!.root.findAllByType('dialog').length, 0);
+    assert.equal(attempts.length, 0);
+    await sendConfirmed();
     assert.equal(renderer!.root.findAllByType('dialog').length, 0);
     assert.equal(submit().children[0], en.poster.retryUpload);
-    await act(async () => { await submit().props.onClick(); });
+    await sendConfirmed();
     assert.equal(attempts.length, 2); assert.equal(attempts[0].file, attempts[1].file); assert.equal(attempts[0].key, attempts[1].key);
     assert.equal(renderer!.root.findAllByType('dialog').length, 1);
     assert.equal(renderer!.root.findAllByType('input').length, 0);
+    current = { ...owner, mode: 'revision', currentUpload: receipt, uploads: [receipt], selectedRequest: {
+      id: '12345678-1234-4234-8234-123456789012', details: 'Fix the poster', status: 'open', closesAt: '2026-10-20T17:00:00Z',
+      createdAt: '2026-10-07T00:00:00Z', requestedBy: 1, submittedAt: null, cancelledAt: null, cancelledBy: null, cancellationReason: null,
+    } };
+    token = 'revision-synthetic-token';
+    await act(async () => renderer!.update(React.createElement(Page)));
+    await act(async () => renderer!.root.findByType('input').props.onChange({ target: { files: [file], value: 'fakepath' } }));
+    await sendConfirmed();
+    assert.equal(attempts.at(-1)?.requestId, '12345678-1234-4234-8234-123456789012');
     // A committed upload with a lost POST response is confirmed by GET, without a new modal or stale uncertainty.
     current = owner; token = 'new-synthetic-token'; lostCommit = true;
     await act(async () => renderer!.update(React.createElement(Page)));
     await act(async () => renderer!.root.findByType('input').props.onChange({ target: { files: [file], value: 'fakepath' } }));
-    await act(async () => { await submit().props.onClick(); });
+    await sendConfirmed();
     assert.equal(renderer!.root.findAllByType('dialog').length, 0);
     assert.equal(renderer!.root.findAllByType('input').length, 0);
     assert.ok(JSON.stringify(renderer!.toJSON()).includes(en.poster.received));
