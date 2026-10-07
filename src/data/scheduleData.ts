@@ -266,7 +266,7 @@ const day1Events = [
       },
       {
         name: "Pharm. Supatra Boonserm",
-        nameTh: "ภญ.ศิริพร ฉวานนท์ ผู้อำนวยการกองผลิตภัณฑ์สมุนไพร อย.)",
+        nameTh: "ภญ.ศิริพร ฉวานนท์ (ผู้อำนวยการกองผลิตภัณฑ์สมุนไพร อย.)",
       },
       {
         name: "Assoc. Prof. Dr. Pharm. Narisa Kamkaen",
@@ -389,8 +389,8 @@ const day1Events = [
     ...day1Event(
       1015,
       "13:00 – 14:00",
-      "Community Pharmacy Next",
-      "Community Pharmacy Next",
+      "Community Pharmacy Next: บทบาทใหม่ของร้านยาในระบบสุขภาพอนาคต",
+      "Community Pharmacy Next: บทบาทใหม่ของร้านยาในระบบสุขภาพอนาคต",
       "JUPITER 11",
       "ห้อง JUPITER 11",
       "Session",
@@ -405,16 +405,16 @@ const day1Events = [
       {
         name: "Pharm. Somruethai Suphankul",
         nameTh:
-          "ภญ.สมฤทัย สุพรรณกูล (ผู้ช่วยเลขาธิการ สำนักงานหลักประกันสุขภาพแห่งชาติ (สปสช.))",
+          "ภญ.สมฤทัย สุพรรณกูล (ผู้ช่วยเลขาธิการสำนักงานหลักประกันสุขภาพแห่งชาติ)",
       },
       {
         name: "Pharm. Penthupha Kaewketthong",
-        nameTh: "ภญ.เพ็ญทิพา แก้วเกตุทอง (นายกสมาคมเภสัชกรรมชุมชน)",
+        nameTh: "ภญ.เพ็ญทิพา แก้วเกตุทอง (นายกสมาคมเภสัชกรรมชุมชน (ประเทศไทย))",
       },
       {
         name: "Dr.Pharm. Kan Wongsuphasawat",
         nameTh:
-          "ดร.ภก.กานต์ วงศ์สุภสวัสดิ์ (อดีตคณบดี สำนักวิชาเวชศาสตร์ชะลอวัยและฟื้นฟูสุขภาพ มหาวิทยาลัยแม่ฟ้าหลวง)",
+          "ดร.ภก.กานต์ วงศ์สุภสวัสดิ์ (อาจารย์พิเศษ สำนักวิชาเวชศาสตร์ชะลอวัย มหาวิทยาลัยแม่ฟ้าหลวง และ กรรมการ บริษัท นูทราเมดิก้า จำกัด)",
       },
       {
         name: "Assoc.Prof.Dr. Surasit Lojitramnuay",
