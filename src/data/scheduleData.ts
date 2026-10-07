@@ -266,7 +266,7 @@ const day1Events = [
       },
       {
         name: "Pharm. Supatra Boonserm",
-        nameTh: "ภญ.สุภัทรา บุญเสริม (เลขาธิการคณะกรรมการอาหารและยา)",
+        nameTh: "ภญ.ศิริพร ฉวานนท์ ผู้อำนวยการกองผลิตภัณฑ์สมุนไพร อย.)",
       },
       {
         name: "Assoc. Prof. Dr. Pharm. Narisa Kamkaen",
@@ -389,8 +389,8 @@ const day1Events = [
     ...day1Event(
       1015,
       "13:00 – 14:00",
-      "Roadmap for Thai Community Pharmacy: Policies, Directions, and Shared Future",
-      "Roadmap เภสัชกรรมชุมชนไทย: นโยบาย ทิศทาง และอนาคตร่วมของวิชาชีพ",
+      "Community Pharmacy Next",
+      "Community Pharmacy Next",
       "JUPITER 11",
       "ห้อง JUPITER 11",
       "Session",
@@ -401,6 +401,29 @@ const day1Events = [
       "Organized by the College of Community Pharmacy and Community Pharmacy Association",
     descriptionTh:
       "จัดโดย วิทยาลัยเภสัชกรรมชุมชน และ สมาคมเภสัชกรรมชุมชน",
+    speakers: [
+      {
+        name: "Pharm. Somruethai Suphankul",
+        nameTh:
+          "ภญ.สมฤทัย สุพรรณกูล (ผู้ช่วยเลขาธิการ สำนักงานหลักประกันสุขภาพแห่งชาติ (สปสช.))",
+      },
+      {
+        name: "Pharm. Penthupha Kaewketthong",
+        nameTh: "ภญ.เพ็ญทิพา แก้วเกตุทอง (นายกสมาคมเภสัชกรรมชุมชน)",
+      },
+      {
+        name: "Dr.Pharm. Kan Wongsuphasawat",
+        nameTh:
+          "ดร.ภก.กานต์ วงศ์สุภสวัสดิ์ (อดีตคณบดี สำนักวิชาเวชศาสตร์ชะลอวัยและฟื้นฟูสุขภาพ มหาวิทยาลัยแม่ฟ้าหลวง)",
+      },
+      {
+        name: "Assoc.Prof.Dr. Surasit Lojitramnuay",
+        nameTh:
+          "ผศ.ดร.ภก.สุรสิทธิ์ ล้อจิตรอำนวย (ประธานวิทยาลัยเภสัชกรรมชุมชน ภายใต้ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย สภาเภสัชกรรม)",
+        role: "Moderator",
+        roleTh: "ผู้ดำเนินรายการ",
+      },
+    ],
   },
   {
     ...day1Event(
