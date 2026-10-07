@@ -42,7 +42,8 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.ok(heading.findAllByType('span').some(node => node.children.includes(messages().heroTitle)));
       const gradient = heading.findAllByType('span').find(node => node.children.includes(messages().highlighted))!;
       assert.ok(gradient.props.className.includes('bg-gradient-to-r'));
-      assert.ok(heading.props.className.includes('md:flex-nowrap'));
+      assert.equal(heading.props.className.includes('md:flex-nowrap'), false);
+      assert.ok(gradient.props.className.split(' ').includes('block'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().selected));
       const templateLink = renderer!.root.findAllByType('a').find(node => node.props.href === 'https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Poster%20Template.zip');
       assert.ok(templateLink);
@@ -83,6 +84,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
         fileUrl: 'https://drive.google.com/file/d/drive-old/view' };
       const oralOwner = { ...revision, presentationType: 'oral', currentUpload: oralUpload, uploads: [oralUpload, previousOral] };
       await act(async () => renderer!.update(React.createElement(PresentationWorkspace, { ...props, owner: oralOwner, file: null, error: 'PRESENTATION_PDF_PAGE_COUNT' })));
+      assert.ok(renderer!.root.findByType('h1').findAllByType('span').some(node => node.children.includes(messages().oral)));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsOral));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes('50'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().pageRuleOral));

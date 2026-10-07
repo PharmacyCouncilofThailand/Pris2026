@@ -1294,7 +1294,7 @@
     "history": "ประวัติไฟล์ก่อนหน้า",
     "version": "ฉบับที่",
     "uploadError": "ส่งไฟล์ไม่สำเร็จ กรุณาตรวจสถานะและลองใหม่",
-    "oral": "Oral",
+    "oral": "Oral Presentation",
     "requirementsOral": "ไฟล์ PDF หนึ่งไฟล์ อย่างน้อย 2 หน้า ขนาดไม่เกิน 50 MiB และไม่ตั้งรหัสผ่าน",
     "requirementsPoster": "ไฟล์ PDF หนึ่งไฟล์ หนึ่งหน้า ขนาดไม่เกิน 30 MiB และไม่ตั้งรหัสผ่าน",
     "downloadOralTemplate": "ดาวน์โหลด Template สำหรับ Oral (.ZIP)",

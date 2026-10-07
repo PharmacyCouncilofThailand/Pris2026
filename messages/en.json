@@ -1294,7 +1294,7 @@
     "history": "Previous files",
     "version": "Version",
     "uploadError": "Unable to submit. Check the current status and try again.",
-    "oral": "Oral",
+    "oral": "Oral Presentation",
     "requirementsOral": "One PDF file, at least 2 pages, maximum 50 MiB, without password protection.",
     "requirementsPoster": "One PDF file, exactly 1 page, maximum 30 MiB, without password protection.",
     "downloadOralTemplate": "Download Oral Template (.ZIP)",

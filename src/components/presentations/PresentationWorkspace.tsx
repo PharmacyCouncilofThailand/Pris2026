@@ -34,7 +34,8 @@ export function PresentationWorkspace(p: { owner: OwnerPresentationDto; file: Fi
   const block = `blocks.${o.blockCode ?? 'PRESENTATION_ALREADY_SUBMITTED'}`;
   const close = o.selectedRequest?.closesAt ?? o.mainClosesAt;
   return <main className="min-h-screen bg-[#fafafa] pb-24 text-slate-900 selection:bg-gold selection:text-black">
-    <PageHero title1={t(o.selectedRequest ? 'revisionHeroTitle' : 'heroTitle')} title2={t(typeKey)} inlineTitle inlineTitleTight />
+    <PageHero title1={t(o.selectedRequest ? 'revisionHeroTitle' : 'heroTitle')} title2={t(typeKey)}
+      titleSizeClassName={typeKey === 'highlighted' ? 'text-[clamp(1rem,3.5vw,4rem)]' : 'text-[clamp(1.5rem,5vw,6.25rem)]'} />
     <div className="relative mx-auto max-w-7xl px-4 sm:px-6 md:px-12">
       <div className="mb-8 flex items-start gap-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-5 text-amber-900 sm:p-6">
         <Clock3 size={22} aria-hidden="true" className="mt-0.5 shrink-0 text-amber-600" /><div><p className="text-sm leading-relaxed"><strong>{t('deadline')}</strong> · {date(new Date(Date.parse(close) - 1000).toISOString())} {t('thaiTime')}</p>
