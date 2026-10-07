@@ -750,16 +750,30 @@ const day2Events = [
       203,
       "09:10 – 09:50",
       "Clinical Pharmacy",
-      "หัวข้อ Clinical Pharmacy",
+      "หัวข้อ Personalized Pharmacotherapy: Pharmacists Leading the Future of Precision Dosing: From Standard Dosing to Patient-Specific Care",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Session",
       "เสวนา",
       "JUPITER 4-7"
     ),
-    description: "By College of Pharmacotherapy of Thailand",
-    descriptionTh: "โดย วิทยาลัยเภสัชกรรมบำบัด",
-  },
+    speakers: [
+      {
+        name: "Assoc. Prof. Dr. Wichai Santimaleeworakul",
+        nameTh:
+          "รศ.ดร.ภก.วิชัย สันติมาลีวรกุล (ประธานวิทยาลัยเภสัชบำบัด ภายใต้ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย และ อาจารย์ประจำสาขาวิชาบริบาลทางเภสัชกรรม คณะเภสัชศาสตร์ ม.ศิลปากร)",
+      },
+      {
+        name: "Asst. Prof. Dr. Juthatip Suphanklang",
+        nameTh:
+          "ผศ.ดร.ภญ.จุฑาทิพย์ สุพรรณกลาง (ประธานหลักสูตรการฝึกอบรมเป็นผู้มีความรู้ความชำนาญฯ สาขาเภสัชบำบัด ม.ศิลปากร และ อาจารย์ประจำสาขาวิชาบริบาลทางเภสัชกรรม คณะเภสัชศาสตร์ ม.ศิลปากร)",
+      },
+      {
+        name: "Dr. Phannee Leelawatchai",
+        nameTh:
+          "อ.ดร.ภญ.พรรณี ลีลาวัฒนชัย (กรรมการบริหารวิทยาลัยเภสัชบำบัด ภายใต้ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย และ อาจารย์ประจำหมวดวิชาเภสัชกรรมปฏิบัติเฉพาะทาง วิทยาลัยเภสัชศาสตร์ มหาวิทยาลัยรังสิต)",
+      },
+    ],
   {
     ...day1Event(
       204,
