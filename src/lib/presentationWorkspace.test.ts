@@ -46,6 +46,7 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.ok(gradient.props.className.split(' ').includes('block'));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().selected));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsPoster.replace('{maxMB}', '30')));
+      for (const key of ['preparationTitlePoster', 'posterDimensions', 'posterImages', 'posterTemplate'] as const) assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages()[key]));
       assert.equal(JSON.stringify(renderer!.toJSON()).includes('{maxMB}'), false);
       const templateLink = renderer!.root.findAllByType('a').find(node => node.props.href === 'https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Poster%20Template.zip');
       assert.ok(templateLink);
@@ -88,6 +89,8 @@ test('TH/EN workspace selection/progress/locks/revision/history and native recei
       await act(async () => renderer!.update(React.createElement(PresentationWorkspace, { ...props, owner: oralOwner, file: null, error: 'PRESENTATION_PDF_PAGE_COUNT' })));
       assert.ok(renderer!.root.findByType('h1').findAllByType('span').some(node => node.children.includes(messages().oral)));
       assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().requirementsOral.replace('{maxMB}', '50')));
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes(messages().preparationTitleOral));
+      for (const key of ['posterDimensions', 'posterImages', 'posterTemplate'] as const) assert.equal(JSON.stringify(renderer!.toJSON()).includes(messages()[key]), false);
       assert.equal(JSON.stringify(renderer!.toJSON()).includes(locale === 'th' ? 'อย่างน้อย 2 หน้า' : 'at least 2 pages'), false);
       assert.equal(JSON.stringify(renderer!.toJSON()).includes('{maxMB}'), false);
       assert.ok(JSON.stringify(renderer!.toJSON()).includes('50'));

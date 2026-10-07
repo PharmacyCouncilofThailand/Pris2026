@@ -57,7 +57,12 @@ export function PresentationWorkspace(p: { owner: OwnerPresentationDto; file: Fi
           </div>}
         </section>
         <section className="min-w-0 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-[0_40px_100px_rgba(0,0,0,0.03)] sm:rounded-[2.5rem] sm:p-10" aria-labelledby="presentation-upload">
-          <h2 id="presentation-upload" tabIndex={-1} className="text-xl font-black tracking-tight text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4">{t('uploadTitle')}</h2><p className="mt-2 text-sm leading-relaxed text-slate-600">{t(oral ? 'requirementsOral' : 'requirementsPoster', { maxMB })}</p>
+          <h2 id="presentation-upload" tabIndex={-1} className="text-xl font-black tracking-tight text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-4">{t('uploadTitle')}</h2>
+          <h3 className="mt-4 text-sm font-bold text-slate-900">{t(oral ? 'preparationTitleOral' : 'preparationTitlePoster')}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">{t(oral ? 'requirementsOral' : 'requirementsPoster', { maxMB })}</p>
+          {!oral && <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600">
+            {(['posterDimensions', 'posterImages', 'posterTemplate'] as const).map(key => <li key={key}>{t(key)}</li>)}
+          </ul>}
           <a href={templateUrl} target="_blank" rel="noopener noreferrer"
             className="mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-bold text-slate-900 transition-colors hover:border-gold hover:bg-gold/5 focus-visible:outline-2 focus-visible:outline-offset-4 motion-reduce:transition-none">
             <Download size={18} aria-hidden="true" />{t(oral ? 'downloadOralTemplate' : 'downloadPosterTemplate')}
