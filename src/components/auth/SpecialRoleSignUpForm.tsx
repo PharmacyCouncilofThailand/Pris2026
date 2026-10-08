@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
@@ -15,6 +15,43 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "";
 const inputClass = "w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100";
 const labelClass = "block text-sm font-bold text-gray-900 mb-2";
+
+function EducationDropdown({ id, label, placeholder, value, options, onChange }: {
+  id: string; label: string; placeholder: string; value: string;
+  options: { value: string; label: string }[]; onChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const closeOutside = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", closeOutside);
+    return () => document.removeEventListener("mousedown", closeOutside);
+  }, []);
+  return <div className="relative" ref={rootRef} onBlur={event => {
+    if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+  }} onKeyDown={event => {
+    if (event.key === "Escape") { setOpen(false); triggerRef.current?.focus(); }
+    if (open && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+      event.preventDefault();
+      const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="option"]'));
+      const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      buttons[(index + (event.key === "ArrowDown" ? 1 : -1) + buttons.length) % buttons.length]?.focus();
+    }
+  }}>
+    <label className={labelClass} htmlFor={id}>{label} <span className="text-red-500">*</span></label>
+    <button ref={triggerRef} id={id} type="button" aria-haspopup="listbox" aria-expanded={open} aria-controls={`${id}-options`} onClick={() => setOpen(!open)}
+      className={`w-full text-left bg-[#f8f9fc] border rounded-2xl py-3.5 px-5 text-sm font-medium outline-none transition-all flex items-center justify-between focus:border-gray-200 focus:ring-4 focus:ring-gray-100 ${open ? "bg-white border-gray-200 ring-4 ring-gray-100" : "border-transparent"} ${value ? "text-gray-900" : "text-gray-400"}`}>
+      <span>{options.find(option => option.value === value)?.label || placeholder}</span><ChevronDown aria-hidden="true" className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+    </button>
+    {open && <div id={`${id}-options`} role="listbox" aria-labelledby={id} className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+      {options.map(option => <button key={option.value} type="button" role="option" aria-selected={value === option.value} onClick={() => { onChange(option.value); setOpen(false); triggerRef.current?.focus(); }}
+        className={`w-full text-left px-5 py-3 text-sm font-medium transition-colors focus:bg-gray-100 focus:text-gray-900 outline-none ${value === option.value ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-[#f8f9fc]"}`}>{option.label}</button>)}
+    </div>}
+  </div>;
+}
 
 export default function SpecialRoleSignUpForm({ accountType }: { accountType: "healthhack" | "booth" }) {
   const locale = useLocale();
@@ -115,19 +152,19 @@ export default function SpecialRoleSignUpForm({ accountType }: { accountType: "h
             </div>
             <form className="space-y-5" onSubmit={submit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {(["firstName","lastName"] as const).map(name => <div key={name}><label className={labelClass} htmlFor={name}>{t(name)} <span className="text-red-500">*</span></label><input id={name} name={name} className={inputClass} autoComplete={name === "firstName" ? "given-name" : "family-name"} maxLength={100} required /></div>)}
+                {(["firstName","lastName"] as const).map(name => <div key={name}><label className={labelClass} htmlFor={name}>{t(name)} <span className="text-red-500">*</span></label><input id={name} name={name} className={inputClass} autoComplete={name === "firstName" ? "given-name" : "family-name"} maxLength={100} placeholder={t(name)} required /></div>)}
               </div>
               <div><label className={labelClass} htmlFor="email">{t("emailAddress")} <span className="text-red-500">*</span></label><input type="email" id="email" name="email" autoComplete="email" maxLength={255} className={inputClass} placeholder={t("emailPlaceholder")} required /></div>
               {isHealthHack && <>
-                <div><label className={labelClass} htmlFor="organization">{t("specialInstitution")} <span className="text-red-500">*</span></label><input id="organization" name="organization" className={inputClass} maxLength={255} required /></div>
-                <div><label className={labelClass} htmlFor="educationGroup">{t("healthHackGroup")} <span className="text-red-500">*</span></label><select id="educationGroup" className={inputClass} required value={group} onChange={e => { setGroup(e.target.value as HealthHackGroup); setGrade(""); }}>
-                  <option value="">{t("selectLevel")}</option><option value="lower">{t("lowerSecondary")}</option><option value="upper">{t("upperSecondary")}</option><option value="undergraduate">{t("undergrad")}</option>
-                </select></div>
-                {secondaryGrades && <div><label className={labelClass} htmlFor="educationGrade">{t("healthHackGrade")} <span className="text-red-500">*</span></label><select id="educationGrade" className={inputClass} required value={grade} onChange={e => setGrade(e.target.value)}><option value="">{t("selectHealthHackGrade")}</option>{secondaryGrades.map(value => <option key={value} value={value}>{t(`healthHackLevels.${value}`)}</option>)}</select></div>}
+                <div><label className={labelClass} htmlFor="organization">{t("specialInstitution")} <span className="text-red-500">*</span></label><input id="organization" name="organization" className={inputClass} maxLength={255} placeholder={t("organizationPlaceholderUniversity")} required /></div>
+                <EducationDropdown id="educationGroup" label={t("healthHackGroup")} placeholder={t("selectLevel")} value={group} onChange={value => { setGroup(value as HealthHackGroup); setGrade(""); }} options={[
+                  { value: "lower", label: t("lowerSecondary") }, { value: "upper", label: t("upperSecondary") }, { value: "undergraduate", label: t("undergrad") },
+                ]} />
+                {secondaryGrades && <EducationDropdown key={group} id="educationGrade" label={t("healthHackGrade")} placeholder={t("selectHealthHackGrade")} value={grade} onChange={setGrade} options={secondaryGrades.map(value => ({ value, label: t(`healthHackLevels.${value}`) }))} />}
               </>}
               <div><label className={labelClass} htmlFor="phone">{t("phoneNumber")} <span className="text-red-500">*</span></label><div className="flex"><span className="flex items-center justify-center px-4 rounded-l-2xl border border-transparent bg-gray-100 text-gray-700 text-sm font-bold">+66</span><input type="tel" id="phone" name="phone" autoComplete="tel-national" maxLength={20} className={inputClass + " rounded-l-none"} placeholder={t("phonePlaceholder")} required /></div></div>
-              {!isHealthHack && <div><label className={labelClass} htmlFor="boothName">{t("boothName")} <span className="text-red-500">*</span></label><input id="boothName" name="boothName" className={inputClass} maxLength={255} required /></div>}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">{(["password","confirmPassword"] as const).map(name => <div key={name}><label className={labelClass} htmlFor={name}>{t(name)} <span className="text-red-500">*</span></label><input type="password" id={name} name={name} autoComplete="new-password" minLength={6} className={inputClass} required /></div>)}</div>
+              {!isHealthHack && <div><label className={labelClass} htmlFor="boothName">{t("boothName")} <span className="text-red-500">*</span></label><input id="boothName" name="boothName" className={inputClass} maxLength={255} placeholder={t("boothName")} required /></div>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">{(["password","confirmPassword"] as const).map(name => <div key={name}><label className={labelClass} htmlFor={name}>{t(name)} <span className="text-red-500">*</span></label><input type="password" id={name} name={name} autoComplete="new-password" minLength={6} className={inputClass} placeholder="••••••••" required /></div>)}</div>
               {turnstileSiteKey && <div className="pt-2 pb-2 flex justify-start"><Turnstile ref={turnstileRef} siteKey={turnstileSiteKey} onSuccess={setTurnstileToken} onExpire={() => setTurnstileToken(null)} onError={() => setTurnstileToken(null)} /></div>}
               <label className="flex items-start gap-3 cursor-pointer group"><input type="checkbox" className="mt-0.5 w-4 h-4 rounded-[4px] border-gray-300 text-black focus:ring-black cursor-pointer transition-colors checked:border-black" required /><span className="text-sm font-medium text-gray-500 group-hover:text-gray-900 transition-colors select-none">{t("iAgree")} {t("tos")} {t("and")} {t("privacy")}</span></label>
               <div className="pt-4 pb-2"><button type="submit" disabled={isLoading} className="w-full bg-black hover:bg-gray-900 text-white font-bold text-base py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">{isLoading ? t("creatingAcc") : t("createBtn")}</button></div>
