@@ -25,24 +25,28 @@ const day1Event = (
     track === "Common"
       ? "ทั่วไป"
       : track === "INNOVATION ZONE"
-      ? "INNOVATION ZONE"
-      : `ห้อง ${track}`,
+        ? "INNOVATION ZONE"
+        : `ห้อง ${track}`,
   ...(group ? { group } : {}),
   speakers: [],
 });
 
 const day1Events = [
-  day1Event(
-    1001,
-    "08:00 – 09:00",
-    "Registration",
-    "ลงทะเบียนผู้เข้าร่วมประชุม (Registration)",
-    "JUPITER 4-7",
-    "ห้อง JUPITER 4-7",
-    "Registration",
-    "ลงทะเบียน",
-    "JUPITER 4-7"
+  {
+    ...day1Event(
+      1001,
+      "08:00 – 09:00",
+      "Registration",
+      "ลงทะเบียนผู้เข้าร่วมประชุม (Registration)",
+      "JUPITER 4-7",
+      "ห้อง JUPITER 4-7",
+      "Registration",
+      "ลงทะเบียน",
+      "JUPITER 4-7",
     ),
+    description: "Organized by the Pharmacy Council",
+    descriptionTh: "จัดโดย สภาเภสัชกรรม",
+  },
   {
     ...day1Event(
       1003,
@@ -53,12 +57,12 @@ const day1Events = [
       "ห้อง JUPITER 4-7",
       "Ceremony",
       "พิธีการ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
         name: "Prof. Dr. Pharm. Chonlaphat Sukasem",
-        nameTh: "ศ.ดร.ภก. ชลภัทร สุขเกษม",
+        nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
       },
     ],
   },
@@ -67,12 +71,12 @@ const day1Events = [
       1004,
       "09:10 – 09:30",
       "Opening Ceremony: National Conference on Pharmacy Research and Innovation",
-      "พิธีเปิด \"งานประชุมวิชาการ วิจัย และนวัตกรรมทางเภสัชกรรมระดับชาติ\"",
+      'พิธีเปิด "งานประชุมวิชาการ วิจัย และนวัตกรรมทางเภสัชกรรมระดับชาติ"',
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Ceremony",
       "พิธีการ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
@@ -91,7 +95,7 @@ const day1Events = [
       "ห้อง JUPITER 4-7",
       "Keynote",
       "ปาฐกถาพิเศษ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
@@ -112,13 +116,12 @@ const day1Events = [
       "10:00 – 10:30",
       "Pharmacy Exhibition and Innovation Showcase",
       "เยี่ยมชมนิทรรศการแสดงผลงานและนวัตกรรมด้านเภสัชกรรมจากหน่วยงานภาครัฐ ภาคเอกชน และสถาบันการศึกษา",
-      "JUPITER 4-7–11",
-      "ห้อง JUPITER 4-7–11",
+      "JUPITER 4-7",
+      "ห้อง JUPITER 4-7",
       "Activity",
       "เยี่ยมชมนิทรรศการ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
-    spanTracks: ["JUPITER 4-7", "JUPITER 11"],
   },
   day1Event(
     1007,
@@ -129,7 +132,7 @@ const day1Events = [
     "ห้อง JUPITER 4-7",
     "Break",
     "พัก",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   {
     ...day1Event(
@@ -141,17 +144,24 @@ const day1Events = [
       "ห้อง JUPITER 11",
       "Workshop",
       "เวิร์กชอป",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
-    description:
-      "Organized by the Pharmacy Council, conducted by Asst. Prof. Dr. Jitsuda Limkriengkrai and team, Faculty of Social Sciences and Humanities, Mahidol University",
-    descriptionTh:
-      "จัดโดย สภาเภสัชกรรม\nโดย ผศ.ดร.จิตรสุดา ลิมเกรียงไกร และทีมงาน\nคณะสังคมศาสตร์และมนุษยศาสตร์ มหาวิทยาลัยมหิดล",
+    description: "Organized by the Pharmacy Council",
+    descriptionTh: "จัดโดย สภาเภสัชกรรม",
     speakers: [
       {
-        name: "Asst. Prof. Dr. Jitsuda Limkriengkrai and team (Faculty of Social Sciences and Humanities, Mahidol University)",
+        name: "Asst. Prof. Dr. Jitsuda Limkriengkrai (Faculty of Social Sciences and Humanities, Mahidol University)",
         nameTh:
-          "ผศ.ดร.จิตรสุดา ลิมเกรียงไกร และทีมงาน (คณะสังคมศาสตร์และมนุษยศาสตร์ มหาวิทยาลัยมหิดล)",
+          "ผศ.ดร.จิตรสุดา ลิมเกรียงไกร (คณะสังคมศาสตร์และมนุษยศาสตร์ มหาวิทยาลัยมหิดล)",
+      },
+      {
+        name: "ดร.ปุณญาดา ไชยราช (Faculty of Humanities and Social Sciences, Thaksin University)",
+        nameTh:
+          "ดร.ปุณญาดา ไชยราช (คณะมนุษยศาสตร์และสังคมศาสตร์ มหาวิทยาลัยทักษิณ)",
+      },
+      {
+        name: "Nia Academy (National Innovation Agency)",
+        nameTh: "Nia Academy (สำนักงานนวัตกรรมแห่งชาติ)",
       },
     ],
   },
@@ -165,8 +175,10 @@ const day1Events = [
       "ห้อง JUPITER 4-7",
       "Session",
       "เสวนา",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
+    description: "Organized by the Pharmacy Council",
+    descriptionTh: "จัดโดย สภาเภสัชกรรม",
     speakers: [
       {
         name: "Pharm. Suttinee Ruangsuphan",
@@ -206,12 +218,12 @@ const day1Events = [
       "ห้อง JUPITER 12",
       "Session",
       "เสวนา",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
     description:
-      "Organized by the College of Consumer Protection, Royal College of Pharmacy of Thailand",
+      "Organized by the College of Consumer Protection and the Royal College of Pharmacy of Thailand",
     descriptionTh:
-      "จัดโดย วิทยาลัยคุ้มครองผู้บริโภค ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
+      "จัดโดย วิทยาลัยคุ้มครองผู้บริโภค และ ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
     speakers: [
       {
         name: "Pharm. Netnapis Suchonwanich",
@@ -247,7 +259,7 @@ const day1Events = [
       "ห้อง JUPITER 13",
       "Session",
       "เสวนา",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     description:
       "Organized by the College of Herbal Pharmacy, Royal College of Pharmacy of Thailand",
@@ -287,7 +299,7 @@ const day1Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 1"
+      "GROUP 1",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -303,7 +315,7 @@ const day1Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 2"
+      "GROUP 2",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -319,7 +331,7 @@ const day1Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 3"
+      "GROUP 3",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -333,7 +345,7 @@ const day1Events = [
     "ห้อง JUPITER 4-7",
     "Lunch",
     "บรรยาย",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   day1Event(
     1013,
@@ -344,7 +356,7 @@ const day1Events = [
     "ห้อง JUPITER 4-7",
     "Lunch",
     "บรรยาย",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   {
     ...day1Event(
@@ -356,8 +368,10 @@ const day1Events = [
       "ห้อง JUPITER 4-7",
       "Session",
       "เสวนา",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
+    description: "Organized by the Pharmacy Council",
+    descriptionTh: "จัดโดย สภาเภสัชกรรม",
     speakers: [
       {
         name: "Assoc. Prof. (Special) Pharm. Kitti Pitaknitinan",
@@ -395,12 +409,11 @@ const day1Events = [
       "ห้อง JUPITER 11",
       "Session",
       "เสวนา",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description:
       "Organized by the College of Community Pharmacy and Community Pharmacy Association",
-    descriptionTh:
-      "จัดโดย วิทยาลัยเภสัชกรรมชุมชน และ สมาคมเภสัชกรรมชุมชน",
+    descriptionTh: "จัดโดย วิทยาลัยเภสัชกรรมชุมชน และ สมาคมเภสัชกรรมชุมชน",
     speakers: [
       {
         name: "Pharm. Somruethai Suphankul",
@@ -435,8 +448,10 @@ const day1Events = [
       "ห้อง JUPITER 12",
       "Session",
       "เสวนา",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
+    description: "Organized by the Royal College of Pharmacy of Thailand",
+    descriptionTh: "จัดโดย ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
     speakers: [
       {
         name: "Asst. Prof. Dr. Pharm. Rotjaporn Watcharotayankun",
@@ -465,7 +480,7 @@ const day1Events = [
       "ห้อง JUPITER 13",
       "Session",
       "เสวนา",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     description:
       "Organized by the Pharmacy Council and Thai Young Pharmacist Group (Thai YPG)",
@@ -507,8 +522,13 @@ const day1Events = [
       },
       {
         name: "Ms. Chawanya Songthep",
-        nameTh:
-          "ภญ.ชวัลญา ทรงเทพ (AstraZeneca (Thailand) co., Ltd.)",
+        nameTh: "ภญ.ชวัลญา ทรงเทพ (AstraZeneca (Thailand) co., Ltd.)",
+        role: "Moderator",
+        roleTh: "ผู้ดำเนินรายการ",
+      },
+      {
+        name: "ภก.พงษ์ศิวะ ภู่นอก (Assistant Secretary-General, Pharmacy Council)",
+        nameTh: "ภก.พงษ์ศิวะ ภู่นอก (ผู้ช่วยเลขาธิการ สภาเภสัชกรรม)",
         role: "Moderator",
         roleTh: "ผู้ดำเนินรายการ",
       },
@@ -525,7 +545,7 @@ const day1Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 1"
+      "GROUP 1",
     ),
     description: "Committee: Digital Pharmacy and Health Informatics Group",
     descriptionTh: "Committee: กลุ่มเภสัชกรรมดิจิทัลและสารสนเทศศาสตร์สุขภาพ",
@@ -541,7 +561,7 @@ const day1Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 2"
+      "GROUP 2",
     ),
     description: "Committee: College of Drug Consumer Protection",
     descriptionTh: "Committee: วิทยาลัยคุ้มครองผู้บริโภคด้านยา",
@@ -551,13 +571,13 @@ const day1Events = [
       1020,
       "13:00 – 14:00",
       "Poster Presentation: Herbal Pharmacy",
-      "สาขาเภสัชกรรมสมุนไพร",
+      "Poster Presentation สาขาเภสัชกรรมสมุนไพร",
       "INNOVATION ZONE",
       "INNOVATION ZONE สถานี 3",
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 3"
+      "GROUP 3",
     ),
     description: "Committee: College of Herbal Pharmacy",
     descriptionTh: "Committee: วิทยาลัยเภสัชกรรมสมุนไพร",
@@ -573,7 +593,7 @@ const day1Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 4"
+      "GROUP 4",
     ),
     description: "Committee: College of Pharmacogenomics",
     descriptionTh: "Committee: วิทยาลัยเภสัชพันธุศาสตร์ฯ",
@@ -588,7 +608,7 @@ const day1Events = [
       "ห้อง JUPITER 4-7",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     description: "Committee: College of Pharmacotherapy",
     descriptionTh: "Committee: วิทยาลัยเภสัชกรรมบำบัด",
@@ -603,7 +623,7 @@ const day1Events = [
       "ห้อง JUPITER 11",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description: "Committee: College of Community Pharmacy",
     descriptionTh: "Committee: วิทยาลัยเภสัชกรรมชุมชน",
@@ -618,7 +638,7 @@ const day1Events = [
       "ห้อง JUPITER 12",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
     description: "Committee: College of Pharmacy Administration",
     descriptionTh: "Committee: วิทยาลัยบริหารเภสัชกิจ",
@@ -633,7 +653,7 @@ const day1Events = [
       "ห้อง JUPITER 13",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     description: "Committee: College of Industrial Pharmacy",
     descriptionTh: "Committee: วิทยาลัยเภสัชกรรมอุตสาหการ",
@@ -647,7 +667,7 @@ const day1Events = [
     "ห้อง JUPITER 4-7",
     "Break",
     "พัก",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   {
     ...day1Event(
@@ -659,7 +679,7 @@ const day1Events = [
       "ห้อง JUPITER 11",
       "Student Presentation",
       "นำเสนอผลงานนักศึกษา",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -674,7 +694,7 @@ const day1Events = [
       "ห้อง JUPITER 12",
       "Student Presentation",
       "นำเสนอผลงานนักศึกษา",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -689,22 +709,26 @@ const day1Events = [
       "ห้อง JUPITER 13",
       "Student Presentation",
       "นำเสนอผลงานนักศึกษา",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
   },
-  day1Event(
-    1030,
-    "15:45 – 16:30",
-    "Policy Highlights and Pharmacy Profession Roadmap",
-    "Policy Highlights นำเสนอข้อเสนอเชิงนโยบายและ Roadmap วิชาชีพเภสัชกรรม โดย สภาเภสัชกรรม",
-    "JUPITER 4-7",
-    "ห้อง JUPITER 4-7",
-    "Session",
-    "นำเสนอ",
-    "JUPITER 4-7"
-  ),
+  {
+    ...day1Event(
+      1030,
+      "15:45 – 16:30",
+      "Policy Highlights and Pharmacy Profession Roadmap",
+      "Policy Highlights นำเสนอข้อเสนอเชิงนโยบายและ Roadmap วิชาชีพเภสัชกรรม",
+      "JUPITER 4-7",
+      "ห้อง JUPITER 4-7",
+      "Session",
+      "นำเสนอ",
+      "JUPITER 4-7",
+    ),
+    description: "Organized by the Pharmacy Council",
+    descriptionTh: "จัดโดย สภาเภสัชกรรม",
+  },
   {
     ...day1Event(
       1031,
@@ -715,70 +739,79 @@ const day1Events = [
       "ห้อง JUPITER 4-7",
       "Keynote",
       "บรรยายพิเศษ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
-        name: "Dr. Pharm. Artirat Charukitpipat (CEO, Bumrungrad International Hospital)",
-        nameTh: "ดร.ภญ.อาทิรัตน์ จารุกิจพิพัฒน์ (CEO โรงพยาบาลบำรุงราษฎร์)",
+        name: "ภก.ภัทรพงศ์ ภาพภักดี (Deputy Chief Executive Officer, General Administration, Bumrungrad Hospital)",
+        nameTh:
+          "ภก.ภัทรพงศ์ ภาพภักดี (รองประธานเจ้าหน้าที่บริหาร สายงานการจัดการทั่วไป โรงพยาบาลบำรุงราษฎร์)",
       },
     ],
   },
-  day1Event(
-    1032,
-    "17:00 – 18:30",
-    "Welcome Reception, Networking and Certificate Ceremony",
-    "Welcome Reception and Networking พร้อมพิธีมอบประกาศนียบัตร วุฒิบัตร และหนังสืออนุมัติ โดย ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
-    "JUPITER 4-7",
-    "ห้อง JUPITER 4-7",
-    "Ceremony",
-    "พิธีการ",
-    "JUPITER 4-7"
-  ),
+  {
+    ...day1Event(
+      1032,
+      "17:00 – 18:30",
+      "Welcome Reception, Networking and Certificate Ceremony",
+      "Welcome Reception and Networking พร้อมพิธีมอบประกาศนียบัตร วุฒิบัตร และหนังสืออนุมัติ",
+      "JUPITER 4-7",
+      "ห้อง JUPITER 4-7",
+      "Ceremony",
+      "พิธีการ",
+      "JUPITER 4-7",
+    ),
+    description: "Organized by the Royal College of Pharmacy of Thailand",
+    descriptionTh: "จัดโดย ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
+  },
 ];
 
 const day2Events = [
-  day1Event(
-    201,
-    "08:00 – 09:00",
-    "Registration",
-    "ลงทะเบียนผู้เข้าร่วมประชุม (Registration)",
-    "JUPITER 4-7",
-    "ห้อง JUPITER 4-7",
-    "Registration",
-    "ลงทะเบียน",
-    "JUPITER 4-7"
-  ),
+  {
+    ...day1Event(
+      201,
+      "08:00 – 09:00",
+      "Registration",
+      "ลงทะเบียนผู้เข้าร่วมประชุม (Registration)",
+      "JUPITER 4-7",
+      "ห้อง JUPITER 4-7",
+      "Registration",
+      "ลงทะเบียน",
+      "JUPITER 4-7",
+    ),
+    description: "Organized by the Pharmacy Council",
+    descriptionTh: "จัดโดย สภาเภสัชกรรม",
+  },
   {
     ...day1Event(
       202,
-      "09:00 – 09:10",
+      "11:00 – 11:10",
       "Opening Report and PRIS2026 Opening Video",
       "กล่าวรายงาน พร้อมรับชม PRIS2026 Opening Video",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Ceremony",
       "พิธีการ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
         name: "Prof. Dr. Pharm. Chonlaphat Sukasem",
-        nameTh: "ศ.ดร.ภก. ชลภัทร สุขเกษม",
+        nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
       },
     ],
   },
-{
+  {
     ...day1Event(
       203,
-      "09:10 – 09:50",
+      "09:00 – 09:50",
       "Clinical Pharmacy",
-      "หัวข้อ Personalized Pharmacotherapy: Pharmacists Leading the Future of Precision Dosing: From Standard Dosing to Patient-Specific Care",
+      "Personalized Pharmacotherapy: Pharmacists Leading the Future of Precision Dosing: From Standard Dosing to Patient-Specific Care",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Session",
       "เสวนา",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
@@ -803,12 +836,12 @@ const day2Events = [
       204,
       "09:50 – 10:30",
       "From Data to Discovery: Empowering Pharmacist Researchers for National Impact",
-      "หัวข้อ From Data to Discovery: Empowering Pharmacist Researchers for National Impact",
+      "From Data to Discovery: Empowering Pharmacist Researchers for National Impact",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Session",
       "บรรยาย",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
@@ -833,25 +866,25 @@ const day2Events = [
     "ห้อง JUPITER 4-7",
     "Break",
     "พัก",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   {
     ...day1Event(
       206,
-      "11:00 – 11:50",
+      "11:10 – 12:00",
       "Keynote: Advancing Thailand Healthcare through Pharmacy Research and Innovation",
-      "ปาฐกถาพิเศษ หัวข้อ Advancing Thailand Healthcare through pharmacy research and innovation",
+      "ปาฐกถาพิเศษ Advancing Thailand Healthcare through pharmacy research and innovation",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Keynote",
       "ปาฐกถาพิเศษ",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
         name: "Prof. Dr. Yotchanan Wongsawat (Deputy Prime Minister and Minister of Higher Education, Science, Research and Innovation)",
         nameTh:
-          "ศ.ดร.ยศชนัน วงศ์สวัสดิ์ (รองนายกรัฐมนตรีและรัฐมนตรีว่าการกระทรวงอุดมศึกษา วิจัยและนวัตกรรม)",
+          "ศ.ดร.ยศชนัน วงศ์สวัสดิ์ (รองนายกรัฐมนตรี\nรัฐมนตรีว่าการกระทรวงอุดมศึกษา วิจัยและนวัตกรรม)",
       },
       {
         name: "President, Secretary-General and Board Members of the Pharmacy Council",
@@ -870,7 +903,7 @@ const day2Events = [
     "ห้อง JUPITER 4-7",
     "Lunch",
     "บรรยาย",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   day1Event(
     208,
@@ -881,26 +914,26 @@ const day2Events = [
     "ห้อง JUPITER 4-7",
     "Lunch",
     "บรรยาย",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   {
     ...day1Event(
       209,
       "13:00 – 14:00",
       "Digital Solutions: Key to Upgrading Pharmacy and Hospital Services",
-      "หัวข้อ Digital Solutions: กุญแจสู่การยกระดับบริการร้านยาและโรงพยาบาล",
+      "Digital Solutions: กุญแจสู่การยกระดับบริการร้านยาและโรงพยาบาล",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Session",
       "เสวนา",
-      "JUPITER 4-7"
+      "JUPITER 4-7",
     ),
     speakers: [
       {
         name: "Pharm. Apinan Watcharaphichart",
         nameTh: "ภก.อภินันท์ วัชราภิชาต (ผู้ช่วยเลขาธิการสภาเภสัชกรรม)",
         role: "Moderator",
-        roleTh: "Moderator",
+        roleTh: "ผู้ดำเนินรายการ",
       },
       {
         name: "Dr. Pharm. Samart Jumrus",
@@ -912,12 +945,12 @@ const day2Events = [
     210,
     "14:00 – 15:30",
     "Oral Presentation: Digital Pharmacy and Health Informatics",
-    "Oral Presentation เภสัชกรรมดิจิทัลและสารสนเทศศาสตร์สุขภาพ",
+    "Oral Presentation สาขาเภสัชกรรมดิจิทัลและสารสนเทศศาสตร์สุขภาพ",
     "JUPITER 4-7",
     "ห้อง JUPITER 4-7",
     "Oral Presentation",
     "นำเสนอผลงาน",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   day1Event(
     211,
@@ -928,7 +961,7 @@ const day2Events = [
     "ห้อง JUPITER 4-7",
     "Session",
     "บรรยาย",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
   day1Event(
     212,
@@ -939,34 +972,20 @@ const day2Events = [
     "ห้อง JUPITER 4-7",
     "Ceremony",
     "พิธีการ",
-    "JUPITER 4-7"
+    "JUPITER 4-7",
   ),
-  {
-    ...day1Event(
-      221,
-      "09:00 – 10:00",
-      "From Idea to Impact: Turning Health Innovations into Fundable Startups",
-      "หัวข้อ From Idea to Impact: Turning Health Innovations into Fundable Startups",
-      "JUPITER 11",
-      "ห้อง JUPITER 11",
-      "Session",
-      "บรรยาย",
-      "JUPITER 11"
-    ),
-    description: "By TED FUND",
-    descriptionTh: "โดย TED FUND",
-  },
+
   {
     ...day1Event(
       223,
       "11:00 – 11:50",
       "CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
-      "หัวข้อ CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
+      "CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
       "JUPITER 11",
       "ห้อง JUPITER 11",
       "Session",
       "บรรยาย",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description: "By CPAT (College of Pharmacy Administration of Thailand)",
     descriptionTh: "โดย วิทยาลัยบริหารเภสัชกิจ",
@@ -990,15 +1009,21 @@ const day2Events = [
       224,
       "13:00 – 14:00",
       "Thai Clinical Pharmacogenomics Implementation Guideline for NAT2 genotyping and Isoniazid dose optimization",
-      "หัวข้อ Thai Clinical Pharmacogenomics Implementation Guideline for NAT2 genotyping and Isoniazid dose optimization",
+      "Thai Clinical Pharmacogenomics Implementation Guideline for NAT2 genotyping and Isoniazid dose optimization",
       "JUPITER 11",
       "ห้อง JUPITER 11",
       "Session",
       "บรรยาย",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description: "By the College of Pharmacogenomics and Precision Pharmacy",
     descriptionTh: "โดย วิทยาลัยเภสัชพันธุศาสตร์และเภสัชกรรมแม่นยำ",
+    speakers: [
+      {
+        name: "Prof. Dr. Pharm. Chonlaphat Sukasem",
+        nameTh: "ศ.ดร.ภก.ชลภัทร สุขเกษม",
+      },
+    ],
   },
   {
     ...day1Event(
@@ -1010,7 +1035,7 @@ const day2Events = [
       "ห้อง JUPITER 11",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description: "Committee: College of Consumer Protection",
     descriptionTh: "Committee: วิทยาลัยคุ้มครองผู้บริโภค",
@@ -1025,7 +1050,7 @@ const day2Events = [
       "ห้อง JUPITER 11",
       "Student Presentation",
       "นำเสนอผลงานนักศึกษา",
-      "JUPITER 11"
+      "JUPITER 11",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -1035,13 +1060,17 @@ const day2Events = [
       231,
       "08:00 – 12:30",
       "PSAT Health Hack 2026",
-      "PSAT Health Hack 2026 จัดโดย สมาพันธ์นิสิตนักศึกษาเภสัชศาสตร์แห่งประเทศไทย (สนภท.)",
+      "PSAT Health Hack 2026",
       "JUPITER 12–13",
       "ห้อง JUPITER 12–13",
       "Activity",
       "กิจกรรม",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
+    description:
+      "Organized by the Pharmacy Council and the Pharmacy Students' Association of Thailand (PSAT)",
+    descriptionTh:
+      "จัดโดย สภาเภสัชกรรม และ สมาพันธ์นิสิตนักศึกษาเภสัชศาสตร์แห่งประเทศไทย (สนภท.)",
     spanTracks: ["JUPITER 12", "JUPITER 13"],
   },
   {
@@ -1049,12 +1078,12 @@ const day2Events = [
       232,
       "13:00 – 14:00",
       "Future Industrial Pharmacists",
-      "หัวข้อ Future Industrial Pharmacists",
+      "Future Industrial Pharmacists",
       "JUPITER 12",
       "ห้อง JUPITER 12",
       "Session",
       "บรรยาย",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
     description: "By the College of Industrial Pharmacy",
     descriptionTh: "โดย วิทยาลัยเภสัชกรรมอุตสาหการ",
@@ -1065,7 +1094,8 @@ const day2Events = [
       },
       {
         name: "Assoc.Prof.Dr.Sathit Puttipipatkhachorn (President, College of Industrial Pharmacy)",
-        nameTh: "รศ.ดร.ภก.สาธิต พุทธิพิพัฒน์ขจร (ประธานวิทยาลัยเภสัชกรรมอุตสาหการ)",
+        nameTh:
+          "รศ.ดร.ภก.สาธิต พุทธิพิพัฒน์ขจร (ประธานวิทยาลัยเภสัชกรรมอุตสาหการ)",
         role: "Chair",
         roleTh: "Chair",
       },
@@ -1081,7 +1111,7 @@ const day2Events = [
       "ห้อง JUPITER 12",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
     description: "Committee: College of Herbal Pharmacy",
     descriptionTh: "Committee: วิทยาลัยเภสัชกรรมสมุนไพร",
@@ -1096,7 +1126,7 @@ const day2Events = [
       "ห้อง JUPITER 12",
       "Student Presentation",
       "นำเสนอผลงานนักศึกษา",
-      "JUPITER 12"
+      "JUPITER 12",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -1106,35 +1136,37 @@ const day2Events = [
       242,
       "13:00 – 14:00",
       "How to Write a Research Article to Impress the Editor",
-      "หัวข้อ เขียนบทความวิจัยอย่างไรให้โดนใจบรรณาธิการ",
+      "เขียนบทความวิจัยอย่างไรให้โดนใจบรรณาธิการ",
       "JUPITER 13",
       "ห้อง JUPITER 13",
       "Session",
       "บรรยาย",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     speakers: [
       {
         name: "Assoc. Prof. Dr. Busaba Jindawisak (Editor, Thai Journal of Hospital Pharmacy)",
-        nameTh: "รศ.ดร.ภญ.บุษบา จินดาวิจักษณ์ (บรรณาธิการ วารสารเภสัชกรรมโรงพยาบาล)",
+        nameTh:
+          "รศ.ดร.ภญ.บุษบา จินดาวิจักษณ์ (บรรณาธิการ วารสารเภสัชกรรมโรงพยาบาล)",
       },
       {
         name: "Asst. Prof. Dr. Charoen Trisak (Editor, Thai Pharmaceutical and Health Science Journal)",
-        nameTh: "ผศ.ดร.ภก.เจริญ ตรีศักดิ์ (บรรณาธิการ วารสารไทยเภสัชศาสตร์และวิทยาการสุขภาพ)",
+        nameTh:
+          "ผศ.ดร.ภก.เจริญ ตรีศักดิ์ (บรรณาธิการ วารสารไทยเภสัชศาสตร์และวิทยาการสุขภาพ)",
       },
-    ],  
+    ],
   },
   {
     ...day1Event(
       243,
       "14:00 – 15:30",
       "Oral Presentation: Pharmacogenomics and Precision Pharmacy",
-      "Oral Presentation เภสัชพันธุศาสตร์และเภสัชกรรมแม่นยำ",
+      "Oral Presentation สาขาเภสัชพันธุศาสตร์และเภสัชกรรมแม่นยำ",
       "JUPITER 13",
       "ห้อง JUPITER 13",
       "Oral Presentation",
       "นำเสนอผลงาน",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     description:
       "Committee: College of Pharmacogenomics and Precision Pharmacy",
@@ -1150,7 +1182,7 @@ const day2Events = [
       "ห้อง JUPITER 13",
       "Student Presentation",
       "นำเสนอผลงานนักศึกษา",
-      "JUPITER 13"
+      "JUPITER 13",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -1166,7 +1198,7 @@ const day2Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 1"
+      "GROUP 1",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -1182,7 +1214,7 @@ const day2Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 2"
+      "GROUP 2",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -1198,7 +1230,7 @@ const day2Events = [
       "Poster Presentation",
       "นำเสนอผลงาน",
       "INNOVATION ZONE",
-      "GROUP 3"
+      "GROUP 3",
     ),
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
@@ -1213,7 +1245,7 @@ const day2Events = [
     "Poster Presentation",
     "นำเสนอผลงาน",
     "INNOVATION ZONE",
-    "GROUP 1"
+    "GROUP 1",
   ),
   day1Event(
     254,
@@ -1225,7 +1257,7 @@ const day2Events = [
     "Poster Presentation",
     "นำเสนอผลงาน",
     "INNOVATION ZONE",
-    "GROUP 2"
+    "GROUP 2",
   ),
   day1Event(
     255,
@@ -1237,7 +1269,7 @@ const day2Events = [
     "Poster Presentation",
     "นำเสนอผลงาน",
     "INNOVATION ZONE",
-    "GROUP 3"
+    "GROUP 3",
   ),
   day1Event(
     256,
@@ -1249,7 +1281,7 @@ const day2Events = [
     "Poster Presentation",
     "นำเสนอผลงาน",
     "INNOVATION ZONE",
-    "GROUP 4"
+    "GROUP 4",
   ),
 ];
 
