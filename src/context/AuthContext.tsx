@@ -15,6 +15,8 @@ interface User {
     idCard?: string;
     phone?: string;
     institution?: string;
+    healthHackLevel?: string | null;
+    boothName?: string | null;
     university?: string;
     pharmacyLicenseId?: string;
     name?: string;
