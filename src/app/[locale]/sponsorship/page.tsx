@@ -26,24 +26,82 @@ const organizedByLogos = [
 ];
 
 const partnerLogos = [
-  { id: 3, name: "วิทยาลัยเภสัชบำบัด", logo: "/assets/Img/Partner/วิทยาลัยบำบัด 2.png" },
-  { id: 4, name: "วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png" },
-  { id: 5, name: "วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png" },
-  { id: 6, name: "วิทยาลัยเภสัชกรรมชุมชน", logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมชุมชน.png" },
-  { id: 7, name: "วิทยาลัยคุ้มครอง", logo: "/assets/Img/Partner/วิทยาลัยคุ้นครอง 2.png" },
-  { id: 8, name: "วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย", logo: "/assets/Img/Partner/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png" },
+  {
+    id: 3,
+    name: "วิทยาลัยเภสัชบำบัด",
+    logo: "/assets/Img/Partner/วิทยาลัยบำบัด 2.png",
+  },
+  {
+    id: 4,
+    name: "วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย",
+    logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมอุตสาหการแห่งประเทศไทย.png",
+  },
+  {
+    id: 5,
+    name: "วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย",
+    logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมสมุนไพรแห่งประเทศไทย.png",
+  },
+  {
+    id: 6,
+    name: "วิทยาลัยเภสัชกรรมชุมชน",
+    logo: "/assets/Img/Partner/วิทยาลัยเภสัชกรรมชุมชน.png",
+  },
+  {
+    id: 7,
+    name: "วิทยาลัยคุ้มครอง",
+    logo: "/assets/Img/Partner/วิทยาลัยคุ้นครอง 2.png",
+  },
+  {
+    id: 8,
+    name: "วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย",
+    logo: "/assets/Img/Partner/วิทยาลัยการบริหารเภสัชกิจแห่งประเทศไทย.png",
+  },
   { id: 9, name: "CPPGX", logo: "/assets/Img/Partner/CPPGX.png" },
-  { id: 10, name: "มูลนิธิสภาเภสัชกรรม", logo: "/assets/Img/Partner/มูลนิธิสภาเภสัชกรรม.png" },
+  {
+    id: 10,
+    name: "มูลนิธิสภาเภสัชกรรม",
+    logo: "/assets/Img/Partner/มูลนิธิสภาเภสัชกรรม.png",
+  },
 ];
 
 const universityLogos = [
-  { id: 1, name: "มหาวิทยาลัยขอนแก่น", logo: "/assets/Img/University/มหาวิทยาลัยขอนแก่น.png" },
-  { id: 2, name: "มหาวิทยาลัยเชียงใหม่", logo: "/assets/Img/University/มหาวิทยาลัยเชียงใหม่.webp" },
-  { id: 3, name: "มหาวิทยาลัยนเรศวร", logo: "/assets/Img/University/มหาวิทยาลัยนเรศวร.png" },
-  { id: 4, name: "มหาวิทยาลัยบูรพา", logo: "/assets/Img/University/มหาวิทยาลัยบูรพา.webp" },
-  { id: 5, name: "มหาวิทยาลัยปทุมธานี", logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.png" },
-  { id: 6, name: "มหาวิทยาลัยรังสิต", logo: "/assets/Img/University/มหาวิทยาลัยรังสิต.png", scaleClass: "scale-[1.9]" },
-  { id: 7, name: "มหาวิทยาลัยสงขลานครินทร์", logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.png", scaleClass: "scale-[1.45]" },
+  {
+    id: 1,
+    name: "มหาวิทยาลัยขอนแก่น",
+    logo: "/assets/Img/University/มหาวิทยาลัยขอนแก่น.png",
+  },
+  {
+    id: 2,
+    name: "มหาวิทยาลัยเชียงใหม่",
+    logo: "/assets/Img/University/มหาวิทยาลัยเชียงใหม่.webp",
+  },
+  {
+    id: 3,
+    name: "มหาวิทยาลัยนเรศวร",
+    logo: "/assets/Img/University/มหาวิทยาลัยนเรศวร.png",
+  },
+  {
+    id: 4,
+    name: "มหาวิทยาลัยบูรพา",
+    logo: "/assets/Img/University/มหาวิทยาลัยบูรพา.webp",
+  },
+  {
+    id: 5,
+    name: "มหาวิทยาลัยปทุมธานี",
+    logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.png",
+  },
+  {
+    id: 6,
+    name: "มหาวิทยาลัยรังสิต",
+    logo: "/assets/Img/University/มหาวิทยาลัยรังสิต.png",
+    scaleClass: "scale-[1.9]",
+  },
+  {
+    id: 7,
+    name: "มหาวิทยาลัยสงขลานครินทร์",
+    logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.png",
+    scaleClass: "scale-[1.45]",
+  },
 ];
 
 const sponsorLogos = [
@@ -227,36 +285,35 @@ export default function SponsorshipPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("sponsorship");
 
-  useGSAP(() => {
-
-
-    // Sponsor blocks fade in
-    const blocks = pageRef.current?.querySelectorAll(".content-block");
-    blocks?.forEach((block) => {
-      gsap.fromTo(
-        block,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: block,
-            start: "top 85%",
+  useGSAP(
+    () => {
+      // Sponsor blocks fade in
+      const blocks = pageRef.current?.querySelectorAll(".content-block");
+      blocks?.forEach((block) => {
+        gsap.fromTo(
+          block,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: block,
+              start: "top 85%",
+            },
           },
-        }
-      );
-    });
-  }, { scope: pageRef });
+        );
+      });
+    },
+    { scope: pageRef },
+  );
 
   return (
     <main
       ref={pageRef}
       className="bg-white text-gray-900 overflow-hidden selection:bg-orange-500/20 min-h-screen"
     >
-
-
       {/* ══════ HERO ══════ */}
       <PageHero
         title1={t("title1")}
@@ -267,7 +324,6 @@ export default function SponsorshipPage() {
       {/* ══════ SPONSOR LOGOS ══════ */}
       <section className="relative px-4 sm:px-6 md:px-12 lg:px-16 pb-16 md:pb-24 pt-8">
         <div className="max-w-7xl 2xl:max-w-[1400px] mx-auto">
-          
           {/* Organized By */}
           <div className="content-block mb-24">
             <div className="flex flex-col items-center text-center mb-10 md:mb-14">
@@ -277,8 +333,8 @@ export default function SponsorshipPage() {
             </div>
             <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 md:gap-20">
               {organizedByLogos.map((sponsor) => (
-                <div 
-                  key={sponsor.id} 
+                <div
+                  key={sponsor.id}
                   className="relative flex items-center justify-center w-28 h-24 sm:w-40 sm:h-32 md:w-56 md:h-40"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -286,7 +342,7 @@ export default function SponsorshipPage() {
                     src={sponsor.logo}
                     alt={sponsor.name}
                     className={`object-contain w-full h-full max-w-[100%] max-h-[100%] ${
-                    sponsor.id === 2 ? "scale-[1.6]" : "scale-125"
+                      sponsor.id === 2 ? "scale-[1.6]" : "scale-125"
                     }`}
                   />
                 </div>
@@ -303,8 +359,8 @@ export default function SponsorshipPage() {
             </div>
             <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-16">
               {partnerLogos.map((sponsor) => (
-                <div 
-                  key={sponsor.id} 
+                <div
+                  key={sponsor.id}
                   className="relative flex items-center justify-center w-24 h-20 sm:w-32 sm:h-24 md:w-48 md:h-32"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -327,8 +383,8 @@ export default function SponsorshipPage() {
             </div>
             <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-14">
               {universityLogos.map((uni) => (
-                <div 
-                  key={uni.id} 
+                <div
+                  key={uni.id}
                   className="relative flex items-center justify-center w-24 h-20 sm:w-32 sm:h-24 md:w-44 md:h-32"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -351,8 +407,8 @@ export default function SponsorshipPage() {
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 items-center justify-items-center gap-x-6 sm:gap-x-12 lg:gap-x-20 xl:gap-x-28 gap-y-12 sm:gap-y-16 lg:gap-y-24 w-full max-w-7xl mx-auto px-1 sm:px-4 pb-8 lg:pb-16">
               {sponsorLogos.map((sponsor) => (
-                <div 
-                  key={sponsor.id} 
+                <div
+                  key={sponsor.id}
                   className="relative flex items-center justify-center w-full max-w-[110px] sm:max-w-[150px] lg:max-w-[180px] h-12 sm:h-16 lg:h-20"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -365,7 +421,6 @@ export default function SponsorshipPage() {
               ))}
             </div>
           </div>
-
         </div>
       </section>
 
@@ -376,12 +431,16 @@ export default function SponsorshipPage() {
             {t("cta.title")}
           </h2>
           <p className="text-gray-500 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            {t("cta.desc")} <a href="mailto:pr@pharmacycouncil.org" className="text-blue-600 font-medium hover:underline">pr@pharmacycouncil.org</a>
+            {t("cta.desc")}{" "}
+            <a
+              href="mailto:pr@pharmacycouncil.org"
+              className="text-blue-600 font-medium hover:underline"
+            >
+              pr@pharmacycouncil.org
+            </a>
           </p>
         </div>
       </section>
-
-
     </main>
   );
 }

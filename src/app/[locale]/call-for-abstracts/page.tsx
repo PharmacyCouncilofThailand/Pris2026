@@ -9,10 +9,18 @@ import PageHero from "@/components/sections/PageHero";
 import { getAbstractGateState } from "@/lib/registrationGate";
 
 // Dynamic imports for the sections
-const AbstractTimeline = dynamic(() => import("@/components/sections/AbstractTimeline"), { ssr: false });
-const AbstractTopicList = dynamic(() => import("@/components/sections/AbstractTopicList"), { ssr: false });
-const AbstractGuidelines = dynamic(() => import("@/components/sections/AbstractGuidelines"), { ssr: false });
-    
+const AbstractTimeline = dynamic(
+  () => import("@/components/sections/AbstractTimeline"),
+  { ssr: false },
+);
+const AbstractTopicList = dynamic(
+  () => import("@/components/sections/AbstractTopicList"),
+  { ssr: false },
+);
+const AbstractGuidelines = dynamic(
+  () => import("@/components/sections/AbstractGuidelines"),
+  { ssr: false },
+);
 
 export default function CallForAbstractsPage() {
   const t = useTranslations("cfa");
@@ -23,7 +31,9 @@ export default function CallForAbstractsPage() {
 
   React.useEffect(() => {
     document.body.classList.remove("hero-playing");
-    window.requestAnimationFrame(() => setAbstractOpen(getAbstractGateState().open));
+    window.requestAnimationFrame(() =>
+      setAbstractOpen(getAbstractGateState().open),
+    );
   }, []);
 
   useEffect(() => {
@@ -76,7 +86,8 @@ export default function CallForAbstractsPage() {
       <section className="pt-24 pb-24 md:pt-32 md:pb-32 lg:pb-36 border-t border-slate-200 bg-slate-50">
         <div className="container mx-auto px-6 max-w-4xl text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 tracking-tight">
-            {t("ctaTitle1")} <span className="text-blue-600">{t("ctaTitle2")}</span>
+            {t("ctaTitle1")}{" "}
+            <span className="text-blue-600">{t("ctaTitle2")}</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-600 leading-relaxed">
             {t("ctaDesc")}
@@ -121,7 +132,9 @@ export default function CallForAbstractsPage() {
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{__html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .cfa-floating-cta {
           bottom: max(env(safe-area-inset-bottom), 0.875rem);
         }
@@ -207,7 +220,9 @@ export default function CallForAbstractsPage() {
           0%, 100% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
         }
-      `}} />
+      `,
+        }}
+      />
     </main>
   );
 }

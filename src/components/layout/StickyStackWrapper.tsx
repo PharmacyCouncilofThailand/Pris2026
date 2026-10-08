@@ -47,17 +47,21 @@ export default function StickyStackWrapper({
       });
 
       mm.add("(max-width: 1024px)", () => {
-         // Mobile: natural scroll, no pinning or scaling down
-         gsap.set(innerRef.current, { scale: 1, opacity: 1 });
+        // Mobile: natural scroll, no pinning or scaling down
+        gsap.set(innerRef.current, { scale: 1, opacity: 1 });
       });
 
       return () => mm.revert();
     },
-    { scope: wrapperRef }
+    { scope: wrapperRef },
   );
 
   return (
-    <div ref={wrapperRef} className="relative w-full" style={{ zIndex: 1, backgroundColor: "black" }}>
+    <div
+      ref={wrapperRef}
+      className="relative w-full"
+      style={{ zIndex: 1, backgroundColor: "black" }}
+    >
       <div
         ref={innerRef}
         className="w-full will-change-transform"

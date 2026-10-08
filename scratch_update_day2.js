@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const data = fs.readFileSync('c:/Pris2026/src/data/scheduleData.ts', 'utf8');
+const data = fs.readFileSync("c:/Pris2026/src/data/scheduleData.ts", "utf8");
 
 const day2Events = `    events: [
       {
@@ -294,25 +294,28 @@ const day2Events = `    events: [
       }
     ]`;
 
-const day2StartTag = '  {\r\n    day: "Day 2",\r\n    dayTh: "วันที่ 2",\r\n    date: "October 30, 2026",\r\n    dateTh: "30 ตุลาคม 2569",\r\n    events: [\r\n      {\r\n        id: 12,\r\n        time: "08:00 – 09:00",';
+const day2StartTag =
+  '  {\r\n    day: "Day 2",\r\n    dayTh: "วันที่ 2",\r\n    date: "October 30, 2026",\r\n    dateTh: "30 ตุลาคม 2569",\r\n    events: [\r\n      {\r\n        id: 12,\r\n        time: "08:00 – 09:00",';
 
 const idx = data.indexOf('  {\r\n    day: "Day 2",');
 if (idx !== -1) {
-    const head = data.substring(0, idx);
-    const day2Header = '  {\r\n    day: "Day 2",\r\n    dayTh: "วันที่ 2",\r\n    date: "October 30, 2026",\r\n    dateTh: "30 ตุลาคม 2569",\r\n';
-    const newData = head + day2Header + day2Events + '\r\n  }\r\n];\r\n';
-    fs.writeFileSync('c:/Pris2026/src/data/scheduleData.ts', newData, 'utf8');
-    console.log("SUCCESS");
+  const head = data.substring(0, idx);
+  const day2Header =
+    '  {\r\n    day: "Day 2",\r\n    dayTh: "วันที่ 2",\r\n    date: "October 30, 2026",\r\n    dateTh: "30 ตุลาคม 2569",\r\n';
+  const newData = head + day2Header + day2Events + "\r\n  }\r\n];\r\n";
+  fs.writeFileSync("c:/Pris2026/src/data/scheduleData.ts", newData, "utf8");
+  console.log("SUCCESS");
 } else {
-    // Try \n
-    const idx2 = data.indexOf('  {\n    day: "Day 2",');
-    if (idx2 !== -1) {
-        const head = data.substring(0, idx2);
-        const day2Header = '  {\n    day: "Day 2",\n    dayTh: "วันที่ 2",\n    date: "October 30, 2026",\n    dateTh: "30 ตุลาคม 2569",\n';
-        const newData = head + day2Header + day2Events + '\n  }\n];\n';
-        fs.writeFileSync('c:/Pris2026/src/data/scheduleData.ts', newData, 'utf8');
-        console.log("SUCCESS");
-    } else {
-        console.log("FAILED");
-    }
+  // Try \n
+  const idx2 = data.indexOf('  {\n    day: "Day 2",');
+  if (idx2 !== -1) {
+    const head = data.substring(0, idx2);
+    const day2Header =
+      '  {\n    day: "Day 2",\n    dayTh: "วันที่ 2",\n    date: "October 30, 2026",\n    dateTh: "30 ตุลาคม 2569",\n';
+    const newData = head + day2Header + day2Events + "\n  }\n];\n";
+    fs.writeFileSync("c:/Pris2026/src/data/scheduleData.ts", newData, "utf8");
+    console.log("SUCCESS");
+  } else {
+    console.log("FAILED");
+  }
 }

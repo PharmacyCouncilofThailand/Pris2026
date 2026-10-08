@@ -37,10 +37,12 @@
 ### Task 1: Lock the PDF dataset and integrity contract
 
 **Files:**
+
 - Create: `src/data/approvedRound1Abstracts.ts`
 - Create: `src/data/approvedRound1Abstracts.test.ts`
 
 **Interfaces:**
+
 - Produces `approvedRound1Abstracts: AcceptedAbstract[]`
 - Each item has `id: number`, `sequence: number`, `trackingId: string | null`, `title: string`, `presentationType: "oral" | "highlighted-poster" | "poster"`, `categoryId: number`, `categoryName: string`, `submitterName: string | null`, `affiliation: string | null`, and `round: 1`
 - Uses numeric IDs that remain unique even though the PDF numbering restarts per presentation section: Oral IDs `1–31`, Highlighted Poster IDs `101–139`, Poster IDs `201–249`
@@ -163,10 +165,12 @@ git commit -m "feat(approved-abstracts): add round 1 PDF dataset"
 ### Task 2: Extend local filtering for all PDF presentation types
 
 **Files:**
+
 - Modify: `src/lib/acceptedAbstractsFilter.ts`
 - Modify: `src/lib/acceptedAbstractsFilter.test.ts`
 
 **Interfaces:**
+
 - `AcceptedAbstract.presentationType` accepts `"oral" | "highlighted-poster" | "poster"`
 - `AcceptedAbstractFilterOptions.presentationType` accepts `"all" | "oral" | "highlighted-poster" | "poster"`
 - `filterAcceptedAbstracts` continues to combine type, category, round, and text search with AND logic
@@ -186,7 +190,10 @@ test("filters Highlighted Poster independently from standard Poster", () => {
     { presentationType: "highlighted-poster", round: 1 },
   );
 
-  assert.deepEqual(result.map((item) => item.id), [2]);
+  assert.deepEqual(
+    result.map((item) => item.id),
+    [2],
+  );
 });
 ```
 
@@ -201,10 +208,7 @@ Expected: FAIL at the new case because the current presentation type union does 
 Change only the presentation type unions and keep the existing normalized comparison:
 
 ```ts
-export type AcceptedPresentationType =
-  | "oral"
-  | "highlighted-poster"
-  | "poster";
+export type AcceptedPresentationType = "oral" | "highlighted-poster" | "poster";
 
 export interface AcceptedAbstract {
   id: number;
@@ -244,9 +248,11 @@ git commit -m "feat(approved-abstracts): support highlighted poster filtering"
 ### Task 3: Restore the page with static Round 1 data
 
 **Files:**
+
 - Modify: `src/app/[locale]/approved-abstracts/page.tsx`
 
 **Interfaces:**
+
 - Consumes `approvedRound1Abstracts` and `filterAcceptedAbstracts`
 - Produces the existing localized page with local Search, type, category, and round filtering
 
@@ -281,10 +287,7 @@ export default function ApprovedAbstractsPage() {
     document.body.classList.remove("hero-playing");
   }, []);
 
-  const categories = useMemo(
-    () => extractDistinctCategories(abstracts),
-    [],
-  );
+  const categories = useMemo(() => extractDistinctCategories(abstracts), []);
 
   const filteredAbstracts = useMemo(
     () =>
@@ -296,7 +299,6 @@ export default function ApprovedAbstractsPage() {
       }),
     [deferredSearchQuery, selectedType, selectedRound, selectedCategory],
   );
-
 }
 ```
 
@@ -334,12 +336,14 @@ git commit -m "feat(approved-abstracts): publish round 1 results"
 ### Task 4: Restore the Header menu and localized copy
 
 **Files:**
+
 - Modify: `src/data/navigation.ts`
 - Modify: `src/components/layout/Header.tsx`
 - Modify: `messages/th.json`
 - Modify: `messages/en.json`
 
 **Interfaces:**
+
 - `navigationData` exposes an `abstracts` item with `callForAbstracts` and `acceptedAbstractsAnnouncement` children
 - Header continues to consume `navigationData` through `visibleNav`; no API or new state is added
 - Both locales expose the same `approvedAbstracts` keys
@@ -396,9 +400,11 @@ git commit -m "feat(approved-abstracts): restore header navigation"
 ### Task 5: Run full verification and inspect the rendered result
 
 **Files:**
+
 - Test: all repository tests and the changed page/data files
 
 **Interfaces:**
+
 - Validates the completed page without changing source behavior
 
 - [ ] **Step 1: Run the complete test suite**

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Outfit, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 
-
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
@@ -26,7 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`dark ${outfit.variable} ${notoSansThai.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`dark ${outfit.variable} ${notoSansThai.variable}`}
+      suppressHydrationWarning
+    >
       <body
         suppressHydrationWarning
         className={`font-sans antialiased min-h-screen bg-background text-foreground`}

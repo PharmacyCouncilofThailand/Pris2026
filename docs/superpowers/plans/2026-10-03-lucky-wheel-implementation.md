@@ -58,28 +58,28 @@ Do not mark a task complete on mocked happy-path evidence alone when it owns a d
 
 ## Verified incumbent files and non-obvious findings
 
-| Repo / path | Existing responsibility / consequence |
-| --- | --- |
-| conference-api/src/database/schema.ts | users, registrations, registration_sessions, sessions, staff assignments; extend without cloning entitlements |
-| conference-api/src/routes/backoffice/checkins.ts | all three scan writers, list, stats and undo; every daily path must share one policy |
-| conference-api/src/schemas/checkins.schema.ts | current list/create/stats/undo validation |
-| conference-api/src/routes/backoffice/registrations.ts | registration-detail checkedInAt reader |
-| conference-api/src/modules/session-grants/test-database.ts | existing dedicated TEST_DATABASE_URL guard; reuse safe URL validation; do not invoke its destructive reset against runtime |
-| conference-api/src/modules/session-grants/invitation-token.ts | existing AES-GCM token-envelope pattern; reuse pattern without importing invitation-specific errors or secret |
-| conference-api/src/index.ts | route registration, JWT, CORS, multipart, IP-based global rate limit |
-| conference-api/drizzle/0032_admin_session_invitations.sql | latest numbered application migration observed; reserve 0033/0034 after rechecking at execution |
-| conference-api/drizzle/meta/_journal.json | ends at 0007 despite later SQL files: do not assume journal migration covers manually managed SQL |
-| conference-backoffice/src/app/checkin/page.tsx | scanner, session selection, daily header and recent rows |
-| conference-backoffice/src/app/checkins/page.tsx | date-filtered list, exportToExcel, undo; current row.id is registration-session identity |
-| conference-backoffice/src/app/registrations/[id]/page.tsx | admission history summary |
-| conference-backoffice/src/app/reports/page.tsx | attendance is currently synthetic; replace the attendance portion with live results, do not certify unrelated revenue samples |
-| conference-backoffice/src/lib/api.ts | central client and ApiError, auth failure event, check-in contracts |
-| Pris2026/src/lib/entryTicket.ts | ticket reader AND ticket-specific return query; do not break existing callers when generalizing return journeys |
-| Pris2026/src/lib/refreshRedirect.ts | exempts ticket/invitation routes from global reload-to-home behavior |
-| Pris2026/src/components/layout/Header.tsx | route light-surface classification and original shared logo |
-| Pris2026/src/components/layout/Footer.tsx | existing exact ticket/login/signup exclusions |
-| Pris2026/src/app/[locale]/ticket/ticket.module.css | current white/orange/black ticket visual source; its fixed aspect-ratio is NOT a wheel requirement |
-| Pris2026/messages/th.json and en.json | actual locale message paths |
+| Repo / path                                                   | Existing responsibility / consequence                                                                                         |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| conference-api/src/database/schema.ts                         | users, registrations, registration_sessions, sessions, staff assignments; extend without cloning entitlements                 |
+| conference-api/src/routes/backoffice/checkins.ts              | all three scan writers, list, stats and undo; every daily path must share one policy                                          |
+| conference-api/src/schemas/checkins.schema.ts                 | current list/create/stats/undo validation                                                                                     |
+| conference-api/src/routes/backoffice/registrations.ts         | registration-detail checkedInAt reader                                                                                        |
+| conference-api/src/modules/session-grants/test-database.ts    | existing dedicated TEST_DATABASE_URL guard; reuse safe URL validation; do not invoke its destructive reset against runtime    |
+| conference-api/src/modules/session-grants/invitation-token.ts | existing AES-GCM token-envelope pattern; reuse pattern without importing invitation-specific errors or secret                 |
+| conference-api/src/index.ts                                   | route registration, JWT, CORS, multipart, IP-based global rate limit                                                          |
+| conference-api/drizzle/0032_admin_session_invitations.sql     | latest numbered application migration observed; reserve 0033/0034 after rechecking at execution                               |
+| conference-api/drizzle/meta/_journal.json                     | ends at 0007 despite later SQL files: do not assume journal migration covers manually managed SQL                             |
+| conference-backoffice/src/app/checkin/page.tsx                | scanner, session selection, daily header and recent rows                                                                      |
+| conference-backoffice/src/app/checkins/page.tsx               | date-filtered list, exportToExcel, undo; current row.id is registration-session identity                                      |
+| conference-backoffice/src/app/registrations/[id]/page.tsx     | admission history summary                                                                                                     |
+| conference-backoffice/src/app/reports/page.tsx                | attendance is currently synthetic; replace the attendance portion with live results, do not certify unrelated revenue samples |
+| conference-backoffice/src/lib/api.ts                          | central client and ApiError, auth failure event, check-in contracts                                                           |
+| Pris2026/src/lib/entryTicket.ts                               | ticket reader AND ticket-specific return query; do not break existing callers when generalizing return journeys               |
+| Pris2026/src/lib/refreshRedirect.ts                           | exempts ticket/invitation routes from global reload-to-home behavior                                                          |
+| Pris2026/src/components/layout/Header.tsx                     | route light-surface classification and original shared logo                                                                   |
+| Pris2026/src/components/layout/Footer.tsx                     | existing exact ticket/login/signup exclusions                                                                                 |
+| Pris2026/src/app/[locale]/ticket/ticket.module.css            | current white/orange/black ticket visual source; its fixed aspect-ratio is NOT a wheel requirement                            |
+| Pris2026/messages/th.json and en.json                         | actual locale message paths                                                                                                   |
 
 ## Contract names used by all tasks
 
@@ -122,10 +122,18 @@ export type RedemptionInput = {
   deliveredDetails: string | null;
 };
 export type BlockCode =
-  | "CHECKIN_REQUIRED" | "REGISTRATION_REQUIRED" | "ACCOUNT_UNAVAILABLE"
-  | "SESSION_CLOSED" | "WHEEL_PAUSED" | "WHEEL_NOT_READY"
-  | "OUT_OF_STOCK" | "ALREADY_SPUN" | "WHEEL_UPDATED"
-  | "IDEMPOTENCY_CONFLICT" | "REDEMPTION_CLOSED" | "ADMIN_REQUIRED";
+  | "CHECKIN_REQUIRED"
+  | "REGISTRATION_REQUIRED"
+  | "ACCOUNT_UNAVAILABLE"
+  | "SESSION_CLOSED"
+  | "WHEEL_PAUSED"
+  | "WHEEL_NOT_READY"
+  | "OUT_OF_STOCK"
+  | "ALREADY_SPUN"
+  | "WHEEL_UPDATED"
+  | "IDEMPOTENCY_CONFLICT"
+  | "REDEMPTION_CLOSED"
+  | "ADMIN_REQUIRED";
 ```
 
 The attendee client must not import server modules. Mirror wire types in the two client feature modules or consume an existing shared-contract convention if one is found; do not introduce a new package solely to share these types.
@@ -133,6 +141,7 @@ The attendee client must not import server modules. Mirror wire types in the two
 ## Task 1: Scoped daily-attendance schema and readiness query
 
 **Files — conference-api:**
+
 - Modify `src/database/schema.ts`.
 - Create `drizzle/0033_pris_daily_attendance.sql`.
 - Create `sql/lucky-wheel-setup/00_readiness.sql` and `sql/lucky-wheel-setup/README.md`.
@@ -176,6 +185,7 @@ ORDER BY r.id, s.id;
 ## Task 2: Shared daily scan writer, cancellation and legacy cutover
 
 **Files — conference-api:**
+
 - Create `src/modules/attendance/policy.ts`, `service.ts`, `service.integration.test.ts`, `policy.test.ts`.
 - Modify `src/routes/backoffice/checkins.ts`, `src/schemas/checkins.schema.ts`.
 - Create `sql/lucky-wheel-setup/01_backfill_daily_attendance.sql`.
@@ -203,7 +213,9 @@ test("server instants use Bangkok midnight and an exclusive session end", () => 
 
 ```ts
 export function bangkokDay(now: Date): string {
-  return new Date(now.getTime() + 7 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return new Date(now.getTime() + 7 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
 }
 export function isWithinSession(now: Date, start: Date, end: Date): boolean {
   return start.getTime() <= now.getTime() && now.getTime() < end.getTime();
@@ -289,12 +301,31 @@ import type { WheelSegment } from "./types.js";
 
 test("no physical stock closes a wheel even with unlimited no-prize slots", () => {
   const segments: WheelSegment[] = [
-    { id: "pen", kind: "prize", name: { th: "ปากกา", en: "Pen" }, imageKey: null, enabled: true, position: 0, remaining: 0 },
-    { id: "lose", kind: "no_prize", name: { th: "เสียใจด้วย", en: "No prize" }, imageKey: null, enabled: true, position: 1, remaining: null },
+    {
+      id: "pen",
+      kind: "prize",
+      name: { th: "ปากกา", en: "Pen" },
+      imageKey: null,
+      enabled: true,
+      position: 0,
+      remaining: 0,
+    },
+    {
+      id: "lose",
+      kind: "no_prize",
+      name: { th: "เสียใจด้วย", en: "No prize" },
+      imageKey: null,
+      enabled: true,
+      position: 1,
+      remaining: null,
+    },
   ];
   assert.deepEqual(candidateSegments(segments), []);
   segments[0].remaining = 1;
-  assert.deepEqual(candidateSegments(segments).map(s => s.id), ["pen", "lose"]);
+  assert.deepEqual(
+    candidateSegments(segments).map((s) => s.id),
+    ["pen", "lose"],
+  );
 });
 ```
 
@@ -302,8 +333,10 @@ test("no physical stock closes a wheel even with unlimited no-prize slots", () =
 
 ```ts
 export function candidateSegments(segments: WheelSegment[]): WheelSegment[] {
-  const live = segments.filter(s => s.enabled && (s.kind === "no_prize" || (s.remaining ?? 0) > 0));
-  return live.some(s => s.kind === "prize") ? live : [];
+  const live = segments.filter(
+    (s) => s.enabled && (s.kind === "no_prize" || (s.remaining ?? 0) > 0),
+  );
+  return live.some((s) => s.kind === "prize") ? live : [];
 }
 ```
 
@@ -387,7 +420,10 @@ RETURNING remaining;
 
 ```ts
 assert.equal(shouldRedirectReload("/th/lucky-wheel"), false);
-assert.equal(shouldRedirectReload("/en/login", "?redirect=%2Flucky-wheel"), false);
+assert.equal(
+  shouldRedirectReload("/en/login", "?redirect=%2Flucky-wheel"),
+  false,
+);
 assert.equal(shouldRedirectReload("/th/profile"), true);
 assert.equal(shouldRedirectReload("/en/sessions/confirm"), false);
 ```
@@ -415,6 +451,7 @@ assert.equal(shouldRedirectReload("/en/sessions/confirm"), false);
 ## Task 12: Cross-repository acceptance, load evidence and release runbook
 
 **Files:**
+
 - conference-api: `src/modules/lucky-wheel/load.integration.test.ts`, `sql/lucky-wheel-setup/README.md`, `package.json` test scripts.
 - Pris2026: `docs/superpowers/verification/lucky-wheel/acceptance.md` and updated approved surface brief.
 - conference-backoffice: only fixes required by failed integrated acceptance, not unrelated chart redesign.
@@ -462,21 +499,21 @@ This is a separate final gate, not a replacement for per-task tests or a relabel
 
 ## Completion and self-review matrix
 
-| Confirmed requirement | Tasks |
-| --- | --- |
-| PRIS login/LINE OA, one account/event/day | 6, 10, 12 |
-| Existing Main Session/QR/entitlements, daily active uniqueness | 1, 2, 12 |
-| All scan modes, cancellation history, legacy backfill | 1–4, 12 |
-| Correct date-filtered reports, counts and export | 3, 4 |
-| Main Session window, equal eligible slots, unlimited no-prize and real-stock stop | 5, 6, 11 |
-| Shared stock, add/reduce audit/idempotency, restore sold-out segment | 5, 6, 9 |
-| Gray fixed-position sold-out slots and many slot counts | 5, 11 |
-| Atomic publish, stale-client refresh and frozen winning configuration | 6, 9–11 |
-| Reward owner proof/QR, admin lookup/identity verification/one receipt | 7, 9, 11 |
+| Confirmed requirement                                                                  | Tasks      |
+| -------------------------------------------------------------------------------------- | ---------- |
+| PRIS login/LINE OA, one account/event/day                                              | 6, 10, 12  |
+| Existing Main Session/QR/entitlements, daily active uniqueness                         | 1, 2, 12   |
+| All scan modes, cancellation history, legacy backfill                                  | 1–4, 12    |
+| Correct date-filtered reports, counts and export                                       | 3, 4       |
+| Main Session window, equal eligible slots, unlimited no-prize and real-stock stop      | 5, 6, 11   |
+| Shared stock, add/reduce audit/idempotency, restore sold-out segment                   | 5, 6, 9    |
+| Gray fixed-position sold-out slots and many slot counts                                | 5, 11      |
+| Atomic publish, stale-client refresh and frozen winning configuration                  | 6, 9–11    |
+| Reward owner proof/QR, admin lookup/identity verification/one receipt                  | 7, 9, 11   |
 | Timeout recovery, deadline extension, audited correction and no second stock decrement | 6, 7, 9–12 |
-| Admin-only wheel operations | 6–9 |
-| Mobile-first approved B, real header/logo and TH/EN | 10, 11 |
-| R2 only for new wheel images | 8, 9, 12 |
-| 500 total / 100 simultaneous, actual prizes entered later | 5, 9, 12 |
+| Admin-only wheel operations                                                            | 6–9        |
+| Mobile-first approved B, real header/logo and TH/EN                                    | 10, 11     |
+| R2 only for new wheel images                                                           | 8, 9, 12   |
+| 500 total / 100 simultaneous, actual prizes entered later                              | 5, 9, 12   |
 
 Plan self-review: all confirmed requirement groups map to tasks. No pending visual choice; B is selected. Deployment-owned event/session IDs, credentials and actual prizes are validated setup inputs, not fabricated constants. A committed design or completed plan is not an implemented feature. Work tasks in the approved order with the documented dependency exception, keep each unfinished acceptance item visible, and complete the separate final verification and local batch commits before reporting completion.

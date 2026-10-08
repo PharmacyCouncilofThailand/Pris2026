@@ -23,37 +23,57 @@
 
 The workspace root is not the application Git repository. `conference-api`, `Pris2026` and `conference-backoffice` are separate Git repositories; every command below runs in the named repo. Verify each checkout is clean before execution and preserve unrelated edits.
 
-| Repo | Files and responsibility |
-| --- | --- |
-| conference-api | `drizzle/0035_lucky_wheel_qr_credits.sql` and `src/database/schema.ts`: additive day, QR and credit tables; legacy spin index transition |
-| conference-api | `src/modules/lucky-wheel/access.ts`: shared wheel clock, active-account, entitlement and daily-attendance queries extracted from `service.ts` |
-| conference-api | `src/modules/lucky-wheel/day-schedule.ts`: versioned day reads/edits and audit |
-| conference-api | `src/modules/lucky-wheel/qr-credits.ts`: QR lifecycle, projection data, claims, inspection and revocation |
-| conference-api | `src/modules/lucky-wheel/service.ts`: credit-aware eligibility and atomic spin; retain prize allocation and reward snapshots |
-| conference-api | `src/modules/lucky-wheel/schemas.ts`, `types.ts`, `routes.ts`, `src/config/env.ts` and `.env.example`: bounded DTOs, auth, rate limits and canonical PRIS claim origin |
-| conference-api | `src/modules/lucky-wheel/*.test.ts`: migration, route, service, claim, concurrency, reward and load proof |
-| Pris2026 | `src/lib/localizedRedirect.ts`, `refreshRedirect.ts`, `luckyWheel.ts` and their tests: safe login return, claim client and request-key recovery |
-| Pris2026 | `src/app/[locale]/lucky-wheel/claim/page.tsx`, `src/app/[locale]/lucky-wheel/page.tsx`, `src/components/lucky-wheel/ActivityTicket.tsx`, `messages/th.json`, `messages/en.json`: claim journey and multi-spin UI |
+| Repo                  | Files and responsibility                                                                                                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| conference-api        | `drizzle/0035_lucky_wheel_qr_credits.sql` and `src/database/schema.ts`: additive day, QR and credit tables; legacy spin index transition                                                                                 |
+| conference-api        | `src/modules/lucky-wheel/access.ts`: shared wheel clock, active-account, entitlement and daily-attendance queries extracted from `service.ts`                                                                            |
+| conference-api        | `src/modules/lucky-wheel/day-schedule.ts`: versioned day reads/edits and audit                                                                                                                                           |
+| conference-api        | `src/modules/lucky-wheel/qr-credits.ts`: QR lifecycle, projection data, claims, inspection and revocation                                                                                                                |
+| conference-api        | `src/modules/lucky-wheel/service.ts`: credit-aware eligibility and atomic spin; retain prize allocation and reward snapshots                                                                                             |
+| conference-api        | `src/modules/lucky-wheel/schemas.ts`, `types.ts`, `routes.ts`, `src/config/env.ts` and `.env.example`: bounded DTOs, auth, rate limits and canonical PRIS claim origin                                                   |
+| conference-api        | `src/modules/lucky-wheel/*.test.ts`: migration, route, service, claim, concurrency, reward and load proof                                                                                                                |
+| Pris2026              | `src/lib/localizedRedirect.ts`, `refreshRedirect.ts`, `luckyWheel.ts` and their tests: safe login return, claim client and request-key recovery                                                                          |
+| Pris2026              | `src/app/[locale]/lucky-wheel/claim/page.tsx`, `src/app/[locale]/lucky-wheel/page.tsx`, `src/components/lucky-wheel/ActivityTicket.tsx`, `messages/th.json`, `messages/en.json`: claim journey and multi-spin UI         |
 | conference-backoffice | `src/types/lucky-wheel.ts`, `src/lib/api.ts`, `src/components/lucky-wheel/QrRights.tsx`, `src/components/lucky-wheel/QrProjection.tsx`, `src/app/lucky-wheel/page.tsx`: schedule, projection, claim audit and revocation |
 
 Use these DTO names consistently across the three repositories. Exact additional response-envelope fields follow the existing routes.
 
 ```ts
 type DayWindow = {
-  date: string; startAt: string; endAt: string; version: number;
+  date: string;
+  startAt: string;
+  endAt: string;
+  version: number;
 };
 type CreditAvailability = {
-  unspentCredits: number; spendableCredits: number;
-  hasExpiredPriorDayCredit: boolean; currentWindow: DayWindow | null;
+  unspentCredits: number;
+  spendableCredits: number;
+  hasExpiredPriorDayCredit: boolean;
+  currentWindow: DayWindow | null;
   latestSpin: SpinDto | null;
 };
 type ClaimCreditResult = {
-  created: boolean; qrId: string; qrName: string; creditId: string; date: string;
-  claimedAt: string; currentDeadline: string; state: "spendable" | "outside_window" | "blocked" | "spent" | "revoked" | "prior_day_expired";
+  created: boolean;
+  qrId: string;
+  qrName: string;
+  creditId: string;
+  date: string;
+  claimedAt: string;
+  currentDeadline: string;
+  state:
+    | "spendable"
+    | "outside_window"
+    | "blocked"
+    | "spent"
+    | "revoked"
+    | "prior_day_expired";
 };
 type DayWindowInput = {
-  date: string; startAt: string; endAt: string;
-  expectedVersion: number | null; reason: string | null;
+  date: string;
+  startAt: string;
+  endAt: string;
+  expectedVersion: number | null;
+  reason: string | null;
 };
 ```
 

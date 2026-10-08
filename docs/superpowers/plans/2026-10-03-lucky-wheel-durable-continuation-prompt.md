@@ -106,39 +106,43 @@ Objective:
    - health/readiness
    - database names ที่สร้างภายใน instance
    - วันที่/Task ที่สร้างหรือ reuse
-   ห้ามบันทึก password หรือ connection string ที่มี secret
+     ห้ามบันทึก password หรือ connection string ที่มี secret
 8. test suite ต่าง ๆ สามารถสร้าง **dedicated test databases หลาย database ภายใน PostgreSQL container เดิม** ได้ตามแผน เช่น integration database แยกตาม module/suite แต่ห้ามสร้าง PostgreSQL container เพิ่มเพียงเพื่อแยก Task
 9. database/schema/fixture ที่ใช้ต้องเป็น test-owned เท่านั้น ห้าม copy production data, ห้ามใช้ production/runtime database และห้ามชี้ `TEST_DATABASE_URL` ไปยังฐานใช้งานจริง
 10. ใช้ test database guard เดิมของ repository ทุกครั้งที่ destructive reset/cleanup ต้องเกิด
 11. การ reset/drop database ภายใน container ทำได้เฉพาะ database ที่พิสูจน์ว่าเป็น test-owned และเมื่อ test lifecycle ต้องการจริง; **ห้ามลบ/recreate container หรือ named volume เพื่อแก้ test failure**
 12. เมื่อ session/worker เปลี่ยน ให้ recover โดย inspect exact container เดิมก่อน แล้ว reuse ต่อจาก state เดิม
 13. หาก container เดิมหายไปหลังจากเคยบันทึกว่าสร้างสำเร็จแล้ว:
-   - ห้ามสร้าง replacement แบบเงียบ ๆ
-   - ตรวจ Docker state/recovery evidence ก่อน
-   - checkpoint ว่า test-environment continuity สูญหาย
-   - ถ้าพิสูจน์ไม่ได้ว่าการสร้างใหม่ปลอดภัยและไม่ทำให้หลักฐานเดิมคลาดเคลื่อน ให้ถือเป็น blocker ที่ต้องแจ้งผู้ใช้
+
+- ห้ามสร้าง replacement แบบเงียบ ๆ
+- ตรวจ Docker state/recovery evidence ก่อน
+- checkpoint ว่า test-environment continuity สูญหาย
+- ถ้าพิสูจน์ไม่ได้ว่าการสร้างใหม่ปลอดภัยและไม่ทำให้หลักฐานเดิมคลาดเคลื่อน ให้ถือเป็น blocker ที่ต้องแจ้งผู้ใช้
+
 14. container นี้เป็น **retained test infrastructure** ของ Lucky Wheel goal:
-   - ถ้าต้อง track เป็น supporting service ให้ใช้ `role:supporting_service`
-   - ใช้ `cancelWithGoal:false`
-   - ห้าม cleanup พร้อม ordinary checkpoint
-   - ห้าม cleanup เมื่อ Task 12 ผ่าน
-   - ห้าม cleanup เมื่อ Final Comprehensive Verification ผ่าน
-   - ห้าม cleanup เมื่อ Scheduled Continuation ถูกยกเลิก
-   - ห้าม cleanup เมื่อ durable goal ถูก `finish_goal(status:completed)`
-   - ห้าม cleanup เมื่อ goal ถูกหยุด/ยกเลิก เว้นแต่ผู้ใช้สั่งลบ test environment โดยชัดแจ้ง
+
+- ถ้าต้อง track เป็น supporting service ให้ใช้ `role:supporting_service`
+- ใช้ `cancelWithGoal:false`
+- ห้าม cleanup พร้อม ordinary checkpoint
+- ห้าม cleanup เมื่อ Task 12 ผ่าน
+- ห้าม cleanup เมื่อ Final Comprehensive Verification ผ่าน
+- ห้าม cleanup เมื่อ Scheduled Continuation ถูกยกเลิก
+- ห้าม cleanup เมื่อ durable goal ถูก `finish_goal(status:completed)`
+- ห้าม cleanup เมื่อ goal ถูกหยุด/ยกเลิก เว้นแต่ผู้ใช้สั่งลบ test environment โดยชัดแจ้ง
+
 15. **คำว่า FINAL, completed, cancelled, abandoned, cleanup หรือ terminal goal ไม่ถือเป็นคำสั่งลบ Docker test environment นี้**
 16. ลบ container/volume นี้ได้เฉพาะเมื่อผู้ใช้มีคำสั่งใหม่ที่ระบุให้ลบ Lucky Wheel local Docker test environment โดยตรง
 17. เมื่อได้รับคำสั่งลบ:
-   - verify exact container identity/label/volume/ownership ก่อน
-   - ตรวจว่าไม่มี goal/task ที่ยังใช้งาน environment นี้
-   - ลบเฉพาะ container และ volume ที่สร้างสำหรับ Lucky Wheel goal นี้
-   - ห้ามแตะ container/volume/database อื่น
-   - บันทึก cleanup evidence ตามจริง
+
+- verify exact container identity/label/volume/ownership ก่อน
+- ตรวจว่าไม่มี goal/task ที่ยังใช้งาน environment นี้
+- ลบเฉพาะ container และ volume ที่สร้างสำหรับ Lucky Wheel goal นี้
+- ห้ามแตะ container/volume/database อื่น
+- บันทึก cleanup evidence ตามจริง
 
 ดังนั้น lifecycle ที่ต้องการคือ:
 
 `create once → reuse across all tasks/sessions → keep after FINAL → delete only on explicit later user command`
-
 
 ---
 
@@ -154,13 +158,13 @@ Objective:
 
 เมื่อต้องบันทึกเข้า durable step ซึ่งรองรับเพียง `pending / in_progress / completed / blocked` ให้ map ดังนี้:
 
-| Prompt หลัก | Durable step | กติกา |
-| --- | --- | --- |
-| PENDING | pending | ยังไม่เริ่ม |
-| RUNNING | in_progress | มีงานหรือ verification ค้าง |
-| DEFERRED_DEPENDENCY | in_progress | ห้าม mark completed; บันทึก dependency และ return condition |
-| PASS | completed | ใช้ได้เฉพาะเมื่อ required checks ผ่านจริงครบ |
-| BLOCKED | blocked | มี blocker ตาม prompt หลัก; ห้ามทำ workaround |
+| Prompt หลัก         | Durable step | กติกา                                                       |
+| ------------------- | ------------ | ----------------------------------------------------------- |
+| PENDING             | pending      | ยังไม่เริ่ม                                                 |
+| RUNNING             | in_progress  | มีงานหรือ verification ค้าง                                 |
+| DEFERRED_DEPENDENCY | in_progress  | ห้าม mark completed; บันทึก dependency และ return condition |
+| PASS                | completed    | ใช้ได้เฉพาะเมื่อ required checks ผ่านจริงครบ                |
+| BLOCKED             | blocked      | มี blocker ตาม prompt หลัก; ห้ามทำ workaround               |
 
 ห้ามใช้ durable step `completed` เพื่อกลบ `DEFERRED_DEPENDENCY`, skipped test, unverified environment หรือ pending final verification
 
@@ -214,11 +218,13 @@ reconstruction-grade context ต้องครอบคลุม:
 หาก schema ปัจจุบันของ `checkpoint_goal` expose field เช่น `resumeContext` ให้ใช้ตาม skill/runtime contract ปัจจุบัน
 
 หาก schema ปัจจุบัน **ไม่ expose field นั้น**:
+
 - ห้าม invent field
 - ให้เก็บ reconstruction-grade details ใน `acceptance.md` และใช้ `summary / nextAction / blockers / evidence / trackedTasks` เท่าที่ schema รองรับ
 - durable state กับ acceptance ledger ต้องชี้กันได้และไม่ขัดกัน
 
 checkpoint ปกติ **ไม่ใช่เหตุผลให้หยุด turn และไม่ใช่ handoff**
+
 - ใช้ lease เดิมต่อ
 - `releaseLease:false` หรือไม่ระบุ ตาม contract
 - checkpoint แล้วต้องกลับเข้า Active Coordinator Loop ตามข้อ 5.8 ทันที
@@ -227,6 +233,7 @@ checkpoint ปกติ **ไม่ใช่เหตุผลให้หยุ
 - ถ้า checkpoint ทำให้ Task ปัจจุบัน PASS และมี Task/nextAction ถัดไปที่ไม่ blocked ต้องเริ่มขั้นถัดไปใน turn เดิม
 
 ใช้ `releaseLease:true` เฉพาะ checkpoint สุดท้ายก่อน actual turn boundary ที่หลีกเลี่ยงไม่ได้ และหลังยืนยันทั้งหมดต่อไปนี้:
+
 1. ไม่มี terminal tracked task ที่ยังไม่ได้ inspect/disposition
 2. task ที่ยัง running เป็น goal-bound durable task หรือ external target ที่ recover ได้จริง
 3. ไม่มี safe useful parallel work เหลือ
@@ -446,6 +453,7 @@ service ที่ต้องเปิดเพื่อให้ test ทำง
 #### Phase D — Execute nextAction ทันที
 
 ถ้า:
+
 - goal ยัง active
 - blockers=[]
 - มี nextAction
@@ -454,6 +462,7 @@ service ที่ต้องเปิดเพื่อให้ test ทำง
 ให้ execute nextAction ใน **turn/wake เดียวกัน** ทันที
 
 ตัวอย่างบังคับ:
+
 - T04 verification terminal PASS → update acceptance → T04 PASS → commit ถ้า plan กำหนด → เริ่ม T05
 - RED test fail ตามคาด → implement minimum fix → rerun test
 - build fail ที่แก้ได้ → trace → repair → rerun
@@ -483,6 +492,7 @@ service ที่ต้องเปิดเพื่อให้ test ทำง
 5. scheduled wake พบ live owner จริงและ runtime สั่ง `worker_busy_noop` โดยไม่มี stale-recovery path ใน wake นั้น
 
 **ห้าม yield** เมื่อ:
+
 - tracked task terminal แล้ว
 - Task เพิ่ง PASS และมี Task ถัดไป
 - nextAction มีอยู่และไม่ blocked
@@ -502,6 +512,7 @@ service ที่ต้องเปิดเพื่อให้ test ทำง
 
 Prompt นี้ **ไม่สามารถสร้าง event-driven callback จาก task completion หลัง worker ตายไปแล้วได้**
 ดังนั้น:
+
 - ถ้า worker ยังมีชีวิตตอน task จบ → Active Coordinator ต้อง consume และเดินต่อทันที
 - ถ้า host ปิด worker/turn ก่อน task จบ → durable task ยังทำงาน/เก็บผลได้ และ hourly watchdog เป็น recovery fallback
 - ห้ามอ้างว่า watchdog รายชั่วโมงคือ instant continuation
@@ -548,6 +559,7 @@ scheduled wake ห้ามพยายามถือทั้ง Task ให�
 6. packet: acceptance + commit boundary
 
 เมื่อ packet หนึ่งเสร็จ:
+
 - checkpoint milestone ได้
 - ถ้า host ยัง active ให้เริ่ม packet ถัดไปทันที
 - ห้ามรอ hourly watchdogเพียงเพราะ packet จบ
@@ -565,6 +577,7 @@ scheduled wake ห้ามพยายามถือทั้ง Task ให�
 7. ถ้าถูก host ตัด ผล durable verification ต้องยัง recover ได้ใน wake/manual resume ถัดไป
 
 ห้ามใช้เวลาส่วนใหญ่ของ short wake ไปกับ:
+
 - รายงานสถานะ
 - re-read เอกสารเดิมทั้งหมด
 - broad grep ที่ไม่สัมพันธ์กับ nextAction
@@ -583,6 +596,7 @@ scheduled wake ห้ามพยายามถือทั้ง Task ให�
 - ห้าม checkpoint ซ้ำด้วย summary เดิมเพื่อซื้อเวลา
 
 ทุก checkpoint ของ scheduled wake ต้องทำให้ worker ถัดไปตอบได้ทันทีว่า:
+
 - ทำอะไรเสร็จจริง
 - อะไรยัง unverified
 - task ไหน live/terminal
@@ -621,6 +635,7 @@ scheduled wake ห้ามพยายามถือทั้ง Task ให�
 AI reasoning/editing ไม่สามารถรันเองต่อหลัง host ปิด worker แต่ external/durable execution สามารถอยู่ต่อได้ จึงต้อง delegate งานที่เหมาะสมให้เร็ว:
 
 ใช้ goal-bound durable task สำหรับ:
+
 - tests
 - lint
 - typecheck
@@ -634,6 +649,7 @@ AI reasoning/editing ไม่สามารถรันเองต่อห�
 อย่าใช้ durable task แทนงานที่ต้อง reasoning/edit code โดยตรง
 
 เมื่อ packet มีทั้ง code + verification:
+
 - ทำ code ให้ถึง testable state
 - spawn durable verification
 - checkpoint exact task ID/command/expected evidence
@@ -641,6 +657,7 @@ AI reasoning/editing ไม่สามารถรันเองต่อห�
 - ถ้า host ถูกตัด → task/result พร้อมให้ wake/manual resume ถัดไป consume
 
 หากไม่มี durable work ที่สมเหตุผลให้ spawn:
+
 - checkpoint exact coding state/next edit location
 - อย่าสร้าง dummy/sleep/background task เพื่อแสร้งว่ากำลังทำงานต่อ
 
@@ -664,6 +681,7 @@ AI reasoning/editing ไม่สามารถรันเองต่อห�
 12. เมื่อ manual worker ยัง active ให้ทำงานต่อโดยไม่รอ scheduled wake ถัดไป
 
 Short manual resume prompt สามารถอ้างเพียง:
+
 - workspace
 - stable goalKey
 - Prompt 1/2 canonical paths
@@ -751,7 +769,7 @@ Scheduled Task prompt ต้อง bind กลับมายัง connected In
 - credentials
 - secrets
 - private internal session IDs
--ข้อมูลที่ไม่จำเป็นต่อ wake protocol
+  -ข้อมูลที่ไม่จำเป็นต่อ wake protocol
 
 ---
 
@@ -768,6 +786,7 @@ Scheduled Task prompt ต้อง bind กลับมายัง connected In
 เมื่อ acquire สำเร็จ ห้ามทำเพียง “หนึ่ง action แล้วตอบ” ให้เข้า **Active Coordinator Loop ข้อ 5.8 + Short-budget Strategy ข้อ 5.9** ทันที
 
 ก่อนทำ workspace mutation ให้ refresh canonical continuity instructions จาก:
+
 - Prompt 1 canonical path
 - Prompt 2 canonical path ปัจจุบัน
 - durable checkpoint ล่าสุด
@@ -811,6 +830,7 @@ Scheduled Task prompt ต้อง bind กลับมายัง connected In
 - ห้ามแตะ recurring native task
 
 ถ้า runtime คืน `retryAfterSeconds <= 60` และระบุว่าเป็น stale-heartbeat grace:
+
 - bounded wait ตามค่านั้น
 - retry claim/run_goal ใน **wake เดิม**
 - ถ้าปลอดภัยให้ recover ใน wake เดิม ไม่รออีกหนึ่งชั่วโมงโดยไม่จำเป็น
@@ -1034,6 +1054,7 @@ priority ตอน resume:
 `terminal unconsumed task → ownership recovery → ledger/state reconciliation → required commit boundary → nextAction → new work`
 
 ตัวอย่าง:
+
 - T01–T06 PASS และ commit SHA มีจริง → ห้ามทำ T01–T06 ใหม่
 - T04 tracked API task terminal PASS แต่ checkpoint ยังบอก running → inspect result → clear task → update acceptance → T04 PASS → commit ถ้ากำหนด → เริ่ม T05 ใน turn เดิม
 - T09 RUNNING และมี focused test fail ที่แก้ code แล้วแต่ยังไม่ rerun → เริ่มจาก rerun นั้น
@@ -1084,6 +1105,7 @@ priority ตอน resume:
 พบ failure ที่แก้ได้ใน scope = next unit of work ไม่ใช่ handoff boundary
 
 หาก background job รันนาน:
+
 - ทำ non-conflicting work ก่อน
 - ใช้ bounded wait/observe เมื่อไม่มี parallel work
 - local verification ที่คาดว่าจบในหลักวินาที/นาทีไม่ควรถูกโยนให้ hourly watchdogโดยสมัครใจ
@@ -1092,11 +1114,12 @@ priority ตอน resume:
 - yield ได้เมื่อ job ยัง live จริง, ไม่มี useful parallel work, checkpoint reconstruction-grade พร้อม และ watchdog coverage ยืนยันแล้ว
 
 ก่อน yield ให้ถามเชิง state ไม่ใช่ถามผู้ใช้:
+
 - มี terminal task ที่ยังไม่ได้ consume หรือไม่?
 - blockers=[] และมี nextAction หรือไม่?
 - Task เพิ่ง PASS แต่ Task ถัดไปยัง pending หรือไม่?
 - มี commit/ledger boundary ที่ต้องทำหรือไม่?
-ถ้าคำตอบข้อใดเป็น “ใช่” และทำได้อย่างปลอดภัย → **ยังห้าม yield**
+  ถ้าคำตอบข้อใดเป็น “ใช่” และทำได้อย่างปลอดภัย → **ยังห้าม yield**
 
 ไม่กำหนดเวลาว่า worker ต้องหยุดหลัง N นาที ให้ใช้ host turn อย่างมีประโยชน์จนถึง Yield decision ของข้อ 5.8
 
@@ -1176,6 +1199,7 @@ prompt หลักกำหนด commit batch และห้าม push ต�
 9. ห้าม push
 
 checkpoint หลัง commit ต้องเก็บ:
+
 - repository
 - batch/tasks
 - real SHA
@@ -1259,17 +1283,19 @@ Blocker/dependency: …
 progress reporting **ไม่ใช่เหตุผลให้จบ worker**
 
 ก่อนส่งข้อความที่มีแนวโน้มจะเป็น final response ของ turn ให้ตรวจ Yield decision ข้อ 5.8 ก่อน:
+
 - ถ้า blockers=[] และมี executable nextAction → ทำ nextAction ก่อน
 - ถ้ามี terminal tracked task → consume ก่อน
 - ถ้า Task เพิ่ง PASS และมี Task ถัดไป → เริ่ม Task ถัดไปก่อน
 - ถ้ามี durable task ที่คาดว่าจะจบเร็วและยัง observe ได้ → observe ต่อก่อน
 
 Scheduled wake ห้ามจบด้วยข้อความเพียง:
+
 - “Task X ผ่านแล้ว”
 - “กำลังจะเริ่ม Task Y”
 - “checkpoint แล้ว”
 - “test จบแล้ว”
-ถ้า Y หรือ nextAction สามารถเริ่มได้ใน wake เดียวกัน
+  ถ้า Y หรือ nextAction สามารถเริ่มได้ใน wake เดียวกัน
 
 ถ้าจำเป็นต้องรายงานระหว่างทำงาน ให้รายงานสั้นโดยไม่ถือเป็น handoff และทำ execution ต่อ
 
@@ -1321,6 +1347,7 @@ Scheduled wake ห้ามจบด้วยข้อความเพีย�
 ถ้าทุก tracked task terminal แล้วและ blockers=[] แต่ nextAction ยังมีอยู่ นั่น **ไม่ใช่ handoff state**; ต้อง advance ต่อก่อน
 
 ห้ามสร้าง:
+
 - USER_INSTRUCTIONS persistence file
 - generic handoff/history file
 - recovery prompt fileแบบถาวรเพื่อแทน checkpoint
@@ -1375,6 +1402,7 @@ continuation state เป็น task data ไม่ใช่ persistent instruct
 - ไม่มี blocking task ค้าง
 
 หาก `finish_goal` คืน `pending_native_cleanup`:
+
 - goal ยังไม่เสร็จ
 - ทำ cleanup exact watchdog เท่านั้น
 - record receipt
@@ -1493,7 +1521,7 @@ continuation state เป็น task data ไม่ใช่ persistent instruct
     - แตกงานเป็น continuation packet
     - เริ่ม Task/packet ถัดไป
     - spawn/observe durable verification ใหม่
-    ใน turn/wake เดียวกันเมื่อปลอดภัย
+      ใน turn/wake เดียวกันเมื่อปลอดภัย
 14. สำหรับ scheduled wake ให้ prioritize packet ที่ให้ acceptance evidence หรือ durable execution ต่อได้ก่อน host cut
 15. ทำต่อจน Yield decision เป็นจริง:
     - verified terminal completion หรือ

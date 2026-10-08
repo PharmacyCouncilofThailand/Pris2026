@@ -10,10 +10,7 @@ import {
 export const ABSTRACT_WORD_COUNT_DEBOUNCE_MS = 500;
 
 export type AuthoritativeWordCountStatus =
-  | "idle"
-  | "loading"
-  | "ready"
-  | "error";
+  "idle" | "loading" | "ready" | "error";
 
 type HookState = {
   status: AuthoritativeWordCountStatus;

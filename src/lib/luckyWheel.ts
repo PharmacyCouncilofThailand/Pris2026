@@ -63,15 +63,24 @@ export type LuckyWheelBlockCode =
 
 export function luckyWheelBlockMessageKey(code: LuckyWheelBlockCode | null) {
   switch (code) {
-    case "ATTENDANCE_SETUP_REQUIRED": return "attendanceSetupRequired";
-    case "CHECKIN_REQUIRED": return "checkinRequired";
-    case "REGISTRATION_REQUIRED": return "registrationRequired";
-    case "SESSION_CLOSED": return "sessionClosed";
-    case "DAY_WINDOW_CLOSED": return "outsideWindow";
-    case "NO_CREDIT": return "noCredit";
-    case "WHEEL_PAUSED": return "paused";
-    case "OUT_OF_STOCK": return "outOfStock";
-    default: return "notReady";
+    case "ATTENDANCE_SETUP_REQUIRED":
+      return "attendanceSetupRequired";
+    case "CHECKIN_REQUIRED":
+      return "checkinRequired";
+    case "REGISTRATION_REQUIRED":
+      return "registrationRequired";
+    case "SESSION_CLOSED":
+      return "sessionClosed";
+    case "DAY_WINDOW_CLOSED":
+      return "outsideWindow";
+    case "NO_CREDIT":
+      return "noCredit";
+    case "WHEEL_PAUSED":
+      return "paused";
+    case "OUT_OF_STOCK":
+      return "outOfStock";
+    default:
+      return "notReady";
   }
 }
 
@@ -90,7 +99,13 @@ export type LuckyWheelEligibility = {
   unspentCredits: number;
   spendableCredits: number;
   hasExpiredPriorDayCredit: boolean;
-  currentWindow: { id: string; date: string; startAt: string; endAt: string; version: number } | null;
+  currentWindow: {
+    id: string;
+    date: string;
+    startAt: string;
+    endAt: string;
+    version: number;
+  } | null;
   latestSpin: LuckyWheelSpin | null;
   requestId: string;
 };
@@ -196,13 +211,23 @@ export type WheelQrClaim = {
   date: string;
   claimedAt: string;
   currentDeadline: string;
-  state: "spendable" | "outside_window" | "blocked" | "spent" | "revoked" | "prior_day_expired";
+  state:
+    | "spendable"
+    | "outside_window"
+    | "blocked"
+    | "spent"
+    | "revoked"
+    | "prior_day_expired";
 };
 
 const QR_CLAIM_STORAGE_KEY = "pris:lucky-wheel:pending-qr-claim";
-const QR_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const QR_ID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-export function captureQrClaimFromFragment(storage: StorageLike, fragment: string): string | null {
+export function captureQrClaimFromFragment(
+  storage: StorageLike,
+  fragment: string,
+): string | null {
   if (fragment) {
     const candidate = fragment.startsWith("#") ? fragment.slice(1) : fragment;
     if (!QR_ID_PATTERN.test(candidate)) {
@@ -277,11 +302,17 @@ async function requestJson<T>(
   token: string,
   init: RequestInit = {},
 ): Promise<T> {
-  if (!token) throw new LuckyWheelApiError(401, "AUTH_REQUIRED", "Authentication required");
+  if (!token)
+    throw new LuckyWheelApiError(
+      401,
+      "AUTH_REQUIRED",
+      "Authentication required",
+    );
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
   headers.set("Authorization", `Bearer ${token}`);
-  if (typeof init.body === "string") headers.set("Content-Type", "application/json");
+  if (typeof init.body === "string")
+    headers.set("Content-Type", "application/json");
 
   let response: Response;
   try {
@@ -303,7 +334,9 @@ async function requestJson<T>(
     throw new LuckyWheelApiError(
       response.status,
       typeof record.code === "string" ? record.code : "REQUEST_FAILED",
-      typeof record.error === "string" ? record.error : `Request failed (${response.status})`,
+      typeof record.error === "string"
+        ? record.error
+        : `Request failed (${response.status})`,
       record.details,
     );
   }
@@ -331,7 +364,11 @@ export async function loadQrPreview(
   signal?: AbortSignal,
 ): Promise<WheelQrPreview> {
   if (!QR_ID_PATTERN.test(qrId)) throw new Error("Invalid wheel QR id");
-  return requestJson<WheelQrPreview>(endpoint(apiOrigin, eventId, `/qr-codes/${qrId}`), token, { signal });
+  return requestJson<WheelQrPreview>(
+    endpoint(apiOrigin, eventId, `/qr-codes/${qrId}`),
+    token,
+    { signal },
+  );
 }
 
 export async function claimQrCredit(
@@ -342,9 +379,15 @@ export async function claimQrCredit(
   signal?: AbortSignal,
 ): Promise<WheelQrClaim> {
   if (!QR_ID_PATTERN.test(qrId)) throw new Error("Invalid wheel QR id");
-  return requestJson<WheelQrClaim>(endpoint(apiOrigin, eventId, "/credit-claims"), token, {
-    method: "POST", signal, body: JSON.stringify({ qrId }),
-  });
+  return requestJson<WheelQrClaim>(
+    endpoint(apiOrigin, eventId, "/credit-claims"),
+    token,
+    {
+      method: "POST",
+      signal,
+      body: JSON.stringify({ qrId }),
+    },
+  );
 }
 
 export async function loadWheel(
@@ -372,21 +415,17 @@ export async function submitSpin(
   request: PendingSpinRequest,
   signal?: AbortSignal,
 ): Promise<{ created: boolean; spin: LuckyWheelSpin; requestId: string }> {
-  return requestJson(
-    endpoint(apiOrigin, request.eventId, "/spins"),
-    token,
-    {
-      method: "POST",
-      signal,
-      body: JSON.stringify({
-        eventId: request.eventId,
-        configurationVersion: request.configurationVersion,
-        poolRevision: request.poolRevision,
-        scheduleVersion: request.scheduleVersion,
-        idempotencyKey: request.idempotencyKey,
-      }),
-    },
-  );
+  return requestJson(endpoint(apiOrigin, request.eventId, "/spins"), token, {
+    method: "POST",
+    signal,
+    body: JSON.stringify({
+      eventId: request.eventId,
+      configurationVersion: request.configurationVersion,
+      poolRevision: request.poolRevision,
+      scheduleVersion: request.scheduleVersion,
+      idempotencyKey: request.idempotencyKey,
+    }),
+  });
 }
 
 export async function loadOwnSpins(

@@ -142,14 +142,14 @@ export default function EventScheduleSection() {
               ease: "power4.out",
               force3D: true,
               scrollTrigger: { trigger: ".agenda-title", start: "top 80%" },
-            }
+            },
           );
-        }
+        },
       );
 
       return () => media.revert();
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   useGSAP(
@@ -168,13 +168,13 @@ export default function EventScheduleSection() {
             stagger: 0.04,
             ease: "power3.out",
             force3D: true,
-          }
+          },
         );
       });
 
       return () => media.revert();
     },
-    { scope: containerRef, dependencies: [activeTab] }
+    { scope: containerRef, dependencies: [activeTab] },
   );
 
   return (
@@ -229,7 +229,7 @@ export default function EventScheduleSection() {
                       "inline-flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black transition-all",
                       isActive
                         ? "bg-amber-400 text-slate-950 shadow-md shadow-amber-400/30"
-                        : "bg-white/10 text-white/60 group-hover:bg-white/20 group-hover:text-white"
+                        : "bg-white/10 text-white/60 group-hover:bg-white/20 group-hover:text-white",
                     )}
                   >
                     {index + 1}
@@ -240,7 +240,7 @@ export default function EventScheduleSection() {
                         "block text-lg font-black tracking-tight transition-colors sm:text-2xl",
                         isActive
                           ? "text-white"
-                          : "text-white/40 group-hover:text-white/80"
+                          : "text-white/40 group-hover:text-white/80",
                       )}
                     >
                       {t(`day${index + 1}`)}
@@ -248,7 +248,7 @@ export default function EventScheduleSection() {
                     <span
                       className={cn(
                         "block text-xs font-semibold uppercase tracking-wider transition-colors",
-                        isActive ? "text-amber-300" : "text-white/30"
+                        isActive ? "text-amber-300" : "text-white/30",
                       )}
                     >
                       {date}
@@ -261,7 +261,7 @@ export default function EventScheduleSection() {
                     "absolute inset-x-0 -bottom-[1px] h-0.5 origin-left bg-amber-400 transition-transform duration-300",
                     isActive
                       ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-40"
+                      : "scale-x-0 group-hover:scale-x-40",
                   )}
                 />
               </button>
@@ -270,7 +270,10 @@ export default function EventScheduleSection() {
         </div>
 
         {/* Highlight Sessions Preview Cards Grid */}
-        <div ref={containerRef} className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div
+          ref={containerRef}
+          className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+        >
           {previewEvents.map((event) => {
             const tone = getEventTone(event.type);
             const title =
@@ -287,7 +290,7 @@ export default function EventScheduleSection() {
                 key={event.id}
                 className={cn(
                   "preview-card group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
-                  tone.card
+                  tone.card,
                 )}
               >
                 <div>
@@ -298,7 +301,7 @@ export default function EventScheduleSection() {
                         aria-hidden="true"
                         className={cn(
                           "h-2 w-2 rounded-full shadow-[0_0_8px_currentColor]",
-                          tone.dot
+                          tone.dot,
                         )}
                       />
                       <span className="font-mono text-xs font-bold text-amber-300">
@@ -310,7 +313,7 @@ export default function EventScheduleSection() {
                       <span
                         className={cn(
                           "rounded-full border px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider",
-                          tone.badge
+                          tone.badge,
                         )}
                       >
                         {type}

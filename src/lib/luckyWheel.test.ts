@@ -24,10 +24,20 @@ const qrId = "123e4567-e89b-42d3-a456-426614174000";
 
 test("configuration failure has distinct TH/EN copy from check-in and unavailable QR", () => {
   const key = luckyWheelBlockMessageKey("ATTENDANCE_SETUP_REQUIRED");
-  const th = JSON.parse(readFileSync(new URL("../../messages/th.json", import.meta.url), "utf8")).luckyWheel;
-  const en = JSON.parse(readFileSync(new URL("../../messages/en.json", import.meta.url), "utf8")).luckyWheel;
-  assert.equal(th[key], "กิจกรรมยังตั้งค่าระบบเช็คอินไม่ครบ กรุณาติดต่อเจ้าหน้าที่");
-  assert.equal(en[key], "The activity's check-in setup is not ready. Please contact staff.");
+  const th = JSON.parse(
+    readFileSync(new URL("../../messages/th.json", import.meta.url), "utf8"),
+  ).luckyWheel;
+  const en = JSON.parse(
+    readFileSync(new URL("../../messages/en.json", import.meta.url), "utf8"),
+  ).luckyWheel;
+  assert.equal(
+    th[key],
+    "กิจกรรมยังตั้งค่าระบบเช็คอินไม่ครบ กรุณาติดต่อเจ้าหน้าที่",
+  );
+  assert.equal(
+    en[key],
+    "The activity's check-in setup is not ready. Please contact staff.",
+  );
   assert.notEqual(key, luckyWheelBlockMessageKey("CHECKIN_REQUIRED"));
   assert.notEqual(key, luckyWheelBlockMessageKey("WHEEL_NOT_READY"));
 });
@@ -48,26 +58,60 @@ test("QR preview and first/duplicate claims use authenticated server endpoints",
   let claimCount = 0;
   try {
     globalThis.fetch = async (input, init) => {
-      assert.equal(new Headers(init?.headers).get("Authorization"), "Bearer token");
+      assert.equal(
+        new Headers(init?.headers).get("Authorization"),
+        "Bearer token",
+      );
       assert.equal(init?.cache, "no-store");
       if (init?.method === "POST") {
-        assert.equal(String(input), "https://api.example.test/api/lucky-wheel/events/7/credit-claims");
+        assert.equal(
+          String(input),
+          "https://api.example.test/api/lucky-wheel/events/7/credit-claims",
+        );
         assert.deepEqual(JSON.parse(String(init.body)), { qrId });
         claimCount += 1;
-        return Response.json({
-          created: claimCount === 1, qrId, qrName: "Morning", creditId: "credit-1",
-          date: "2026-10-29", claimedAt: "2026-10-29T08:00:00.000Z",
-          currentDeadline: "2026-10-29T12:00:00.000Z", state: "spendable",
-        }, { status: claimCount === 1 ? 201 : 200 });
+        return Response.json(
+          {
+            created: claimCount === 1,
+            qrId,
+            qrName: "Morning",
+            creditId: "credit-1",
+            date: "2026-10-29",
+            claimedAt: "2026-10-29T08:00:00.000Z",
+            currentDeadline: "2026-10-29T12:00:00.000Z",
+            state: "spendable",
+          },
+          { status: claimCount === 1 ? 201 : 200 },
+        );
       }
-      assert.equal(String(input), `https://api.example.test/api/lucky-wheel/events/7/qr-codes/${qrId}`);
-      return Response.json({ qrId, name: "Morning", status: "open", date: "2026-10-29",
-        startAt: "2026-10-29T02:00:00.000Z", currentDeadline: "2026-10-29T12:00:00.000Z",
-        scheduleVersion: 1 });
+      assert.equal(
+        String(input),
+        `https://api.example.test/api/lucky-wheel/events/7/qr-codes/${qrId}`,
+      );
+      return Response.json({
+        qrId,
+        name: "Morning",
+        status: "open",
+        date: "2026-10-29",
+        startAt: "2026-10-29T02:00:00.000Z",
+        currentDeadline: "2026-10-29T12:00:00.000Z",
+        scheduleVersion: 1,
+      });
     };
-    assert.equal((await loadQrPreview("https://api.example.test", "token", 7, qrId)).name, "Morning");
-    assert.equal((await claimQrCredit("https://api.example.test", "token", 7, qrId)).created, true);
-    assert.equal((await claimQrCredit("https://api.example.test", "token", 7, qrId)).created, false);
+    assert.equal(
+      (await loadQrPreview("https://api.example.test", "token", 7, qrId)).name,
+      "Morning",
+    );
+    assert.equal(
+      (await claimQrCredit("https://api.example.test", "token", 7, qrId))
+        .created,
+      true,
+    );
+    assert.equal(
+      (await claimQrCredit("https://api.example.test", "token", 7, qrId))
+        .created,
+      false,
+    );
     assert.equal(claimCount, 2);
   } finally {
     globalThis.fetch = originalFetch;
@@ -77,17 +121,27 @@ test("QR preview and first/duplicate claims use authenticated server endpoints",
 test("QR claim preserves server block codes and uncertain network outcomes", async () => {
   const originalFetch = globalThis.fetch;
   try {
-    for (const code of ["ATTENDANCE_SETUP_REQUIRED", "WHEEL_NOT_READY", "CHECKIN_REQUIRED", "SESSION_CLOSED"]) {
-      globalThis.fetch = async () => Response.json({ code, error: code }, { status: 409 });
+    for (const code of [
+      "ATTENDANCE_SETUP_REQUIRED",
+      "WHEEL_NOT_READY",
+      "CHECKIN_REQUIRED",
+      "SESSION_CLOSED",
+    ]) {
+      globalThis.fetch = async () =>
+        Response.json({ code, error: code }, { status: 409 });
       await assert.rejects(
         claimQrCredit("https://api.example.test", "token", 7, qrId),
-        (error: unknown) => error instanceof LuckyWheelApiError && error.code === code,
+        (error: unknown) =>
+          error instanceof LuckyWheelApiError && error.code === code,
       );
     }
-    globalThis.fetch = async () => { throw new TypeError("offline"); };
+    globalThis.fetch = async () => {
+      throw new TypeError("offline");
+    };
     await assert.rejects(
       claimQrCredit("https://api.example.test", "token", 7, qrId),
-      (error: unknown) => error instanceof LuckyWheelApiError && error.status === 0,
+      (error: unknown) =>
+        error instanceof LuckyWheelApiError && error.status === 0,
     );
   } finally {
     globalThis.fetch = originalFetch;
@@ -96,9 +150,15 @@ test("QR claim preserves server block codes and uncertain network outcomes", asy
 
 class MemoryStorage implements StorageLike {
   private readonly values = new Map<string, string>();
-  getItem(key: string) { return this.values.get(key) ?? null; }
-  setItem(key: string, value: string) { this.values.set(key, value); }
-  removeItem(key: string) { this.values.delete(key); }
+  getItem(key: string) {
+    return this.values.get(key) ?? null;
+  }
+  setItem(key: string, value: string) {
+    this.values.set(key, value);
+  }
+  removeItem(key: string) {
+    this.values.delete(key);
+  }
 }
 
 const eligibility = {
@@ -112,30 +172,40 @@ const eligibility = {
   poolRevision: 6,
   paused: false,
   configuration: {
-    segments: [{
-      id: "123e4567-e89b-42d3-a456-426614174001",
-      kind: "prize",
-      name: { th: "เสื้อ", en: "Shirt" },
-      imageId: null,
-      enabled: true,
-      position: 0,
-    }],
+    segments: [
+      {
+        id: "123e4567-e89b-42d3-a456-426614174001",
+        kind: "prize",
+        name: { th: "เสื้อ", en: "Shirt" },
+        imageId: null,
+        enabled: true,
+        position: 0,
+      },
+    ],
     collectionInstructions: { th: "โต๊ะกิจกรรม", en: "Activity desk" },
     collectionDeadline: "2026-10-30T10:00:00.000Z",
   },
-  availability: [{
-    id: "123e4567-e89b-42d3-a456-426614174001",
-    kind: "prize",
-    name: { th: "เสื้อ", en: "Shirt" },
-    imageKey: null,
-    enabled: true,
-    position: 0,
-    remaining: 3,
-  }],
+  availability: [
+    {
+      id: "123e4567-e89b-42d3-a456-426614174001",
+      kind: "prize",
+      name: { th: "เสื้อ", en: "Shirt" },
+      imageKey: null,
+      enabled: true,
+      position: 0,
+      remaining: 3,
+    },
+  ],
   unspentCredits: 2,
   spendableCredits: 2,
   hasExpiredPriorDayCredit: false,
-  currentWindow: { id: qrId, date: "2026-10-29", startAt: "2026-10-29T02:00:00.000Z", endAt: "2026-10-29T12:00:00.000Z", version: 3 },
+  currentWindow: {
+    id: qrId,
+    date: "2026-10-29",
+    startAt: "2026-10-29T02:00:00.000Z",
+    endAt: "2026-10-29T12:00:00.000Z",
+    version: 3,
+  },
   latestSpin: null,
   requestId: "req-1",
 };
@@ -149,25 +219,53 @@ test("wheel image URLs use only a trusted public root and fail closed", () => {
     "https://images.example.test/events/7/wheel/prize.webp",
   );
   assert.equal(resolveWheelImageUrl(null, "https://images.example.test"), null);
-  assert.equal(resolveWheelImageUrl("events/7/wheel/prize.webp", undefined), null);
-  assert.equal(resolveWheelImageUrl("../secret", "https://images.example.test"), null);
-  assert.equal(resolveWheelImageUrl("/absolute", "https://images.example.test"), null);
-  assert.equal(resolveWheelImageUrl("events\\bad", "https://images.example.test"), null);
-  assert.equal(resolveWheelImageUrl("events/good", "javascript:alert(1)"), null);
-  assert.equal(resolveWheelImageUrl("events/good", "https://user:pass@example.test"), null);
+  assert.equal(
+    resolveWheelImageUrl("events/7/wheel/prize.webp", undefined),
+    null,
+  );
+  assert.equal(
+    resolveWheelImageUrl("../secret", "https://images.example.test"),
+    null,
+  );
+  assert.equal(
+    resolveWheelImageUrl("/absolute", "https://images.example.test"),
+    null,
+  );
+  assert.equal(
+    resolveWheelImageUrl("events\\bad", "https://images.example.test"),
+    null,
+  );
+  assert.equal(
+    resolveWheelImageUrl("events/good", "javascript:alert(1)"),
+    null,
+  );
+  assert.equal(
+    resolveWheelImageUrl("events/good", "https://user:pass@example.test"),
+    null,
+  );
 });
 
 test("loads authenticated eligibility/wheel state and preserves server errors", async () => {
   const originalFetch = globalThis.fetch;
   try {
     globalThis.fetch = async (input, init) => {
-      assert.equal(String(input), "https://api.example.test/api/lucky-wheel/events/7/eligibility");
-      assert.equal(new Headers(init?.headers).get("Authorization"), "Bearer token");
+      assert.equal(
+        String(input),
+        "https://api.example.test/api/lucky-wheel/events/7/eligibility",
+      );
+      assert.equal(
+        new Headers(init?.headers).get("Authorization"),
+        "Bearer token",
+      );
       assert.equal(init?.cache, "no-store");
       return Response.json(eligibility);
     };
 
-    const loaded = await loadEligibility("https://api.example.test/", "token", 7);
+    const loaded = await loadEligibility(
+      "https://api.example.test/",
+      "token",
+      7,
+    );
     assert.equal(loaded.configurationVersion, 4);
     const wheel = await loadWheel("https://api.example.test", "token", 7);
     assert.equal(wheel.poolRevision, 6);
@@ -175,7 +273,11 @@ test("loads authenticated eligibility/wheel state and preserves server errors", 
 
     globalThis.fetch = async () =>
       Response.json(
-        { success: false, code: "AUTH_REQUIRED", error: "Authentication required" },
+        {
+          success: false,
+          code: "AUTH_REQUIRED",
+          error: "Authentication required",
+        },
         { status: 401 },
       );
     await assert.rejects(
@@ -218,7 +320,10 @@ test("spin submission sends only server-authoritative revision fields and reuses
   const originalFetch = globalThis.fetch;
   try {
     globalThis.fetch = async (input, init) => {
-      assert.equal(String(input), "https://api.example.test/api/lucky-wheel/events/7/spins");
+      assert.equal(
+        String(input),
+        "https://api.example.test/api/lucky-wheel/events/7/spins",
+      );
       assert.equal(init?.method, "POST");
       const body = JSON.parse(String(init?.body));
       assert.deepEqual(body, {
@@ -231,27 +336,30 @@ test("spin submission sends only server-authoritative revision fields and reuses
       assert.equal("segmentId" in body, false);
       assert.equal("playDate" in body, false);
       assert.equal("userId" in body, false);
-      return Response.json({
-        created: true,
-        spin: {
-          id: "123e4567-e89b-42d3-a456-426614174002",
-          eventId: 7,
-          userId: 11,
-          playDate: "2026-10-29",
-          attendanceId: "123e4567-e89b-42d3-a456-426614174003",
-          attendanceCheckedInAt: "2026-10-29T08:55:00.000Z",
-          segmentId: "123e4567-e89b-42d3-a456-426614174001",
-          outcomeKind: "prize",
-          awardedName: { th: "เสื้อ", en: "Shirt" },
-          awardedImageKey: null,
-          configurationVersion: 4,
-          poolRevision: 6,
-          createdAt: "2026-10-29T09:01:00.000Z",
-          configurationSnapshot: {},
-          outcomeSnapshot: {},
+      return Response.json(
+        {
+          created: true,
+          spin: {
+            id: "123e4567-e89b-42d3-a456-426614174002",
+            eventId: 7,
+            userId: 11,
+            playDate: "2026-10-29",
+            attendanceId: "123e4567-e89b-42d3-a456-426614174003",
+            attendanceCheckedInAt: "2026-10-29T08:55:00.000Z",
+            segmentId: "123e4567-e89b-42d3-a456-426614174001",
+            outcomeKind: "prize",
+            awardedName: { th: "เสื้อ", en: "Shirt" },
+            awardedImageKey: null,
+            configurationVersion: 4,
+            poolRevision: 6,
+            createdAt: "2026-10-29T09:01:00.000Z",
+            configurationSnapshot: {},
+            outcomeSnapshot: {},
+          },
+          requestId: "req-2",
         },
-        requestId: "req-2",
-      }, { status: 201 });
+        { status: 201 },
+      );
     };
     const result = await submitSpin("https://api.example.test", "token", first);
     assert.equal(result.created, true);
@@ -291,23 +399,66 @@ test("network failure remains unknown and does not clear the pending request", a
 
 test("current schedule can close and reopen the same unspent credits; prior day stays expired", async () => {
   const originalFetch = globalThis.fetch;
-  const closed = { ...eligibility, eligible: false, blockCode: "DAY_WINDOW_CLOSED",
-    unspentCredits: 2, spendableCredits: 0,
-    currentWindow: { ...eligibility.currentWindow, version: 4, endAt: "2026-10-29T10:00:00.000Z" } };
-  const reopened = { ...eligibility, eligible: true, blockCode: null,
-    unspentCredits: 2, spendableCredits: 2,
-    currentWindow: { ...eligibility.currentWindow, version: 5, endAt: "2026-10-29T13:00:00.000Z" } };
-  const priorDay = { ...eligibility, eligible: false, blockCode: "NO_CREDIT",
-    playDate: "2026-10-30", unspentCredits: 0, spendableCredits: 0,
-    hasExpiredPriorDayCredit: true, currentWindow: null };
+  const closed = {
+    ...eligibility,
+    eligible: false,
+    blockCode: "DAY_WINDOW_CLOSED",
+    unspentCredits: 2,
+    spendableCredits: 0,
+    currentWindow: {
+      ...eligibility.currentWindow,
+      version: 4,
+      endAt: "2026-10-29T10:00:00.000Z",
+    },
+  };
+  const reopened = {
+    ...eligibility,
+    eligible: true,
+    blockCode: null,
+    unspentCredits: 2,
+    spendableCredits: 2,
+    currentWindow: {
+      ...eligibility.currentWindow,
+      version: 5,
+      endAt: "2026-10-29T13:00:00.000Z",
+    },
+  };
+  const priorDay = {
+    ...eligibility,
+    eligible: false,
+    blockCode: "NO_CREDIT",
+    playDate: "2026-10-30",
+    unspentCredits: 0,
+    spendableCredits: 0,
+    hasExpiredPriorDayCredit: true,
+    currentWindow: null,
+  };
   const states = [closed, reopened, priorDay];
   try {
     globalThis.fetch = async () => Response.json(states.shift());
     const first = await loadEligibility("https://api.example.test", "token", 7);
-    const second = await loadEligibility("https://api.example.test", "token", 7);
+    const second = await loadEligibility(
+      "https://api.example.test",
+      "token",
+      7,
+    );
     const third = await loadEligibility("https://api.example.test", "token", 7);
-    assert.deepEqual([first.unspentCredits, first.spendableCredits, first.currentWindow?.version], [2, 0, 4]);
-    assert.deepEqual([second.unspentCredits, second.spendableCredits, second.currentWindow?.version], [2, 2, 5]);
+    assert.deepEqual(
+      [
+        first.unspentCredits,
+        first.spendableCredits,
+        first.currentWindow?.version,
+      ],
+      [2, 0, 4],
+    );
+    assert.deepEqual(
+      [
+        second.unspentCredits,
+        second.spendableCredits,
+        second.currentWindow?.version,
+      ],
+      [2, 2, 5],
+    );
     assert.equal(third.hasExpiredPriorDayCredit, true);
     assert.equal(third.spendableCredits, 0);
   } finally {
@@ -323,7 +474,10 @@ test("owner history uses server pagination and contains no reward credentials", 
         String(input),
         "https://api.example.test/api/lucky-wheel/events/7/spins?page=2&pageSize=2",
       );
-      assert.equal(new Headers(init?.headers).get("Authorization"), "Bearer token");
+      assert.equal(
+        new Headers(init?.headers).get("Authorization"),
+        "Bearer token",
+      );
       assert.equal(init?.cache, "no-store");
       return Response.json({
         eventId: 7,
@@ -395,7 +549,11 @@ test("owner history uses server pagination and contains no reward credentials", 
 
     globalThis.fetch = async () =>
       Response.json(
-        { success: false, code: "AUTH_REQUIRED", error: "Authentication required" },
+        {
+          success: false,
+          code: "AUTH_REQUIRED",
+          error: "Authentication required",
+        },
         { status: 401 },
       );
     await assert.rejects(
@@ -434,7 +592,12 @@ test("owner detail is authenticated and bounded to an explicit spin id", async (
       return Response.json({
         spinId: "123e4567-e89b-42d3-a456-426614174002",
         eventId: 7,
-        owner: { id: 11, firstName: "A", lastName: "B", email: "a@example.test" },
+        owner: {
+          id: 11,
+          firstName: "A",
+          lastName: "B",
+          email: "a@example.test",
+        },
         prize: {
           name: { th: "เสื้อ", en: "Shirt" },
           imageKey: null,
@@ -448,7 +611,10 @@ test("owner detail is authenticated and bounded to an explicit spin id", async (
         deliveredDetails: null,
         collectionInstructions: { th: "โต๊ะกิจกรรม", en: "Activity desk" },
         collectionDeadline: "2026-10-30T10:00:00.000Z",
-        rewardProof: { qrPayload: "PRIS-REWARD:opaque", displayCode: "ABCD-EFGH" },
+        rewardProof: {
+          qrPayload: "PRIS-REWARD:opaque",
+          displayCode: "ABCD-EFGH",
+        },
         requestId: "req-3",
       });
     };
@@ -458,7 +624,10 @@ test("owner detail is authenticated and bounded to an explicit spin id", async (
       7,
       "123e4567-e89b-42d3-a456-426614174002",
     );
-    assert.equal(detail.rewardProof?.qrPayload.startsWith("PRIS-REWARD:"), true);
+    assert.equal(
+      detail.rewardProof?.qrPayload.startsWith("PRIS-REWARD:"),
+      true,
+    );
   } finally {
     globalThis.fetch = originalFetch;
   }

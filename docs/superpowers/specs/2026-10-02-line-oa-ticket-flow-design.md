@@ -27,11 +27,11 @@ JWT_EXPIRY is currently 7d. Remember-me selects localStorage; unchecked selects 
 
 No new endpoint is required.
 
-| Method and path | Authentication | Use |
-| --- | --- | --- |
-| POST /auth/login | Existing password/Turnstile flow | Obtain PRIS user and JWT |
-| GET /api/payments/my-tickets | PRIS Bearer JWT | Retrieve owned confirmed registrations and ticket/event details |
-| GET /api/users/profile | PRIS Bearer JWT | Retrieve current account name and optional institution |
+| Method and path              | Authentication                   | Use                                                             |
+| ---------------------------- | -------------------------------- | --------------------------------------------------------------- |
+| POST /auth/login             | Existing password/Turnstile flow | Obtain PRIS user and JWT                                        |
+| GET /api/payments/my-tickets | PRIS Bearer JWT                  | Retrieve owned confirmed registrations and ticket/event details |
+| GET /api/users/profile       | PRIS Bearer JWT                  | Retrieve current account name and optional institution          |
 
 Call the two GETs independently after authentication. Retrieve private data without browser/application caching. The ticket API binds registrations.userId to request.user.id and filters status=confirmed. Select tickets whose eventCode matches NEXT_PUBLIC_EVENT_CODE (currently PRIS-2026 in the example configuration). The existing optional eventId parameter may narrow the server request when an event ID is already available; do not add a lookup request solely for that optimization. Do not accept userId from the URL.
 
@@ -49,16 +49,16 @@ The staff backoffice continues to verify the registration status and session ent
 
 ## Required states
 
-| State | Behavior |
-| --- | --- |
-| Restoring authentication/loading tickets | A clear loading state; no fabricated QR or confirmed badge |
-| Confirmed PRIS ticket | Show the associated QR, registration code, identity, ticket type, and event details |
-| No matching confirmed ticket | Show "ยังไม่พบบัตรที่ยืนยันสำหรับงานนี้" with access to existing registration/profile pages; this is not proof that no pending order exists |
-| Missing/expired/rejected JWT | Return to login and retain the internal ticket destination |
-| Login account pending/rejected | Retain existing account-status handling; never show a confirmed ticket for an unsuccessful login |
-| Network/server error | Explain that loading failed and provide retry; do not label it as an empty registration |
+| State                                     | Behavior                                                                                                                                                       |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Restoring authentication/loading tickets  | A clear loading state; no fabricated QR or confirmed badge                                                                                                     |
+| Confirmed PRIS ticket                     | Show the associated QR, registration code, identity, ticket type, and event details                                                                            |
+| No matching confirmed ticket              | Show "ยังไม่พบบัตรที่ยืนยันสำหรับงานนี้" with access to existing registration/profile pages; this is not proof that no pending order exists                    |
+| Missing/expired/rejected JWT              | Return to login and retain the internal ticket destination                                                                                                     |
+| Login account pending/rejected            | Retain existing account-status handling; never show a confirmed ticket for an unsuccessful login                                                               |
+| Network/server error                      | Explain that loading failed and provide retry; do not label it as an empty registration                                                                        |
 | Profile request fails but ticket succeeds | Keep the server-authorized ticket available; display the current session name if available without presenting a failed profile refresh as missing registration |
-| Multiple confirmed tickets | Explicitly identify the chosen registration and keep QR/details consistent |
+| Multiple confirmed tickets                | Explicitly identify the chosen registration and keep QR/details consistent                                                                                     |
 
 ## Mobile surface boundary
 

@@ -9,7 +9,9 @@ import {
 } from "./wheelGeometry.js";
 
 function ids(count: number) {
-  return Array.from({ length: count }, (_, index) => ({ id: `segment-${index}` }));
+  return Array.from({ length: count }, (_, index) => ({
+    id: `segment-${index}`,
+  }));
 }
 
 for (const count of [1, 2, 6, 17]) {
@@ -19,7 +21,9 @@ for (const count of [1, 2, 6, 17]) {
     assert.equal(sectors.length, count);
     const expectedSize = 360 / count;
     for (const sector of sectors) {
-      assert.ok(Math.abs((sector.endAngle - sector.startAngle) - expectedSize) < 1e-9);
+      assert.ok(
+        Math.abs(sector.endAngle - sector.startAngle - expectedSize) < 1e-9,
+      );
       const rotation = rotationForWinningSegment(segments, sector.id, 5);
       assert.ok(
         Math.abs(

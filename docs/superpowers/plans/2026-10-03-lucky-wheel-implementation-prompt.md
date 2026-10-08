@@ -46,11 +46,13 @@ Workspace: `D:/confer/confer/conference`
 ## 3A. Approved T09 scope amendment — 2026-10-03
 
 ผู้ใช้อนุมัติให้ Task 9 แตะ `conference-api` ได้ **เฉพาะเท่าที่จำเป็น** เพื่อให้ Admin UI ใช้ข้อมูลจริงจาก server ตาม acceptance เดิม โดยเพิ่ม authenticated event-scoped admin read APIs สำหรับ:
+
 - สถานะวงล้อปัจจุบัน: configuration/version/pool revision/pause/collection settings
 - live segment stock และ stock/audit history ที่จำเป็นต่อหน้าจอ
 - ผลการหมุน/claim state ที่กรองตามวันที่/รางวัล/สถานะรับของและแบ่งหน้าได้
 
 ข้อบังคับ amendment:
+
 - ใช้สิทธิ์ admin ตาม event และ re-check server-side identity แบบเดียวกับ Lucky Wheel admin routes เดิม
 - เพิ่ม API/service/route tests และให้ผ่านก่อนทำ UI ต่อ
 - ห้ามเพิ่ม business rule ใหม่, migration ใหม่, public leaderboard, worker/scheduler ใหม่ หรือ refactor นอกขอบเขต
@@ -63,6 +65,7 @@ Workspace: `D:/confer/confer/conference`
 ผู้ใช้อนุมัติให้ Task 10 แตะ `conference-api` **เฉพาะ** authenticated owner-only Lucky Wheel history list แบบ paginated ตาม spec เดิม ภายใต้ attendee Lucky Wheel prefix ที่ระบบใช้อยู่
 
 ข้อบังคับ amendment:
+
 - owner ต้องมาจาก authenticated actor เท่านั้น และกรอง `eventId` ฝั่ง server
 - ห้ามรับ `userId` จาก query/body/client
 - response history ต้องไม่ส่ง reward QR token, display code หรือ credential สำหรับรับของ
@@ -76,20 +79,20 @@ Workspace: `D:/confer/confer/conference`
 
 ใช้รายละเอียด Files, Interfaces และ checkbox ของแต่ละ Task ในแผนหลักเป็นรายการงานจริง ตารางนี้เป็นเพียงตัวช่วยติดตาม ไม่ใช้แทนรายละเอียดในแผน
 
-| Task | ขอบเขตหลัก | หลักฐานสำคัญก่อนผ่าน |
-| --- | --- | --- |
-| 1 | Schema ประวัติเช็คอินรายวัน, migration, readiness query | Constraint ใน PostgreSQL จริง, ประวัติเดิมและจำนวนสิทธิ์ไม่เสียหาย |
-| 2 | กติกาสแกนร่วมทุกเส้นทาง, ยกเลิกรายวัน, backfill | บัตรเดิมสแกนวันใหม่ได้, สแกนพร้อมกันไม่ซ้ำ, UTC แปลงถูก, session อื่นไม่เปลี่ยน |
-| 3 | API รายการ/สถิติ/รายละเอียด/ส่งออก | ตัวกรองวันที่และยอดผู้มีสิทธิ์/คนไม่ซ้ำ/จำนวนเข้าร่วมถูกต้อง |
-| 4 | หน้าสแกนและรายงาน backoffice | วันที่จาก server ชัดเจน, ใช้ข้อมูลจริง, ยกเลิกเฉพาะวันที่เลือก |
-| 5 | Schema วงล้อ, สต็อก, allocation และข้อบังคับข้อมูล | โอกาสเท่ากันต่อช่องที่ใช้ได้, ของหมดไม่นำเข้าสุ่ม, ข้อมูลคงความถูกต้อง |
-| 6 | เผยแพร่/พัก/สต็อก/หมุนแบบ transaction | วันละหนึ่งสิทธิ์, idempotency, concurrency, snapshot และ stock ไม่ติดลบ |
-| 7 | หลักฐานรางวัล, QR/รหัส, รับของและการแก้ไข | Owner/admin authorization, รับครั้งเดียว, retry ไม่สร้างผลซ้ำ, ไม่ตัดสต็อกซ้ำ |
-| 8 | R2 เฉพาะรูปวงล้อ | ตรวจไฟล์จริง, สิทธิ์และ event, upload failure, เก็บรูปที่ประวัติยังใช้อยู่ |
-| 9 | หน้าจัดการวงล้อ/สต็อก/รับของ | บันทึกและเผยแพร่, audit, preview ก่อนยืนยันรับ, เครือข่ายขัดข้อง |
-| 10 | PRIS login return และ data client | กลับหน้าที่ถูกต้องหลัง login, ป้องกัน redirect ไม่ปลอดภัย, reconcile ผลเดิม |
-| 11 | หน้าวงล้อ/ประวัติ/หลักฐานรางวัลแบบ B | TH/EN, mobile, สถานะครบ, geometry ตรงผล server, accessibility และภาพหน้าจอจริง |
-| 12 | Integration, load, acceptance และ runbook | 100 concurrent, invariants, end-to-end, staging/device/provider และหลักฐานตรวจรับ |
+| Task | ขอบเขตหลัก                                              | หลักฐานสำคัญก่อนผ่าน                                                              |
+| ---- | ------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 1    | Schema ประวัติเช็คอินรายวัน, migration, readiness query | Constraint ใน PostgreSQL จริง, ประวัติเดิมและจำนวนสิทธิ์ไม่เสียหาย                |
+| 2    | กติกาสแกนร่วมทุกเส้นทาง, ยกเลิกรายวัน, backfill         | บัตรเดิมสแกนวันใหม่ได้, สแกนพร้อมกันไม่ซ้ำ, UTC แปลงถูก, session อื่นไม่เปลี่ยน   |
+| 3    | API รายการ/สถิติ/รายละเอียด/ส่งออก                      | ตัวกรองวันที่และยอดผู้มีสิทธิ์/คนไม่ซ้ำ/จำนวนเข้าร่วมถูกต้อง                      |
+| 4    | หน้าสแกนและรายงาน backoffice                            | วันที่จาก server ชัดเจน, ใช้ข้อมูลจริง, ยกเลิกเฉพาะวันที่เลือก                    |
+| 5    | Schema วงล้อ, สต็อก, allocation และข้อบังคับข้อมูล      | โอกาสเท่ากันต่อช่องที่ใช้ได้, ของหมดไม่นำเข้าสุ่ม, ข้อมูลคงความถูกต้อง            |
+| 6    | เผยแพร่/พัก/สต็อก/หมุนแบบ transaction                   | วันละหนึ่งสิทธิ์, idempotency, concurrency, snapshot และ stock ไม่ติดลบ           |
+| 7    | หลักฐานรางวัล, QR/รหัส, รับของและการแก้ไข               | Owner/admin authorization, รับครั้งเดียว, retry ไม่สร้างผลซ้ำ, ไม่ตัดสต็อกซ้ำ     |
+| 8    | R2 เฉพาะรูปวงล้อ                                        | ตรวจไฟล์จริง, สิทธิ์และ event, upload failure, เก็บรูปที่ประวัติยังใช้อยู่        |
+| 9    | หน้าจัดการวงล้อ/สต็อก/รับของ                            | บันทึกและเผยแพร่, audit, preview ก่อนยืนยันรับ, เครือข่ายขัดข้อง                  |
+| 10   | PRIS login return และ data client                       | กลับหน้าที่ถูกต้องหลัง login, ป้องกัน redirect ไม่ปลอดภัย, reconcile ผลเดิม       |
+| 11   | หน้าวงล้อ/ประวัติ/หลักฐานรางวัลแบบ B                    | TH/EN, mobile, สถานะครบ, geometry ตรงผล server, accessibility และภาพหน้าจอจริง    |
+| 12   | Integration, load, acceptance และ runbook               | 100 concurrent, invariants, end-to-end, staging/device/provider และหลักฐานตรวจรับ |
 
 ## 5. วงจรบังคับสำหรับทุก Task
 
@@ -121,9 +124,9 @@ Workspace: `D:/confer/confer/conference`
 
 ก่อนเดินหน้าต้องบันทึกครบ:
 
-| Task ที่รอ | Test/คำสั่งที่ล้ม | Error และหลักฐานสาเหตุ | รอ Task/checkbox ใด | เงื่อนไขกลับมาทดสอบ | ผลทดสอบซ้ำ |
-| --- | --- | --- | --- | --- | --- |
-| ระบุเลขจริง | ระบุคำสั่งจริง | อธิบายความสัมพันธ์ที่ตรวจพบ | ระบุเลขและงานที่จำเป็น | ทันทีหลัง dependency ผ่าน | PENDING จนรันจริง |
+| Task ที่รอ  | Test/คำสั่งที่ล้ม | Error และหลักฐานสาเหตุ      | รอ Task/checkbox ใด    | เงื่อนไขกลับมาทดสอบ       | ผลทดสอบซ้ำ        |
+| ----------- | ----------------- | --------------------------- | ---------------------- | ------------------------- | ----------------- |
+| ระบุเลขจริง | ระบุคำสั่งจริง    | อธิบายความสัมพันธ์ที่ตรวจพบ | ระบุเลขและงานที่จำเป็น | ทันทีหลัง dependency ผ่าน | PENDING จนรันจริง |
 
 กติกาหลังบันทึก:
 

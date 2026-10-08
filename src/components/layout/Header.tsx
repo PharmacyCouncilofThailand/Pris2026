@@ -41,7 +41,7 @@ export default function Header() {
   type LinkHref = React.ComponentProps<typeof Link>["href"];
   const visibleNav = React.useMemo(
     () => navigationData.filter((item) => !item.authRequired || isLoggedIn),
-    [isLoggedIn]
+    [isLoggedIn],
   );
 
   React.useEffect(() => {
@@ -50,7 +50,8 @@ export default function Header() {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const heroStillPlaying = document.body.classList.contains("hero-playing");
+        const heroStillPlaying =
+          document.body.classList.contains("hero-playing");
         setIsScrolled(!heroStillPlaying && window.scrollY > 50);
         ticking = false;
       });
@@ -79,7 +80,7 @@ export default function Header() {
     "/signup",
     "/profile",
     "/registration",
-    "/sessions/confirm"
+    "/sessions/confirm",
   ];
   const isLightPage =
     lightPages.includes(pathname) ||
@@ -90,20 +91,36 @@ export default function Header() {
     pathname.startsWith("/lucky-wheel");
   const useDarkText = isLightPage && !isScrolled;
 
-  if (pathname.includes("/login") || pathname.includes("/signup") || pathname.includes("/forgot-password") || pathname.includes("/reset-password")) {
+  if (
+    pathname.includes("/login") ||
+    pathname.includes("/signup") ||
+    pathname.includes("/forgot-password") ||
+    pathname.includes("/reset-password")
+  ) {
     return null;
   }
 
   const switchLocale = () => {
     const newLocale = locale === "en" ? "th" : "en";
     startTransition(() => {
-      if (pathname === "/presentation-submission" && typeof window !== "undefined") {
-        router.replace(presentationReturnPath(window.location.search) || pathname, { locale: newLocale });
+      if (
+        pathname === "/presentation-submission" &&
+        typeof window !== "undefined"
+      ) {
+        router.replace(
+          presentationReturnPath(window.location.search) || pathname,
+          { locale: newLocale },
+        );
         return;
       }
       if (pathname === "/sessions/confirm" && typeof window !== "undefined") {
         router.replace(
-          { pathname, query: Object.fromEntries(new URLSearchParams(window.location.search).entries()) },
+          {
+            pathname,
+            query: Object.fromEntries(
+              new URLSearchParams(window.location.search).entries(),
+            ),
+          },
           { locale: newLocale },
         );
         return;
@@ -118,7 +135,7 @@ export default function Header() {
         "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent py-3",
         isScrolled
           ? "bg-black/95 md:bg-black/90 md:backdrop-blur-md border-white/10 shadow-lg"
-          : "bg-transparent"
+          : "bg-transparent",
       )}
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
@@ -133,7 +150,9 @@ export default function Header() {
                   if (document.activeElement instanceof HTMLElement) {
                     document.activeElement.blur();
                   }
-                  document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+                  document.dispatchEvent(
+                    new KeyboardEvent("keydown", { key: "Escape" }),
+                  );
                 }
               }}
             >
@@ -142,7 +161,10 @@ export default function Header() {
                 alt="Pris 2026 Logo"
                 width={200}
                 height={80}
-                className={cn("object-contain h-[40px] w-auto transition-all xl:h-[48px]", useDarkText && "brightness-0")}
+                className={cn(
+                  "object-contain h-[40px] w-auto transition-all xl:h-[48px]",
+                  useDarkText && "brightness-0",
+                )}
                 priority
               />
             </Link>
@@ -154,63 +176,90 @@ export default function Header() {
                 {visibleNav.map((item) => (
                   <NavigationMenuItem key={item.labelKey}>
                     {item.disabled ? (
-                      <span className={cn(
-                        navigationMenuTriggerStyle(),
-                        "bg-transparent transition-colors font-black opacity-50 cursor-not-allowed",
-                        useDarkText ? "text-slate-900" : "text-white"
-                      )}>
+                      <span
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "bg-transparent transition-colors font-black opacity-50 cursor-not-allowed",
+                          useDarkText ? "text-slate-900" : "text-white",
+                        )}
+                      >
                         {t(item.labelKey as TranslationKey)}
                       </span>
-                    ) : item.href && (!item.children || item.children.length === 0) ? (
-                      <NavigationMenuLink render={
-                        <Link
-                          href={item.href as LinkHref}
-                          prefetch={true}
-                          className={cn(
-                            navigationMenuTriggerStyle(),
-                            "bg-transparent transition-colors font-black",
-                            useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-cyan-400"
-                          )}
-                          onClick={() => {
-                            if (typeof document !== "undefined") {
-                              if (document.activeElement instanceof HTMLElement) {
-                                document.activeElement.blur();
+                    ) : item.href &&
+                      (!item.children || item.children.length === 0) ? (
+                      <NavigationMenuLink
+                        render={
+                          <Link
+                            href={item.href as LinkHref}
+                            prefetch={true}
+                            className={cn(
+                              navigationMenuTriggerStyle(),
+                              "bg-transparent transition-colors font-black",
+                              useDarkText
+                                ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
+                                : "text-white hover:bg-white/10 hover:text-cyan-400",
+                            )}
+                            onClick={() => {
+                              if (typeof document !== "undefined") {
+                                if (
+                                  document.activeElement instanceof HTMLElement
+                                ) {
+                                  document.activeElement.blur();
+                                }
+                                document.dispatchEvent(
+                                  new KeyboardEvent("keydown", {
+                                    key: "Escape",
+                                  }),
+                                );
                               }
-                              document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-                            }
-                          }}
-                        />
-                      }>
+                            }}
+                          />
+                        }
+                      >
                         {t(item.labelKey as TranslationKey)}
                       </NavigationMenuLink>
                     ) : (
                       <>
-                        <NavigationMenuTrigger className={cn(
-                          "bg-transparent transition-colors font-black",
-                          useDarkText ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600" : "text-white hover:bg-white/10 hover:text-cyan-400"
-                        )}>
+                        <NavigationMenuTrigger
+                          className={cn(
+                            "bg-transparent transition-colors font-black",
+                            useDarkText
+                              ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
+                              : "text-white hover:bg-white/10 hover:text-cyan-400",
+                          )}
+                        >
                           {t(item.labelKey as TranslationKey)}
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>
                           <ul className="grid w-[260px] gap-2 p-4 bg-white rounded-lg shadow-xl border border-slate-100">
                             {item.children?.map((child) => (
                               <li key={child.labelKey}>
-                                <NavigationMenuLink render={
-                                  <Link
-                                    href={(child.href || "#") as LinkHref}
-                                    prefetch={true}
-                                    className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
-                                    onClick={() => {
-                                      if (typeof document !== "undefined") {
-                                        if (document.activeElement instanceof HTMLElement) {
-                                          document.activeElement.blur();
+                                <NavigationMenuLink
+                                  render={
+                                    <Link
+                                      href={(child.href || "#") as LinkHref}
+                                      prefetch={true}
+                                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
+                                      onClick={() => {
+                                        if (typeof document !== "undefined") {
+                                          if (
+                                            document.activeElement instanceof
+                                            HTMLElement
+                                          ) {
+                                            document.activeElement.blur();
+                                          }
+                                          document.dispatchEvent(
+                                            new KeyboardEvent("keydown", {
+                                              key: "Escape",
+                                              bubbles: true,
+                                            }),
+                                          );
+                                          document.body.click();
                                         }
-                                        document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-                                        document.body.click();
-                                      }
-                                    }}
-                                  />
-                                }>
+                                      }}
+                                    />
+                                  }
+                                >
                                   <div className="text-sm font-black leading-none whitespace-nowrap">
                                     {t(child.labelKey as TranslationKey)}
                                   </div>
@@ -236,20 +285,26 @@ export default function Header() {
                 useDarkText
                   ? "text-slate-900 hover:bg-slate-100"
                   : "text-white hover:bg-white/10",
-                isPending && "opacity-50 cursor-not-allowed"
+                isPending && "opacity-50 cursor-not-allowed",
               )}
             >
-              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Globe className="w-4 h-4" />
+              )}
               <span className="uppercase text-xs font-black tracking-wider">
                 {locale === "en" ? "TH" : "EN"}
               </span>
             </button>
 
             {isLoggedIn ? (
-              <div className={cn(
-                "flex items-center gap-4 border-l pl-4",
-                useDarkText ? "border-slate-200" : "border-white/20"
-              )}>
+              <div
+                className={cn(
+                  "flex items-center gap-4 border-l pl-4",
+                  useDarkText ? "border-slate-200" : "border-white/20",
+                )}
+              >
                 <Link
                   href="/profile"
                   prefetch={true}
@@ -258,7 +313,7 @@ export default function Header() {
                     authTracking,
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
-                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
+                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
                   )}
                 >
                   <User className="w-4 h-4" />
@@ -266,17 +321,19 @@ export default function Header() {
                 </Link>
               </div>
             ) : (
-              <div className={cn(
-                "flex items-center gap-4 border-l pl-4",
-                useDarkText ? "border-slate-200" : "border-white/20"
-              )}>
+              <div
+                className={cn(
+                  "flex items-center gap-4 border-l pl-4",
+                  useDarkText ? "border-slate-200" : "border-white/20",
+                )}
+              >
                 <Link
                   href="/login"
                   prefetch={true}
                   className={cn(
                     "shrink-0 whitespace-nowrap text-[11px] font-black uppercase transition-colors hover:text-blue-600",
                     authTracking,
-                    useDarkText ? "text-slate-900" : "text-white"
+                    useDarkText ? "text-slate-900" : "text-white",
                   )}
                 >
                   {t("login")}
@@ -289,7 +346,7 @@ export default function Header() {
                     authTracking,
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
-                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25"
+                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
                   )}
                 >
                   {t("signUp")}
@@ -299,132 +356,144 @@ export default function Header() {
           </div>
 
           <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
-          <button
-            onClick={switchLocale}
-            disabled={isPending}
-            className={cn(
-              "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
-              useDarkText
-                ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
-                : "text-white hover:bg-white/20 border border-white/20",
-              isPending && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Globe className="w-4 h-4" />}
-            <span className="uppercase text-xs font-black tracking-wider">
-              {locale === "en" ? "TH" : "EN"}
-            </span>
-          </button>
-
-          {!isTicketPage && <Sheet>
-            <SheetTrigger
+            <button
+              onClick={switchLocale}
+              disabled={isPending}
               className={cn(
-                "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
+                "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
                 useDarkText
-                  ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
-                  : "text-white border border-white/20 hover:bg-white/20"
+                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
+                  : "text-white hover:bg-white/20 border border-white/20",
+                isPending && "opacity-50 cursor-not-allowed",
               )}
             >
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle mobile menu</span>
-            </SheetTrigger>
-            <SheetContent side="right" className="bg-black/95 text-white border-l-gray-800 p-0 w-[300px]">
-              <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>
-              <div className="p-6 h-full flex flex-col">
-                <div className="mb-8 mt-4">
-                  <Image
-                    src="/assets/Img/logo/Logo-Final .png"
-                    alt="Pris 2026 Logo"
-                    width={200}
-                    height={80}
-                    className="h-[55px] w-auto"
-                  />
-                </div>
+              {isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Globe className="w-4 h-4" />
+              )}
+              <span className="uppercase text-xs font-black tracking-wider">
+                {locale === "en" ? "TH" : "EN"}
+              </span>
+            </button>
 
-                <nav className="flex-1 overflow-y-auto">
-                  <ul className="flex flex-col gap-4">
-                    {visibleNav.map((item) => (
-                      <li key={item.labelKey} className="border-b border-white/10 pb-4">
-                        {item.disabled ? (
-                          <span className="text-lg font-medium text-gray-500 block cursor-not-allowed">
-                            {t(item.labelKey as TranslationKey)}
-                          </span>
-                        ) : item.href ? (
-                          <Link
-                            href={item.href as LinkHref}
-                            prefetch={true}
-                            className="text-lg font-medium hover:text-cyan-400 block"
+            {!isTicketPage && (
+              <Sheet>
+                <SheetTrigger
+                  className={cn(
+                    "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
+                    useDarkText
+                      ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
+                      : "text-white border border-white/20 hover:bg-white/20",
+                  )}
+                >
+                  <Menu className="h-5 w-5" />
+                  <span className="sr-only">Toggle mobile menu</span>
+                </SheetTrigger>
+                <SheetContent
+                  side="right"
+                  className="bg-black/95 text-white border-l-gray-800 p-0 w-[300px]"
+                >
+                  <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>
+                  <div className="p-6 h-full flex flex-col">
+                    <div className="mb-8 mt-4">
+                      <Image
+                        src="/assets/Img/logo/Logo-Final .png"
+                        alt="Pris 2026 Logo"
+                        width={200}
+                        height={80}
+                        className="h-[55px] w-auto"
+                      />
+                    </div>
+
+                    <nav className="flex-1 overflow-y-auto">
+                      <ul className="flex flex-col gap-4">
+                        {visibleNav.map((item) => (
+                          <li
+                            key={item.labelKey}
+                            className="border-b border-white/10 pb-4"
                           >
-                            {t(item.labelKey as TranslationKey)}
-                          </Link>
-                        ) : (
-                          <details className="group">
-                            <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-cyan-400">
-                              {t(item.labelKey as TranslationKey)}
-                              <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
-                            </summary>
-                            <ul className="mt-4 flex flex-col gap-3 pl-4 border-l-2 border-white/20">
-                              {item.children?.map((child) => (
-                                <li key={child.labelKey}>
-                                  <Link
-                                    href={(child.href || "#") as LinkHref}
-                                    prefetch={true}
-                                    className="text-gray-300 hover:text-cyan-400 block py-1"
-                                  >
-                                    {t(child.labelKey as TranslationKey)}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </details>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+                            {item.disabled ? (
+                              <span className="text-lg font-medium text-gray-500 block cursor-not-allowed">
+                                {t(item.labelKey as TranslationKey)}
+                              </span>
+                            ) : item.href ? (
+                              <Link
+                                href={item.href as LinkHref}
+                                prefetch={true}
+                                className="text-lg font-medium hover:text-cyan-400 block"
+                              >
+                                {t(item.labelKey as TranslationKey)}
+                              </Link>
+                            ) : (
+                              <details className="group">
+                                <summary className="flex items-center justify-between text-lg font-medium cursor-pointer list-none hover:text-cyan-400">
+                                  {t(item.labelKey as TranslationKey)}
+                                  <ChevronDown className="h-5 w-5 transition-transform group-open:rotate-180" />
+                                </summary>
+                                <ul className="mt-4 flex flex-col gap-3 pl-4 border-l-2 border-white/20">
+                                  {item.children?.map((child) => (
+                                    <li key={child.labelKey}>
+                                      <Link
+                                        href={(child.href || "#") as LinkHref}
+                                        prefetch={true}
+                                        className="text-gray-300 hover:text-cyan-400 block py-1"
+                                      >
+                                        {t(child.labelKey as TranslationKey)}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </details>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
 
-                {isLoggedIn ? (
-                  <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
-                    <Link
-                      href="/profile"
-                      prefetch={true}
-                      className={cn(
-                        "flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white py-3.5 text-center text-[11px] font-bold uppercase text-black transition-colors hover:bg-blue-600 hover:text-white",
-                        authTracking
-                      )}
-                    >
-                      <User className="w-4 h-4" />
-                      {t("myProfile")}
-                    </Link>
+                    {isLoggedIn ? (
+                      <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
+                        <Link
+                          href="/profile"
+                          prefetch={true}
+                          className={cn(
+                            "flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white py-3.5 text-center text-[11px] font-bold uppercase text-black transition-colors hover:bg-blue-600 hover:text-white",
+                            authTracking,
+                          )}
+                        >
+                          <User className="w-4 h-4" />
+                          {t("myProfile")}
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
+                        <Link
+                          href="/login"
+                          prefetch={true}
+                          className={cn(
+                            "w-full whitespace-nowrap rounded-full border border-white/20 py-3.5 text-center text-[11px] font-bold uppercase text-white transition-colors hover:bg-white/10",
+                            authTracking,
+                          )}
+                        >
+                          {t("login")}
+                        </Link>
+                        <Link
+                          href="/signup"
+                          prefetch={true}
+                          className={cn(
+                            "w-full whitespace-nowrap rounded-full bg-white py-3.5 text-center text-[11px] font-bold uppercase text-black transition-colors hover:bg-blue-600 hover:text-white",
+                            authTracking,
+                          )}
+                        >
+                          {t("signUp")}
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="mt-8 pt-6 border-t border-white/10 flex flex-col gap-3">
-                    <Link
-                      href="/login"
-                      prefetch={true}
-                      className={cn(
-                        "w-full whitespace-nowrap rounded-full border border-white/20 py-3.5 text-center text-[11px] font-bold uppercase text-white transition-colors hover:bg-white/10",
-                        authTracking
-                      )}
-                    >
-                      {t("login")}
-                    </Link>
-                    <Link
-                      href="/signup"
-                      prefetch={true}
-                      className={cn(
-                        "w-full whitespace-nowrap rounded-full bg-white py-3.5 text-center text-[11px] font-bold uppercase text-black transition-colors hover:bg-blue-600 hover:text-white",
-                        authTracking
-                      )}
-                    >
-                      {t("signUp")}
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>}
-        </div>
+                </SheetContent>
+              </Sheet>
+            )}
+          </div>
         </div>
       </div>
     </header>

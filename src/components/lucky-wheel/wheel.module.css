@@ -103,7 +103,9 @@
   background: #c2410c;
   color: #fff;
   font-weight: 800;
-  transition: background-color 160ms ease, transform 160ms ease;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
 }
 
 .action:hover:not(:disabled) {

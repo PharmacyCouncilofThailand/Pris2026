@@ -13,7 +13,9 @@ function fakeResponse(status: number, body: unknown): Response {
 
 test("lookup uses scoped Authorization, no-store GET, and never puts token in URL/body", async (t) => {
   const originalFetch = globalThis.fetch;
-  t.after(() => { globalThis.fetch = originalFetch; });
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
   let capturedUrl = "";
   let capturedInit: RequestInit | undefined;
   globalThis.fetch = async (input, init) => {
@@ -23,18 +25,29 @@ test("lookup uses scoped Authorization, no-store GET, and never puts token in UR
   };
 
   await requestInvitation("https://api.example.test/", token, null);
-  assert.equal(capturedUrl, "https://api.example.test/api/session-invitations/current");
+  assert.equal(
+    capturedUrl,
+    "https://api.example.test/api/session-invitations/current",
+  );
   assert.equal(capturedUrl.includes(token), false);
   assert.equal(capturedInit?.method, "GET");
   assert.equal(capturedInit?.cache, "no-store");
   assert.equal(capturedInit?.body, undefined);
-  assert.equal((capturedInit?.headers as Record<string, string>).Authorization, `Bearer ${token}`);
-  assert.equal((capturedInit?.headers as Record<string, string>)["Content-Type"], undefined);
+  assert.equal(
+    (capturedInit?.headers as Record<string, string>).Authorization,
+    `Bearer ${token}`,
+  );
+  assert.equal(
+    (capturedInit?.headers as Record<string, string>)["Content-Type"],
+    undefined,
+  );
 });
 
 test("response PUT sends only the decision and preserves safe error DTOs", async (t) => {
   const originalFetch = globalThis.fetch;
-  t.after(() => { globalThis.fetch = originalFetch; });
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
   let capturedUrl = "";
   let capturedInit: RequestInit | undefined;
   const safeError = {
@@ -61,13 +74,19 @@ test("response PUT sends only the decision and preserves safe error DTOs", async
     return fakeResponse(410, safeError);
   };
 
-  const result = await requestInvitation("https://api.example.test", token, "declined");
+  const result = await requestInvitation(
+    "https://api.example.test",
+    token,
+    "declined",
+  );
   assert.equal(result.httpStatus, 410);
   assert.deepEqual(result.body, safeError);
   assert.equal(capturedUrl.includes(token), false);
   assert.equal(capturedInit?.method, "PUT");
   assert.equal(capturedInit?.body, JSON.stringify({ decision: "declined" }));
-  assert.deepEqual(Object.keys(JSON.parse(String(capturedInit?.body))).sort(), ["decision"]);
+  assert.deepEqual(Object.keys(JSON.parse(String(capturedInit?.body))).sort(), [
+    "decision",
+  ]);
 });
 
 test("AbortSignal and network failures propagate without logging or rewriting the token", async (t) => {
@@ -78,7 +97,9 @@ test("AbortSignal and network failures propagate without logging or rewriting th
     console.error = originalConsoleError;
   });
   const logged: unknown[][] = [];
-  console.error = (...args: unknown[]) => { logged.push(args); };
+  console.error = (...args: unknown[]) => {
+    logged.push(args);
+  };
   const controller = new AbortController();
   globalThis.fetch = async (_input, init) => {
     assert.equal(init?.signal, controller.signal);
@@ -86,7 +107,12 @@ test("AbortSignal and network failures propagate without logging or rewriting th
   };
 
   await assert.rejects(
-    requestInvitation("https://api.example.test", token, null, controller.signal),
+    requestInvitation(
+      "https://api.example.test",
+      token,
+      null,
+      controller.signal,
+    ),
     /synthetic network failure/,
   );
   assert.deepEqual(logged, []);

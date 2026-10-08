@@ -21,11 +21,11 @@ Canonical plan: `../../plans/2026-10-05-lucky-wheel-daily-attendance-readiness.m
 
 ## Baseline
 
-| Repository | Starting HEAD | Initial working tree |
-| --- | --- | --- |
-| conference-api | b50792e8e34ec6dbc1d82380cb292027d08e4c23 | Clean |
-| conference-backoffice | b21347c529252320401747588f7e033bb076a6cb | Clean |
-| Pris2026 | 6c465d0e00178b6694373d5cd2448966248dbf73 | Canonical plan untracked |
+| Repository            | Starting HEAD                            | Initial working tree     |
+| --------------------- | ---------------------------------------- | ------------------------ |
+| conference-api        | b50792e8e34ec6dbc1d82380cb292027d08e4c23 | Clean                    |
+| conference-backoffice | b21347c529252320401747588f7e033bb076a6cb | Clean                    |
+| Pris2026              | 6c465d0e00178b6694373d5cd2448966248dbf73 | Canonical plan untracked |
 
 No applicable AGENTS.md found outside unrelated vendor files. The planned container name and port were unused before creation. Existing containers were not deleted, stopped or modified.
 
@@ -200,9 +200,11 @@ User approved proceeding with the most suitable approach. Canonical T04 now spec
 - Proposed narrow amendment: assert setup waits, then rejects the stale preview with zero policy/import/audit writes and preserves the committed legacy scan; Admin reloads/read-reviews a new revision and submits a new command/key; import succeeds exactly once. Keep original revision/fence/backend behavior. Await user approval before changing canonical T11 expectation and resuming its remaining coverage/full suites.
 
 ## T11 amendment approved
+
 - User approved wait → STALE/zero writes → fresh reviewed revision/new key → exactly-once import and replay. Production revision/fence behavior unchanged; T11 resumed.
 
 ## T11 completed
+
 - Actual legacy-scan barrier: setup waits, STALE rolls back all setup writes, source retained, refreshed command imports once and replays.
 - Actual setup transaction holds exclusive fence: queued scanner re-reads committed daily policy. Two active admins compete; one succeeds, the other receives STALE.
 - Real setup → scan → QR-A/B → two spins, temporary window closure/reopening, cancellation before/after spin and stock exhaustion/restock verified. Duplicate active daily rows/claims/spends and negative stock zero; original two grants preserved.
@@ -210,6 +212,7 @@ User approved proceeding with the most suitable approach. Canonical T04 now spec
 - Sequential wheel 29/29 then attendance 16/16 PASS; API build PASS. T12 started.
 
 ## T12 operational Local repair and browser proof
+
 - Re-read .env target: localhost:5432/confer_db, PostgreSQL16.14, confer-postgres-dev. One running Local API is tsx watch src/index.ts from the current conference-api checkout; real admin state exposes current readiness contract. No Railway activation/deployment.
 - Selected event1 PRIS-2026 / original active Main1, bound wheel v3/pool4. Confirmed2 and Main grants2, missing/null links0, one valid legacy import dated2026-10-05.
 - Full custom backup outside Git: C:/Users/JaoNo/AppData/Local/Codex/attendance-readiness-20261005/confer-db-before-attendance-setup-20261006.dump (391524 bytes), SHA256 56E6444CAA19B0669EB905EDEEB94EEF224B73564D9F25881DE93DDB63138CCC. Restored with pg_restore --exit-on-error into fresh local_restore_readiness_test in the task container: registrations2, grants5, QR5 preserved.
@@ -223,6 +226,7 @@ User approved proceeding with the most suitable approach. Canonical T04 now spec
 - Browser synthetic setup-error retry after actual setup now correctly returns CHECKIN_REQUIRED with ticket link. Actual Backoffice scanner Main91 checks in new synthetic account using READINESS-BROWSER; PRIS original QR claim succeeds once and owner History reads server-recorded test reward. Test allocation performed only through guarded synthetic service fixture, no operational prize allocated.
 
 ## Final verification and delivery
+
 - Final sequential guarded wheel29/29 then attendance18/18 PASS, including actual imported-source cancellation held behind the shared fence: setup waits, STALE commits no audit, reviewed retry imports0 and preserves cancelled history. API build PASS.
 - Backoffice scoped ESLint zero errors (2 existing scanner hook warnings), tsc and production build PASS. PRIS63/63, scoped ESLint, tsc and production build PASS (existing middleware/test-renderer deprecation warnings). All diffs reviewed; diff --check passes.
 - Actual browser setup, uncertain request retry, server state reload, daily scanner desktop/mobile, participant setup-specific TH/EN recovery, QR claim, owner history/reward proof, and synthetic Open/Close QR controls verified. Claimed1/spent1 stays unchanged while QR toggles. Static pickup copy remains; no new hidden deadline.

@@ -26,9 +26,13 @@ import {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
 
-function renderSegments(eligibility: LuckyWheelEligibility): LuckyWheelSegment[] {
+function renderSegments(
+  eligibility: LuckyWheelEligibility,
+): LuckyWheelSegment[] {
   if (eligibility.availability.length > 0) {
-    return [...eligibility.availability].sort((a, b) => a.position - b.position);
+    return [...eligibility.availability].sort(
+      (a, b) => a.position - b.position,
+    );
   }
   return (eligibility.configuration?.segments ?? [])
     .map((segment) => ({
@@ -48,10 +52,14 @@ export default function LuckyWheelPage() {
   const router = useRouter();
   const { token, isAuthenticated, logout } = useAuth();
   const [eventId, setEventId] = useState<number | null>(null);
-  const [eligibility, setEligibility] = useState<LuckyWheelEligibility | null>(null);
+  const [eligibility, setEligibility] = useState<LuckyWheelEligibility | null>(
+    null,
+  );
   const [phase, setPhase] = useState<WheelActionPhase>("idle");
   const [result, setResult] = useState<LuckyWheelSpin | null>(null);
-  const [frozenSegments, setFrozenSegments] = useState<LuckyWheelSegment[] | null>(null);
+  const [frozenSegments, setFrozenSegments] = useState<
+    LuckyWheelSegment[] | null
+  >(null);
   const [animateResult, setAnimateResult] = useState(false);
   const [loadError, setLoadError] = useState(!EVENT_CODE);
   const [missingRegistration, setMissingRegistration] = useState(false);
@@ -144,8 +152,17 @@ export default function LuckyWheelPage() {
   }, [attempt, expireAuth, isAuthenticated, refreshEligibility, token]);
 
   useEffect(() => {
-    if (!eventId || !isAuthenticated || animateResult || phase === "submitting" || phase === "reconciling") return;
-    const refreshOnReturn = () => { void refreshEligibility(eventId).catch(() => setLoadError(true)); };
+    if (
+      !eventId ||
+      !isAuthenticated ||
+      animateResult ||
+      phase === "submitting" ||
+      phase === "reconciling"
+    )
+      return;
+    const refreshOnReturn = () => {
+      void refreshEligibility(eventId).catch(() => setLoadError(true));
+    };
     const refreshOnVisible = () => {
       if (document.visibilityState === "visible") refreshOnReturn();
     };
@@ -222,7 +239,12 @@ export default function LuckyWheelPage() {
       await handleSpinError(error, eligibility.userId, eventId);
       return;
     }
-    if (!latest.eligible || latest.configurationVersion === null || latest.poolRevision === null || !latest.currentWindow) {
+    if (
+      !latest.eligible ||
+      latest.configurationVersion === null ||
+      latest.poolRevision === null ||
+      !latest.currentWindow
+    ) {
       setPhase("idle");
       return;
     }
@@ -306,12 +328,17 @@ export default function LuckyWheelPage() {
             aria-live="polite"
             className="flex min-h-72 flex-col items-center justify-center gap-3 rounded-[22px] border-2 border-zinc-950 bg-white p-8 text-center"
           >
-            <Loader2 className="h-7 w-7 animate-spin text-orange-700" aria-hidden="true" />
+            <Loader2
+              className="h-7 w-7 animate-spin text-orange-700"
+              aria-hidden="true"
+            />
             <p className="font-bold text-zinc-700">{t("loading")}</p>
           </div>
         ) : loadError ? (
           <div className="rounded-[22px] border-2 border-zinc-950 bg-white p-6 text-center">
-            <p role="alert" className="font-extrabold">{t("loadError")}</p>
+            <p role="alert" className="font-extrabold">
+              {t("loadError")}
+            </p>
             <button
               type="button"
               className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border-2 border-zinc-950 px-4 font-extrabold"
@@ -349,7 +376,10 @@ export default function LuckyWheelPage() {
             onAnimationComplete={() => {
               setAnimateResult(false);
               setFrozenSegments(null);
-              if (eventId) void refreshEligibility(eventId, true).catch(() => setLoadError(true));
+              if (eventId)
+                void refreshEligibility(eventId, true).catch(() =>
+                  setLoadError(true),
+                );
             }}
           />
         ) : null}

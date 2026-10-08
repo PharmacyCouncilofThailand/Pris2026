@@ -60,16 +60,21 @@ export default function Countdown({ className }: CountdownProps) {
       lang={locale}
       className={cn(
         "font-heading mx-auto grid w-full max-w-[520px] grid-cols-2 items-center justify-items-center gap-x-4 gap-y-5 sm:inline-flex sm:max-w-none sm:justify-center sm:gap-x-0 sm:gap-y-0",
-        className
+        className,
       )}
     >
       {units.map((unit, i) => (
-        <div key={unit.label} className="flex w-full items-center justify-center sm:w-auto">
+        <div
+          key={unit.label}
+          className="flex w-full items-center justify-center sm:w-auto"
+        >
           <div className="flex min-w-[7.25rem] flex-col items-center px-2 sm:min-w-0 sm:px-8 md:px-10 lg:px-14 xl:px-20 2xl:px-24 max-md:landscape:px-5">
             <span className="text-4xl font-black leading-none tracking-[0.04em] text-white tabular-nums sm:text-5xl md:text-6xl max-md:landscape:text-3xl">
               {String(unit.value).padStart(2, "0")}
             </span>
-            <span className={`mt-1.5 text-[1.08rem] font-bold uppercase ${unitTracking} text-white sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:mt-1 max-md:landscape:text-[0.88rem]`}>
+            <span
+              className={`mt-1.5 text-[1.08rem] font-bold uppercase ${unitTracking} text-white sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:mt-1 max-md:landscape:text-[0.88rem]`}
+            >
               {unit.label}
             </span>
           </div>

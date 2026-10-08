@@ -116,7 +116,9 @@ export default function LuckyWheelRewardPage() {
           </div>
         ) : error || !detail ? (
           <div className="rounded-[22px] border-2 border-zinc-950 bg-white p-6 text-center">
-            <p role="alert" className="font-extrabold">{t("proofLoadError")}</p>
+            <p role="alert" className="font-extrabold">
+              {t("proofLoadError")}
+            </p>
             <button
               type="button"
               className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg border-2 border-zinc-950 px-4 font-extrabold"

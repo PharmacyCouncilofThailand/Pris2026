@@ -8,10 +8,10 @@ interface InViewWrapperProps {
   minHeight?: string;
 }
 
-export default function InViewWrapper({ 
-  children, 
-  rootMargin = "400px", 
-  minHeight = "600px" 
+export default function InViewWrapper({
+  children,
+  rootMargin = "400px",
+  minHeight = "600px",
 }: InViewWrapperProps) {
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -28,19 +28,22 @@ export default function InViewWrapper({
           observer.unobserve(el); // Only need to load it once
         }
       },
-      { root: null, rootMargin }
+      { root: null, rootMargin },
     );
-    
+
     observer.observe(el);
 
     return () => observer.disconnect();
   }, [rootMargin]);
 
-  // Before it is in view, render a placeholder div with a minimum height 
+  // Before it is in view, render a placeholder div with a minimum height
   // to preserve layout space and prevent weird scroll jumps.
   // Once in view, we render the actual heavy component.
   return (
-    <div ref={ref} style={{ minHeight: inView ? "auto" : minHeight, width: "100%" }}>
+    <div
+      ref={ref}
+      style={{ minHeight: inView ? "auto" : minHeight, width: "100%" }}
+    >
       {inView ? children : null}
     </div>
   );

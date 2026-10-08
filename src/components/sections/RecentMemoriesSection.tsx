@@ -12,7 +12,12 @@ if (typeof window !== "undefined") {
 }
 
 import { Button } from "@/components/ui/button";
-import { column1, column2, column3, allImages } from "@/data/recentMemoriesData";
+import {
+  column1,
+  column2,
+  column3,
+  allImages,
+} from "@/data/recentMemoriesData";
 
 export default function RecentMemoriesSection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -21,22 +26,25 @@ export default function RecentMemoriesSection() {
   const col2Ref = useRef<HTMLDivElement>(null);
   const col3Ref = useRef<HTMLDivElement>(null);
 
-  useGSAP(() => {
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 75%",
-        toggleActions: "play none none reverse",
-      },
-    });
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
 
-    // Stagger fade-in and slide-up the columns
-    tl.fromTo(
-      [col1Ref.current, col2Ref.current, col3Ref.current],
-      { opacity: 0, y: 100 },
-      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.2 }
-    );
-  }, { scope: sectionRef });
+      // Stagger fade-in and slide-up the columns
+      tl.fromTo(
+        [col1Ref.current, col2Ref.current, col3Ref.current],
+        { opacity: 0, y: 100 },
+        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.2 },
+      );
+    },
+    { scope: sectionRef },
+  );
 
   // Lightbox
   const openLightbox = useCallback((src: string) => {
@@ -48,13 +56,13 @@ export default function RecentMemoriesSection() {
 
   const goNext = useCallback(() => {
     setLightboxIndex((prev) =>
-      prev !== null ? (prev + 1) % allImages.length : null
+      prev !== null ? (prev + 1) % allImages.length : null,
     );
   }, []);
 
   const goPrev = useCallback(() => {
     setLightboxIndex((prev) =>
-      prev !== null ? (prev - 1 + allImages.length) % allImages.length : null
+      prev !== null ? (prev - 1 + allImages.length) % allImages.length : null,
     );
   }, []);
 
@@ -82,8 +90,10 @@ export default function RecentMemoriesSection() {
   // Column 3 is hidden on mobile and shown on md+
   return (
     <>
-      <section ref={sectionRef} className="relative bg-black text-white overflow-hidden">
-
+      <section
+        ref={sectionRef}
+        className="relative bg-black text-white overflow-hidden"
+      >
         {/* Vertical Scrolling Gallery — uniform grid */}
         <div className="memories-gallery relative h-[600px] sm:h-[800px] md:h-[1000px] lg:h-[1100px] overflow-hidden z-10">
           {/* Top fade */}
@@ -93,7 +103,10 @@ export default function RecentMemoriesSection() {
 
           <div className="flex gap-2 sm:gap-3 md:gap-4 px-2 sm:px-4 md:px-8 h-full">
             {/* Column 1 — scrolls UP */}
-            <div ref={col1Ref} className="flex-1 overflow-hidden relative opacity-0">
+            <div
+              ref={col1Ref}
+              className="flex-1 overflow-hidden relative opacity-0"
+            >
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up">
                 {col1Items.map((src, i) => (
                   <div
@@ -116,7 +129,10 @@ export default function RecentMemoriesSection() {
             </div>
 
             {/* Column 2 — scrolls DOWN */}
-            <div ref={col2Ref} className="flex-1 overflow-hidden relative opacity-0">
+            <div
+              ref={col2Ref}
+              className="flex-1 overflow-hidden relative opacity-0"
+            >
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-down">
                 {col2Items.map((src, i) => (
                   <div
@@ -140,7 +156,10 @@ export default function RecentMemoriesSection() {
             </div>
 
             {/* Column 3 — scrolls UP (hidden on mobile, visible on md+) */}
-            <div ref={col3Ref} className="hidden md:block flex-1 overflow-hidden relative opacity-0">
+            <div
+              ref={col3Ref}
+              className="hidden md:block flex-1 overflow-hidden relative opacity-0"
+            >
               <div className="flex flex-col gap-2 sm:gap-3 md:gap-4 animate-scroll-up-slow w-full">
                 {col3Items.map((src, i) => (
                   <div
@@ -166,7 +185,9 @@ export default function RecentMemoriesSection() {
         </div>
 
         {/* Vertical scroll animations */}
-        <style dangerouslySetInnerHTML={{ __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
           @keyframes scroll-up {
             0% { transform: translateY(0); }
             100% { transform: translateY(-50%); }
@@ -204,7 +225,9 @@ export default function RecentMemoriesSection() {
               animation: none;
             }
           }
-        `}} />
+        `,
+          }}
+        />
       </section>
 
       {/* Lightbox Modal */}
@@ -226,7 +249,10 @@ export default function RecentMemoriesSection() {
             variant="ghost"
             size="icon"
             className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-10 text-white/40 hover:text-white transition-colors duration-300 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10"
-            onClick={(e) => { e.stopPropagation(); goPrev(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              goPrev();
+            }}
           >
             <ChevronLeft className="w-5 h-5 sm:w-8 sm:h-8" />
           </Button>
@@ -235,7 +261,10 @@ export default function RecentMemoriesSection() {
             variant="ghost"
             size="icon"
             className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-10 text-white/40 hover:text-white transition-colors duration-300 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10"
-            onClick={(e) => { e.stopPropagation(); goNext(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              goNext();
+            }}
           >
             <ChevronRight className="w-5 h-5 sm:w-8 sm:h-8" />
           </Button>

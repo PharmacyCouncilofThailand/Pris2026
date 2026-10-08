@@ -1,9 +1,5 @@
 export type InvitationStatus =
-  | "pending"
-  | "accepted"
-  | "declined"
-  | "expired"
-  | "revoked";
+  "pending" | "accepted" | "declined" | "expired" | "revoked";
 
 export type InvitationDecision = "accepted" | "declined";
 
@@ -33,7 +29,10 @@ export async function requestInvitation(
   token: string,
   decision: InvitationDecision | null,
   signal?: AbortSignal,
-): Promise<{ httpStatus: number; body: PublicInvitationDto | InvitationErrorDto }> {
+): Promise<{
+  httpStatus: number;
+  body: PublicInvitationDto | InvitationErrorDto;
+}> {
   const origin = apiOrigin.replace(/\/$/, "");
   const response = await fetch(
     `${origin}/api/session-invitations/current${decision ? "/response" : ""}`,
@@ -51,6 +50,6 @@ export async function requestInvitation(
   );
   return {
     httpStatus: response.status,
-    body: await response.json() as PublicInvitationDto | InvitationErrorDto,
+    body: (await response.json()) as PublicInvitationDto | InvitationErrorDto,
   };
 }

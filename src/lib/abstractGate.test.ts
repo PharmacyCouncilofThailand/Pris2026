@@ -3,10 +3,7 @@ import test from "node:test";
 import { getAbstractGateState } from "./registrationGate.js";
 
 test("closes immediately when ABSTRACT_OPEN is false", () => {
-  assert.deepEqual(
-    getAbstractGateState(),
-    { open: false, phase: "closed" },
-  );
+  assert.deepEqual(getAbstractGateState(), { open: false, phase: "closed" });
 });
 
 test("keeps abstract submission open through final Round 1 instant when open", () => {

@@ -1,9 +1,9 @@
-const fs = require('fs');
-const file = 'c:/Pris2026/src/data/scheduleData.ts';
-let content = fs.readFileSync(file, 'utf8');
+const fs = require("fs");
+const file = "c:/Pris2026/src/data/scheduleData.ts";
+let content = fs.readFileSync(file, "utf8");
 
 const replacements = {
-  '"ห้อง JUPITER 4-7 (INNOVATION ZONE)"': '"ห้อง JUPITER 4-7"'
+  '"ห้อง JUPITER 4-7 (INNOVATION ZONE)"': '"ห้อง JUPITER 4-7"',
 };
 
 for (const [key, value] of Object.entries(replacements)) {

@@ -761,7 +761,15 @@
     "selectHealthHackLevelError": "Please select your education level and grade",
     "lowerSecondary": "Lower secondary school",
     "upperSecondary": "Upper secondary school",
-    "healthHackLevels": {"m1":"Mathayom 1","m2":"Mathayom 2","m3":"Mathayom 3","m4":"Mathayom 4","m5":"Mathayom 5","m6":"Mathayom 6","undergraduate":"Undergraduate"},
+    "healthHackLevels": {
+      "m1": "Mathayom 1",
+      "m2": "Mathayom 2",
+      "m3": "Mathayom 3",
+      "m4": "Mathayom 4",
+      "m5": "Mathayom 5",
+      "m6": "Mathayom 6",
+      "undergraduate": "Undergraduate"
+    },
     "login": "Login",
     "loginDesc": "Enter your email and password to access your account",
     "email": "Email",

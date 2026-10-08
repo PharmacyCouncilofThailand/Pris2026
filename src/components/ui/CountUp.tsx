@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, useMemo, useCallback } from "react";
 
 interface CountUpProps {
   text: string;
@@ -13,7 +13,11 @@ interface CountUpProps {
  * Uses a single IntersectionObserver + requestAnimationFrame loop.
  * Writes directly to the DOM via ref to avoid React re-renders during animation.
  */
-export default function CountUp({ text, duration = 2000, suffixClassName }: CountUpProps) {
+export default function CountUp({
+  text,
+  duration = 2000,
+  suffixClassName,
+}: CountUpProps) {
   const containerRef = useRef<HTMLSpanElement>(null);
   const numRef = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
@@ -21,11 +25,11 @@ export default function CountUp({ text, duration = 2000, suffixClassName }: Coun
   // Parse text once — stable across renders
   const { prefix, suffix, endValue } = useMemo(() => {
     const match = text.match(/\d+(?:,\d+)*(?:\.\d+)?/);
-    if (!match) return { prefix: '', suffix: '', endValue: 0 };
+    if (!match) return { prefix: "", suffix: "", endValue: 0 };
     return {
       prefix: text.substring(0, match.index),
       suffix: text.substring(match.index! + match[0].length),
-      endValue: parseInt(match[0].replace(/,/g, ''), 10),
+      endValue: parseInt(match[0].replace(/,/g, ""), 10),
     };
   }, [text]);
 
@@ -63,7 +67,7 @@ export default function CountUp({ text, duration = 2000, suffixClassName }: Coun
 
     // Show initial text (0 if animatable)
     if (endValue > 0) {
-      numEl.textContent = '0';
+      numEl.textContent = "0";
     }
 
     const io = new IntersectionObserver(
@@ -73,7 +77,7 @@ export default function CountUp({ text, duration = 2000, suffixClassName }: Coun
           io.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     io.observe(container);
     return () => io.disconnect();

@@ -105,22 +105,22 @@ Actual shirt quantities are not yet supplied. Default is one shared shirt stock 
 
 Keep established REST naming and /api paths. Public here means attendee-facing, not anonymous authorization.
 
-| Route | Use |
-| --- | --- |
-| GET /api/events/:eventId/lucky-wheel | Published segments, state, versions, availability, safe collection instructions |
-| GET /api/events/:eventId/lucky-wheel/eligibility | Authenticated own eligibility, server day/window and existing daily result |
-| POST /api/events/:eventId/lucky-wheel/spins | Idempotent atomic allocation; versions in validated body; actor from auth |
-| GET /api/events/:eventId/lucky-wheel/spins/me | Paginated own history, including no-prize |
-| GET /api/events/:eventId/lucky-wheel/spins/:spinId | Owner-only historical result/proof |
-| GET /api/backoffice/events/:eventId/lucky-wheel | Admin configuration/live stock |
-| PUT /api/backoffice/events/:eventId/lucky-wheel/configuration | Atomic save-and-publish with expected version |
-| PATCH /api/backoffice/events/:eventId/lucky-wheel/status | Explicit pause/resume, audited |
-| POST /api/backoffice/events/:eventId/lucky-wheel/segments/:id/stock-adjustments | Idempotent signed stock delta plus reason |
-| POST /api/backoffice/events/:eventId/lucky-wheel/images | Validated prize image upload |
-| GET /api/backoffice/events/:eventId/lucky-wheel/spins | Filtered, paginated admin history and claims |
-| POST /api/backoffice/events/:eventId/lucky-wheel/reward-lookups | Authenticated token/code lookup; no state transition; avoid URL token leakage |
-| PUT /api/backoffice/events/:eventId/lucky-wheel/spins/:spinId/redemption | Idempotent confirmation with identity-check acknowledgment |
-| POST /api/backoffice/events/:eventId/lucky-wheel/spins/:spinId/redemption-corrections | Explicit reasoned audit-preserving correction |
+| Route                                                                                 | Use                                                                             |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| GET /api/events/:eventId/lucky-wheel                                                  | Published segments, state, versions, availability, safe collection instructions |
+| GET /api/events/:eventId/lucky-wheel/eligibility                                      | Authenticated own eligibility, server day/window and existing daily result      |
+| POST /api/events/:eventId/lucky-wheel/spins                                           | Idempotent atomic allocation; versions in validated body; actor from auth       |
+| GET /api/events/:eventId/lucky-wheel/spins/me                                         | Paginated own history, including no-prize                                       |
+| GET /api/events/:eventId/lucky-wheel/spins/:spinId                                    | Owner-only historical result/proof                                              |
+| GET /api/backoffice/events/:eventId/lucky-wheel                                       | Admin configuration/live stock                                                  |
+| PUT /api/backoffice/events/:eventId/lucky-wheel/configuration                         | Atomic save-and-publish with expected version                                   |
+| PATCH /api/backoffice/events/:eventId/lucky-wheel/status                              | Explicit pause/resume, audited                                                  |
+| POST /api/backoffice/events/:eventId/lucky-wheel/segments/:id/stock-adjustments       | Idempotent signed stock delta plus reason                                       |
+| POST /api/backoffice/events/:eventId/lucky-wheel/images                               | Validated prize image upload                                                    |
+| GET /api/backoffice/events/:eventId/lucky-wheel/spins                                 | Filtered, paginated admin history and claims                                    |
+| POST /api/backoffice/events/:eventId/lucky-wheel/reward-lookups                       | Authenticated token/code lookup; no state transition; avoid URL token leakage   |
+| PUT /api/backoffice/events/:eventId/lucky-wheel/spins/:spinId/redemption              | Idempotent confirmation with identity-check acknowledgment                      |
+| POST /api/backoffice/events/:eventId/lucky-wheel/spins/:spinId/redemption-corrections | Explicit reasoned audit-preserving correction                                   |
 
 Extend existing check-in contracts with attendance ID/date/policy and date-filtered responses without changing ordinary session semantics. Add a daily-attendance cancellation endpoint or a clearly discriminated existing undo payload; a legacy registrationSessionId-only request must not ambiguously cancel a daily record. No need for GraphQL, new global API versioning or a general-purpose CMS.
 

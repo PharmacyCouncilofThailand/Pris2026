@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs = require("fs");
 
-const data = fs.readFileSync('c:/Pris2026/src/data/scheduleData.ts', 'utf8');
+const data = fs.readFileSync("c:/Pris2026/src/data/scheduleData.ts", "utf8");
 
 const newEventsStr = `    events: [
       {
@@ -334,30 +334,46 @@ const newEventsStr = `    events: [
       }
     ]`;
 
-const parts = data.split('    events: [\r\n      {\r\n        id: 12,\r\n        time: "08:00 – 09:00",');
+const parts = data.split(
+  '    events: [\r\n      {\r\n        id: 12,\r\n        time: "08:00 – 09:00",',
+);
 if (parts.length === 2) {
-  const head = data.substring(0, data.indexOf('    events: ['));
-  const tail = '    events: [\r\n      {\r\n        id: 12,\r\n        time: "08:00 – 09:00",' + parts[1];
-  const newData = head + newEventsStr + ',\r\n  },\r\n  {\r\n    day: "Day 2",\r\n    dayTh: "วันที่ 2",\r\n    date: "October 30, 2026",\r\n    dateTh: "30 ตุลาคม 2569",\r\n' + tail;
-  fs.writeFileSync('c:/Pris2026/src/data/scheduleData.ts', newData, 'utf8');
+  const head = data.substring(0, data.indexOf("    events: ["));
+  const tail =
+    '    events: [\r\n      {\r\n        id: 12,\r\n        time: "08:00 – 09:00",' +
+    parts[1];
+  const newData =
+    head +
+    newEventsStr +
+    ',\r\n  },\r\n  {\r\n    day: "Day 2",\r\n    dayTh: "วันที่ 2",\r\n    date: "October 30, 2026",\r\n    dateTh: "30 ตุลาคม 2569",\r\n' +
+    tail;
+  fs.writeFileSync("c:/Pris2026/src/data/scheduleData.ts", newData, "utf8");
   console.log("SUCCESS");
 } else {
   // Let's try splitting by Day 2 events array
   const day2Start = '  {\r\n    day: "Day 2",';
   const dataParts = data.split(day2Start);
   if (dataParts.length === 2) {
-    const head = dataParts[0].substring(0, dataParts[0].indexOf('    events: ['));
-    const newData = head + newEventsStr + ',\r\n  },\r\n' + day2Start + dataParts[1];
-    fs.writeFileSync('c:/Pris2026/src/data/scheduleData.ts', newData, 'utf8');
+    const head = dataParts[0].substring(
+      0,
+      dataParts[0].indexOf("    events: ["),
+    );
+    const newData =
+      head + newEventsStr + ",\r\n  },\r\n" + day2Start + dataParts[1];
+    fs.writeFileSync("c:/Pris2026/src/data/scheduleData.ts", newData, "utf8");
     console.log("SUCCESS");
   } else {
     // try with \n only
     const day2StartN = '  {\n    day: "Day 2",';
     const dataPartsN = data.split(day2StartN);
     if (dataPartsN.length === 2) {
-      const head = dataPartsN[0].substring(0, dataPartsN[0].indexOf('    events: ['));
-      const newData = head + newEventsStr + ',\n  },\n' + day2StartN + dataPartsN[1];
-      fs.writeFileSync('c:/Pris2026/src/data/scheduleData.ts', newData, 'utf8');
+      const head = dataPartsN[0].substring(
+        0,
+        dataPartsN[0].indexOf("    events: ["),
+      );
+      const newData =
+        head + newEventsStr + ",\n  },\n" + day2StartN + dataPartsN[1];
+      fs.writeFileSync("c:/Pris2026/src/data/scheduleData.ts", newData, "utf8");
       console.log("SUCCESS");
     } else {
       console.log("FAILED TO SPLIT");

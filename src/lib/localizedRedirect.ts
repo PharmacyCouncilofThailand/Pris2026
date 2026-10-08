@@ -1,8 +1,16 @@
 const SUPPORTED_LOCALE_PREFIX = /^\/(?:en|th)(?=\/|\?|#|$)/;
-const REWARD_PROOF_PATH = /^\/lucky-wheel\/rewards\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-const EVENT_RETURN_PATHS = new Set(["/ticket", "/lucky-wheel", "/lucky-wheel/claim", "/lucky-wheel/history"]);
+const REWARD_PROOF_PATH =
+  /^\/lucky-wheel\/rewards\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const EVENT_RETURN_PATHS = new Set([
+  "/ticket",
+  "/lucky-wheel",
+  "/lucky-wheel/claim",
+  "/lucky-wheel/history",
+]);
 
-export function normalizeLocalizedRedirectPath(value: string | null | undefined): string {
+export function normalizeLocalizedRedirectPath(
+  value: string | null | undefined,
+): string {
   const redirect = value?.trim();
 
   if (
@@ -33,8 +41,13 @@ export function normalizeLocalizedRedirectPath(value: string | null | undefined)
   if (destination.origin !== "https://internal.invalid") return "/";
   const resolvedPath = destination.pathname.replace(/\/+$/, "");
   if (resolvedPath === "/presentation-submission") {
-    if (withoutLocale.split(/[?#]/)[0] !== "/presentation-submission") return "/";
-    return withoutLocale.includes("#") ? "/" : presentationReturnPath(withoutLocale.slice("/presentation-submission".length)) || "/";
+    if (withoutLocale.split(/[?#]/)[0] !== "/presentation-submission")
+      return "/";
+    return withoutLocale.includes("#")
+      ? "/"
+      : presentationReturnPath(
+          withoutLocale.slice("/presentation-submission".length),
+        ) || "/";
   }
 
   return withoutLocale;
@@ -47,8 +60,13 @@ export function eventReturnQuery(
   if (!raw || raw.includes("\\")) return undefined;
 
   const redirect = normalizeLocalizedRedirectPath(raw);
-  if (redirect.split("?")[0] === "/presentation-submission" && !redirect.includes("#")) {
-    const path = presentationReturnPath(redirect.slice("/presentation-submission".length));
+  if (
+    redirect.split("?")[0] === "/presentation-submission" &&
+    !redirect.includes("#")
+  ) {
+    const path = presentationReturnPath(
+      redirect.slice("/presentation-submission".length),
+    );
     return path ? { redirect: path } : undefined;
   }
   if (EVENT_RETURN_PATHS.has(redirect) || REWARD_PROOF_PATH.test(redirect)) {
@@ -59,18 +77,31 @@ export function eventReturnQuery(
 
 export function presentationReturnPath(search: string): string | null {
   const query = new URLSearchParams(search);
-  if ([...query.keys()].some((key) => key !== "abstractId" && key !== "requestId")) return null;
+  if (
+    [...query.keys()].some((key) => key !== "abstractId" && key !== "requestId")
+  )
+    return null;
   const abstractId = query.get("abstractId");
   const requestId = query.get("requestId");
   if (
-    query.getAll("abstractId").length !== 1 || !abstractId || !/^\d+$/.test(abstractId) ||
-    !Number.isSafeInteger(Number(abstractId)) || Number(abstractId) < 1
-  ) return null;
+    query.getAll("abstractId").length !== 1 ||
+    !abstractId ||
+    !/^\d+$/.test(abstractId) ||
+    !Number.isSafeInteger(Number(abstractId)) ||
+    Number(abstractId) < 1
+  )
+    return null;
   if (
     query.getAll("requestId").length > 1 ||
-    (requestId !== null && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(requestId))
-  ) return null;
-  const normalized = new URLSearchParams({ abstractId: String(Number(abstractId)) });
+    (requestId !== null &&
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+        requestId,
+      ))
+  )
+    return null;
+  const normalized = new URLSearchParams({
+    abstractId: String(Number(abstractId)),
+  });
   if (requestId) normalized.set("requestId", requestId);
   return `/presentation-submission?${normalized}`;
 }

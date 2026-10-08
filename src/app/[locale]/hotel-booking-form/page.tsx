@@ -40,8 +40,7 @@ const HOTEL_FORMS_BY_CATEGORY: Record<OrganizationCategory, HotelDoc[]> = {
       key: "ibis",
       filePath:
         "/assets/documents/form_hotel/Ibis - แบบฟอร์มการจองห้องพัก_หน่วยงานราชการ PRIS .pdf",
-      downloadFileName:
-        "Ibis - แบบฟอร์มการจองห้องพัก_หน่วยงานราชการ PRIS .pdf",
+      downloadFileName: "Ibis - แบบฟอร์มการจองห้องพัก_หน่วยงานราชการ PRIS .pdf",
       hotelBadge: "Ibis Bangkok IMPACT",
       brandColor: {
         badgeBg: "bg-red-50 text-red-700 border-red-200",
@@ -56,8 +55,7 @@ const HOTEL_FORMS_BY_CATEGORY: Record<OrganizationCategory, HotelDoc[]> = {
       key: "novotel",
       filePath:
         "/assets/documents/form_hotel/Novotel - แบบฟอร์มการจองห้องพัก_หน่วยงานราชการ PR.pdf",
-      downloadFileName:
-        "Novotel - แบบฟอร์มการจองห้องพัก_หน่วยงานราชการ PR.pdf",
+      downloadFileName: "Novotel - แบบฟอร์มการจองห้องพัก_หน่วยงานราชการ PR.pdf",
       hotelBadge: "Novotel Bangkok IMPACT",
       brandColor: {
         badgeBg: "bg-blue-50 text-blue-700 border-blue-200",
@@ -334,7 +332,9 @@ export default function HotelBookingFormPage() {
                               <span
                                 className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${form.brandColor.badgeBg}`}
                               >
-                                {t(`cards.${selectedCategory}.${form.key}.label`)}
+                                {t(
+                                  `cards.${selectedCategory}.${form.key}.label`,
+                                )}
                               </span>
                               <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-semibold text-slate-600">
                                 {t("fileType")}
@@ -353,7 +353,9 @@ export default function HotelBookingFormPage() {
                         </div>
 
                         <p className="mt-4 text-xs leading-relaxed text-slate-600 md:text-sm">
-                          {t(`cards.${selectedCategory}.${form.key}.description`)}
+                          {t(
+                            `cards.${selectedCategory}.${form.key}.description`,
+                          )}
                         </p>
                       </div>
 
@@ -405,4 +407,3 @@ export default function HotelBookingFormPage() {
     </main>
   );
 }
-

@@ -11,7 +11,13 @@ export default function SessionInvitationConfirmPage() {
   return (
     <main className="min-h-screen bg-slate-50 px-4 pb-16 pt-28 sm:px-6">
       <div className="mx-auto max-w-2xl">
-        <Suspense fallback={<div className="rounded-3xl bg-white p-8 text-center shadow-sm">…</div>}>
+        <Suspense
+          fallback={
+            <div className="rounded-3xl bg-white p-8 text-center shadow-sm">
+              …
+            </div>
+          }
+        >
           <SessionInvitationResponse />
         </Suspense>
       </div>

@@ -36,9 +36,13 @@ export function rotationForWinningSegment(
   if (!Number.isFinite(turns) || turns < 0) {
     throw new Error("turns must be a non-negative number");
   }
-  const index = segments.findIndex((segment) => segment.id === winningSegmentId);
-  if (index < 0) throw new Error("winning segment is not in the rendered snapshot");
-  if (segments.length === 0) throw new Error("wheel requires at least one segment");
+  const index = segments.findIndex(
+    (segment) => segment.id === winningSegmentId,
+  );
+  if (index < 0)
+    throw new Error("winning segment is not in the rendered snapshot");
+  if (segments.length === 0)
+    throw new Error("wheel requires at least one segment");
   return turns * FULL_TURN - (index + 0.5) * (FULL_TURN / segments.length);
 }
 

@@ -69,14 +69,20 @@ const event = (overrides) => ({
 });
 
 test("parseScheduleTime accepts conference separators and rejects invalid ranges", () => {
-  assert.deepEqual(parseScheduleTime("08:00 – 09:10"), { start: 480, end: 550 });
+  assert.deepEqual(parseScheduleTime("08:00 – 09:10"), {
+    start: 480,
+    end: 550,
+  });
   assert.deepEqual(parseScheduleTime("09.30-10.45"), { start: 570, end: 645 });
   assert.equal(parseScheduleTime("all day"), null);
   assert.equal(parseScheduleTime("10:00 – 09:00"), null);
 });
 
 test("resolveVenueKey uses group for Innovation Zone and location for Common", () => {
-  assert.equal(resolveVenueKey(event({ track: "JUPITER 11" })), "track:JUPITER 11");
+  assert.equal(
+    resolveVenueKey(event({ track: "JUPITER 11" })),
+    "track:JUPITER 11",
+  );
   assert.equal(
     resolveVenueKey(event({ track: "INNOVATION ZONE", group: "GROUP 3" })),
     "innovation:GROUP 3",
@@ -110,7 +116,9 @@ test("buildVenueColumns keeps published rooms, Innovation groups, and localized 
     ],
   );
   assert.deepEqual(
-    columns.filter((column) => column.kind === "innovation").map((column) => column.key),
+    columns
+      .filter((column) => column.kind === "innovation")
+      .map((column) => column.key),
     [
       "innovation:GROUP 1",
       "innovation:GROUP 2",
@@ -118,7 +126,10 @@ test("buildVenueColumns keeps published rooms, Innovation groups, and localized 
       "innovation:GROUP 4",
     ],
   );
-  assert.equal(columns.find((column) => column.key === "common:Foyer")?.label, "โถงด้านหน้า");
+  assert.equal(
+    columns.find((column) => column.key === "common:Foyer")?.label,
+    "โถงด้านหน้า",
+  );
   assert.equal(columns.at(-1)?.key, "fallback:other");
 });
 
@@ -131,18 +142,27 @@ test("buildScheduleLayout creates boundary spans and stacks overlapping venue ev
 
   assert.deepEqual(layout.boundaries, [540, 570, 600, 630, 660]);
   assert.equal(layout.cells.length, 2);
-  assert.deepEqual(layout.cells[0].events.map((item) => item.id), [1, 2]);
+  assert.deepEqual(
+    layout.cells[0].events.map((item) => item.id),
+    [1, 2],
+  );
   assert.deepEqual(
     { startLine: layout.cells[0].startLine, endLine: layout.cells[0].endLine },
     { startLine: 1, endLine: 4 },
   );
-  assert.deepEqual(layout.cells[1].events.map((item) => item.id), [3]);
+  assert.deepEqual(
+    layout.cells[1].events.map((item) => item.id),
+    [3],
+  );
 });
 
 test("unparseable events remain visible in fallbackEvents", () => {
   const invalid = event({ id: 99, time: "TBA" });
   const layout = buildScheduleLayout([invalid]);
-  assert.deepEqual(layout.fallbackEvents.map((item) => item.id), [99]);
+  assert.deepEqual(
+    layout.fallbackEvents.map((item) => item.id),
+    [99],
+  );
 });
 
 test("groupEventsForMobile sorts parsed starts and keeps unparseable times last", () => {
@@ -153,12 +173,14 @@ test("groupEventsForMobile sorts parsed starts and keeps unparseable times last"
     event({ id: 4, time: "09:00 – 09:30", track: "JUPITER 12" }),
   ]);
 
-  assert.deepEqual(groups.map((group) => group.timeLabel), [
-    "09:00",
-    "10:00",
-    "TBA",
-  ]);
-  assert.deepEqual(groups.flatMap((group) => group.events.map((item) => item.id)), [1, 4, 2, 3]);
+  assert.deepEqual(
+    groups.map((group) => group.timeLabel),
+    ["09:00", "10:00", "TBA"],
+  );
+  assert.deepEqual(
+    groups.flatMap((group) => group.events.map((item) => item.id)),
+    [1, 4, 2, 3],
+  );
 });
 ```
 
@@ -252,7 +274,9 @@ export function parseScheduleTime(value: string): ParsedTime | null {
 }
 
 export function formatMinutes(value: number) {
-  const hours = Math.floor(value / 60).toString().padStart(2, "0");
+  const hours = Math.floor(value / 60)
+    .toString()
+    .padStart(2, "0");
   const minutes = (value % 60).toString().padStart(2, "0");
   return `${hours}:${minutes}`;
 }
@@ -264,13 +288,19 @@ export function resolveVenueKey(event: Event) {
   if (event.track === "Common" && event.location.trim()) {
     return `common:${event.location.trim()}`;
   }
-  if (event.track && STANDARD_TRACKS.includes(event.track as (typeof STANDARD_TRACKS)[number])) {
+  if (
+    event.track &&
+    STANDARD_TRACKS.includes(event.track as (typeof STANDARD_TRACKS)[number])
+  ) {
     return `track:${event.track}`;
   }
   return "fallback:other";
 }
 
-export function buildVenueColumns(events: Event[], locale: string): VenueColumn[] {
+export function buildVenueColumns(
+  events: Event[],
+  locale: string,
+): VenueColumn[] {
   const roomColumns = STANDARD_TRACKS.map((track) => ({
     key: `track:${track}`,
     label: locale === "th" ? `ห้อง ${track}` : track,
@@ -290,23 +320,28 @@ export function buildVenueColumns(events: Event[], locale: string): VenueColumn[
     if (!commonByKey.has(key)) {
       commonByKey.set(key, {
         key,
-        label: locale === "th" && item.locationTh ? item.locationTh : item.location,
+        label:
+          locale === "th" && item.locationTh ? item.locationTh : item.location,
         kind: "common",
       });
     }
   }
 
-  const hasFallback = events.some((item) => resolveVenueKey(item) === "fallback:other");
+  const hasFallback = events.some(
+    (item) => resolveVenueKey(item) === "fallback:other",
+  );
   return [
     ...roomColumns,
     ...innovationColumns,
     ...commonByKey.values(),
     ...(hasFallback
-      ? [{
-          key: "fallback:other",
-          label: locale === "th" ? "สถานที่อื่น" : "Other venue",
-          kind: "fallback" as const,
-        }]
+      ? [
+          {
+            key: "fallback:other",
+            label: locale === "th" ? "สถานที่อื่น" : "Other venue",
+            kind: "fallback" as const,
+          },
+        ]
       : []),
   ];
 }
@@ -318,15 +353,21 @@ function overlaps(left: ParsedTime, right: ParsedTime) {
 export function buildScheduleLayout(events: Event[]): ScheduleLayout {
   const parsed = events.flatMap((item) => {
     const time = parseScheduleTime(item.time);
-    return time ? [{ event: item, time, columnKey: resolveVenueKey(item) }] : [];
+    return time
+      ? [{ event: item, time, columnKey: resolveVenueKey(item) }]
+      : [];
   });
   const fallbackEvents = events.filter((item) => !parseScheduleTime(item.time));
-  const boundaries = [...new Set(parsed.flatMap((item) => [item.time.start, item.time.end]))]
-    .sort((a, b) => a - b);
+  const boundaries = [
+    ...new Set(parsed.flatMap((item) => [item.time.start, item.time.end])),
+  ].sort((a, b) => a - b);
   const pending = [...parsed].sort(
-    (a, b) => a.time.start - b.time.start || a.time.end - b.time.end || a.event.id - b.event.id,
+    (a, b) =>
+      a.time.start - b.time.start ||
+      a.time.end - b.time.end ||
+      a.event.id - b.event.id,
   );
-  const groups: typeof pending[] = [];
+  const groups: (typeof pending)[] = [];
 
   while (pending.length) {
     const seed = pending.shift();
@@ -372,18 +413,17 @@ export function buildScheduleLayout(events: Event[]): ScheduleLayout {
 }
 
 export function groupEventsForMobile(events: Event[]): MobileTimeGroup[] {
-  const sorted = [...events]
-    .sort((left, right) => {
-      const leftTime = parseScheduleTime(left.time);
-      const rightTime = parseScheduleTime(right.time);
-      return (
-        (leftTime?.start ?? Number.POSITIVE_INFINITY) -
-          (rightTime?.start ?? Number.POSITIVE_INFINITY) ||
-        (leftTime?.end ?? Number.POSITIVE_INFINITY) -
-          (rightTime?.end ?? Number.POSITIVE_INFINITY) ||
-        left.id - right.id
-      );
-    });
+  const sorted = [...events].sort((left, right) => {
+    const leftTime = parseScheduleTime(left.time);
+    const rightTime = parseScheduleTime(right.time);
+    return (
+      (leftTime?.start ?? Number.POSITIVE_INFINITY) -
+        (rightTime?.start ?? Number.POSITIVE_INFINITY) ||
+      (leftTime?.end ?? Number.POSITIVE_INFINITY) -
+        (rightTime?.end ?? Number.POSITIVE_INFINITY) ||
+      left.id - right.id
+    );
+  });
   const groups = new Map<string, MobileTimeGroup>();
 
   for (const item of sorted) {
@@ -542,7 +582,9 @@ function EventContent({
 }) {
   const title = locale === "th" && event.titleTh ? event.titleTh : event.title;
   const description =
-    locale === "th" && event.descriptionTh ? event.descriptionTh : event.description;
+    locale === "th" && event.descriptionTh
+      ? event.descriptionTh
+      : event.description;
   const location =
     locale === "th" && event.locationTh ? event.locationTh : event.location;
 
@@ -556,31 +598,46 @@ function EventContent({
           </span>
         )}
       </div>
-      <h4 className={cn(
-        "font-heading font-bold leading-snug text-white",
-        compact ? "text-sm" : "text-base sm:text-lg",
-      )}>
+      <h4
+        className={cn(
+          "font-heading font-bold leading-snug text-white",
+          compact ? "text-sm" : "text-base sm:text-lg",
+        )}
+      >
         {title}
       </h4>
       {description && (
-        <p className={cn(
-          "mt-2 whitespace-pre-wrap font-light leading-relaxed text-white/58",
-          compact ? "line-clamp-4 text-[11px]" : "text-sm",
-        )}>
+        <p
+          className={cn(
+            "mt-2 whitespace-pre-wrap font-light leading-relaxed text-white/58",
+            compact ? "line-clamp-4 text-[11px]" : "text-sm",
+          )}
+        >
           {description}
         </p>
       )}
       <div className="mt-3 flex items-start gap-1.5 text-[10px] leading-relaxed text-white/45">
-        <MapPin aria-hidden="true" className="mt-0.5 size-3 shrink-0 text-gold/70" />
+        <MapPin
+          aria-hidden="true"
+          className="mt-0.5 size-3 shrink-0 text-gold/70"
+        />
         <span>{location}</span>
       </div>
       {event.speakers.length > 0 && (
         <div className="mt-3 border-t border-white/8 pt-3">
           {event.speakers.map((speaker, index) => (
-            <div key={`${speaker.name}-${index}`} className="flex gap-2 text-[11px] leading-relaxed">
-              <Users aria-hidden="true" className="mt-0.5 size-3 shrink-0 text-gold/65" />
+            <div
+              key={`${speaker.name}-${index}`}
+              className="flex gap-2 text-[11px] leading-relaxed"
+            >
+              <Users
+                aria-hidden="true"
+                className="mt-0.5 size-3 shrink-0 text-gold/65"
+              />
               <span className="text-white/72">
-                {locale === "th" && speaker.nameTh ? speaker.nameTh : speaker.name}
+                {locale === "th" && speaker.nameTh
+                  ? speaker.nameTh
+                  : speaker.name}
                 {(locale === "th" ? speaker.roleTh : speaker.role) && (
                   <span className="text-white/38">
                     {" · "}
@@ -602,102 +659,112 @@ function EventContent({
 After the Day buttons, render this desktop block:
 
 ```tsx
-{currentDay.events.length > 0 && (
-  <div
-    className="relative hidden lg:block"
-    role="region"
-    aria-label={t("scheduleTableLabel")}
-    tabIndex={0}
-  >
-    <div className="overflow-x-auto rounded-[1.75rem] border border-gold/25 bg-[#061332]/88 shadow-[0_30px_90px_rgba(0,0,0,0.36)]">
-      <div
-        role="table"
-        aria-label={t("scheduleTableLabel")}
-        className="min-w-max"
-        style={{
-          width: `max(100%, ${116 + columns.length * 210}px)`,
-        }}
-      >
+{
+  currentDay.events.length > 0 && (
+    <div
+      className="relative hidden lg:block"
+      role="region"
+      aria-label={t("scheduleTableLabel")}
+      tabIndex={0}
+    >
+      <div className="overflow-x-auto rounded-[1.75rem] border border-gold/25 bg-[#061332]/88 shadow-[0_30px_90px_rgba(0,0,0,0.36)]">
         <div
-          role="row"
-          className="sticky top-0 z-30 grid border-b border-gold/30 bg-[#091943]/96 backdrop-blur-xl"
-          style={{ gridTemplateColumns: `116px repeat(${columns.length}, minmax(210px, 1fr))` }}
-        >
-          <div
-            role="columnheader"
-            className="sticky left-0 z-40 flex items-center gap-2 border-r border-gold/25 bg-[#0b1d4d] px-4 py-5 text-xs font-black uppercase tracking-[0.16em] text-gold"
-          >
-            <CalendarClock aria-hidden="true" className="size-4" />
-            {t("time")}
-          </div>
-          {columns.map((column) => (
-            <div
-              key={column.key}
-              role="columnheader"
-              className="border-r border-white/10 px-4 py-4 text-center last:border-r-0"
-            >
-              {column.eyebrow && (
-                <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gold/65">
-                  {t("innovationZone")}
-                </span>
-              )}
-              <span className="mt-1 block text-xs font-black uppercase tracking-[0.08em] text-white">
-                {column.label}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <div
-          role="rowgroup"
-          className="relative grid"
+          role="table"
+          aria-label={t("scheduleTableLabel")}
+          className="min-w-max"
           style={{
-            gridTemplateColumns: `116px repeat(${columns.length}, minmax(210px, 1fr))`,
-            gridTemplateRows: `repeat(${Math.max(layout.boundaries.length - 1, 1)}, minmax(54px, auto))`,
+            width: `max(100%, ${116 + columns.length * 210}px)`,
           }}
         >
-          {layout.boundaries.slice(0, -1).map((boundary, index) => (
-            <React.Fragment key={boundary}>
+          <div
+            role="row"
+            className="sticky top-0 z-30 grid border-b border-gold/30 bg-[#091943]/96 backdrop-blur-xl"
+            style={{
+              gridTemplateColumns: `116px repeat(${columns.length}, minmax(210px, 1fr))`,
+            }}
+          >
+            <div
+              role="columnheader"
+              className="sticky left-0 z-40 flex items-center gap-2 border-r border-gold/25 bg-[#0b1d4d] px-4 py-5 text-xs font-black uppercase tracking-[0.16em] text-gold"
+            >
+              <CalendarClock aria-hidden="true" className="size-4" />
+              {t("time")}
+            </div>
+            {columns.map((column) => (
               <div
-                role="rowheader"
-                className="schedule-reveal sticky left-0 z-20 border-b border-r border-white/10 bg-[#08173b]/98 px-4 py-3 text-xs font-black tabular-nums text-gold"
-                style={{ gridColumn: 1, gridRow: index + 1 }}
+                key={column.key}
+                role="columnheader"
+                className="border-r border-white/10 px-4 py-4 text-center last:border-r-0"
               >
-                {formatMinutes(boundary)}
+                {column.eyebrow && (
+                  <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-gold/65">
+                    {t("innovationZone")}
+                  </span>
+                )}
+                <span className="mt-1 block text-xs font-black uppercase tracking-[0.08em] text-white">
+                  {column.label}
+                </span>
               </div>
-              <div
-                aria-hidden="true"
-                className="pointer-events-none z-0 border-b border-white/8"
-                style={{ gridColumn: `2 / ${columns.length + 2}`, gridRow: index + 1 }}
-              />
-            </React.Fragment>
-          ))}
+            ))}
+          </div>
 
-          {layout.cells.map((cell) => {
-            const gridColumn = columnIndex.get(cell.columnKey);
-            if (!gridColumn) return null;
-            return (
-              <div
-                key={cell.key}
-                role="cell"
-                className="schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border border-white/12 bg-[#0d2455]/92 p-3 shadow-[inset_3px_0_0_rgba(202,155,82,0.75)] transition-colors hover:border-gold/35 hover:bg-[#112b62]"
-                style={{ gridColumn, gridRow: `${cell.startLine} / ${cell.endLine}` }}
-              >
-                <div className="space-y-4 divide-y divide-white/10">
-                  {cell.events.map((event, index) => (
-                    <div key={event.id} className={cn(index > 0 && "pt-4")}>
-                      <EventContent event={event} locale={locale} compact />
-                    </div>
-                  ))}
+          <div
+            role="rowgroup"
+            className="relative grid"
+            style={{
+              gridTemplateColumns: `116px repeat(${columns.length}, minmax(210px, 1fr))`,
+              gridTemplateRows: `repeat(${Math.max(layout.boundaries.length - 1, 1)}, minmax(54px, auto))`,
+            }}
+          >
+            {layout.boundaries.slice(0, -1).map((boundary, index) => (
+              <React.Fragment key={boundary}>
+                <div
+                  role="rowheader"
+                  className="schedule-reveal sticky left-0 z-20 border-b border-r border-white/10 bg-[#08173b]/98 px-4 py-3 text-xs font-black tabular-nums text-gold"
+                  style={{ gridColumn: 1, gridRow: index + 1 }}
+                >
+                  {formatMinutes(boundary)}
                 </div>
-              </div>
-            );
-          })}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none z-0 border-b border-white/8"
+                  style={{
+                    gridColumn: `2 / ${columns.length + 2}`,
+                    gridRow: index + 1,
+                  }}
+                />
+              </React.Fragment>
+            ))}
+
+            {layout.cells.map((cell) => {
+              const gridColumn = columnIndex.get(cell.columnKey);
+              if (!gridColumn) return null;
+              return (
+                <div
+                  key={cell.key}
+                  role="cell"
+                  className="schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border border-white/12 bg-[#0d2455]/92 p-3 shadow-[inset_3px_0_0_rgba(202,155,82,0.75)] transition-colors hover:border-gold/35 hover:bg-[#112b62]"
+                  style={{
+                    gridColumn,
+                    gridRow: `${cell.startLine} / ${cell.endLine}`,
+                  }}
+                >
+                  <div className="space-y-4 divide-y divide-white/10">
+                    {cell.events.map((event, index) => (
+                      <div key={event.id} className={cn(index > 0 && "pt-4")}>
+                        <EventContent event={event} locale={locale} compact />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-)}
+  );
+}
 ```
 
 Immediately after it, render unparseable desktop events when `layout.fallbackEvents.length > 0` as a compact list labeled with `t("otherVenue")`. Each item must use `<EventContent event={event} locale={locale} compact />` and `key={event.id}`.
@@ -707,46 +774,54 @@ Immediately after it, render unparseable desktop events when `layout.fallbackEve
 Render below the desktop block:
 
 ```tsx
-{currentDay.events.length > 0 ? (
-  <div className="space-y-4 lg:hidden">
-    {mobileGroups.map((group) => (
-      <section
-        key={`${group.timeLabel}-${group.events[0].id}`}
-        className="schedule-reveal overflow-hidden rounded-2xl border border-white/10 bg-[#091943]/72"
-        aria-labelledby={`mobile-time-${group.events[0].id}`}
-      >
-        <div className="flex items-center gap-3 border-b border-gold/20 bg-[#0c2250]/82 px-4 py-3">
-          <span className="h-7 w-1 rounded-full bg-gold" aria-hidden="true" />
-          <h3
-            id={`mobile-time-${group.events[0].id}`}
-            className="font-heading text-lg font-black tabular-nums text-gold"
-          >
-            {group.timeLabel}
-          </h3>
-        </div>
-        <div className="divide-y divide-white/10">
-          {group.events.map((event) => {
-            const venue = columns.find((column) => column.key === resolveVenueKey(event));
-            return (
-              <div key={event.id} className="px-4 py-5">
-                <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/6 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] text-white/68">
-                  {venue?.label ?? t("otherVenue")}
+{
+  currentDay.events.length > 0 ? (
+    <div className="space-y-4 lg:hidden">
+      {mobileGroups.map((group) => (
+        <section
+          key={`${group.timeLabel}-${group.events[0].id}`}
+          className="schedule-reveal overflow-hidden rounded-2xl border border-white/10 bg-[#091943]/72"
+          aria-labelledby={`mobile-time-${group.events[0].id}`}
+        >
+          <div className="flex items-center gap-3 border-b border-gold/20 bg-[#0c2250]/82 px-4 py-3">
+            <span className="h-7 w-1 rounded-full bg-gold" aria-hidden="true" />
+            <h3
+              id={`mobile-time-${group.events[0].id}`}
+              className="font-heading text-lg font-black tabular-nums text-gold"
+            >
+              {group.timeLabel}
+            </h3>
+          </div>
+          <div className="divide-y divide-white/10">
+            {group.events.map((event) => {
+              const venue = columns.find(
+                (column) => column.key === resolveVenueKey(event),
+              );
+              return (
+                <div key={event.id} className="px-4 py-5">
+                  <div className="mb-3 inline-flex rounded-full border border-white/12 bg-white/6 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] text-white/68">
+                    {venue?.label ?? t("otherVenue")}
+                  </div>
+                  <EventContent event={event} locale={locale} />
                 </div>
-                <EventContent event={event} locale={locale} />
-              </div>
-            );
-          })}
-        </div>
-      </section>
-    ))}
-  </div>
-) : (
-  <div className="py-24 text-center">
-    <MapPin aria-hidden="true" className="mx-auto mb-5 size-9 text-gold/55" />
-    <h4 className="font-heading text-2xl font-bold text-white">{t("emptyTitle")}</h4>
-    <p className="mx-auto mt-2 max-w-md text-sm text-white/55">{t("emptyDescription")}</p>
-  </div>
-)}
+              );
+            })}
+          </div>
+        </section>
+      ))}
+    </div>
+  ) : (
+    <div className="py-24 text-center">
+      <MapPin aria-hidden="true" className="mx-auto mb-5 size-9 text-gold/55" />
+      <h4 className="font-heading text-2xl font-bold text-white">
+        {t("emptyTitle")}
+      </h4>
+      <p className="mx-auto mt-2 max-w-md text-sm text-white/55">
+        {t("emptyDescription")}
+      </p>
+    </div>
+  );
+}
 ```
 
 - [ ] **Step 6: Adjust section width and day control accessibility**
@@ -815,12 +890,19 @@ test("every source event is represented once by the desktop layout and mobile gr
       ...desktop.cells.flatMap((cell) => cell.events.map((item) => item.id)),
       ...desktop.fallbackEvents.map((item) => item.id),
     ];
-    const mobileIds = groupEventsForMobile(day.events)
-      .flatMap((group) => group.events.map((item) => item.id));
+    const mobileIds = groupEventsForMobile(day.events).flatMap((group) =>
+      group.events.map((item) => item.id),
+    );
     const sourceIds = day.events.map((item) => item.id);
 
-    assert.deepEqual([...desktopIds].sort((a, b) => a - b), [...sourceIds].sort((a, b) => a - b));
-    assert.deepEqual([...mobileIds].sort((a, b) => a - b), [...sourceIds].sort((a, b) => a - b));
+    assert.deepEqual(
+      [...desktopIds].sort((a, b) => a - b),
+      [...sourceIds].sort((a, b) => a - b),
+    );
+    assert.deepEqual(
+      [...mobileIds].sort((a, b) => a - b),
+      [...sourceIds].sort((a, b) => a - b),
+    );
     assert.equal(new Set(desktopIds).size, sourceIds.length);
     assert.equal(new Set(mobileIds).size, sourceIds.length);
   }

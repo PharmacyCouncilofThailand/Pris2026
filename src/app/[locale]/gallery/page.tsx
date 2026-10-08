@@ -21,17 +21,25 @@ export default function GalleryPage() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const images = galleryData.pris2025.images;
-  const title = locale === "th" ? galleryData.pris2025.titleTh : galleryData.pris2025.title;
-  const subtitle = locale === "th" ? galleryData.pris2025.subtitleTh : galleryData.pris2025.subtitle;
+  const title =
+    locale === "th" ? galleryData.pris2025.titleTh : galleryData.pris2025.title;
+  const subtitle =
+    locale === "th"
+      ? galleryData.pris2025.subtitleTh
+      : galleryData.pris2025.subtitle;
 
   // Lightbox handlers
   const openLightbox = useCallback((idx: number) => setLightboxIndex(idx), []);
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
   const goNext = useCallback(() => {
-    setLightboxIndex((prev) => prev !== null ? (prev + 1) % images.length : null);
+    setLightboxIndex((prev) =>
+      prev !== null ? (prev + 1) % images.length : null,
+    );
   }, [images.length]);
   const goPrev = useCallback(() => {
-    setLightboxIndex((prev) => prev !== null ? (prev - 1 + images.length) % images.length : null);
+    setLightboxIndex((prev) =>
+      prev !== null ? (prev - 1 + images.length) % images.length : null,
+    );
   }, [images.length]);
 
   useEffect(() => {
@@ -53,44 +61,47 @@ export default function GalleryPage() {
     document.body.classList.remove("hero-playing");
   }, []);
 
-  useGSAP(() => {
-    // Hero text reveal
-    gsap.from(".gallery-hero-line", {
-      yPercent: 110,
-      stagger: 0.12,
-      duration: 1.6,
-      ease: "power4.out",
-      delay: 0.15,
-    });
-    gsap.from(".gallery-hero-sub", {
-      opacity: 0,
-      y: 20,
-      duration: 1,
-      ease: "power3.out",
-      delay: 0.6,
-    });
+  useGSAP(
+    () => {
+      // Hero text reveal
+      gsap.from(".gallery-hero-line", {
+        yPercent: 110,
+        stagger: 0.12,
+        duration: 1.6,
+        ease: "power4.out",
+        delay: 0.15,
+      });
+      gsap.from(".gallery-hero-sub", {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: "power3.out",
+        delay: 0.6,
+      });
 
-    // Gallery items stagger
-    const items = pageRef.current?.querySelectorAll(".gallery-item");
-    items?.forEach((item, i) => {
-      gsap.fromTo(
-        item,
-        { opacity: 0, y: 50, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.8,
-          delay: (i % 6) * 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: item,
-            start: "top 90%",
+      // Gallery items stagger
+      const items = pageRef.current?.querySelectorAll(".gallery-item");
+      items?.forEach((item, i) => {
+        gsap.fromTo(
+          item,
+          { opacity: 0, y: 50, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.8,
+            delay: (i % 6) * 0.08,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: item,
+              start: "top 90%",
+            },
           },
-        }
-      );
-    });
-  }, { scope: pageRef });
+        );
+      });
+    },
+    { scope: pageRef },
+  );
 
   return (
     <>
@@ -107,7 +118,9 @@ export default function GalleryPage() {
           <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col items-center">
             <div className="gallery-hero-sub flex items-center gap-4 mb-8">
               <span className="w-12 h-px bg-gold/50" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gold">PRIS 2025</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-gold">
+                PRIS 2025
+              </span>
               <span className="w-12 h-px bg-gold/50" />
             </div>
 
@@ -195,7 +208,10 @@ export default function GalleryPage() {
             variant="ghost"
             size="icon"
             className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-10 text-white/40 hover:text-white transition-colors duration-300 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md"
-            onClick={(e) => { e.stopPropagation(); goPrev(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              goPrev();
+            }}
           >
             <ChevronLeft className="w-5 h-5 sm:w-8 sm:h-8" />
           </Button>
@@ -204,7 +220,10 @@ export default function GalleryPage() {
             variant="ghost"
             size="icon"
             className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-10 text-white/40 hover:text-white transition-colors duration-300 p-2 sm:p-3 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md"
-            onClick={(e) => { e.stopPropagation(); goNext(); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              goNext();
+            }}
           >
             <ChevronRight className="w-5 h-5 sm:w-8 sm:h-8" />
           </Button>

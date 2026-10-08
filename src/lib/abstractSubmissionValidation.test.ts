@@ -19,9 +19,7 @@ test("provides early client email validation on normalized input", () => {
 });
 
 test("normalizes co-author emails without mutating the input array", () => {
-  const original = [
-    { firstName: "Suda", email: "  suda@example.com  " },
-  ];
+  const original = [{ firstName: "Suda", email: "  suda@example.com  " }];
 
   const normalized = normalizeCoAuthorEmails(original);
 
@@ -34,7 +32,11 @@ test("normalizes co-author emails without mutating the input array", () => {
 test("maps presenting-author Zod path", () => {
   assert.deepEqual(
     findAbstractEmailValidationTarget([
-      { code: "invalid_string", path: ["email"], message: "Invalid email address" },
+      {
+        code: "invalid_string",
+        path: ["email"],
+        message: "Invalid email address",
+      },
     ]),
     { kind: "author" },
   );

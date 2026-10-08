@@ -10,7 +10,10 @@ import { useLocale, useTranslations } from "next-intl";
 import { ChevronDown, ArrowRight, CalendarDays, MapPin } from "lucide-react";
 import Countdown from "@/components/elements/Countdown";
 import { useAuth } from "@/context/AuthContext";
-import { REGISTRATION_OPEN, getAbstractGateState } from "@/lib/registrationGate";
+import {
+  REGISTRATION_OPEN,
+  getAbstractGateState,
+} from "@/lib/registrationGate";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -52,11 +55,16 @@ export default function Hero() {
   const isThai = locale === "th";
   const headingTracking = isThai ? "tracking-normal" : "tracking-[0.07em]";
   const detailTracking = isThai ? "tracking-normal" : "tracking-[0.11em]";
-  const buttonTracking = isThai ? "tracking-normal" : "tracking-[0.16em] sm:tracking-[0.2em]";
+  const buttonTracking = isThai
+    ? "tracking-normal"
+    : "tracking-[0.16em] sm:tracking-[0.2em]";
   const noticeTracking = isThai ? "tracking-normal" : "tracking-[0.04em]";
-  const countdownTracking = isThai ? "tracking-normal" : "tracking-[0.26em] sm:tracking-[0.34em]";
+  const countdownTracking = isThai
+    ? "tracking-normal"
+    : "tracking-[0.26em] sm:tracking-[0.34em]";
   const scrollTracking = isThai ? "tracking-normal" : "tracking-[0.18em]";
-  const buttonLabelClass = "relative justify-self-center whitespace-nowrap text-[0.8rem] font-black leading-tight sm:text-base max-md:landscape:text-[0.68rem]";
+  const buttonLabelClass =
+    "relative justify-self-center whitespace-nowrap text-[0.8rem] font-black leading-tight sm:text-base max-md:landscape:text-[0.68rem]";
   const organizerParts = t.raw("organizerParts") as string[];
   const { isAuthenticated } = useAuth();
   const [abstractOpen, setAbstractOpen] = useState(true);
@@ -73,12 +81,15 @@ export default function Hero() {
   // Track if hero has already played (persists across page reloads in the same tab)
   const hasPlayed = () => {
     if (typeof window === "undefined") return false;
-    return !!(window as unknown as Record<string, boolean>).__heroPlayed || sessionStorage.getItem('heroPlayed') === 'true';
+    return (
+      !!(window as unknown as Record<string, boolean>).__heroPlayed ||
+      sessionStorage.getItem("heroPlayed") === "true"
+    );
   };
   const markPlayed = () => {
     if (typeof window !== "undefined") {
       (window as unknown as Record<string, boolean>).__heroPlayed = true;
-      sessionStorage.setItem('heroPlayed', 'true');
+      sessionStorage.setItem("heroPlayed", "true");
     }
   };
 
@@ -170,12 +181,14 @@ export default function Hero() {
 
       // Device settings
       const isMobile = window.innerWidth <= 1024; // Treat tablets as mobile for scrolling performance
-      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
       const shouldSkipIntro = isMobile || prefersReducedMotion;
       const { initialScale, initialY } = isMobile
         ? HERO_CFG.mobile
         : HERO_CFG.desktop;
-        
+
       const initialX = 0;
 
       gsap.set(logoRef.current, {
@@ -183,7 +196,7 @@ export default function Hero() {
         y: initialY,
         x: initialX,
         scale: initialScale,
-        transformOrigin: "center center"
+        transformOrigin: "center center",
       });
 
       // Calculate zoom origin (center of "S")
@@ -192,26 +205,35 @@ export default function Hero() {
         const container = maskRef.current.getBoundingClientRect();
         const tgt = zoomTargetRef.current.getBoundingClientRect();
         if (container.width === 0 || container.height === 0) return;
-        const ox = ((tgt.left + tgt.width / 2 - container.left) / container.width) * 100;
-        const oy = ((tgt.top + tgt.height / 2 - container.top) / container.height) * 100;
+        const ox =
+          ((tgt.left + tgt.width / 2 - container.left) / container.width) * 100;
+        const oy =
+          ((tgt.top + tgt.height / 2 - container.top) / container.height) * 100;
         gsap.set(maskRef.current, { transformOrigin: `${ox}% ${oy}%` });
       };
-      
+
       const updateSubtextWidth = () => {
-        if (!mainTextRef.current || !subtextInnerRef.current || !subtextRef.current || !containerRef.current) return;
+        if (
+          !mainTextRef.current ||
+          !subtextInnerRef.current ||
+          !subtextRef.current ||
+          !containerRef.current
+        )
+          return;
         const mainRect = mainTextRef.current.getBoundingClientRect();
         const containerRect = containerRef.current.getBoundingClientRect();
-        
+
         if (mainRect.width > 0) {
           // Position tightly under the PRIS 2026 text
           // Subtract a small percentage of height to account for font descender space
           const relativeTop = mainRect.bottom - containerRect.top;
-          subtextRef.current.style.top = `${relativeTop - (mainRect.height * 0.1)}px`; 
+          subtextRef.current.style.top = `${relativeTop - mainRect.height * 0.1}px`;
 
           // Measure and scale to perfectly match width
-          subtextInnerRef.current.style.transform = 'none';
-          const naturalWidth = subtextInnerRef.current.getBoundingClientRect().width;
-          
+          subtextInnerRef.current.style.transform = "none";
+          const naturalWidth =
+            subtextInnerRef.current.getBoundingClientRect().width;
+
           if (naturalWidth > 0) {
             const scale = (mainRect.width / naturalWidth) * 0.92; // Reduce size to fit inside visible glyphs
             subtextInnerRef.current.style.transform = `scale(${scale})`;
@@ -234,18 +256,30 @@ export default function Hero() {
       document.documentElement.style.overflow = "hidden";
 
       const preventKeyScroll = (e: KeyboardEvent) => {
-        if (['Space', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'].includes(e.code)) {
+        if (
+          [
+            "Space",
+            "ArrowUp",
+            "ArrowDown",
+            "PageUp",
+            "PageDown",
+            "Home",
+            "End",
+          ].includes(e.code)
+        ) {
           e.preventDefault();
         }
       };
-      
+
       const preventPostZoomWheel = (e: WheelEvent) => e.preventDefault();
       const preventTouchMove = (e: TouchEvent | Event) => e.preventDefault();
 
       // Block keyboard scrolling immediately
       window.addEventListener("keydown", preventKeyScroll, { passive: false });
       if (isMobile) {
-        window.addEventListener("touchmove", preventTouchMove, { passive: false });
+        window.addEventListener("touchmove", preventTouchMove, {
+          passive: false,
+        });
       }
 
       const tlZoom = gsap.timeline({ paused: true });
@@ -285,18 +319,83 @@ export default function Hero() {
       if (isMobile) {
         // Mobile-optimized: Single smooth continuous push
         tlAuto
-          .to(logoRef.current, { opacity: 1, y: 0, x: 0, scale: 1, ease: "power3.out", duration: 1.4, force3D: true }, 0.2)
-          .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
-          .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 }, 0.8);
+          .to(
+            logoRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              x: 0,
+              scale: 1,
+              ease: "power3.out",
+              duration: 1.4,
+              force3D: true,
+            },
+            0.2,
+          )
+          .fromTo(
+            infoRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 },
+            0.8,
+          )
+          .fromTo(
+            countdownRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 },
+            0.8,
+          )
+          .fromTo(
+            buttonsRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, ease: "power3.out", duration: 1.0 },
+            0.8,
+          );
       } else {
         // Desktop: Two-phase motion (syncs with the SVG mask scroll)
         tlAuto
-          .to(logoRef.current, { opacity: 1, y: initialY, x: initialX, scale: initialScale, ease: "power2.out", duration: 0.8, force3D: true }, 0)
-          .to(logoRef.current, { y: 0, x: 0, scale: 1, ease: "power2.inOut", duration: 0.6, force3D: true }, 1.0)
-          .fromTo(infoRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
-          .fromTo(countdownRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3)
-          .fromTo(buttonsRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 }, 1.3);
+          .to(
+            logoRef.current,
+            {
+              opacity: 1,
+              y: initialY,
+              x: initialX,
+              scale: initialScale,
+              ease: "power2.out",
+              duration: 0.8,
+              force3D: true,
+            },
+            0,
+          )
+          .to(
+            logoRef.current,
+            {
+              y: 0,
+              x: 0,
+              scale: 1,
+              ease: "power2.inOut",
+              duration: 0.6,
+              force3D: true,
+            },
+            1.0,
+          )
+          .fromTo(
+            infoRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 },
+            1.3,
+          )
+          .fromTo(
+            countdownRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 },
+            1.3,
+          )
+          .fromTo(
+            buttonsRef.current,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, ease: "power2.out", duration: 0.5 },
+            1.3,
+          );
       }
 
       // Wheel-driven zoom control
@@ -314,14 +413,16 @@ export default function Hero() {
         if (progress >= HERO_CFG.autoTriggerAt) {
           autoTriggered = true;
           window.removeEventListener("wheel", handleWheel);
-          window.addEventListener("wheel", preventPostZoomWheel, { passive: false });
+          window.addEventListener("wheel", preventPostZoomWheel, {
+            passive: false,
+          });
           gsap.to(tlZoom, {
             progress: 1,
             duration: 0.35,
             ease: "power2.in",
-            onComplete: () => { 
+            onComplete: () => {
               gsap.set(hintRef.current, { display: "none" });
-              tlAuto.play(); 
+              tlAuto.play();
             },
           });
         }
@@ -365,14 +466,15 @@ export default function Hero() {
       };
 
       // Phase 1 (Auto): Letters stagger in
-      const gradientLetters = maskRef.current!.querySelectorAll(".gradient-letter");
-      
+      const gradientLetters =
+        maskRef.current!.querySelectorAll(".gradient-letter");
+
       if (shouldSkipIntro) {
         // Mobile/reduced-motion optimization: skip the SVG zoom intro.
         triggerAutoPlay();
       } else if (gradientLetters.length) {
         gsap.set(gradientLetters, { opacity: 0 }); // Hide gradient text initially
-        
+
         gsap.to(gradientLetters, {
           opacity: 1,
           duration: 0.35,
@@ -383,14 +485,20 @@ export default function Hero() {
             bindInteractions();
           },
         });
-        
+
         // Show scroll down hint earlier, independent of animation completion
         if (!isMobile) {
-          gsap.to(hintRef.current, { opacity: 1, duration: 0.8, delay: 0.6, ease: "power2.out" });
+          gsap.to(hintRef.current, {
+            opacity: 1,
+            duration: 0.8,
+            delay: 0.6,
+            ease: "power2.out",
+          });
         }
-        
+
         // Fade in subtext alongside PRIS 2026
-        const subtextParts = subtextRef.current?.querySelectorAll(".subtext-part");
+        const subtextParts =
+          subtextRef.current?.querySelectorAll(".subtext-part");
         if (subtextParts) {
           gsap.set(subtextParts, { opacity: 0 });
           gsap.to(subtextParts, {
@@ -403,7 +511,8 @@ export default function Hero() {
         }
       } else {
         if (!isMobile) gsap.set(hintRef.current, { opacity: 1 });
-        const subtextParts = subtextRef.current?.querySelectorAll(".subtext-part");
+        const subtextParts =
+          subtextRef.current?.querySelectorAll(".subtext-part");
         if (subtextParts) gsap.set(subtextParts, { opacity: 1 });
         bindInteractions();
       }
@@ -427,7 +536,7 @@ export default function Hero() {
   );
 
   return (
-    <section 
+    <section
       ref={containerRef}
       lang={locale}
       className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:min-h-[100svh]"
@@ -462,7 +571,11 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-[2] mx-auto flex min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 w-full max-w-[1920px] flex-col px-4 pb-6 pt-16 sm:px-8 sm:pt-20 md:px-10 md:pb-[7vh] md:pt-[7vh] md:portrait:px-[5.2vw] md:portrait:pb-[2.6vh] md:portrait:pt-[7.2vh] min-[1280px]:min-h-[100svh] min-[1280px]:px-[8vw] min-[1280px]:pb-[2.2vh] min-[1280px]:pt-[5.6rem] min-[1280px]:max-[1439px]:landscape:pt-[9.2rem] max-md:landscape:pb-5 max-md:landscape:pt-12 pointer-events-auto">
         <div className="mx-auto flex w-full flex-col items-center md:max-w-[820px] md:portrait:max-w-none min-[1280px]:mx-auto min-[1280px]:max-w-[80vw]">
-          <div ref={logoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
+          <div
+            ref={logoRef}
+            className="will-change-transform transform-gpu flex flex-col items-center"
+            style={{ opacity: 0 }}
+          >
             <div className="flex translate-y-6 items-center justify-center gap-4 sm:gap-6 lg:gap-5 md:portrait:gap-5 max-md:landscape:translate-y-3 max-md:landscape:gap-3">
               <div className="relative h-16 w-16 sm:h-[5.25rem] sm:w-[5.25rem] md:portrait:h-[4.6rem] md:portrait:w-[4.6rem] lg:h-[5.5vw] lg:w-[5.5vw] lg:max-h-[84px] lg:max-w-[84px] max-md:landscape:h-12 max-md:landscape:w-12">
                 <Image
@@ -496,11 +609,19 @@ export default function Hero() {
             </div>
           </div>
 
-          <div ref={infoRef} className="will-change-transform transform-gpu flex flex-col items-center" style={{ opacity: 0 }}>
+          <div
+            ref={infoRef}
+            className="will-change-transform transform-gpu flex flex-col items-center"
+            style={{ opacity: 0 }}
+          >
             <div className="mt-4 sm:mt-10 lg:mt-[2.2vh] md:portrait:mt-[4.1vh] min-[1280px]:portrait:mt-[2.2vh] max-md:landscape:mt-4 text-center flex justify-center w-full">
-              <h1 className={`max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] ${headingTracking} text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]`}>
+              <h1
+                className={`max-w-[1060px] text-center text-[1.85rem] font-black uppercase leading-[1.14] ${headingTracking} text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.8),0_0_40px_rgba(0,0,0,0.5)] min-[380px]:text-[2.1rem] sm:text-[2.65rem] md:text-[3.05rem] md:portrait:text-[clamp(2.75rem,5.3vw,3.55rem)] lg:text-[clamp(2.05rem,2.25vw,2.95rem)] max-md:landscape:text-[1.45rem] max-md:landscape:leading-[1.08]`}
+              >
                 {t("headingLine1")}
-                {t("headingLine2") && <span className="block">{t("headingLine2")}</span>}
+                {t("headingLine2") && (
+                  <span className="block">{t("headingLine2")}</span>
+                )}
               </h1>
             </div>
 
@@ -512,7 +633,9 @@ export default function Hero() {
                     aria-hidden="true"
                     className="-mt-0.5 h-6 w-6 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-6 md:portrait:w-6 lg:h-6 lg:w-6 max-md:landscape:h-5 max-md:landscape:w-5"
                   />
-                  <p className={`max-w-[16rem] text-center text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.1rem] max-md:landscape:text-right max-md:landscape:text-[0.88rem]`}>
+                  <p
+                    className={`max-w-[16rem] text-center text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-right sm:text-[1.22rem] md:text-[1.32rem] md:portrait:text-center lg:text-[1.1rem] max-md:landscape:text-right max-md:landscape:text-[0.88rem]`}
+                  >
                     {t("date")}
                   </p>
                 </div>
@@ -529,20 +652,28 @@ export default function Hero() {
                       className="mt-0.5 h-6 w-6 shrink-0 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)] md:portrait:h-6 md:portrait:w-6 lg:h-6 lg:w-6 max-md:landscape:h-5 max-md:landscape:w-5"
                     />
                     <div className="flex flex-col gap-y-0.5">
-                      <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
+                      <p
+                        className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}
+                      >
                         {t("venueTitle")}
                       </p>
                       {t("venueLocationNameTh") ? (
-                        <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
+                        <p
+                          className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}
+                        >
                           {t("venueLocationNameTh")}
                         </p>
                       ) : null}
                       {t("venueLocationNameEn") ? (
-                        <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
+                        <p
+                          className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}
+                        >
                           {t("venueLocationNameEn")}
                         </p>
                       ) : null}
-                      <p className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
+                      <p
+                        className={`text-[1.08rem] font-black uppercase leading-tight ${detailTracking} text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.9),0_0_30px_rgba(0,0,0,0.5)] sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}
+                      >
                         {t("venueRegion")}
                       </p>
                     </div>
@@ -552,7 +683,11 @@ export default function Hero() {
             </div>
           </div>
 
-          <div ref={buttonsRef} className="will-change-transform transform-gpu flex flex-col items-center w-full" style={{ opacity: 0 }}>
+          <div
+            ref={buttonsRef}
+            className="will-change-transform transform-gpu flex flex-col items-center w-full"
+            style={{ opacity: 0 }}
+          >
             <div className="mt-7 grid w-full max-w-[760px] grid-cols-1 gap-4 sm:grid-cols-2 md:portrait:mt-[4.6vh] md:portrait:max-w-none md:portrait:gap-5 min-[1280px]:mt-[2.8vh] max-md:landscape:mt-4 max-md:landscape:grid-cols-2 max-md:landscape:gap-3">
               {REGISTRATION_OPEN ? (
                 <Link
@@ -564,7 +699,11 @@ export default function Hero() {
                   <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-75 transition group-hover:via-[#07101f]" />
                   <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-white/26 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                   <span className="relative justify-self-start h-2 w-2 rounded-full bg-white opacity-85 shadow-[0_0_18px_rgba(255,255,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
-                  <span className={`${buttonLabelClass} drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]`}>{t("registerNow")}</span>
+                  <span
+                    className={`${buttonLabelClass} drop-shadow-[0_0_12px_rgba(100,28,0,0.32)]`}
+                  >
+                    {t("registerNow")}
+                  </span>
                   <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-white/18 bg-white text-[#ff6a00] shadow-[0_0_16px_rgba(255,255,255,0.28)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#07101f] group-hover:text-white sm:h-8 sm:w-8">
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -575,7 +714,11 @@ export default function Hero() {
                   title={tg("registrationNotice")}
                   className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-[#ff8a24] bg-[#ff6a00] px-5 text-center font-black text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
-                  <span className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}>{tg("registrationNotice")}</span>
+                  <span
+                    className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}
+                  >
+                    {tg("registrationNotice")}
+                  </span>
                 </div>
               )}
               {abstractOpen ? (
@@ -587,7 +730,11 @@ export default function Hero() {
                   <span className="absolute inset-x-8 bottom-0 h-px bg-gradient-to-r from-transparent via-[#168fff] to-transparent opacity-80 transition group-hover:via-[#ff7a1a]" />
                   <span className="absolute -left-1/3 top-0 h-full w-1/3 skew-x-[-18deg] bg-[#168fff]/22 opacity-0 blur-sm transition duration-700 group-hover:left-[115%] group-hover:opacity-100" />
                   <span className="relative justify-self-start h-2 w-2 rounded-full bg-[#168fff] opacity-80 shadow-[0_0_18px_rgba(22,143,255,0.9)] transition group-hover:scale-[1.7] group-hover:opacity-100" />
-                  <span className={`${buttonLabelClass} drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]`}>{t("submitAbstract")}</span>
+                  <span
+                    className={`${buttonLabelClass} drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]`}
+                  >
+                    {t("submitAbstract")}
+                  </span>
                   <span className="relative flex h-7 w-7 items-center justify-center justify-self-end rounded-full border border-[#07101f]/10 bg-[#07101f] text-white shadow-[0_0_16px_rgba(22,143,255,0.25)] transition duration-300 group-hover:translate-x-1 group-hover:bg-[#168fff] sm:h-8 sm:w-8">
                     <ArrowRight className="h-4 w-4" />
                   </span>
@@ -598,17 +745,26 @@ export default function Hero() {
                   title={tg("abstractNotice")}
                   className="relative flex min-h-[64px] items-center justify-center gap-2 overflow-hidden rounded-full border border-white bg-white px-5 text-center font-black text-[#07101f] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_26px_rgba(0,0,0,0.35)] cursor-not-allowed select-none sm:min-h-[76px] sm:px-7 md:portrait:min-h-[70px] lg:min-h-[72px] max-md:landscape:min-h-[52px]"
                 >
-                  <span className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}>{tg("abstractNotice")}</span>
+                  <span
+                    className={`relative whitespace-nowrap text-[0.78rem] ${noticeTracking} sm:text-[0.95rem]`}
+                  >
+                    {tg("abstractNotice")}
+                  </span>
                 </div>
               )}
             </div>
           </div>
-
         </div>
 
-        <div ref={countdownRef} className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2" style={{ opacity: 0 }}>
+        <div
+          ref={countdownRef}
+          className="will-change-transform transform-gpu relative mt-14 w-full px-1 py-4 sm:mt-auto md:portrait:mt-[7vh] lg:portrait:mt-[7vh] sm:px-5 sm:py-5 md:portrait:pb-[1.8vh] min-[1280px]:mt-[clamp(1.75rem,3.8vh,3.5rem)] min-[1280px]:mb-3 min-[1280px]:max-[1439px]:landscape:mt-[6vh] max-md:landscape:mt-8 max-md:landscape:py-2"
+          style={{ opacity: 0 }}
+        >
           <div className="relative flex flex-col items-center gap-3 max-md:landscape:gap-2">
-            <p className={`text-center text-[1.08rem] font-bold uppercase ${countdownTracking} text-white sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}>
+            <p
+              className={`text-center text-[1.08rem] font-bold uppercase ${countdownTracking} text-white sm:text-[1.22rem] md:text-[1.32rem] lg:text-[1.1rem] max-md:landscape:text-[0.88rem]`}
+            >
               {t("countdownLabel")}
             </p>
             <Countdown className="mx-auto" />
@@ -649,11 +805,13 @@ export default function Hero() {
         style={{ opacity: 0 }}
       >
         <div className="flex flex-col items-center gap-1.5 px-4 text-center text-black">
-          <span className={`text-[11px] sm:text-xs font-semibold leading-none ${scrollTracking}`}>
-            {t('scrollDown')}
+          <span
+            className={`text-[11px] sm:text-xs font-semibold leading-none ${scrollTracking}`}
+          >
+            {t("scrollDown")}
           </span>
           <span className="text-[9px] sm:text-[10px] font-semibold leading-none tracking-[0.28em]">
-            {t('scrollDownSecondary')}
+            {t("scrollDownSecondary")}
           </span>
           <ChevronDown className="mt-1 w-4 h-4 text-black animate-pulse opacity-80" />
         </div>
@@ -664,13 +822,16 @@ export default function Hero() {
         ref={subtextRef}
         className="absolute left-1/2 -translate-x-1/2 z-[2] pointer-events-none transition-opacity duration-300 flex justify-center"
       >
-        <div ref={subtextInnerRef} className="text-black/90 font-medium whitespace-nowrap text-3xl tracking-tight origin-top flex">
+        <div
+          ref={subtextInnerRef}
+          className="text-black/90 font-medium whitespace-nowrap text-3xl tracking-tight origin-top flex"
+        >
           {organizerParts.map((part, i) => (
             <React.Fragment key={`sub-${i}`}>
-              <span className="subtext-part inline-block">
-                {part}
-              </span>
-              {i < organizerParts.length - 1 && <span className="inline-block">&nbsp;</span>}
+              <span className="subtext-part inline-block">{part}</span>
+              {i < organizerParts.length - 1 && (
+                <span className="inline-block">&nbsp;</span>
+              )}
             </React.Fragment>
           ))}
         </div>

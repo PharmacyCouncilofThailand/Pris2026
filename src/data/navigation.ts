@@ -1,58 +1,64 @@
 export interface NavItem {
-    labelKey: string;
-    href?: string;
-    children?: NavItem[];
-    disabled?: boolean;
-    /** Hide from nav until user is logged in */
-    authRequired?: boolean;
+  labelKey: string;
+  href?: string;
+  children?: NavItem[];
+  disabled?: boolean;
+  /** Hide from nav until user is logged in */
+  authRequired?: boolean;
 }
 
 export const navigationData: NavItem[] = [
-    {
-        labelKey: "home",
-        href: "/",
-    },
-    {
-        labelKey: "about",
-        children: [
-            { labelKey: "aboutPris", href: "/about" },
-            { labelKey: "welcomeMessages", href: "/welcome-messages" },
-        ],
-    },
-    {
-        labelKey: "agenda",
-        href: "/agenda",
-    },
-    {
-        labelKey: "abstracts",
-        children: [
-            { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
-            { labelKey: "acceptedAbstractsAnnouncement", href: "/approved-abstracts" },
-        ],
-    },
-    {
-        labelKey: "registration",
-        href: "/registration",
-    },
-    {
-        labelKey: "sponsorship",
-        href: "/sponsorship",
-    },
-    {
-        labelKey: "gallery",
-        href: "/gallery",
-    },
-    {
-        labelKey: "more",
-        authRequired: true,
-        children: [
-            { labelKey: "hotelBookingForm", href: "/hotel-booking-form" },
-            { labelKey: "inviteLetter", href: "/invite-letter" },
-            { labelKey: "oralPosterPresentationCriteria", href: "/oral-poster-presentation-criteria" },
-        ],
-    },
-    {
-        labelKey: "contact",
-        href: "/contact",
-    },
+  {
+    labelKey: "home",
+    href: "/",
+  },
+  {
+    labelKey: "about",
+    children: [
+      { labelKey: "aboutPris", href: "/about" },
+      { labelKey: "welcomeMessages", href: "/welcome-messages" },
+    ],
+  },
+  {
+    labelKey: "agenda",
+    href: "/agenda",
+  },
+  {
+    labelKey: "abstracts",
+    children: [
+      { labelKey: "callForAbstracts", href: "/call-for-abstracts" },
+      {
+        labelKey: "acceptedAbstractsAnnouncement",
+        href: "/approved-abstracts",
+      },
+    ],
+  },
+  {
+    labelKey: "registration",
+    href: "/registration",
+  },
+  {
+    labelKey: "sponsorship",
+    href: "/sponsorship",
+  },
+  {
+    labelKey: "gallery",
+    href: "/gallery",
+  },
+  {
+    labelKey: "more",
+    authRequired: true,
+    children: [
+      { labelKey: "hotelBookingForm", href: "/hotel-booking-form" },
+      { labelKey: "inviteLetter", href: "/invite-letter" },
+      {
+        labelKey: "oralPosterPresentationCriteria",
+        href: "/oral-poster-presentation-criteria",
+      },
+    ],
+  },
+  {
+    labelKey: "contact",
+    href: "/contact",
+  },
 ];

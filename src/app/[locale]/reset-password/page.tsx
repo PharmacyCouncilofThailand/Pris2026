@@ -55,8 +55,12 @@ function ResetPasswordContent() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const newPassword = (form.elements.namedItem("newPassword") as HTMLInputElement).value;
-    const confirmPassword = (form.elements.namedItem("confirmPassword") as HTMLInputElement).value;
+    const newPassword = (
+      form.elements.namedItem("newPassword") as HTMLInputElement
+    ).value;
+    const confirmPassword = (
+      form.elements.namedItem("confirmPassword") as HTMLInputElement
+    ).value;
 
     if (newPassword.length < 6) {
       toast.error(t("passwordTooShort"));
@@ -105,8 +109,19 @@ function ResetPasswordContent() {
           disabled={isPendingLang}
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-gray-100 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-black transition-all disabled:opacity-50"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           {locale === "en" ? "TH" : "EN"}
         </button>
@@ -121,13 +136,28 @@ function ResetPasswordContent() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
 
           <div className="relative z-10">
-            <Link href="/login" className="inline-flex items-center gap-4 group text-white hover:text-white/80 transition-colors">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-4 group text-white hover:text-white/80 transition-colors"
+            >
               <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/20 bg-white/5 group-hover:bg-white/10 transition-colors shadow-sm">
-                <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <svg
+                  className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
                 </svg>
               </div>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold">{t("backToLogin")}</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold">
+                {t("backToLogin")}
+              </span>
             </Link>
           </div>
         </div>
@@ -137,19 +167,37 @@ function ResetPasswordContent() {
           <div className="w-full max-w-[420px] py-4">
             {/* Mobile Back Button */}
             <div className="lg:hidden flex justify-start mb-6">
-              <Link href="/login" className="inline-flex items-center gap-2 group text-gray-500 hover:text-black transition-colors">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 group text-gray-500 hover:text-black transition-colors"
+              >
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 border border-gray-200 group-hover:bg-gray-100 transition-colors shadow-sm">
-                  <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <svg
+                    className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
                   </svg>
                 </div>
-                <span className="text-[11px] uppercase tracking-widest font-bold">{t("backToLogin")}</span>
+                <span className="text-[11px] uppercase tracking-widest font-bold">
+                  {t("backToLogin")}
+                </span>
               </Link>
             </div>
 
             {/* Logo */}
             <div className="flex justify-center mb-10">
-              <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
+              <Link
+                href="/"
+                className="inline-block transition-transform duration-300 hover:opacity-70"
+              >
                 <Image
                   src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
@@ -165,7 +213,10 @@ function ResetPasswordContent() {
               /* Success State */
               <div className="text-center space-y-6">
                 <div className="w-20 h-20 mx-auto rounded-full bg-emerald-50 flex items-center justify-center">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-500" strokeWidth={1.75} />
+                  <CheckCircle2
+                    className="w-10 h-10 text-emerald-500"
+                    strokeWidth={1.75}
+                  />
                 </div>
                 <div className="space-y-3">
                   <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 leading-tight">
@@ -186,14 +237,19 @@ function ResetPasswordContent() {
               /* Invalid / Missing Token State */
               <div className="text-center space-y-6">
                 <div className="w-20 h-20 mx-auto rounded-full bg-red-50 flex items-center justify-center">
-                  <AlertTriangle className="w-10 h-10 text-red-500" strokeWidth={1.75} />
+                  <AlertTriangle
+                    className="w-10 h-10 text-red-500"
+                    strokeWidth={1.75}
+                  />
                 </div>
                 <div className="space-y-3">
                   <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 leading-tight">
                     {t("invalidToken")}
                   </h1>
                   <p className="text-sm font-medium text-gray-500 leading-relaxed">
-                    {tokenError === "missing" ? t("missingToken") : t("invalidTokenDesc")}
+                    {tokenError === "missing"
+                      ? t("missingToken")
+                      : t("invalidTokenDesc")}
                   </p>
                 </div>
                 <div className="space-y-3 pt-2">
@@ -224,7 +280,10 @@ function ResetPasswordContent() {
 
                 <form className="space-y-6" onSubmit={handleSubmit}>
                   <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="newPassword">
+                    <label
+                      className="block text-sm font-bold text-gray-900 mb-2"
+                      htmlFor="newPassword"
+                    >
                       {t("newPassword")}
                     </label>
                     <div className="relative">
@@ -243,15 +302,24 @@ function ResetPasswordContent() {
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-700 transition-colors"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="confirmPassword">
+                    <label
+                      className="block text-sm font-bold text-gray-900 mb-2"
+                      htmlFor="confirmPassword"
+                    >
                       {t("confirmNewPassword")}
                     </label>
                     <div className="relative">
@@ -269,9 +337,15 @@ function ResetPasswordContent() {
                         type="button"
                         onClick={() => setShowConfirm(!showConfirm)}
                         className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-700 transition-colors"
-                        aria-label={showConfirm ? "Hide password" : "Show password"}
+                        aria-label={
+                          showConfirm ? "Hide password" : "Show password"
+                        }
                       >
-                        {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showConfirm ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -290,7 +364,10 @@ function ResetPasswordContent() {
                 <div className="mt-12 text-center">
                   <p className="text-sm font-medium text-gray-500">
                     {t("rememberPassword")}{" "}
-                    <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
+                    <Link
+                      href="/login"
+                      className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1"
+                    >
                       {t("signIn")}
                     </Link>
                   </p>

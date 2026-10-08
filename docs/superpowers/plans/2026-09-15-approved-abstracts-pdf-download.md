@@ -22,9 +22,11 @@
 ### Task 1: Add the original PDF asset
 
 **Files:**
+
 - Create: `public/documents/approved-abstracts-round-1.pdf`
 
 **Interfaces:**
+
 - Produces: a static PDF served by Next.js at `/documents/approved-abstracts-round-1.pdf`.
 
 - [x] **Step 1: Create the public documents directory**
@@ -65,11 +67,13 @@ Expected: one commit contains only the copied PDF asset.
 ### Task 2: Add bilingual PDF action links
 
 **Files:**
+
 - Modify: `src/app/[locale]/approved-abstracts/page.tsx`
 - Modify: `messages/th.json`
 - Modify: `messages/en.json`
 
 **Interfaces:**
+
 - Consumes: the static URL `/documents/approved-abstracts-round-1.pdf` and the existing `useTranslations("approvedAbstracts")` instance.
 - Produces: two accessible links rendered above the filter card.
 
@@ -96,11 +100,24 @@ Use these English values in `messages/en.json`:
 Render two links using the existing page card styling:
 
 ```tsx
-import { Download, ExternalLink, Search, X, User, Tag, Calendar, Clock, Info } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  Search,
+  X,
+  User,
+  Tag,
+  Calendar,
+  Clock,
+  Info,
+} from "lucide-react";
 
 const approvedAbstractsPdfUrl = "/documents/approved-abstracts-round-1.pdf";
 
-<div aria-label={t("pdfActionsLabel")} className="mb-5 flex flex-col gap-2.5 rounded-2xl border border-slate-200 bg-white/90 p-3.5 shadow-sm sm:flex-row sm:items-center sm:justify-end sm:px-4">
+<div
+  aria-label={t("pdfActionsLabel")}
+  className="mb-5 flex flex-col gap-2.5 rounded-2xl border border-slate-200 bg-white/90 p-3.5 shadow-sm sm:flex-row sm:items-center sm:justify-end sm:px-4"
+>
   <div className="flex flex-col gap-2 sm:flex-row">
     <a
       href={approvedAbstractsPdfUrl}
@@ -120,7 +137,7 @@ const approvedAbstractsPdfUrl = "/documents/approved-abstracts-round-1.pdf";
       {t("downloadPdf")}
     </a>
   </div>
-</div>
+</div>;
 ```
 
 Place this block after the page introduction and before the existing filter card. The `aria-label` identifies the action group without adding another visible control or heading.
@@ -149,12 +166,14 @@ Expected: one commit contains the two actions and both locale labels.
 ### Task 3: Run regression and browser verification
 
 **Files:**
+
 - Verify: `public/documents/approved-abstracts-round-1.pdf`
 - Verify: `src/app/[locale]/approved-abstracts/page.tsx`
 - Verify: `messages/th.json`
 - Verify: `messages/en.json`
 
 **Interfaces:**
+
 - Consumes: the committed PDF asset and two rendered links.
 - Produces: verified Thai/English PDF access with unchanged abstract data.
 

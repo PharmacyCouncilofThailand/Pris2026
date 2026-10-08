@@ -4,7 +4,6 @@
 
 Follow code (2).html / screen (3).png for the ticket only: white/#fafafa surfaces, black 2px frame, #ea580c accents, bold installed fonts, black confirmation, venue panel and framed QR. Keep shared Header unchanged and retain 9:16. Both middle cutouts mask the straight outer border and draw inward arcs with the same 2px black stroke. CSS pseudo-elements are decorative; real registration QR and PNG download remain. Verified synthetic data at 320px: no information/page overflow, QR contained and exact 9:16. ESLint/TypeScript passed. Screenshots remain local under ignored .impeccable. This reference supersedes earlier ticket color guidance below.
 
-
 ## Current visual authority — existing profile family
 
 The ticket now follows the existing profile palette and typography: #f4f6f8 ground, white card, slate text/QR, blue action and tier, emerald confirmation, inherited Noto Sans Thai/Outfit. Labels have a 10px floor and values a 12px floor. Detailed source audit and rationale: .impeccable/ticket-style-audit.md. This supersedes earlier reference-specific cream/navy/amber colors. Existing 9:16 geometry and data layout remain.
@@ -31,7 +30,6 @@ Latest user instruction: the ticket itself must keep a 9:16 aspect ratio, with t
 
 Verified synthetic fixtures at 320, 390 and 420px viewport widths: cards measured 288×512, 358×636.44 and 388×689.77 (9:16 within pixel rounding), with no horizontal page overflow. Header original logo and QR dialog Escape/focus return verified. Focused lint and TypeScript pass. Actual scanner/LINE-device behavior remains unverified.
 
-
 ## Current ticket direction — HTML E-Stub reference
 
 The latest user request supersedes earlier ticket composition, header, palette, and single-screen restrictions. Match the supplied code.html and screen (1).png as an event E-Stub, with no barcode. The ticket uses a 420px column, pale #F4F7FB ground, warm-white upper stub, navy #0E2238, amber labels, verified stamp, two-column actual API details, a perforated seam, and a framed real QR below. Ticket-route Header wordmark is PRIS in navy and 2026 in sky blue; other routes keep their original logo. Existing fonts and functioning navigation are retained.
@@ -55,15 +53,15 @@ The latest user request replaces the compact pass with a longer boarding-pass si
 
 ## Colors
 
-| Role | Existing value | Source |
-| --- | --- | --- |
-| Navy identity | #0d1f4a | Profile typography |
-| Dark navy surface/QR ink | #0f172a | Profile slate-900 and QR |
-| Page ground | #f4f6f8 | Profile page |
-| White surface | #ffffff | Profile and login |
-| Gold accent | #ca9b52 | globals.css color-gold |
-| Blue action accent | #2563eb | Profile blue-600 |
-| Confirmed status text | #047857 | Profile emerald-700 |
+| Role                     | Existing value | Source                   |
+| ------------------------ | -------------- | ------------------------ |
+| Navy identity            | #0d1f4a        | Profile typography       |
+| Dark navy surface/QR ink | #0f172a        | Profile slate-900 and QR |
+| Page ground              | #f4f6f8        | Profile page             |
+| White surface            | #ffffff        | Profile and login        |
+| Gold accent              | #ca9b52        | globals.css color-gold   |
+| Blue action accent       | #2563eb        | Profile blue-600         |
+| Confirmed status text    | #047857        | Profile emerald-700      |
 
 Use navy, white, and the light page ground as the main operational surfaces. Gold can mark branding or dividers; do not use gold as small body text on white. Status uses text as well as color.
 

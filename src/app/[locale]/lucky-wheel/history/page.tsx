@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronLeft, ChevronRight, CircleMinus, Loader2, Trophy } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  CircleMinus,
+  Loader2,
+  Trophy,
+} from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { loadEntryTickets } from "@/lib/entryTicket";
@@ -22,7 +28,9 @@ export default function LuckyWheelHistoryPage() {
   const router = useRouter();
   const { token, isAuthenticated, logout } = useAuth();
   const [eventId, setEventId] = useState<number | null>(null);
-  const [history, setHistory] = useState<LuckyWheelHistoryResponse | null>(null);
+  const [history, setHistory] = useState<LuckyWheelHistoryResponse | null>(
+    null,
+  );
   const [page, setPage] = useState(1);
   const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(Boolean(EVENT_CODE));
@@ -30,7 +38,8 @@ export default function LuckyWheelHistoryPage() {
   const [missingRegistration, setMissingRegistration] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) router.replace("/login?redirect=%2Flucky-wheel%2Fhistory");
+    if (!isAuthenticated)
+      router.replace("/login?redirect=%2Flucky-wheel%2Fhistory");
   }, [isAuthenticated, router]);
 
   const expire = useCallback(() => {
@@ -93,11 +102,14 @@ export default function LuckyWheelHistoryPage() {
     };
   }, [attempt, eventId, expire, isAuthenticated, page, token]);
 
-  const formatter = new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
-    timeZone: "Asia/Bangkok",
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const formatter = new Intl.DateTimeFormat(
+    locale === "th" ? "th-TH" : "en-GB",
+    {
+      timeZone: "Asia/Bangkok",
+      dateStyle: "medium",
+      timeStyle: "short",
+    },
+  );
 
   if (!isAuthenticated) return null;
 
@@ -131,13 +143,18 @@ export default function LuckyWheelHistoryPage() {
             </h1>
 
             {loading ? (
-              <div role="status" className="flex min-h-56 items-center justify-center gap-3">
+              <div
+                role="status"
+                className="flex min-h-56 items-center justify-center gap-3"
+              >
                 <Loader2 className="h-6 w-6 animate-spin text-orange-700" />
                 <span className="font-bold text-zinc-600">{t("loading")}</span>
               </div>
             ) : error ? (
               <div className="py-12 text-center">
-                <p role="alert" className="font-extrabold">{t("historyLoadError")}</p>
+                <p role="alert" className="font-extrabold">
+                  {t("historyLoadError")}
+                </p>
                 <button
                   type="button"
                   className="mt-4 min-h-11 rounded-lg border-2 border-zinc-950 px-4 font-extrabold"
@@ -171,13 +188,21 @@ export default function LuckyWheelHistoryPage() {
                     <div className="flex items-start gap-3">
                       <div
                         className={`grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-zinc-950 ${
-                          item.outcomeKind === "prize" ? "bg-orange-50" : "bg-zinc-100"
+                          item.outcomeKind === "prize"
+                            ? "bg-orange-50"
+                            : "bg-zinc-100"
                         }`}
                       >
                         {item.outcomeKind === "prize" ? (
-                          <Trophy className="h-5 w-5 text-orange-800" aria-hidden="true" />
+                          <Trophy
+                            className="h-5 w-5 text-orange-800"
+                            aria-hidden="true"
+                          />
                         ) : (
-                          <CircleMinus className="h-5 w-5 text-zinc-600" aria-hidden="true" />
+                          <CircleMinus
+                            className="h-5 w-5 text-zinc-600"
+                            aria-hidden="true"
+                          />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">

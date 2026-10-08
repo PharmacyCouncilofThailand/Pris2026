@@ -1,7 +1,4 @@
-export type AcceptedPresentationType =
-  | "oral"
-  | "highlighted-poster"
-  | "poster";
+export type AcceptedPresentationType = "oral" | "highlighted-poster" | "poster";
 
 export interface AcceptedAbstract {
   id: number;
@@ -39,11 +36,15 @@ export function filterAcceptedAbstracts(
   const normalizedQuery = (options.search || "").trim().toLowerCase();
   const targetType = (options.presentationType || "all").toLowerCase();
   const targetCategoryId =
-    options.categoryId === "all" || options.categoryId === undefined || options.categoryId === ""
+    options.categoryId === "all" ||
+    options.categoryId === undefined ||
+    options.categoryId === ""
       ? "all"
       : Number(options.categoryId);
   const targetRound =
-    options.round === "all" || options.round === undefined || options.round === ""
+    options.round === "all" ||
+    options.round === undefined ||
+    options.round === ""
       ? "all"
       : Number(options.round);
 

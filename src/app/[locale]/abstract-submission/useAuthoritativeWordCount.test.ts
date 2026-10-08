@@ -9,8 +9,9 @@ import type {
 } from "@/lib/abstractWordCount";
 import { useAuthoritativeWordCount } from "./useAuthoritativeWordCount.js";
 
-(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean })
-  .IS_REACT_ACT_ENVIRONMENT = true;
+(
+  globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 const input: AbstractWordCountRequest = {
   title: "Clinical pharmacy outcomes",

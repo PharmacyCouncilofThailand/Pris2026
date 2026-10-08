@@ -2,9 +2,22 @@
 
 import { useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, ChevronRight, CircleAlert, FileText, Gift, History, Loader2, Ticket, Trophy } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  CircleAlert,
+  FileText,
+  Gift,
+  History,
+  Loader2,
+  Ticket,
+  Trophy,
+} from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { luckyWheelBlockMessageKey, resolveWheelImageUrl } from "@/lib/luckyWheel";
+import {
+  luckyWheelBlockMessageKey,
+  resolveWheelImageUrl,
+} from "@/lib/luckyWheel";
 import type {
   LuckyWheelEligibility,
   LuckyWheelSegment,
@@ -15,11 +28,7 @@ import styles from "./wheel.module.css";
 import ticketStyles from "@/app/[locale]/ticket/ticket.module.css";
 
 export type WheelActionPhase =
-  | "idle"
-  | "submitting"
-  | "reconciling"
-  | "unknown"
-  | "updated";
+  "idle" | "submitting" | "reconciling" | "unknown" | "updated";
 
 type Props = {
   eligibility: LuckyWheelEligibility;
@@ -63,7 +72,8 @@ export function ActivityTicket({
   const winningId =
     phase === "idle" && result && animateResult ? result.segmentId : null;
   const blockedMessage = !eligibility.eligible
-    ? eligibility.blockCode === "NO_CREDIT" && eligibility.hasExpiredPriorDayCredit
+    ? eligibility.blockCode === "NO_CREDIT" &&
+      eligibility.hasExpiredPriorDayCredit
       ? t("priorDayExpired")
       : t(luckyWheelBlockMessageKey(eligibility.blockCode))
     : null;
@@ -82,9 +92,15 @@ export function ActivityTicket({
               aria-live="polite"
             >
               {eligibility.eligible ? (
-                <Check className="h-6 w-6 shrink-0 rounded-full bg-[#f45100] p-1 text-white" aria-hidden="true" />
+                <Check
+                  className="h-6 w-6 shrink-0 rounded-full bg-[#f45100] p-1 text-white"
+                  aria-hidden="true"
+                />
               ) : (
-                <CircleAlert className="h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
+                <CircleAlert
+                  className="h-4 w-4 shrink-0 text-orange-700"
+                  aria-hidden="true"
+                />
               )}
               <span>
                 {eligibility.eligible
@@ -98,7 +114,9 @@ export function ActivityTicket({
             <Wheel
               segments={segments}
               winningSegmentId={winningId}
-              snapshotVersion={result?.configurationVersion ?? eligibility.configurationVersion}
+              snapshotVersion={
+                result?.configurationVersion ?? eligibility.configurationVersion
+              }
               reducedMotion={reducedMotion}
               onAnimationComplete={onAnimationComplete}
               ariaLabel={t("title")}
@@ -106,12 +124,19 @@ export function ActivityTicket({
           </div>
 
           <div className="mt-4 text-center">
-            <p className="text-sm font-extrabold sm:text-lg">{t("equalChance")}</p>
-            <p className="mt-1 text-xs text-zinc-500 sm:text-base">{t("soldOutChance")}</p>
+            <p className="text-sm font-extrabold sm:text-lg">
+              {t("equalChance")}
+            </p>
+            <p className="mt-1 text-xs text-zinc-500 sm:text-base">
+              {t("soldOutChance")}
+            </p>
           </div>
         </section>
 
-        <div className={`${ticketStyles.perforation} ${styles.activitySeam}`} aria-hidden="true" />
+        <div
+          className={`${ticketStyles.perforation} ${styles.activitySeam}`}
+          aria-hidden="true"
+        />
 
         <section className="px-4 pb-5 pt-1 sm:px-5 sm:pb-6">
           <div aria-live="assertive" className="space-y-3">
@@ -119,7 +144,11 @@ export function ActivityTicket({
               <div className="rounded-xl bg-amber-50 p-4 text-amber-950">
                 <p className="font-extrabold">{t("unknown")}</p>
                 <p className="mt-1 text-sm leading-6">{t("unknownHint")}</p>
-                <button type="button" className={`${styles.action} mt-4`} onClick={onReconcile}>
+                <button
+                  type="button"
+                  className={`${styles.action} mt-4`}
+                  onClick={onReconcile}
+                >
                   {t("reconcile")}
                 </button>
               </div>
@@ -127,7 +156,11 @@ export function ActivityTicket({
               <div className="space-y-4 rounded-xl bg-orange-50 p-4 text-orange-950">
                 <p className="font-extrabold">{t("updated")}</p>
                 {eligibility.eligible && (
-                  <button type="button" className={styles.action} onClick={onSpin}>
+                  <button
+                    type="button"
+                    className={styles.action}
+                    onClick={onSpin}
+                  >
                     {t("spin")}
                   </button>
                 )}
@@ -156,8 +189,13 @@ export function ActivityTicket({
               >
                 {result.outcomeKind === "prize" ? (
                   <>
-                    <Trophy className="mx-auto h-8 w-8 text-orange-700" aria-hidden="true" />
-                    <p className="mt-2 text-lg font-black text-zinc-950">{t("prizeWon")}</p>
+                    <Trophy
+                      className="mx-auto h-8 w-8 text-orange-700"
+                      aria-hidden="true"
+                    />
+                    <p className="mt-2 text-lg font-black text-zinc-950">
+                      {t("prizeWon")}
+                    </p>
                     <p className="mt-1 text-xl font-black text-orange-800">
                       {result.awardedName[locale === "th" ? "th" : "en"]}
                     </p>
@@ -170,8 +208,12 @@ export function ActivityTicket({
                   </>
                 ) : (
                   <>
-                    <p className="text-lg font-black text-zinc-950">{t("noPrize")}</p>
-                    <p className="mt-1 text-sm text-zinc-600">{t("creditSpent")}</p>
+                    <p className="text-lg font-black text-zinc-950">
+                      {t("noPrize")}
+                    </p>
+                    <p className="mt-1 text-sm text-zinc-600">
+                      {t("creditSpent")}
+                    </p>
                     <Link
                       href="/lucky-wheel/history"
                       className={`${styles.secondaryAction} mt-4`}
@@ -181,9 +223,15 @@ export function ActivityTicket({
                     </Link>
                   </>
                 )}
-                {eligibility.eligible && <button type="button" className={`${styles.action} mt-4`} onClick={onSpin}>
-                  {t("spinAgain")}
-                </button>}
+                {eligibility.eligible && (
+                  <button
+                    type="button"
+                    className={`${styles.action} mt-4`}
+                    onClick={onSpin}
+                  >
+                    {t("spinAgain")}
+                  </button>
+                )}
               </div>
             ) : eligibility.eligible ? (
               <button
@@ -194,7 +242,10 @@ export function ActivityTicket({
               >
                 {phase === "submitting" ? (
                   <span className="inline-flex items-center justify-center gap-2">
-                    <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+                    <Loader2
+                      className="h-5 w-5 animate-spin"
+                      aria-hidden="true"
+                    />
                     {t("spinning")}
                   </span>
                 ) : (
@@ -224,46 +275,73 @@ export function ActivityTicket({
       </article>
 
       <section aria-labelledby="wheel-availability" className="mt-5">
-        <h2 id="wheel-availability" className="px-3 text-lg font-extrabold text-zinc-950">
+        <h2
+          id="wheel-availability"
+          className="px-3 text-lg font-extrabold text-zinc-950"
+        >
           {t("prizeListTitle")}
         </h2>
         <ul className="mt-2 overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
-          {segments.filter((segment) => segment.kind === "prize").map((segment) => {
-            const soldOut = segment.remaining !== null && segment.remaining <= 0;
-            const imageUrl = resolveWheelImageUrl(segment.imageKey, process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL);
-            return (
-              <li key={segment.id} className="flex min-h-14 items-center gap-3 px-3 py-2 sm:min-h-16 sm:px-4">
-                <span className="relative grid h-10 w-10 shrink-0 place-items-center sm:h-12 sm:w-12">
-                  <Gift className="h-7 w-7 text-zinc-400" aria-hidden="true" />
-                  {imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={imageUrl} alt="" className="absolute inset-0 h-full w-full bg-white object-contain" onError={(event) => { event.currentTarget.hidden = true; }} />
-                  )}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block break-words text-sm font-bold text-zinc-900 sm:text-base">
-                    {segment.name[locale === "th" ? "th" : "en"]}
-                  </span>
-                </span>
-                <span
-                  className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold sm:px-4 sm:text-sm ${
-                    soldOut || !segment.enabled ? "bg-zinc-400 text-white" : "bg-orange-50 text-[#c2410c]"
-                  }`}
+          {segments
+            .filter((segment) => segment.kind === "prize")
+            .map((segment) => {
+              const soldOut =
+                segment.remaining !== null && segment.remaining <= 0;
+              const imageUrl = resolveWheelImageUrl(
+                segment.imageKey,
+                process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL,
+              );
+              return (
+                <li
+                  key={segment.id}
+                  className="flex min-h-14 items-center gap-3 px-3 py-2 sm:min-h-16 sm:px-4"
                 >
-                  {!segment.enabled
-                    ? t("unavailableSegment")
-                    : soldOut
-                      ? t("soldOutPrize")
-                      : t("readyPrize")}
-                </span>
-              </li>
-            );
-          })}
+                  <span className="relative grid h-10 w-10 shrink-0 place-items-center sm:h-12 sm:w-12">
+                    <Gift
+                      className="h-7 w-7 text-zinc-400"
+                      aria-hidden="true"
+                    />
+                    {imageUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={imageUrl}
+                        alt=""
+                        className="absolute inset-0 h-full w-full bg-white object-contain"
+                        onError={(event) => {
+                          event.currentTarget.hidden = true;
+                        }}
+                      />
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block break-words text-sm font-bold text-zinc-900 sm:text-base">
+                      {segment.name[locale === "th" ? "th" : "en"]}
+                    </span>
+                  </span>
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-bold sm:px-4 sm:text-sm ${
+                      soldOut || !segment.enabled
+                        ? "bg-zinc-400 text-white"
+                        : "bg-orange-50 text-[#c2410c]"
+                    }`}
+                  >
+                    {!segment.enabled
+                      ? t("unavailableSegment")
+                      : soldOut
+                        ? t("soldOutPrize")
+                        : t("readyPrize")}
+                  </span>
+                </li>
+              );
+            })}
         </ul>
       </section>
 
       <div className="mt-3 overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
-        <Link href="/lucky-wheel/history" className="flex min-h-14 items-center gap-4 px-4 py-3 text-sm hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-inset sm:text-base">
+        <Link
+          href="/lucky-wheel/history"
+          className="flex min-h-14 items-center gap-4 px-4 py-3 text-sm hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-inset sm:text-base"
+        >
           <Gift className="h-6 w-6 shrink-0" aria-hidden="true" />
           <span className="flex-1">{t("historyAndRewards")}</span>
           <ChevronRight className="h-5 w-5 text-zinc-500" aria-hidden="true" />
@@ -272,7 +350,10 @@ export function ActivityTicket({
           <summary className="flex min-h-14 cursor-pointer list-none items-center gap-4 px-4 py-3 text-sm hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-inset sm:text-base [&::-webkit-details-marker]:hidden">
             <FileText className="h-6 w-6 shrink-0" aria-hidden="true" />
             <span className="flex-1">{t("playRules")}</span>
-            <ChevronRight className="h-5 w-5 text-zinc-500 transition-transform group-open:rotate-90" aria-hidden="true" />
+            <ChevronRight
+              className="h-5 w-5 text-zinc-500 transition-transform group-open:rotate-90"
+              aria-hidden="true"
+            />
           </summary>
           <ul className="list-disc space-y-2 px-5 pb-4 pl-10 text-sm leading-6 text-zinc-700">
             <li>{t("ruleDaily")}</li>
@@ -282,10 +363,29 @@ export function ActivityTicket({
           </ul>
           <div className="space-y-1 border-t border-zinc-100 px-4 py-3 text-xs leading-5 text-zinc-500">
             <p>{t("serverTime", { date: eligibility.playDate })}</p>
-            <p>{t("creditCounts", { held: eligibility.unspentCredits, spendable: eligibility.spendableCredits })}</p>
-            {eligibility.currentWindow && <p>{t("wheelDeadline", { dateTime: new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
-              timeZone: "Asia/Bangkok", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", hour12: false,
-            }).format(new Date(eligibility.currentWindow.endAt)) })}</p>}
+            <p>
+              {t("creditCounts", {
+                held: eligibility.unspentCredits,
+                spendable: eligibility.spendableCredits,
+              })}
+            </p>
+            {eligibility.currentWindow && (
+              <p>
+                {t("wheelDeadline", {
+                  dateTime: new Intl.DateTimeFormat(
+                    locale === "th" ? "th-TH" : "en-GB",
+                    {
+                      timeZone: "Asia/Bangkok",
+                      day: "numeric",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    },
+                  ).format(new Date(eligibility.currentWindow.endAt)),
+                })}
+              </p>
+            )}
           </div>
         </details>
       </div>

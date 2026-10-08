@@ -64,47 +64,63 @@ test("filterAcceptedAbstracts: returns all items when options are default/empty"
 
 test("filterAcceptedAbstracts: filters case-insensitively across search targets", () => {
   // 1. Match trackingId
-  const byTracking = filterAcceptedAbstracts(sampleAbstracts, { search: "2026-001" });
+  const byTracking = filterAcceptedAbstracts(sampleAbstracts, {
+    search: "2026-001",
+  });
   assert.equal(byTracking.length, 1);
   assert.equal(byTracking[0].id, 1);
 
   // 2. Match title (with mixed case and whitespace)
-  const byTitle = filterAcceptedAbstracts(sampleAbstracts, { search: "   DRUG DISCOVERY  " });
+  const byTitle = filterAcceptedAbstracts(sampleAbstracts, {
+    search: "   DRUG DISCOVERY  ",
+  });
   assert.equal(byTitle.length, 1);
   assert.equal(byTitle[0].id, 2);
 
   // 3. Match submitterName
-  const bySubmitter = filterAcceptedAbstracts(sampleAbstracts, { search: "somchai" });
+  const bySubmitter = filterAcceptedAbstracts(sampleAbstracts, {
+    search: "somchai",
+  });
   assert.equal(bySubmitter.length, 1);
   assert.equal(bySubmitter[0].id, 1);
 
   // 4. Match affiliation
-  const byAffiliation = filterAcceptedAbstracts(sampleAbstracts, { search: "khon kaen" });
+  const byAffiliation = filterAcceptedAbstracts(sampleAbstracts, {
+    search: "khon kaen",
+  });
   assert.equal(byAffiliation.length, 1);
   assert.equal(byAffiliation[0].id, 3);
 
   // 5. Match categoryName
-  const byCategoryName = filterAcceptedAbstracts(sampleAbstracts, { search: "toxicology" });
+  const byCategoryName = filterAcceptedAbstracts(sampleAbstracts, {
+    search: "toxicology",
+  });
   assert.equal(byCategoryName.length, 1);
   assert.equal(byCategoryName[0].id, 4);
 });
 
 test("filterAcceptedAbstracts: filters by presentationType", () => {
-  const oralOnly = filterAcceptedAbstracts(sampleAbstracts, { presentationType: "oral" });
+  const oralOnly = filterAcceptedAbstracts(sampleAbstracts, {
+    presentationType: "oral",
+  });
   assert.equal(oralOnly.length, 2);
   assert.deepEqual(
     oralOnly.map((a) => a.id),
     [1, 4],
   );
 
-  const posterOnly = filterAcceptedAbstracts(sampleAbstracts, { presentationType: "poster" });
+  const posterOnly = filterAcceptedAbstracts(sampleAbstracts, {
+    presentationType: "poster",
+  });
   assert.equal(posterOnly.length, 2);
   assert.deepEqual(
     posterOnly.map((a) => a.id),
     [2, 3],
   );
 
-  const all = filterAcceptedAbstracts(sampleAbstracts, { presentationType: "all" });
+  const all = filterAcceptedAbstracts(sampleAbstracts, {
+    presentationType: "all",
+  });
   assert.equal(all.length, 4);
 });
 
@@ -131,7 +147,9 @@ test("filterAcceptedAbstracts: filters by categoryId", () => {
     [1, 3],
   );
 
-  const catAll = filterAcceptedAbstracts(sampleAbstracts, { categoryId: "all" });
+  const catAll = filterAcceptedAbstracts(sampleAbstracts, {
+    categoryId: "all",
+  });
   assert.equal(catAll.length, 4);
 });
 
@@ -174,7 +192,9 @@ test("filterAcceptedAbstracts: filters by round", () => {
 });
 
 test("filterAcceptedAbstracts: matches round keyword in search query", () => {
-  const matchedRound1 = filterAcceptedAbstracts(sampleAbstracts, { search: "round 1" });
+  const matchedRound1 = filterAcceptedAbstracts(sampleAbstracts, {
+    search: "round 1",
+  });
   assert.equal(matchedRound1.length, 2);
   assert.deepEqual(
     matchedRound1.map((a) => a.id),
@@ -194,11 +214,15 @@ test("filterAcceptedAbstracts: treats missing or undefined round as round 1 defe
     affiliation: "Hospital",
   };
 
-  const round1Result = filterAcceptedAbstracts([itemWithoutRound], { round: 1 });
+  const round1Result = filterAcceptedAbstracts([itemWithoutRound], {
+    round: 1,
+  });
   assert.equal(round1Result.length, 1);
   assert.equal(round1Result[0].id, 99);
 
-  const round2Result = filterAcceptedAbstracts([itemWithoutRound], { round: 2 });
+  const round2Result = filterAcceptedAbstracts([itemWithoutRound], {
+    round: 2,
+  });
   assert.equal(round2Result.length, 0);
 });
 

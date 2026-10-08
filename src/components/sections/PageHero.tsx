@@ -62,7 +62,7 @@ export default function PageHero({
         force3D: true,
       });
     },
-    { scope: heroRef }
+    { scope: heroRef },
   );
 
   // Color tokens
@@ -74,16 +74,20 @@ export default function PageHero({
   const gradientFrom = dark
     ? "from-white via-white to-white/60"
     : "from-blue-500 via-blue-600 to-orange-500";
-  const titleSize = titleSizeClassName ?? (inlineTitle
-    ? "text-[clamp(2.2rem,5vw,6.25rem)]"
-    : "text-3xl sm:text-5xl md:text-7xl lg:text-[8rem]");
+  const titleSize =
+    titleSizeClassName ??
+    (inlineTitle
+      ? "text-[clamp(2.2rem,5vw,6.25rem)]"
+      : "text-3xl sm:text-5xl md:text-7xl lg:text-[8rem]");
   const titlePartClass = inlineTitleTight
     ? "overflow-hidden py-2 -my-2"
     : "overflow-hidden py-2 -my-2 md:pl-2";
   const titleSpanClass = inlineTitleTight
     ? "inline-block page-hero-line"
     : `${inlineTitle ? "inline-block" : "block"} page-hero-line pr-[0.15em]`;
-  const inlineTitleSpacing = inlineTitleTight ? "gap-x-0" : "gap-x-3 md:gap-x-6";
+  const inlineTitleSpacing = inlineTitleTight
+    ? "gap-x-0"
+    : "gap-x-3 md:gap-x-6";
 
   return (
     <section
@@ -108,7 +112,9 @@ export default function PageHero({
             <span className={`w-8 h-px ${lineColor}`} />
             {eyebrow}
             {eyebrowSub && (
-              <span className={`${subColor} text-[10px] ${eyebrowSubTracking} uppercase md:text-xs`}>
+              <span
+                className={`${subColor} text-[10px] ${eyebrowSubTracking} uppercase md:text-xs`}
+              >
                 — {eyebrowSub}
               </span>
             )}
@@ -118,7 +124,7 @@ export default function PageHero({
 
         {/* Title */}
         <h1
-          className={`${titleSize} [@media(max-height:500px)]:text-4xl font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 [@media(max-height:500px)]:mb-4 ${inlineTitle ? `flex flex-row flex-wrap md:flex-nowrap justify-center gap-y-1 ${inlineTitleSpacing}` : ''}`}
+          className={`${titleSize} [@media(max-height:500px)]:text-4xl font-black uppercase tracking-tighter leading-tight ${titleColor} mb-8 [@media(max-height:500px)]:mb-4 ${inlineTitle ? `flex flex-row flex-wrap md:flex-nowrap justify-center gap-y-1 ${inlineTitleSpacing}` : ""}`}
         >
           <div className={titlePartClass}>
             <span className={titleSpanClass}>{title1}</span>
@@ -137,7 +143,9 @@ export default function PageHero({
         {/* Subtitle */}
         {subtitle && (
           <div className="overflow-hidden max-w-2xl px-4">
-            <p className={`page-hero-sub ${subtitleColor} text-lg md:text-xl font-light leading-relaxed`}>
+            <p
+              className={`page-hero-sub ${subtitleColor} text-lg md:text-xl font-light leading-relaxed`}
+            >
               {subtitle}
             </p>
           </div>

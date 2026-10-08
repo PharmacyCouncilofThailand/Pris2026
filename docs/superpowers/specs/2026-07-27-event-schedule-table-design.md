@@ -122,4 +122,3 @@ The public component API and `scheduleData` types remain unchanged.
 6. Confirm every event ID from the active day's source data appears exactly once in either desktop or mobile rendering.
 7. Confirm Innovation Zone events appear under their stored group and Common events under their stored location.
 8. Confirm the unrelated existing change in `src/app/[locale]/page.tsx` remains untouched.
-

@@ -12,7 +12,9 @@ export const ABSTRACT_OPEN = false;
 export const REGISTRATION_NOTICE = "เปิดลงทะเบียนวันที่ 1 กรกฎาคม 2569";
 
 export const ABSTRACT_ROUND_2_START_AT = new Date("2026-08-31T17:00:00.000Z");
-export const ABSTRACT_SUBMISSION_CLOSE_AT = new Date("2026-09-20T17:00:00.000Z");
+export const ABSTRACT_SUBMISSION_CLOSE_AT = new Date(
+  "2026-09-20T17:00:00.000Z",
+);
 
 export interface AbstractGateState {
   open: boolean;
@@ -21,7 +23,7 @@ export interface AbstractGateState {
 
 export function getAbstractGateState(
   now: Date = new Date(),
-  overrideOpen?: boolean
+  overrideOpen?: boolean,
 ): AbstractGateState {
   const isOpen = overrideOpen !== undefined ? overrideOpen : ABSTRACT_OPEN;
   if (!isOpen) {

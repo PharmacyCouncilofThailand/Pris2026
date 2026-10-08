@@ -35,7 +35,9 @@ export default function ApprovedAbstractsPage() {
   const t = useTranslations("approvedAbstracts");
 
   const [abstracts, setAbstracts] = useState<Announcement[]>([]);
-  const [loadState, setLoadState] = useState<"loading" | "ready" | "failed">("loading");
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "failed">(
+    "loading",
+  );
   const [reload, setReload] = useState(0);
 
   useEffect(() => {
@@ -43,13 +45,15 @@ export default function ApprovedAbstractsPage() {
     // Keep prior rows hidden while this external API request is pending.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoadState("loading");
-    getApprovedAnnouncements(controller.signal).then((rows) => {
-      if (controller.signal.aborted) return;
-      setAbstracts(rows);
-      setLoadState("ready");
-    }).catch(() => {
-      if (!controller.signal.aborted) setLoadState("failed");
-    });
+    getApprovedAnnouncements(controller.signal)
+      .then((rows) => {
+        if (controller.signal.aborted) return;
+        setAbstracts(rows);
+        setLoadState("ready");
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setLoadState("failed");
+      });
     return () => controller.abort();
   }, [reload]);
 
@@ -99,21 +103,26 @@ export default function ApprovedAbstractsPage() {
 
   const selectedCategoryName = useMemo(() => {
     if (selectedCategory === "all") return t("allCategories");
-    const found = categories.find((c) => String(c.id) === String(selectedCategory));
+    const found = categories.find(
+      (c) => String(c.id) === String(selectedCategory),
+    );
     return found ? found.name : t("allCategories");
   }, [selectedCategory, categories, t]);
 
   const stats = useMemo(() => {
     const roundAbstracts = abstracts.filter(
-      (item) => (item.round ?? 1) === Number(selectedRound)
+      (item) => (item.round ?? 1) === Number(selectedRound),
     );
     return {
       all: roundAbstracts.length,
-      oral: roundAbstracts.filter((item) => item.presentationType === "oral").length,
+      oral: roundAbstracts.filter((item) => item.presentationType === "oral")
+        .length,
       highlightedPoster: roundAbstracts.filter(
-        (item) => item.presentationType === "highlighted-poster"
+        (item) => item.presentationType === "highlighted-poster",
       ).length,
-      poster: roundAbstracts.filter((item) => item.presentationType === "poster").length,
+      poster: roundAbstracts.filter(
+        (item) => item.presentationType === "poster",
+      ).length,
     };
   }, [abstracts, selectedRound]);
 
@@ -124,9 +133,18 @@ export default function ApprovedAbstractsPage() {
       round: selectedRound,
       categoryId: selectedCategory,
     });
-  }, [abstracts, deferredSearchQuery, selectedType, selectedRound, selectedCategory]);
+  }, [
+    abstracts,
+    deferredSearchQuery,
+    selectedType,
+    selectedRound,
+    selectedCategory,
+  ]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredAbstracts.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredAbstracts.length / ITEMS_PER_PAGE),
+  );
 
   useEffect(() => {
     // Reconcile pagination when the external announcement source shrinks.
@@ -139,8 +157,12 @@ export default function ApprovedAbstractsPage() {
     return filteredAbstracts.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredAbstracts, currentPage]);
 
-  const startIndex = filteredAbstracts.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
-  const endIndex = Math.min(currentPage * ITEMS_PER_PAGE, filteredAbstracts.length);
+  const startIndex =
+    filteredAbstracts.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const endIndex = Math.min(
+    currentPage * ITEMS_PER_PAGE,
+    filteredAbstracts.length,
+  );
 
   const handleResetFilters = () => {
     setSearchQuery("");
@@ -182,14 +204,29 @@ export default function ApprovedAbstractsPage() {
       return [1, 2, 3, 4, 5, "...", totalPages];
     }
     if (currentPage >= totalPages - 3) {
-      return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+      return [
+        1,
+        "...",
+        totalPages - 4,
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages,
+      ];
     }
-    return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+    return [
+      1,
+      "...",
+      currentPage - 1,
+      currentPage,
+      currentPage + 1,
+      "...",
+      totalPages,
+    ];
   }, [currentPage, totalPages]);
 
   return (
     <main className="relative min-h-screen bg-white text-slate-900 selection:bg-amber-100 selection:text-slate-900 font-sans">
-      
       {/* ═══════════════════════════════════════════════════════════
           1. PAGE HERO (HEADER TEXT)
          ═══════════════════════════════════════════════════════════ */}
@@ -203,9 +240,11 @@ export default function ApprovedAbstractsPage() {
       {/* ═══════════════════════════════════════════════════════════
           2. MAIN CONTENT AREA (BOXES & DIRECTORY)
          ═══════════════════════════════════════════════════════════ */}
-      <section id="abstracts-content-area" className="relative px-3 sm:px-6 md:px-10 lg:px-12 pb-20 md:pb-32 mt-0 sm:-mt-6 md:-mt-8 z-10">
+      <section
+        id="abstracts-content-area"
+        className="relative px-3 sm:px-6 md:px-10 lg:px-12 pb-20 md:pb-32 mt-0 sm:-mt-6 md:-mt-8 z-10"
+      >
         <div className="max-w-[1360px] mx-auto space-y-3.5 sm:space-y-5">
-
           {/* ── Box A: Official Announcement & Document Actions ── */}
           <div className="bg-white rounded-2xl border border-slate-300 p-4 sm:p-6 shadow-[0_4px_20px_rgba(0,0,0,0.08)] flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-1.5 max-w-3xl">
@@ -216,7 +255,9 @@ export default function ApprovedAbstractsPage() {
                 </span>
                 <span className="text-xs text-slate-600 font-semibold flex items-center gap-1 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
                   <Calendar className="size-3.5 text-slate-500" />
-                  {selectedRound === "1" ? t("round1Announcement") : t("round2Announcement")}
+                  {selectedRound === "1"
+                    ? t("round1Announcement")
+                    : t("round2Announcement")}
                 </span>
               </div>
               <h2 className="text-sm sm:text-lg md:text-xl font-bold text-slate-900 leading-snug">
@@ -251,7 +292,8 @@ export default function ApprovedAbstractsPage() {
               <AlertCircle className="size-4.5 text-amber-600 shrink-0 mt-0.5" />
               <div className="leading-relaxed">
                 <strong className="font-bold text-amber-950 mr-1.5">
-                  {t("revisionDeadlineNote")} (ภายในวันที่ 15 กันยายน 2569 เวลา 23:59 น.)
+                  {t("revisionDeadlineNote")} (ภายในวันที่ 15 กันยายน 2569 เวลา
+                  23:59 น.)
                 </strong>
                 <span className="text-slate-600">
                   {t("pendingAnnouncementNote")}
@@ -266,17 +308,35 @@ export default function ApprovedAbstractsPage() {
 
           {/* ── Box C: Filter Hub (Tabs + Search + Category) ── */}
           <div className="bg-white rounded-2xl border border-slate-300 p-3.5 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] space-y-3.5 sm:space-y-4">
-            
             {/* Presentation Tabs Row */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 pb-3 sm:pb-3.5 border-b border-slate-200">
-              
               {/* Type Switcher Tabs (Responsive 2-col on mobile / flex on tablet/desktop) */}
-              <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 w-full lg:w-auto" role="group" aria-label="Presentation Type Tabs">
+              <div
+                className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 w-full lg:w-auto"
+                role="group"
+                aria-label="Presentation Type Tabs"
+              >
                 {[
-                  { key: "all" as const, label: t("filterAll"), count: stats.all },
-                  { key: "oral" as const, label: t("oralPresentation"), count: stats.oral },
-                  { key: "highlighted-poster" as const, label: t("highlightedPosterPresentation"), count: stats.highlightedPoster },
-                  { key: "poster" as const, label: t("posterPresentation"), count: stats.poster },
+                  {
+                    key: "all" as const,
+                    label: t("filterAll"),
+                    count: stats.all,
+                  },
+                  {
+                    key: "oral" as const,
+                    label: t("oralPresentation"),
+                    count: stats.oral,
+                  },
+                  {
+                    key: "highlighted-poster" as const,
+                    label: t("highlightedPosterPresentation"),
+                    count: stats.highlightedPoster,
+                  },
+                  {
+                    key: "poster" as const,
+                    label: t("posterPresentation"),
+                    count: stats.poster,
+                  },
                 ].map((tab) => {
                   const isActive = selectedType === tab.key;
                   return (
@@ -288,14 +348,18 @@ export default function ApprovedAbstractsPage() {
                         "inline-flex items-center justify-between sm:justify-center gap-1.5 sm:gap-2 h-10 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95",
                         isActive
                           ? "bg-orange-500 text-white shadow-[0_4px_14px_rgba(249,115,22,0.35)] ring-2 ring-orange-500/20"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200",
                       )}
                     >
                       <span className="truncate">{tab.label}</span>
-                      <span className={cn(
-                        "px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-mono font-bold shrink-0",
-                        isActive ? "bg-white text-orange-600" : "bg-white text-slate-700 border border-slate-200 shadow-2xs"
-                      )}>
+                      <span
+                        className={cn(
+                          "px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-mono font-bold shrink-0",
+                          isActive
+                            ? "bg-white text-orange-600"
+                            : "bg-white text-slate-700 border border-slate-200 shadow-2xs",
+                        )}
+                      >
                         {loadState === "ready" ? tab.count : "—"}
                       </span>
                     </button>
@@ -317,7 +381,9 @@ export default function ApprovedAbstractsPage() {
                       onClick={() => setSelectedRound(round.key)}
                       className={cn(
                         "h-8 px-3.5 rounded-lg text-xs font-bold transition cursor-pointer text-center",
-                        isActive ? "bg-orange-500 text-white shadow-[0_2px_8px_rgba(249,115,22,0.3)]" : "text-slate-600 hover:text-slate-900"
+                        isActive
+                          ? "bg-orange-500 text-white shadow-[0_2px_8px_rgba(249,115,22,0.3)]"
+                          : "text-slate-600 hover:text-slate-900",
                       )}
                     >
                       {round.label}
@@ -325,7 +391,6 @@ export default function ApprovedAbstractsPage() {
                   );
                 })}
               </div>
-
             </div>
 
             {/* Search Input & Category Dropdown */}
@@ -354,7 +419,10 @@ export default function ApprovedAbstractsPage() {
               </div>
 
               {/* Custom Category Dropdown */}
-              <div ref={categoryDropdownRef} className="relative shrink-0 w-full sm:w-80">
+              <div
+                ref={categoryDropdownRef}
+                className="relative shrink-0 w-full sm:w-80"
+              >
                 <button
                   type="button"
                   onClick={() => setIsCategoryDropdownOpen((prev) => !prev)}
@@ -362,24 +430,30 @@ export default function ApprovedAbstractsPage() {
                     "h-11 w-full rounded-xl border border-slate-300 bg-slate-50/80 px-3.5 text-xs sm:text-sm font-medium text-slate-800 cursor-pointer flex items-center justify-between gap-2 shadow-2xs transition active:scale-[0.99]",
                     isCategoryDropdownOpen
                       ? "border-orange-500 bg-white ring-2 ring-orange-500/15"
-                      : "hover:bg-slate-100 hover:border-slate-400"
+                      : "hover:bg-slate-100 hover:border-slate-400",
                   )}
                   aria-expanded={isCategoryDropdownOpen}
                   aria-haspopup="listbox"
                 >
                   <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                    <SlidersHorizontal className={cn(
-                      "size-4 shrink-0 transition-colors",
-                      selectedCategory !== "all" ? "text-orange-600" : "text-slate-400"
-                    )} />
+                    <SlidersHorizontal
+                      className={cn(
+                        "size-4 shrink-0 transition-colors",
+                        selectedCategory !== "all"
+                          ? "text-orange-600"
+                          : "text-slate-400",
+                      )}
+                    />
                     <span className="truncate text-left font-medium">
                       {selectedCategoryName}
                     </span>
                   </div>
-                  <ChevronDown className={cn(
-                    "size-4 text-slate-400 shrink-0 transition-transform duration-200",
-                    isCategoryDropdownOpen && "rotate-180 text-orange-600"
-                  )} />
+                  <ChevronDown
+                    className={cn(
+                      "size-4 text-slate-400 shrink-0 transition-transform duration-200",
+                      isCategoryDropdownOpen && "rotate-180 text-orange-600",
+                    )}
+                  />
                 </button>
 
                 {/* Dropdown Popup Menu */}
@@ -398,7 +472,7 @@ export default function ApprovedAbstractsPage() {
                         "w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between gap-2 transition cursor-pointer",
                         selectedCategory === "all"
                           ? "bg-orange-50 text-orange-950 font-bold"
-                          : "text-slate-700 hover:bg-slate-100/80 hover:text-slate-900"
+                          : "text-slate-700 hover:bg-slate-100/80 hover:text-slate-900",
                       )}
                       role="option"
                       aria-selected={selectedCategory === "all"}
@@ -412,7 +486,8 @@ export default function ApprovedAbstractsPage() {
                     <div className="h-px bg-slate-100 my-1" />
 
                     {categories.map((cat) => {
-                      const isSelected = String(selectedCategory) === String(cat.id);
+                      const isSelected =
+                        String(selectedCategory) === String(cat.id);
                       return (
                         <button
                           key={cat.id}
@@ -425,7 +500,7 @@ export default function ApprovedAbstractsPage() {
                             "w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm text-left flex items-center justify-between gap-2 transition cursor-pointer",
                             isSelected
                               ? "bg-orange-50 text-orange-950 font-bold"
-                              : "text-slate-700 hover:bg-slate-100/80 hover:text-slate-900"
+                              : "text-slate-700 hover:bg-slate-100/80 hover:text-slate-900",
                           )}
                           role="option"
                           aria-selected={isSelected}
@@ -443,44 +518,77 @@ export default function ApprovedAbstractsPage() {
             </div>
 
             {/* Results Count & Range Indicator */}
-            {loadState === "ready" && <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-medium pt-1">
-              <span>
-                แสดง <strong className="text-slate-900 font-bold">{startIndex} – {endIndex}</strong> จากทั้งหมด {filteredAbstracts.length} ผลงาน
-              </span>
-              {totalPages > 1 && (
-                <span className="text-slate-500 font-medium">
-                  หน้า {currentPage} จาก {totalPages}
+            {loadState === "ready" && (
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-medium pt-1">
+                <span>
+                  แสดง{" "}
+                  <strong className="text-slate-900 font-bold">
+                    {startIndex} – {endIndex}
+                  </strong>{" "}
+                  จากทั้งหมด {filteredAbstracts.length} ผลงาน
                 </span>
-              )}
-            </div>}
-
+                {totalPages > 1 && (
+                  <span className="text-slate-500 font-medium">
+                    หน้า {currentPage} จาก {totalPages}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* ── Box D: Standalone Cards List (10 Items Per Page) ── */}
           {loadState !== "ready" ? (
-            <div role={loadState === "failed" ? "alert" : "status"} className="bg-white rounded-2xl border border-slate-300 p-8 sm:p-10 text-center">
-              <p className="text-sm text-slate-700">{t(loadState === "loading" ? "loading" : "loadError")}</p>
-              {loadState === "failed" && <button type="button" onClick={() => setReload((value) => value + 1)} className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition cursor-pointer">{t("retry")}</button>}
+            <div
+              role={loadState === "failed" ? "alert" : "status"}
+              className="bg-white rounded-2xl border border-slate-300 p-8 sm:p-10 text-center"
+            >
+              <p className="text-sm text-slate-700">
+                {t(loadState === "loading" ? "loading" : "loadError")}
+              </p>
+              {loadState === "failed" && (
+                <button
+                  type="button"
+                  onClick={() => setReload((value) => value + 1)}
+                  className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition cursor-pointer"
+                >
+                  {t("retry")}
+                </button>
+              )}
             </div>
           ) : abstracts.length === 0 ? (
             <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
-              <h2 className="text-base font-bold text-slate-900">{t("zeroRecordsTitle")}</h2>
-              <p className="mt-1 text-xs text-slate-500">{t("zeroRecordsDesc")}</p>
+              <h2 className="text-base font-bold text-slate-900">
+                {t("zeroRecordsTitle")}
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">
+                {t("zeroRecordsDesc")}
+              </p>
             </div>
           ) : filteredAbstracts.length === 0 ? (
-            selectedRound === "2" && !searchQuery && selectedType === "all" && selectedCategory === "all" ? (
+            selectedRound === "2" &&
+            !searchQuery &&
+            selectedType === "all" &&
+            selectedCategory === "all" ? (
               <div className="bg-white rounded-2xl border border-slate-300 p-8 sm:p-10 text-center shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
                 <div className="inline-flex items-center justify-center size-14 rounded-2xl bg-amber-50 text-amber-700 mx-auto mb-3 border border-amber-300">
                   <Clock className="size-7" />
                 </div>
-                <h2 className="text-lg font-bold text-slate-900">{t("round2EmptyTitle")}</h2>
-                <p className="mt-1.5 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">{t("round2EmptyDesc")}</p>
+                <h2 className="text-lg font-bold text-slate-900">
+                  {t("round2EmptyTitle")}
+                </h2>
+                <p className="mt-1.5 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                  {t("round2EmptyDesc")}
+                </p>
               </div>
             ) : (
               <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-10 text-center shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
                 <Search className="size-10 text-slate-300 mx-auto mb-2" />
-                <h2 className="text-base font-bold text-slate-900">{t("emptyTitle")}</h2>
-                <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto leading-relaxed">{t("emptyDesc")}</p>
+                <h2 className="text-base font-bold text-slate-900">
+                  {t("emptyTitle")}
+                </h2>
+                <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                  {t("emptyDesc")}
+                </p>
                 <button
                   type="button"
                   onClick={handleResetFilters}
@@ -494,9 +602,12 @@ export default function ApprovedAbstractsPage() {
             <div className="space-y-3.5 sm:space-y-4">
               {paginatedAbstracts.map((item) => {
                 const isOral = item.presentationType === "oral";
-                const isHighlightedPoster = item.presentationType === "highlighted-poster";
-                const presentationLabel = presentationLabels[item.presentationType];
-                const isCopied = copiedId === item.trackingId && item.trackingId;
+                const isHighlightedPoster =
+                  item.presentationType === "highlighted-poster";
+                const presentationLabel =
+                  presentationLabels[item.presentationType];
+                const isCopied =
+                  copiedId === item.trackingId && item.trackingId;
 
                 return (
                   <article
@@ -505,7 +616,6 @@ export default function ApprovedAbstractsPage() {
                   >
                     {/* Card Top Row: Sequence, Tracking ID, and Type Badge */}
                     <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
-                      
                       {/* Left: Sequence + Tracking ID */}
                       <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                         <span className="inline-flex items-center justify-center min-w-7 px-2 py-0.5 rounded-lg border border-slate-300 bg-slate-100 text-xs font-black text-slate-700 font-mono shadow-2xs">
@@ -535,7 +645,9 @@ export default function ApprovedAbstractsPage() {
                         )}
 
                         <span className="text-[11px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg border border-slate-200">
-                          {item.round === 2 ? t("round2Badge") : t("round1Badge")}
+                          {item.round === 2
+                            ? t("round2Badge")
+                            : t("round1Badge")}
                         </span>
                       </div>
 
@@ -546,8 +658,8 @@ export default function ApprovedAbstractsPage() {
                           isOral
                             ? "bg-amber-100 text-amber-900 border border-amber-300"
                             : isHighlightedPoster
-                            ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
-                            : "bg-blue-100 text-blue-900 border border-blue-300"
+                              ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                              : "bg-blue-100 text-blue-900 border border-blue-300",
                         )}
                       >
                         {presentationLabel}
@@ -563,26 +675,30 @@ export default function ApprovedAbstractsPage() {
 
                     {/* Card Bottom: Submitter & Category */}
                     <div className="pt-2.5 sm:pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
-                      
                       {/* Submitter */}
                       <div className="flex items-center gap-1.5 text-slate-700 min-w-0">
                         <User className="size-3.5 text-slate-400 shrink-0" />
-                        <span className="text-slate-400 font-semibold shrink-0">{t("submitterField")}:</span>
-                        <strong className="font-bold text-slate-900 truncate">{item.submitterName || t("notSpecified")}</strong>
+                        <span className="text-slate-400 font-semibold shrink-0">
+                          {t("submitterField")}:
+                        </span>
+                        <strong className="font-bold text-slate-900 truncate">
+                          {item.submitterName || t("notSpecified")}
+                        </strong>
                       </div>
 
                       {/* Category */}
                       {item.categoryName && (
                         <div className="flex items-center gap-1.5 min-w-0">
                           <Tag className="size-3.5 text-slate-400 shrink-0" />
-                          <span className="text-slate-400 font-semibold shrink-0">{t("categoryField")}:</span>
+                          <span className="text-slate-400 font-semibold shrink-0">
+                            {t("categoryField")}:
+                          </span>
                           <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-800 border border-slate-200 shadow-2xs truncate">
                             {item.categoryName}
                           </span>
                         </div>
                       )}
                     </div>
-
                   </article>
                 );
               })}
@@ -606,7 +722,7 @@ export default function ApprovedAbstractsPage() {
                   "inline-flex items-center justify-center gap-1 h-9 sm:h-10 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer shrink-0",
                   currentPage === 1
                     ? "text-slate-300 cursor-not-allowed bg-slate-50"
-                    : "text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95"
+                    : "text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95",
                 )}
               >
                 <ChevronLeft className="size-4" />
@@ -637,7 +753,7 @@ export default function ApprovedAbstractsPage() {
                         "size-8 sm:size-10 rounded-xl text-xs sm:text-sm font-bold font-mono transition cursor-pointer active:scale-95 shrink-0",
                         isCurrent
                           ? "bg-orange-500 text-white shadow-[0_2px_8px_rgba(249,115,22,0.35)]"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200",
                       )}
                     >
                       {page}
@@ -655,7 +771,7 @@ export default function ApprovedAbstractsPage() {
                   "inline-flex items-center justify-center gap-1 h-9 sm:h-10 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer shrink-0",
                   currentPage === totalPages
                     ? "text-slate-300 cursor-not-allowed bg-slate-50"
-                    : "text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95"
+                    : "text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 active:scale-95",
                 )}
               >
                 <span className="hidden sm:inline">ถัดไป</span>
@@ -663,10 +779,8 @@ export default function ApprovedAbstractsPage() {
               </button>
             </nav>
           )}
-
         </div>
       </section>
-
     </main>
   );
 }

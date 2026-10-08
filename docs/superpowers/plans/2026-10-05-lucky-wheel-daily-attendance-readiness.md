@@ -44,27 +44,27 @@ Existing design references:
 
 ## File ownership
 
-| File | Responsibility |
-| --- | --- |
-| `conference-api/src/modules/attendance/readiness.ts` (new) | Typed readiness inventory, classification, stable fingerprint, scoped legacy import |
-| `conference-api/src/modules/attendance/cutover-lock.ts` (new) | Shared/exclusive transaction-scoped event/session fence |
-| `conference-api/src/modules/attendance/service.ts` | Fence existing check-in and cancellation writers before row locks |
-| `conference-api/src/modules/lucky-wheel/attendance-setup.ts` (new) | Authorized admin setup transaction and exactly-once audit/replay |
-| `conference-api/src/modules/lucky-wheel/access.ts` | Daily-policy runtime prerequisite and error type |
-| `conference-api/src/modules/lucky-wheel/service.ts` | Admin state readiness, open/spin/eligibility integration |
-| `conference-api/src/modules/lucky-wheel/qr-credits.ts` | QR opening/claim runtime prerequisite |
-| `conference-api/src/modules/lucky-wheel/routes.ts`, `schemas.ts`, `types.ts` | Authenticated setup route and strict contracts |
-| `conference-api/src/routes/backoffice/checkins.ts` | Legacy undo fence and optional test-only database injection through plugin options |
-| `conference-backoffice/src/components/lucky-wheel/AttendanceSetup.tsx` (new) | Readiness card, reviewed setup dialog, result/reload/retry UI |
-| `conference-backoffice/src/app/lucky-wheel/page.tsx` | Mount setup card, readiness warnings and open-button gate |
-| `conference-backoffice/src/components/lucky-wheel/QrRights.tsx` | Missing-policy warning and QR-open prerequisite |
-| `conference-backoffice/src/lib/api.ts`, `src/types/lucky-wheel.ts` | Admin client and shared readiness/setup contracts |
-| `conference-backoffice/src/app/checkin/page.tsx` | Explicit server-day/daily-mode scanner labels |
-| `Pris2026/src/lib/luckyWheel.ts` | Attendee configuration block code |
-| `Pris2026/src/app/[locale]/lucky-wheel/claim/page.tsx` | Setup-specific TH/EN claim message and retry |
-| `Pris2026/src/components/lucky-wheel/ActivityTicket.tsx` | Setup-specific wheel message |
-| `Pris2026/messages/th.json`, `messages/en.json` | Matching localized copy |
-| `conference-api/sql/lucky-wheel-setup/README.md`, `00_readiness.sql`, `01_backfill_daily_attendance.sql` | Current release/cutover runbook and scoped read-only operator inventory |
+| File                                                                                                     | Responsibility                                                                      |
+| -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `conference-api/src/modules/attendance/readiness.ts` (new)                                               | Typed readiness inventory, classification, stable fingerprint, scoped legacy import |
+| `conference-api/src/modules/attendance/cutover-lock.ts` (new)                                            | Shared/exclusive transaction-scoped event/session fence                             |
+| `conference-api/src/modules/attendance/service.ts`                                                       | Fence existing check-in and cancellation writers before row locks                   |
+| `conference-api/src/modules/lucky-wheel/attendance-setup.ts` (new)                                       | Authorized admin setup transaction and exactly-once audit/replay                    |
+| `conference-api/src/modules/lucky-wheel/access.ts`                                                       | Daily-policy runtime prerequisite and error type                                    |
+| `conference-api/src/modules/lucky-wheel/service.ts`                                                      | Admin state readiness, open/spin/eligibility integration                            |
+| `conference-api/src/modules/lucky-wheel/qr-credits.ts`                                                   | QR opening/claim runtime prerequisite                                               |
+| `conference-api/src/modules/lucky-wheel/routes.ts`, `schemas.ts`, `types.ts`                             | Authenticated setup route and strict contracts                                      |
+| `conference-api/src/routes/backoffice/checkins.ts`                                                       | Legacy undo fence and optional test-only database injection through plugin options  |
+| `conference-backoffice/src/components/lucky-wheel/AttendanceSetup.tsx` (new)                             | Readiness card, reviewed setup dialog, result/reload/retry UI                       |
+| `conference-backoffice/src/app/lucky-wheel/page.tsx`                                                     | Mount setup card, readiness warnings and open-button gate                           |
+| `conference-backoffice/src/components/lucky-wheel/QrRights.tsx`                                          | Missing-policy warning and QR-open prerequisite                                     |
+| `conference-backoffice/src/lib/api.ts`, `src/types/lucky-wheel.ts`                                       | Admin client and shared readiness/setup contracts                                   |
+| `conference-backoffice/src/app/checkin/page.tsx`                                                         | Explicit server-day/daily-mode scanner labels                                       |
+| `Pris2026/src/lib/luckyWheel.ts`                                                                         | Attendee configuration block code                                                   |
+| `Pris2026/src/app/[locale]/lucky-wheel/claim/page.tsx`                                                   | Setup-specific TH/EN claim message and retry                                        |
+| `Pris2026/src/components/lucky-wheel/ActivityTicket.tsx`                                                 | Setup-specific wheel message                                                        |
+| `Pris2026/messages/th.json`, `messages/en.json`                                                          | Matching localized copy                                                             |
+| `conference-api/sql/lucky-wheel-setup/README.md`, `00_readiness.sql`, `01_backfill_daily_attendance.sql` | Current release/cutover runbook and scoped read-only operator inventory             |
 
 Do not split or restructure unrelated route/service modules. New modules above keep setup and cutover logic out of the existing large wheel service.
 
@@ -176,15 +176,15 @@ requireDailyAttendanceReady(database: WheelDatabase, eventId: number,
 
 ### Errors
 
-| HTTP | Code | Meaning and action |
-| --- | --- | --- |
-| 409 | `ATTENDANCE_SETUP_REQUIRED` | Daily policy missing/disabled; attendee sees organizer setup message; no credit/spin/stock mutation |
-| 409 | `ATTENDANCE_SETUP_STALE` | Evidence changed since preview; reload readiness and review again |
-| 409 | `ATTENDANCE_SETUP_CONFLICT` | Ambiguous history, invalid binding, or setup blockers; review counts and reconcile explicitly |
-| 409 | `ATTENDANCE_SETUP_BUSY` | Scoped lock timed out; nothing committed; retry original request/key |
-| 409 | `ATTENDANCE_SETUP_REQUIRES_PAUSE` | New setup requires the wheel already paused; committed setup replay does not require pausing again |
-| 409 | `IDEMPOTENCY_CONFLICT` | Same actor/key with different request hash |
-| 403 | `ADMIN_REQUIRED` | Existing active-admin guard rejects actor |
+| HTTP | Code                              | Meaning and action                                                                                  |
+| ---- | --------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 409  | `ATTENDANCE_SETUP_REQUIRED`       | Daily policy missing/disabled; attendee sees organizer setup message; no credit/spin/stock mutation |
+| 409  | `ATTENDANCE_SETUP_STALE`          | Evidence changed since preview; reload readiness and review again                                   |
+| 409  | `ATTENDANCE_SETUP_CONFLICT`       | Ambiguous history, invalid binding, or setup blockers; review counts and reconcile explicitly       |
+| 409  | `ATTENDANCE_SETUP_BUSY`           | Scoped lock timed out; nothing committed; retry original request/key                                |
+| 409  | `ATTENDANCE_SETUP_REQUIRES_PAUSE` | New setup requires the wheel already paused; committed setup replay does not require pausing again  |
+| 409  | `IDEMPOTENCY_CONFLICT`            | Same actor/key with different request hash                                                          |
+| 403  | `ADMIN_REQUIRED`                  | Existing active-admin guard rejects actor                                                           |
 
 Use `ATTENDANCE_SETUP_REQUIRED` as the new attendee BlockCode. Add the setup-only error codes to WheelError's accepted union, not to participant-specific eligibility logic. A missing database schema is a configuration/service failure, never CHECKIN_REQUIRED.
 
@@ -254,10 +254,22 @@ npm run build
 - [x] Add pure classification tests before implementing classification. Cover absent evidence, valid import, matching active history, conflicting active history, processed cancelled source, unprocessed cancellation, unknown scanner and invalid time.
 
 ```ts
-assert.equal(classifyLegacy(source, { sourceAlreadyRecorded: true,
-  active: null, cancelledOnDay: true }), "alreadyImported");
-assert.equal(classifyLegacy(source, { sourceAlreadyRecorded: false,
-  active: null, cancelledOnDay: true }), "cancellationConflict");
+assert.equal(
+  classifyLegacy(source, {
+    sourceAlreadyRecorded: true,
+    active: null,
+    cancelledOnDay: true,
+  }),
+  "alreadyImported",
+);
+assert.equal(
+  classifyLegacy(source, {
+    sourceAlreadyRecorded: false,
+    active: null,
+    cancelledOnDay: true,
+  }),
+  "cancellationConflict",
+);
 ```
 
 `classifyLegacy` is a module-local pure helper exported only if required for focused tests; its source/evidence types are defined in readiness.ts. An exact matching active record returns alreadyCovered, not import.
@@ -265,7 +277,11 @@ assert.equal(classifyLegacy(source, { sourceAlreadyRecorded: false,
 - [x] Add integration assertions against synthetic full-schema fixtures: no policy is not runtimeReady; enabled policy makes runtimeReady true; pending import makes setupComplete false; another event's policy never counts; missing confirmed entitlement and null user are counted without repairing rows.
 
 ```ts
-const state = await readAttendanceReadiness(database, fixture.eventId, fixture.mainSessionId);
+const state = await readAttendanceReadiness(
+  database,
+  fixture.eventId,
+  fixture.mainSessionId,
+);
 assert.equal(state.runtimeReady, false);
 assert.equal(state.counts.missingEntitlements, 0);
 assert.equal(state.counts.pendingLegacyImports, 1);
@@ -300,9 +316,13 @@ npm run build
 ```ts
 const key = `pris:attendance:${eventId}:${sessionId}`;
 if (mode === "shared") {
-  await database.execute(sql`SELECT pg_advisory_xact_lock_shared(hashtextextended(${key}, 0))`);
+  await database.execute(
+    sql`SELECT pg_advisory_xact_lock_shared(hashtextextended(${key}, 0))`,
+  );
 } else {
-  await database.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${key}, 0))`);
+  await database.execute(
+    sql`SELECT pg_advisory_xact_lock(hashtextextended(${key}, 0))`,
+  );
 }
 ```
 
@@ -350,9 +370,12 @@ Bind the second statement from proven server-read source evidence, not the setup
 - [x] Test 100 identical concurrent requests: one setup/audit/import, all retries return original result. Two independently keyed requests from the same stale preview must not create duplicates; one may succeed, the stale one must reload.
 
 ```ts
-const results = await Promise.all(Array.from({ length: 100 }, () =>
-  setupWheelAttendance(database, admin, fixture.eventId, input)));
-assert.equal(results.filter(result => !result.replayed).length, 1);
+const results = await Promise.all(
+  Array.from({ length: 100 }, () =>
+    setupWheelAttendance(database, admin, fixture.eventId, input),
+  ),
+);
+assert.equal(results.filter((result) => !result.replayed).length, 1);
 assert.equal(await countSetupAudits(fixture.eventId), 1);
 assert.equal(await countImportedSource(fixture.entitlementId), 1);
 ```
@@ -374,12 +397,14 @@ Test helpers countSetupAudits/countImportedSource belong to the integration fixt
 - [x] Add strict schema:
 
 ```ts
-export const attendanceSetupBodySchema = z.object({
-  mainSessionId: z.number().int().positive(),
-  expectedReadinessRevision: z.string().regex(/^[a-f0-9]{64}$/),
-  reason: z.string().trim().min(1).max(500),
-  idempotencyKey: z.string().uuid(),
-}).strict();
+export const attendanceSetupBodySchema = z
+  .object({
+    mainSessionId: z.number().int().positive(),
+    expectedReadinessRevision: z.string().regex(/^[a-f0-9]{64}$/),
+    reason: z.string().trim().min(1).max(500),
+    idempotencyKey: z.string().uuid(),
+  })
+  .strict();
 ```
 
 - [x] Add route dependency injection for setup tests following LuckyWheelRouteOptions conventions. RequireAdminFromRequest derives actor; eventId comes from validated path. Request cannot nominate actor/user/date/scanner.
@@ -576,20 +601,20 @@ Run commands from their owning repo; check every exit code rather than letting P
 
 ## Acceptance coverage matrix
 
-| Requirement | Tasks | Proof |
-| --- | --- | --- |
-| Original Main Session/ticket/entitlement preserved | T02,T04,T10,T11,T12 | Same IDs/counts; no extra grants/sessions |
-| Explicit admin policy setup | T04,T05,T07 | Authenticated audited transaction; no GET/init side effect |
-| Evidence-only historical import | T02,T04,T11 | Correct UTC→Thai day/scanner; no fabricated rows |
-| No duplicates/resurrection | T02,T04,T10,T11 | Source and active-day uniqueness; cancelled sources remain cancelled |
-| Safe concurrent cutover | T03,T04,T11 | Shared/exclusive fence barriers and row-lock revalidation |
-| Accurate readiness/error | T02,T05,T06,T07,T09 | Configuration error differs from missing participant check-in |
-| QR state independent | T06,T08,T11,T12 | Closed QR stays closed through setup; download grants nothing |
-| One account/QR, multiple credits | T11 | QR-A duplicate denied, QR-B adds one, multiple spins spend separate credits |
-| Thai daily semantics and reports | T10,T11 | Current server day, previous-day separation, correct distinct/occurrence counts |
-| Workshops unchanged | T03,T10 | Single mode and previous duplicate-scan behavior preserved |
-| Reward/stock/history retained | T06,T11,T12 | No refund/deletion; replay and owner proof still work |
-| Local/Railway operations distinguished | T01,T12 | Reviewed URL/IDs/version/backup per environment |
+| Requirement                                        | Tasks               | Proof                                                                           |
+| -------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------- |
+| Original Main Session/ticket/entitlement preserved | T02,T04,T10,T11,T12 | Same IDs/counts; no extra grants/sessions                                       |
+| Explicit admin policy setup                        | T04,T05,T07         | Authenticated audited transaction; no GET/init side effect                      |
+| Evidence-only historical import                    | T02,T04,T11         | Correct UTC→Thai day/scanner; no fabricated rows                                |
+| No duplicates/resurrection                         | T02,T04,T10,T11     | Source and active-day uniqueness; cancelled sources remain cancelled            |
+| Safe concurrent cutover                            | T03,T04,T11         | Shared/exclusive fence barriers and row-lock revalidation                       |
+| Accurate readiness/error                           | T02,T05,T06,T07,T09 | Configuration error differs from missing participant check-in                   |
+| QR state independent                               | T06,T08,T11,T12     | Closed QR stays closed through setup; download grants nothing                   |
+| One account/QR, multiple credits                   | T11                 | QR-A duplicate denied, QR-B adds one, multiple spins spend separate credits     |
+| Thai daily semantics and reports                   | T10,T11             | Current server day, previous-day separation, correct distinct/occurrence counts |
+| Workshops unchanged                                | T03,T10             | Single mode and previous duplicate-scan behavior preserved                      |
+| Reward/stock/history retained                      | T06,T11,T12         | No refund/deletion; replay and owner proof still work                           |
+| Local/Railway operations distinguished             | T01,T12             | Reviewed URL/IDs/version/backup per environment                                 |
 
 ## Stop conditions
 

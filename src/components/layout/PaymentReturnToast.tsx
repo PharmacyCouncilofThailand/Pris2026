@@ -30,10 +30,9 @@ function PaymentReturnToastInner() {
     params.delete("regCode");
     params.delete("orderNumber");
     const query = params.toString();
-    router.replace(
-      `${window.location.pathname}${query ? `?${query}` : ""}`,
-      { scroll: false }
-    );
+    router.replace(`${window.location.pathname}${query ? `?${query}` : ""}`, {
+      scroll: false,
+    });
   }, [searchParams, router, t]);
 
   return null;

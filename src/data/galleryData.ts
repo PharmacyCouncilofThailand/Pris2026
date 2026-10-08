@@ -39,8 +39,9 @@ export const galleryData = {
   pris2025: {
     title: "PRIS 2025 Highlights",
     titleTh: "ภาพบรรยากาศ PRIS 2025",
-    subtitle: "Memorable moments from the Pharmacy Research and Innovation Summit 2025",
+    subtitle:
+      "Memorable moments from the Pharmacy Research and Innovation Summit 2025",
     subtitleTh: "ภาพประทับใจจากงานประชุมวิชาการเภสัชกรรมและนวัตกรรม ปี 2568",
     images: galleryImages,
-  }
+  },
 };

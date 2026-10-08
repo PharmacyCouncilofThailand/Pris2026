@@ -21,7 +21,9 @@ export default function DetailedGuidelines() {
   const tg = useTranslations("registrationGate");
   const tp = useTranslations("abstractPage");
   const locale = useLocale();
-  const abstractOpen = currentDate ? getAbstractGateState(currentDate).open : true;
+  const abstractOpen = currentDate
+    ? getAbstractGateState(currentDate).open
+    : true;
 
   useEffect(() => {
     // Set current date on the client side to avoid hydration mismatch
@@ -29,36 +31,35 @@ export default function DetailedGuidelines() {
     setCurrentDate(new Date());
   }, []);
 
-  useGSAP(() => {
-
-
-    // Content blocks fade in
-    const blocks = pageRef.current?.querySelectorAll(".content-block");
-    blocks?.forEach((block) => {
-      gsap.fromTo(
-        block,
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: block,
-            start: "top 85%",
+  useGSAP(
+    () => {
+      // Content blocks fade in
+      const blocks = pageRef.current?.querySelectorAll(".content-block");
+      blocks?.forEach((block) => {
+        gsap.fromTo(
+          block,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: block,
+              start: "top 85%",
+            },
           },
-        }
-      );
-    });
-  }, { scope: pageRef });
+        );
+      });
+    },
+    { scope: pageRef },
+  );
 
   return (
     <main
       ref={pageRef}
       className="bg-white text-slate-900 overflow-hidden selection:bg-blue-600 selection:text-white min-h-screen"
     >
-
-
       {/* ══════ HERO ══════ */}
       <PageHero
         eyebrowSub={t("heroSub")}
@@ -71,7 +72,9 @@ export default function DetailedGuidelines() {
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-4xl mx-auto content-block">
           <p className="text-gray-500 text-base md:text-lg leading-[1.8] font-light">
-            {locale === "th" ? submissionGuidelines.introTh : submissionGuidelines.intro}
+            {locale === "th"
+              ? submissionGuidelines.introTh
+              : submissionGuidelines.intro}
           </p>
         </div>
       </section>
@@ -82,7 +85,9 @@ export default function DetailedGuidelines() {
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("timelineLabel")}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
+                {t("timelineLabel")}
+              </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
               {t("timelineTitle")}
@@ -103,11 +108,19 @@ export default function DetailedGuidelines() {
                   key={idx}
                   className="flex flex-col gap-1 border-b border-gray-200 py-5 md:flex-row md:items-baseline md:gap-8 transition-colors duration-300 hover:bg-gray-50/50"
                 >
-                  <span className={`text-lg transition-colors duration-300 md:w-[55%] ${isHighlighted ? "text-red-600 font-bold" : "text-gray-900 font-medium"}`}>
-                    {locale === "th" && item.labelTh ? item.labelTh : item.label}
+                  <span
+                    className={`text-lg transition-colors duration-300 md:w-[55%] ${isHighlighted ? "text-red-600 font-bold" : "text-gray-900 font-medium"}`}
+                  >
+                    {locale === "th" && item.labelTh
+                      ? item.labelTh
+                      : item.label}
                   </span>
-                  <span className={`text-sm transition-colors duration-300 ${isHighlighted ? "text-red-500 font-medium" : "text-gray-400"}`}>
-                    {locale === "th" && item.valueTh ? item.valueTh : item.value}
+                  <span
+                    className={`text-sm transition-colors duration-300 ${isHighlighted ? "text-red-500 font-medium" : "text-gray-400"}`}
+                  >
+                    {locale === "th" && item.valueTh
+                      ? item.valueTh
+                      : item.value}
                   </span>
                 </div>
               );
@@ -119,11 +132,12 @@ export default function DetailedGuidelines() {
       {/* ══════ GENERAL INFORMATION ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
-
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("overviewLabel")}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
+                {t("overviewLabel")}
+              </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
               {t("overviewTitle")}
@@ -136,8 +150,12 @@ export default function DetailedGuidelines() {
                 key={idx}
                 className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8 py-5 border-b border-gray-200"
               >
-                <span className="text-gray-900 font-medium text-base md:w-[45%]">{locale === "th" && item.labelTh ? item.labelTh : item.label}</span>
-                <span className="text-gray-500 text-sm md:text-base">{locale === "th" && item.valueTh ? item.valueTh : item.value}</span>
+                <span className="text-gray-900 font-medium text-base md:w-[45%]">
+                  {locale === "th" && item.labelTh ? item.labelTh : item.label}
+                </span>
+                <span className="text-gray-500 text-sm md:text-base">
+                  {locale === "th" && item.valueTh ? item.valueTh : item.value}
+                </span>
               </div>
             ))}
           </div>
@@ -147,11 +165,12 @@ export default function DetailedGuidelines() {
       {/* ══════ ABSTRACT TOPICS ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
-
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-orange-500" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">{t("categoriesLabel")}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">
+                {t("categoriesLabel")}
+              </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
               {t("categoriesTitle")}
@@ -159,7 +178,10 @@ export default function DetailedGuidelines() {
           </div>
 
           <div className="content-block border-t border-gray-200">
-            {(locale === "th" ? submissionGuidelines.abstractTopicsTh : submissionGuidelines.abstractTopics).map((topic, idx) => (
+            {(locale === "th"
+              ? submissionGuidelines.abstractTopicsTh
+              : submissionGuidelines.abstractTopics
+            ).map((topic, idx) => (
               <div
                 key={idx}
                 className="flex items-baseline gap-6 py-5 border-b border-gray-200 hover:bg-gray-50/60 transition-colors"
@@ -167,7 +189,9 @@ export default function DetailedGuidelines() {
                 <span className="text-orange-500 text-xs font-bold tracking-widest w-8 shrink-0">
                   {String(idx + 1).padStart(2, "0")}
                 </span>
-                <span className="text-gray-900 font-medium text-lg">{topic}</span>
+                <span className="text-gray-900 font-medium text-lg">
+                  {topic}
+                </span>
               </div>
             ))}
           </div>
@@ -177,11 +201,12 @@ export default function DetailedGuidelines() {
       {/* ══════ SUBMISSION GUIDELINES ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
-
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{t("rulesLabel")}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
+                {t("rulesLabel")}
+              </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
               {t("rulesTitle")}
@@ -189,7 +214,10 @@ export default function DetailedGuidelines() {
           </div>
 
           <div className="content-block border-t border-gray-200">
-            {(locale === "th" ? submissionGuidelines.guidelinesTh : submissionGuidelines.guidelines).map((rule, idx) => (
+            {(locale === "th"
+              ? submissionGuidelines.guidelinesTh
+              : submissionGuidelines.guidelines
+            ).map((rule, idx) => (
               <div
                 key={idx}
                 className="flex items-start gap-6 py-5 border-b border-gray-100"
@@ -197,7 +225,9 @@ export default function DetailedGuidelines() {
                 <span className="text-gray-300 text-xs font-bold tracking-widest w-8 shrink-0 pt-1">
                   {String(idx + 1).padStart(2, "0")}
                 </span>
-                <p className="text-gray-600 text-base leading-relaxed font-light">{rule}</p>
+                <p className="text-gray-600 text-base leading-relaxed font-light">
+                  {rule}
+                </p>
               </div>
             ))}
           </div>
@@ -205,12 +235,19 @@ export default function DetailedGuidelines() {
           {/* Callout notes */}
           <div className="content-block mt-12 space-y-6 max-w-4xl">
             <div className="border-l-2 border-blue-400 pl-6 py-2">
-              <p className="text-gray-500 text-sm leading-relaxed">{locale === "th" ? submissionGuidelines.acknowledgementNoteTh : submissionGuidelines.acknowledgementNote}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                {locale === "th"
+                  ? submissionGuidelines.acknowledgementNoteTh
+                  : submissionGuidelines.acknowledgementNote}
+              </p>
             </div>
             <div className="border-l-2 border-orange-400 pl-6 py-2">
-              <p className="text-gray-500 text-sm leading-relaxed">{locale === "th" ? submissionGuidelines.reviewNoteTh : submissionGuidelines.reviewNote}</p>
+              <p className="text-gray-500 text-sm leading-relaxed">
+                {locale === "th"
+                  ? submissionGuidelines.reviewNoteTh
+                  : submissionGuidelines.reviewNote}
+              </p>
             </div>
-
           </div>
         </div>
       </section>
@@ -218,11 +255,12 @@ export default function DetailedGuidelines() {
       {/* ══════ ABSTRACT STRUCTURE ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
-
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-orange-500" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">{t("formatLabel")}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-orange-500">
+                {t("formatLabel")}
+              </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
               {t("formatTitle")}
@@ -237,29 +275,37 @@ export default function DetailedGuidelines() {
 
           <div className="content-block border-t border-gray-200">
             {submissionGuidelines.abstractStructure.map((item, idx) => (
-              <div
-                key={idx}
-                className="py-6 border-b border-gray-200"
-              >
+              <div key={idx} className="py-6 border-b border-gray-200">
                 <div className="flex items-baseline gap-6">
                   <span className="text-orange-500 text-xs font-bold tracking-widest w-8 shrink-0">
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <span className="text-gray-900 font-medium text-lg">{locale === "th" && item.titleTh ? item.titleTh : item.title}</span>
+                    <span className="text-gray-900 font-medium text-lg">
+                      {locale === "th" && item.titleTh
+                        ? item.titleTh
+                        : item.title}
+                    </span>
                     {(locale === "th" ? item.descTh : item.desc) && (
-                      <span className="text-gray-400 text-sm ml-3">— {locale === "th" ? item.descTh : item.desc}</span>
+                      <span className="text-gray-400 text-sm ml-3">
+                        — {locale === "th" ? item.descTh : item.desc}
+                      </span>
                     )}
                   </div>
                 </div>
                 {(locale === "th" ? item.itemsTh : item.items) && (
                   <div className="ml-14 mt-3 space-y-2">
-                    {(locale === "th" ? item.itemsTh : item.items)?.map((sub, subIdx) => (
-                      <p key={subIdx} className="text-gray-500 text-sm font-light flex items-start gap-3">
-                        <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0 mt-2" />
-                        {sub}
-                      </p>
-                    ))}
+                    {(locale === "th" ? item.itemsTh : item.items)?.map(
+                      (sub, subIdx) => (
+                        <p
+                          key={subIdx}
+                          className="text-gray-500 text-sm font-light flex items-start gap-3"
+                        >
+                          <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0 mt-2" />
+                          {sub}
+                        </p>
+                      ),
+                    )}
                   </div>
                 )}
               </div>
@@ -272,9 +318,13 @@ export default function DetailedGuidelines() {
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto content-block">
           <div className="border-t border-b border-gray-200 py-12 md:py-16 text-center">
-            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-orange-500 block mb-4">{tp("maxWordLimit")}</span>
+            <span className="text-xs font-semibold tracking-[0.3em] uppercase text-orange-500 block mb-4">
+              {tp("maxWordLimit")}
+            </span>
             <p className="text-3xl md:text-5xl font-black tracking-tighter text-gray-900 uppercase">
-              {locale === "th" ? submissionGuidelines.maxWordLimitTh : submissionGuidelines.maxWordLimit}
+              {locale === "th"
+                ? submissionGuidelines.maxWordLimitTh
+                : submissionGuidelines.maxWordLimit}
             </p>
           </div>
         </div>
@@ -283,11 +333,12 @@ export default function DetailedGuidelines() {
       {/* ══════ FORMATTING ══════ */}
       <section className="relative px-6 md:px-12 pb-28 md:pb-40">
         <div className="max-w-6xl mx-auto">
-
           <div className="content-block mb-16 md:mb-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{tp("typography")}</span>
+              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
+                {tp("typography")}
+              </span>
             </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
               {tp("formatting")}
@@ -295,7 +346,10 @@ export default function DetailedGuidelines() {
           </div>
 
           <div className="content-block border-t border-gray-200">
-            {(locale === "th" ? submissionGuidelines.formattingTh : submissionGuidelines.formatting).map((item, idx) => (
+            {(locale === "th"
+              ? submissionGuidelines.formattingTh
+              : submissionGuidelines.formatting
+            ).map((item, idx) => (
               <div
                 key={idx}
                 className="flex items-baseline gap-6 py-5 border-b border-gray-200"
@@ -303,7 +357,9 @@ export default function DetailedGuidelines() {
                 <span className="text-blue-600 text-xs font-bold tracking-widest w-8 shrink-0">
                   {String(idx + 1).padStart(2, "0")}
                 </span>
-                <span className="text-gray-700 font-medium text-base">{item}</span>
+                <span className="text-gray-700 font-medium text-base">
+                  {item}
+                </span>
               </div>
             ))}
           </div>
@@ -312,65 +368,91 @@ export default function DetailedGuidelines() {
 
       {/* ══════ DECLARATION & ACCEPTANCE ══════ */}
       {false && (
-      <section className="relative px-6 md:px-12 pb-28 md:pb-40">
-        <div className="max-w-6xl mx-auto">
-
-          <div className="content-block mb-16 md:mb-20">
-            <div className="flex items-center gap-4 mb-6">
-              <span className="w-12 h-px bg-blue-600" />
-              <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">{tp("policies")}</span>
+        <section className="relative px-6 md:px-12 pb-28 md:pb-40">
+          <div className="max-w-6xl mx-auto">
+            <div className="content-block mb-16 md:mb-20">
+              <div className="flex items-center gap-4 mb-6">
+                <span className="w-12 h-px bg-blue-600" />
+                <span className="text-[10px] font-semibold tracking-[0.3em] uppercase text-blue-600">
+                  {tp("policies")}
+                </span>
+              </div>
+              <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
+                {tp("policies")}
+              </h2>
             </div>
-            <h2 className="text-4xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter leading-none text-gray-900">
-              {tp("policies")}
-            </h2>
-          </div>
 
-          {/* Declaration */}
-          <div className="content-block mb-16">
-            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{tp("declaration")}</h3>
-            <div className="border-t border-gray-200">
-              {(locale === "th" ? submissionGuidelines.policies.declarationTh : submissionGuidelines.policies.declaration).map((item, idx) => (
-                <div key={idx} className="flex items-start gap-6 py-5 border-b border-gray-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-2" />
-                  <p className="text-gray-600 text-base leading-relaxed font-light">{item}</p>
-                </div>
-              ))}
+            {/* Declaration */}
+            <div className="content-block mb-16">
+              <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">
+                {tp("declaration")}
+              </h3>
+              <div className="border-t border-gray-200">
+                {(locale === "th"
+                  ? submissionGuidelines.policies.declarationTh
+                  : submissionGuidelines.policies.declaration
+                ).map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-6 py-5 border-b border-gray-100"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 shrink-0 mt-2" />
+                    <p className="text-gray-600 text-base leading-relaxed font-light">
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Acceptance */}
+            <div className="content-block mb-16">
+              <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">
+                {tp("acceptanceNotification")}
+              </h3>
+              <div className="border-t border-gray-200">
+                {(locale === "th"
+                  ? submissionGuidelines.policies.acceptanceTh
+                  : submissionGuidelines.policies.acceptance
+                ).map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-6 py-5 border-b border-gray-100"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-2" />
+                    <p
+                      className={`text-base leading-relaxed font-light ${idx === (locale === "th" ? submissionGuidelines.policies.acceptanceTh : submissionGuidelines.policies.acceptance).length - 1 ? "text-orange-600 font-medium" : "text-gray-600"}`}
+                    >
+                      {item}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Withdrawal */}
+            <div className="content-block">
+              <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">
+                {tp("withdrawal")}
+              </h3>
+              <div className="border-t border-b border-gray-200 py-6">
+                <p className="text-gray-600 text-base leading-relaxed font-light">
+                  {locale === "th"
+                    ? submissionGuidelines.policies.withdrawalTh
+                    : submissionGuidelines.policies.withdrawal}
+                </p>
+              </div>
             </div>
           </div>
-
-          {/* Acceptance */}
-          <div className="content-block mb-16">
-            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{tp("acceptanceNotification")}</h3>
-            <div className="border-t border-gray-200">
-              {(locale === "th" ? submissionGuidelines.policies.acceptanceTh : submissionGuidelines.policies.acceptance).map((item, idx) => (
-                <div key={idx} className="flex items-start gap-6 py-5 border-b border-gray-100">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0 mt-2" />
-                  <p className={`text-base leading-relaxed font-light ${idx === (locale === "th" ? submissionGuidelines.policies.acceptanceTh : submissionGuidelines.policies.acceptance).length - 1 ? 'text-orange-600 font-medium' : 'text-gray-600'}`}>
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Withdrawal */}
-          <div className="content-block">
-            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-gray-400 mb-6">{tp("withdrawal")}</h3>
-            <div className="border-t border-b border-gray-200 py-6">
-              <p className="text-gray-600 text-base leading-relaxed font-light">
-                {locale === "th" ? submissionGuidelines.policies.withdrawalTh : submissionGuidelines.policies.withdrawal}
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
       )}
 
       {/* ══════ CTA ══════ */}
       <section className="py-24 md:py-32 bg-slate-50 border-t border-slate-200">
         <div className="container mx-auto px-6 max-w-4xl text-center">
           <h2 className="text-4xl md:text-5xl font-black mb-6 text-slate-900 tracking-tight">
-            {t("ctaTitle1")} <span className="text-blue-600">{t("ctaTitle2")}</span>
+            {t("ctaTitle1")}{" "}
+            <span className="text-blue-600">{t("ctaTitle2")}</span>
           </h2>
           <p className="text-lg md:text-xl text-slate-600 mb-12">
             {t("ctaDesc")}
@@ -401,8 +483,6 @@ export default function DetailedGuidelines() {
           </div>
         </div>
       </section>
-
-
     </main>
   );
 }

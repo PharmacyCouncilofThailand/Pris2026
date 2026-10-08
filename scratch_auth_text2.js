@@ -1,38 +1,53 @@
-const fs = require('fs');
+const fs = require("fs");
 
 const files = [
-  'c:/Pris2026/src/app/[locale]/signup/student/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/pharmacist/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/healthcare/page.tsx'
+  "c:/Pris2026/src/app/[locale]/signup/student/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/pharmacist/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/healthcare/page.tsx",
 ];
 
-files.forEach(f => {
+files.forEach((f) => {
   if (!fs.existsSync(f)) return;
-  let c = fs.readFileSync(f, 'utf8');
+  let c = fs.readFileSync(f, "utf8");
 
   // Headers
   c = c.replace(/Join as Student/g, '{t("joinAsStudent")}');
   c = c.replace(/Join as Pharmacist/g, '{t("joinAsPharmacist")}');
   c = c.replace(/Join as Healthcare Professional/g, '{t("joinAsHealthcare")}');
-  c = c.replace(/Please fill in your details to register your account/g, '{t("fillDetails")}');
+  c = c.replace(
+    /Please fill in your details to register your account/g,
+    '{t("fillDetails")}',
+  );
 
   // Form Labels that missed the first pass
   c = c.replace(/First Name <span/g, '{t("firstName")} <span');
   c = c.replace(/Last Name <span/g, '{t("lastName")} <span');
-  c = c.replace(/National ID \/ Passport Number <span/g, '{t("nationalId")} <span');
+  c = c.replace(
+    /National ID \/ Passport Number <span/g,
+    '{t("nationalId")} <span',
+  );
   c = c.replace(/Email Address <span/g, '{t("emailAddress")} <span');
   c = c.replace(/University \/ Institution/g, '{t("organization")}');
   c = c.replace(/Student Level <span/g, '{t("studentLevel")} <span');
   c = c.replace(/Phone Number/g, '{t("phoneNumber")}');
   c = c.replace(/>Password <span/g, '>{t("password")} <span');
   c = c.replace(/Confirm Password <span/g, '{t("confirmPassword")} <span');
-  
-  c = c.replace(/Pharmacy Council License <span/g, '{t("uploadLicenseTitle")} <span');
-  c = c.replace(/Professional Certificate \/ ID <span/g, '{t("uploadCertTitle")} <span');
+
+  c = c.replace(
+    /Pharmacy Council License <span/g,
+    '{t("uploadLicenseTitle")} <span',
+  );
+  c = c.replace(
+    /Professional Certificate \/ ID <span/g,
+    '{t("uploadCertTitle")} <span',
+  );
 
   // Terms and checkboxes
   c = c.replace(/I agree to the <Link/g, '{t("iAgree")} <Link');
-  c = c.replace(/>Terms of Service<\/Link> and <Link/g, '>{t("tos")}</Link> {t("and")} <Link');
+  c = c.replace(
+    />Terms of Service<\/Link> and <Link/g,
+    '>{t("tos")}</Link> {t("and")} <Link',
+  );
   c = c.replace(/>Privacy Policy<\/Link>/g, '>{t("privacy")}</Link>');
 
   // Dropsdowns
@@ -42,7 +57,10 @@ files.forEach(f => {
 
   // Files
   c = c.replace(/Click to change file/g, '{t("clickToChange")}');
-  c = c.replace(/Select student certificate or related document/g, '{t("selectDoc")}');
+  c = c.replace(
+    /Select student certificate or related document/g,
+    '{t("selectDoc")}',
+  );
   c = c.replace(/Choose File/g, '{t("chooseFile")}');
 
   // Create account
@@ -53,30 +71,39 @@ files.forEach(f => {
 
 // Also inject the language switcher into ALL 6 pages
 const allFiles = [
-  'c:/Pris2026/src/app/[locale]/login/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/student/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/pharmacist/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/healthcare/page.tsx',
-  'c:/Pris2026/src/app/[locale]/signup/pending/page.tsx'
+  "c:/Pris2026/src/app/[locale]/login/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/student/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/pharmacist/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/healthcare/page.tsx",
+  "c:/Pris2026/src/app/[locale]/signup/pending/page.tsx",
 ];
 
-allFiles.forEach(f => {
+allFiles.forEach((f) => {
   if (!fs.existsSync(f)) return;
-  let c = fs.readFileSync(f, 'utf8');
+  let c = fs.readFileSync(f, "utf8");
 
   // Check if we already have a language switcher
-  if (!c.includes('switchLocale')) {
+  if (!c.includes("switchLocale")) {
     // Add import useLocale
     if (c.includes('useTranslations } from "next-intl"')) {
-      c = c.replace(/import \{ useTranslations \} from "next-intl";/, 'import { useTranslations, useLocale } from "next-intl";');
+      c = c.replace(
+        /import \{ useTranslations \} from "next-intl";/,
+        'import { useTranslations, useLocale } from "next-intl";',
+      );
     } else {
-      c = c.replace(/import \{ useTranslations, useLocale \} from "next-intl";/, 'import { useTranslations, useLocale } from "next-intl";'); // fallback
+      c = c.replace(
+        /import \{ useTranslations, useLocale \} from "next-intl";/,
+        'import { useTranslations, useLocale } from "next-intl";',
+      ); // fallback
     }
 
     // Add useTransition for smooth switching
-    if (c.includes('import React, { useRef')) {
-      c = c.replace(/import React, \{ useRef([^}]*)\} from "react";/, 'import React, { useRef$1, useTransition } from "react";');
+    if (c.includes("import React, { useRef")) {
+      c = c.replace(
+        /import React, \{ useRef([^}]*)\} from "react";/,
+        'import React, { useRef$1, useTransition } from "react";',
+      );
     }
 
     // Inject switchLocale function inside component
@@ -113,8 +140,8 @@ allFiles.forEach(f => {
       </div>`;
       c = c.replace(mainTag, mainTag + buttonInjection);
     }
-    
+
     fs.writeFileSync(f, c);
   }
 });
-console.log('Language switcher and forms updated');
+console.log("Language switcher and forms updated");

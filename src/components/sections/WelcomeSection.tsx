@@ -42,9 +42,9 @@ export default function WelcomeSection() {
             scrollTrigger: {
               trigger: ".welcome-header",
               start: "top 85%",
-              toggleActions: "play none none reverse"
+              toggleActions: "play none none reverse",
             },
-          }
+          },
         );
 
         // Animate cards as a staggered group when the grid comes into view
@@ -61,14 +61,14 @@ export default function WelcomeSection() {
             scrollTrigger: {
               trigger: ".welcome-grid",
               start: "top 85%",
-              toggleActions: "play none none reverse"
+              toggleActions: "play none none reverse",
             },
-          }
+          },
         );
       });
       return () => mm.revert();
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (
@@ -76,16 +76,15 @@ export default function WelcomeSection() {
       ref={containerRef}
       className={cn(
         "relative pt-0 pb-20 md:pb-28 overflow-hidden z-[2]",
-        "bg-white"
+        "bg-white",
       )}
     >
-
       <div className="container mx-auto px-4 relative z-[2] pt-20 md:pt-28">
         {/* Header */}
         <SectionTitle
           subtitle={t("welcomeMessages")}
-          title={t.rich('title', {
-            br: () => <br className="hidden md:block" />
+          title={t.rich("title", {
+            br: () => <br className="hidden md:block" />,
           })}
           align="center"
           theme="light"
@@ -116,7 +115,6 @@ export default function WelcomeSection() {
                     </span>
                   </div>
                 )}
-
               </div>
 
               {/* Name */}

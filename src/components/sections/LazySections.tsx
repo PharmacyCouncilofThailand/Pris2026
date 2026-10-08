@@ -4,40 +4,40 @@ import dynamic from "next/dynamic";
 
 export const PrisIntroSection = dynamic(
   () => import("@/components/sections/PrisIntroSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const WelcomeSection = dynamic(
   () => import("@/components/sections/WelcomeSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const EventScheduleSection = dynamic(
   () => import("@/components/sections/EventScheduleSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const SpeakerSection = dynamic(
   () => import("@/components/sections/SpeakerSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const SponsorSection = dynamic(
   () => import("@/components/sections/SponsorSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const HighlightVideoSection = dynamic(
   () => import("@/components/sections/HighlightVideoSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const RecentMemoriesSection = dynamic(
   () => import("@/components/sections/RecentMemoriesSection"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export const VideoCarouselSection = dynamic(
   () => import("@/components/sections/VideoCarouselSection"),
-  { ssr: false }
+  { ssr: false },
 );

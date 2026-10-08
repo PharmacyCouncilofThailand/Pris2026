@@ -30,7 +30,10 @@ export default function InviteLetterPage() {
   if (!isAuthenticated) return null;
 
   return (
-    <main lang={locale} className="min-h-screen overflow-hidden bg-[#f7f9fc] text-slate-900 selection:bg-blue-500/20 selection:text-blue-950">
+    <main
+      lang={locale}
+      className="min-h-screen overflow-hidden bg-[#f7f9fc] text-slate-900 selection:bg-blue-500/20 selection:text-blue-950"
+    >
       <PageHero
         eyebrow={t("eyebrow")}
         title1={t("title1")}
@@ -54,7 +57,9 @@ export default function InviteLetterPage() {
 
                 <div className="relative z-10 flex h-full min-h-[365px] flex-col justify-between">
                   <div className="flex items-center justify-between gap-4">
-                    <span className={`text-[10px] font-bold uppercase ${eyebrowTracking} text-white/60`}>
+                    <span
+                      className={`text-[10px] font-bold uppercase ${eyebrowTracking} text-white/60`}
+                    >
                       {t("sectionEyebrow")}
                     </span>
                     <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-blue-200">
@@ -86,7 +91,9 @@ export default function InviteLetterPage() {
               </div>
 
               <div className="flex flex-col justify-center p-8 md:p-12 lg:p-14">
-                <div className={`flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase ${metaTracking} text-blue-600`}>
+                <div
+                  className={`flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase ${metaTracking} text-blue-600`}
+                >
                   <span>{t("documentType")}</span>
                   <span className="text-slate-300">/</span>
                   <span className="text-slate-400">{t("documentMeta")}</span>

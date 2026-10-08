@@ -11,7 +11,6 @@ export default function AbstractTimeline() {
   return (
     <section className="py-20 md:py-32 bg-[#FAFBFF] md:bg-white text-slate-900 overflow-hidden">
       <div className="container mx-auto px-5 sm:px-6 lg:px-8 max-w-6xl">
-        
         {/* Header Section */}
         <div className="mb-14 md:mb-20">
           <div className="flex items-center gap-4 mb-4">
@@ -38,8 +37,12 @@ export default function AbstractTimeline() {
                 className="flex flex-col justify-between py-6 md:py-8 border-b border-slate-200 md:flex-row md:items-center transition-colors duration-300 hover:bg-slate-50"
               >
                 <div className="mb-3 md:mb-0 md:w-1/2 flex items-center gap-3 flex-wrap">
-                  <h3 className={`text-base md:text-lg transition-colors duration-300 ${isUpcoming ? "text-blue-600 font-bold" : "text-slate-800 font-medium"}`}>
-                    {locale === "th" && item.labelTh ? item.labelTh : item.label}
+                  <h3
+                    className={`text-base md:text-lg transition-colors duration-300 ${isUpcoming ? "text-blue-600 font-bold" : "text-slate-800 font-medium"}`}
+                  >
+                    {locale === "th" && item.labelTh
+                      ? item.labelTh
+                      : item.label}
                   </h3>
                   {isClosed && (
                     <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-500 font-semibold border border-slate-200">
@@ -54,7 +57,9 @@ export default function AbstractTimeline() {
                 </div>
 
                 <div className="md:w-1/2 md:text-right">
-                  <p className={`text-sm md:text-[0.95rem] transition-colors duration-300 ${isUpcoming ? "text-blue-600 font-semibold" : "text-slate-400 font-medium"}`}>
+                  <p
+                    className={`text-sm md:text-[0.95rem] transition-colors duration-300 ${isUpcoming ? "text-blue-600 font-semibold" : "text-slate-400 font-medium"}`}
+                  >
                     {locale === "th" && item.dateTh ? item.dateTh : item.date}
                   </p>
                 </div>
@@ -62,7 +67,6 @@ export default function AbstractTimeline() {
             );
           })}
         </div>
-
       </div>
     </section>
   );

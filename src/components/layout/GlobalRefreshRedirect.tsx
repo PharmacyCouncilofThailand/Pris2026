@@ -22,7 +22,10 @@ export default function GlobalRefreshRedirect() {
         if (perfEntries.length > 0) {
           const navType = (perfEntries[0] as PerformanceNavigationTiming).type;
           // Preserve the invitation confirmation route so token-bearing reloads stay on-page.
-          if (navType === "reload" && shouldRedirectReload(pathname, window.location.search)) {
+          if (
+            navType === "reload" &&
+            shouldRedirectReload(pathname, window.location.search)
+          ) {
             window.location.href = `/${locale}`;
             return;
           }

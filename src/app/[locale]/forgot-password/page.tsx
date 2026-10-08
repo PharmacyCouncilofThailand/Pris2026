@@ -51,8 +51,19 @@ export default function ForgotPasswordPage() {
           disabled={isPendingLang}
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-md border border-gray-100 text-sm font-bold text-gray-700 hover:bg-gray-50 hover:text-black transition-all disabled:opacity-50"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           {locale === "en" ? "TH" : "EN"}
         </button>
@@ -67,13 +78,28 @@ export default function ForgotPasswordPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/60" />
 
           <div className="relative z-10">
-            <Link href="/login" className="inline-flex items-center gap-4 group text-white hover:text-white/80 transition-colors">
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-4 group text-white hover:text-white/80 transition-colors"
+            >
               <div className="flex items-center justify-center w-8 h-8 rounded-full border border-white/20 bg-white/5 group-hover:bg-white/10 transition-colors shadow-sm">
-                <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                <svg
+                  className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
                 </svg>
               </div>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold">{t("backToLogin")}</span>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold">
+                {t("backToLogin")}
+              </span>
             </Link>
           </div>
         </div>
@@ -83,19 +109,37 @@ export default function ForgotPasswordPage() {
           <div className="w-full max-w-[420px] py-4">
             {/* Mobile Back Button */}
             <div className="lg:hidden flex justify-start mb-6">
-              <Link href="/login" className="inline-flex items-center gap-2 group text-gray-500 hover:text-black transition-colors">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 group text-gray-500 hover:text-black transition-colors"
+              >
                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 border border-gray-200 group-hover:bg-gray-100 transition-colors shadow-sm">
-                  <svg className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  <svg
+                    className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
                   </svg>
                 </div>
-                <span className="text-[11px] uppercase tracking-widest font-bold">{t("backToLogin")}</span>
+                <span className="text-[11px] uppercase tracking-widest font-bold">
+                  {t("backToLogin")}
+                </span>
               </Link>
             </div>
 
             {/* Logo */}
             <div className="flex justify-center mb-10">
-              <Link href="/" className="inline-block transition-transform duration-300 hover:opacity-70">
+              <Link
+                href="/"
+                className="inline-block transition-transform duration-300 hover:opacity-70"
+              >
                 <Image
                   src="/assets/Img/logo/Logo-Final .png"
                   alt="PRIS 2026 Logo"
@@ -111,7 +155,10 @@ export default function ForgotPasswordPage() {
               /* Success State */
               <div className="text-center space-y-6">
                 <div className="w-20 h-20 mx-auto rounded-full bg-emerald-50 flex items-center justify-center">
-                  <MailCheck className="w-10 h-10 text-emerald-500" strokeWidth={1.75} />
+                  <MailCheck
+                    className="w-10 h-10 text-emerald-500"
+                    strokeWidth={1.75}
+                  />
                 </div>
                 <div className="space-y-3">
                   <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 leading-tight">
@@ -125,7 +172,9 @@ export default function ForgotPasswordPage() {
                   <p className="text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">
                     {t("emailAddress")}
                   </p>
-                  <p className="text-sm font-bold text-gray-900 break-all">{submittedEmail}</p>
+                  <p className="text-sm font-bold text-gray-900 break-all">
+                    {submittedEmail}
+                  </p>
                 </div>
                 <div className="space-y-3 pt-2">
                   <Link
@@ -163,18 +212,24 @@ export default function ForgotPasswordPage() {
                     e.preventDefault();
                     setIsLoading(true);
                     const form = e.target as HTMLFormElement;
-                    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+                    const email = (
+                      form.elements.namedItem("email") as HTMLInputElement
+                    ).value;
 
                     try {
-                      const res = await fetch(`${API_URL}/auth/forgot-password`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          email,
-                          recaptchaToken: turnstileToken || undefined,
-                          eventCode: process.env.NEXT_PUBLIC_EVENT_CODE || undefined,
-                        }),
-                      });
+                      const res = await fetch(
+                        `${API_URL}/auth/forgot-password`,
+                        {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            email,
+                            recaptchaToken: turnstileToken || undefined,
+                            eventCode:
+                              process.env.NEXT_PUBLIC_EVENT_CODE || undefined,
+                          }),
+                        },
+                      );
 
                       const data = await res.json();
 
@@ -197,7 +252,10 @@ export default function ForgotPasswordPage() {
                   }}
                 >
                   <div>
-                    <label className="block text-sm font-bold text-gray-900 mb-2" htmlFor="email">
+                    <label
+                      className="block text-sm font-bold text-gray-900 mb-2"
+                      htmlFor="email"
+                    >
                       {t("emailAddress")}
                     </label>
                     <input
@@ -239,7 +297,10 @@ export default function ForgotPasswordPage() {
                 <div className="mt-12 text-center">
                   <p className="text-sm font-medium text-gray-500">
                     {t("rememberPassword")}{" "}
-                    <Link href="/login" className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1">
+                    <Link
+                      href="/login"
+                      className="text-black font-bold hover:underline underline-offset-4 decoration-2 ml-1"
+                    >
                       {t("signIn")}
                     </Link>
                   </p>

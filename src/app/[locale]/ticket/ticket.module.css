@@ -21,7 +21,8 @@
 .perforation {
   height: 24px;
   background:
-    repeating-linear-gradient(to right, #ea580c 0 5px, transparent 5px 10px) center / 100% 2px no-repeat,
+    repeating-linear-gradient(to right, #ea580c 0 5px, transparent 5px 10px)
+      center / 100% 2px no-repeat,
     #fff;
   mask-image:
     radial-gradient(circle at left center, transparent 10px, #000 10px),

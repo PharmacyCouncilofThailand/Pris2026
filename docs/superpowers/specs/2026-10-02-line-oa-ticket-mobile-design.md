@@ -32,8 +32,8 @@ The following records the earlier composition-only decision. Its color and ticke
 
 ## Compositional options
 
-| A: Compact credentials and QR | B: Vertical entry pass | C: Scan focus |
-| --- | --- | --- |
+| A: Compact credentials and QR                                                    | B: Vertical entry pass                                                    | C: Scan focus                                                    |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | ![A compact credentials and QR](../../../.impeccable/mocks/line-oa-ticket-a.png) | ![B vertical entry pass](../../../.impeccable/mocks/line-oa-ticket-b.png) | ![C scan focus](../../../.impeccable/mocks/line-oa-ticket-c.png) |
 
 A was the unboxed alternative with identity above the QR and the enlargement action near the scanning block. It is retained only as a historical comparison.

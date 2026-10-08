@@ -4,13 +4,13 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
-import { 
-  User, 
-  Users, 
-  FileText, 
-  Upload, 
-  CheckCircle, 
-  ArrowRight, 
+import {
+  User,
+  Users,
+  FileText,
+  Upload,
+  CheckCircle,
+  ArrowRight,
   ArrowLeft,
   Info,
   Plus,
@@ -18,7 +18,7 @@ import {
   AlertCircle,
   Loader2,
   ExternalLink,
-  PencilLine
+  PencilLine,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import gsap from "gsap";
@@ -76,7 +76,14 @@ interface RevisionRequest {
   files?: RevisionRequestFile[];
 }
 
-const BODY_REVISION_TOPICS = new Set(["background", "objective", "methods", "results", "conclusion", "documents"]);
+const BODY_REVISION_TOPICS = new Set([
+  "background",
+  "objective",
+  "methods",
+  "results",
+  "conclusion",
+  "documents",
+]);
 
 function useRevisionTopicLabel() {
   const t = useTranslations("abstractSubmission");
@@ -114,8 +121,11 @@ export default function AbstractSubmission() {
   const [isEditParamReady, setIsEditParamReady] = useState(false);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
   const [editLoadError, setEditLoadError] = useState("");
-  const [existingFiles, setExistingFiles] = useState<ExistingAbstractFile[]>([]);
-  const [revisionRequest, setRevisionRequest] = useState<RevisionRequest | null>(null);
+  const [existingFiles, setExistingFiles] = useState<ExistingAbstractFile[]>(
+    [],
+  );
+  const [revisionRequest, setRevisionRequest] =
+    useState<RevisionRequest | null>(null);
   const t = useTranslations("abstractSubmission");
   const ts = useTranslations("abstractSubmissionToasts");
   const tv = useTranslations("abstractSubmission.validation");
@@ -134,10 +144,16 @@ export default function AbstractSubmission() {
   useEffect(() => {
     const rawEditId = new URLSearchParams(window.location.search).get("edit");
     const parsedEditId = rawEditId ? Number(rawEditId) : null;
-    setEditId(Number.isInteger(parsedEditId) && parsedEditId !== null && parsedEditId > 0 ? parsedEditId : null);
+    setEditId(
+      Number.isInteger(parsedEditId) &&
+        parsedEditId !== null &&
+        parsedEditId > 0
+        ? parsedEditId
+        : null,
+    );
     setIsEditParamReady(true);
   }, []);
-  
+
   // Login guard — redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
@@ -150,23 +166,52 @@ export default function AbstractSubmission() {
   useEffect(() => {
     if (EVENT_CODE) {
       fetch(`${API_URL}/api/events/${EVENT_CODE}/abstract-categories`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           if (data.categories) {
-            setCategories([...data.categories].sort((a: CategoryOption, b: CategoryOption) => a.id - b.id));
+            setCategories(
+              [...data.categories].sort(
+                (a: CategoryOption, b: CategoryOption) => a.id - b.id,
+              ),
+            );
           }
         })
-        .catch(() => { /* silently fail, categories will be empty */ });
+        .catch(() => {
+          /* silently fail, categories will be empty */
+        });
     }
   }, []);
 
   // Form State
   const [formData, setFormData] = useState({
-    author: { firstName: "", lastName: "", email: "", affiliation: "", phone: "" },
-    coAuthors: [] as { firstName: string, lastName: string, institution: string, email: string }[],
-    abstract: { title: "", categoryId: undefined as number | undefined, category: "", type: "", keywords: "" },
-    content: { background: "", objective: "", methods: "", results: "", conclusion: "" },
-    files: [] as File[]
+    author: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      affiliation: "",
+      phone: "",
+    },
+    coAuthors: [] as {
+      firstName: string;
+      lastName: string;
+      institution: string;
+      email: string;
+    }[],
+    abstract: {
+      title: "",
+      categoryId: undefined as number | undefined,
+      category: "",
+      type: "",
+      keywords: "",
+    },
+    content: {
+      background: "",
+      objective: "",
+      methods: "",
+      results: "",
+      conclusion: "",
+    },
+    files: [] as File[],
   });
 
   const wordCountInput = useMemo(
@@ -200,7 +245,7 @@ export default function AbstractSubmission() {
   // Autofill user data when logged in
   useEffect(() => {
     if (isAuthenticated && user) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         author: {
           ...prev.author,
@@ -208,9 +253,10 @@ export default function AbstractSubmission() {
           lastName: user.lastName || prev.author.lastName,
           email: user.email || prev.author.email,
           // Fallback chain: institution (pharmacist/medical/general) → university (students)
-          affiliation: user.institution || user.university || prev.author.affiliation,
+          affiliation:
+            user.institution || user.university || prev.author.affiliation,
           phone: user.phone || prev.author.phone,
-        }
+        },
       }));
     }
   }, [isAuthenticated, user]);
@@ -223,9 +269,12 @@ export default function AbstractSubmission() {
       setIsLoadingEdit(true);
       setEditLoadError("");
       try {
-        const res = await fetch(`${API_URL}/api/abstracts/user/${editId}/edit`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `${API_URL}/api/abstracts/user/${editId}/edit`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
         const data = await res.json();
 
         if (!res.ok || !data.abstract) {
@@ -234,9 +283,10 @@ export default function AbstractSubmission() {
 
         if (!isMounted) return;
         const abstractData = data.abstract;
-        const latestRevisionRequest = abstractData.latestRevisionRequest || null;
+        const latestRevisionRequest =
+          abstractData.latestRevisionRequest || null;
 
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           coAuthors: (abstractData.coAuthors || []).map((coAuthor: any) => ({
             firstName: coAuthor.firstName || "",
@@ -249,7 +299,8 @@ export default function AbstractSubmission() {
             categoryId: abstractData.categoryId || undefined,
             category: abstractData.category || "",
             type: abstractData.presentationType
-              ? abstractData.presentationType.charAt(0).toUpperCase() + abstractData.presentationType.slice(1)
+              ? abstractData.presentationType.charAt(0).toUpperCase() +
+                abstractData.presentationType.slice(1)
               : "",
             keywords: abstractData.keywords || "",
           },
@@ -264,17 +315,32 @@ export default function AbstractSubmission() {
         }));
         setExistingFiles(
           abstractData.files && abstractData.files.length > 0
-            ? [...abstractData.files].sort((a: ExistingAbstractFile, b: ExistingAbstractFile) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+            ? [...abstractData.files].sort(
+                (a: ExistingAbstractFile, b: ExistingAbstractFile) =>
+                  (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+              )
             : abstractData.fullPaperUrl
-              ? [{ fileName: tu("currentAbstractPdf"), fileUrl: abstractData.fullPaperUrl }]
+              ? [
+                  {
+                    fileName: tu("currentAbstractPdf"),
+                    fileUrl: abstractData.fullPaperUrl,
+                  },
+                ]
               : [],
         );
         setRevisionRequest(latestRevisionRequest);
         setTrackingId(abstractData.trackingId || "");
-        setCurrentStep(latestRevisionRequest && BODY_REVISION_TOPICS.has(latestRevisionRequest.topic) ? 4 : 3);
+        setCurrentStep(
+          latestRevisionRequest &&
+            BODY_REVISION_TOPICS.has(latestRevisionRequest.topic)
+            ? 4
+            : 3,
+        );
       } catch (error) {
         if (!isMounted) return;
-        setEditLoadError(error instanceof Error ? error.message : tu("loadRevisionError"));
+        setEditLoadError(
+          error instanceof Error ? error.message : tu("loadRevisionError"),
+        );
       } finally {
         if (isMounted) setIsLoadingEdit(false);
       }
@@ -292,14 +358,19 @@ export default function AbstractSubmission() {
     { id: 2, label: t("steps.step2"), icon: <Users className="w-5 h-5" /> },
     { id: 3, label: t("steps.step3"), icon: <FileText className="w-5 h-5" /> },
     { id: 4, label: t("steps.step4"), icon: <Upload className="w-5 h-5" /> },
-    { id: 5, label: t("steps.step5"), icon: <CheckCircle className="w-5 h-5" /> },
+    {
+      id: 5,
+      label: t("steps.step5"),
+      icon: <CheckCircle className="w-5 h-5" />,
+    },
   ];
 
   useGSAP(() => {
     // Transition effect when step changes
-    gsap.fromTo(".step-content", 
-      { opacity: 0, x: 20 }, 
-      { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" }
+    gsap.fromTo(
+      ".step-content",
+      { opacity: 0, x: 20 },
+      { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" },
     );
   }, [currentStep]);
 
@@ -379,7 +450,9 @@ export default function AbstractSubmission() {
         if (!ca.institution.trim()) missing.push(tv("institution"));
         if (missing.length > 0) {
           setShowErrors(true);
-          toast.error(ts("coAuthorFields", { index: i + 1, fields: missing.join(", ") }));
+          toast.error(
+            ts("coAuthorFields", { index: i + 1, fields: missing.join(", ") }),
+          );
           return;
         }
       }
@@ -401,7 +474,8 @@ export default function AbstractSubmission() {
       if (!category.trim()) missing.push(tv("submissionTheme"));
       if (!type.trim()) missing.push(tv("presentationMode"));
       if (!keywords.trim()) missing.push(tv("keywords"));
-      else if (keywordCount > keywordMax) missing.push(tv("keywordsMax", { limit: keywordMax }));
+      else if (keywordCount > keywordMax)
+        missing.push(tv("keywordsMax", { limit: keywordMax }));
       if (missing.length > 0) {
         setShowErrors(true);
         toast.error(ts("fixFields", { fields: missing.join(", ") }));
@@ -429,10 +503,12 @@ export default function AbstractSubmission() {
         const sectionWords = freshWordCount.counts.sections[k];
         if (!v) issues.push(label);
         else if (sectionWords < freshWordCount.limits.sectionMin) {
-          issues.push(tv("sectionMinWords", {
-            label,
-            min: freshWordCount.limits.sectionMin,
-          }));
+          issues.push(
+            tv("sectionMinWords", {
+              label,
+              min: freshWordCount.limits.sectionMin,
+            }),
+          );
         }
       }
       if (issues.length > 0) {
@@ -442,10 +518,12 @@ export default function AbstractSubmission() {
       }
       const totalWords = freshWordCount.counts.total;
       if (totalWords > freshWordCount.limits.totalMax) {
-        toast.error(ts("wordLimitExceeded", {
-          count: totalWords,
-          limit: freshWordCount.limits.totalMax,
-        }));
+        toast.error(
+          ts("wordLimitExceeded", {
+            count: totalWords,
+            limit: freshWordCount.limits.totalMax,
+          }),
+        );
         return;
       }
       // File required (matches API: at least one abstract PDF is required)
@@ -467,7 +545,9 @@ export default function AbstractSubmission() {
   const handleSubmit = async () => {
     // Final guard — file is required by API
     if (formData.files.length === 0) {
-      const fileRequiredMessage = isEditMode ? tu("fileRequiredEdit") : tu("fileRequired");
+      const fileRequiredMessage = isEditMode
+        ? tu("fileRequiredEdit")
+        : tu("fileRequired");
       setSubmitError(fileRequiredMessage);
       toast.error(fileRequiredMessage);
       return;
@@ -529,9 +609,10 @@ export default function AbstractSubmission() {
         fd.append("abstractFiles", file);
       });
 
-      const endpoint = isEditMode && editId
-        ? `${API_URL}/api/abstracts/user/${editId}/resubmit`
-        : `${API_URL}/api/abstracts/submit`;
+      const endpoint =
+        isEditMode && editId
+          ? `${API_URL}/api/abstracts/user/${editId}/resubmit`
+          : `${API_URL}/api/abstracts/submit`;
 
       const res = await fetch(endpoint, {
         method: isEditMode ? "PATCH" : "POST",
@@ -565,7 +646,8 @@ export default function AbstractSubmission() {
         }
 
         setSubmitError(
-          data.error || (isEditMode ? tu("resubmissionFailed") : tu("submissionFailed")),
+          data.error ||
+            (isEditMode ? tu("resubmissionFailed") : tu("submissionFailed")),
         );
         return;
       }
@@ -581,12 +663,9 @@ export default function AbstractSubmission() {
 
   return (
     <main className="min-h-screen bg-[#fafafa] text-slate-900 selection:bg-gold selection:text-black overflow-x-hidden">
-
-      
       {/* ─── Modern Research Studio Layout ─── */}
       <section className="pt-32 pb-40">
         <div className="container mx-auto px-6 md:px-12 max-w-7xl">
-          
           {/* Header Info */}
           <PageHero
             title1={t("title1")}
@@ -607,7 +686,8 @@ export default function AbstractSubmission() {
                   </p>
                   {revisionRequest && (
                     <p className="mt-3 text-sm font-bold text-blue-950">
-                      {tu("revisionTopic")} {getRevisionTopicLabel(revisionRequest.topic)}
+                      {tu("revisionTopic")}{" "}
+                      {getRevisionTopicLabel(revisionRequest.topic)}
                     </p>
                   )}
                 </div>
@@ -657,146 +737,219 @@ export default function AbstractSubmission() {
           ) : (
             <>
               <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 mb-16">
-            <div className="flex gap-4 items-start justify-center text-left max-w-3xl mx-auto">
-              <Info className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
-              <div>
-                <h4 className="text-sm font-bold text-blue-900 mb-1">{tu("importantNote")}</h4>
-                <p className="text-sm text-blue-700/80 leading-relaxed">
-                  {tu("importantNoteDesc")}
-                </p>
-                <Link href="/abstract-guidelines" className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-2 inline-flex items-center gap-2 hover:text-blue-800 transition-colors">
-                  {t("warning")} <ArrowRight className="w-3 h-3" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Horizontal Stepper */}
-          <div className="mb-16 relative w-full">
-            {/* Connecting Lines Base */}
-            <div className="absolute top-5 left-8 right-8 h-[2px] bg-slate-200 z-0"></div>
-            {/* Progress Fill */}
-            <div 
-              className="absolute top-5 left-8 h-[2px] bg-slate-950 z-0 transition-all duration-500" 
-              style={{ width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 4rem + ${currentStep === 1 ? '4rem' : currentStep === steps.length ? '0rem' : '2rem'})` }}
-            ></div>
-            
-            <div className="relative z-10 flex justify-between items-start">
-              {steps.map((step) => (
-                <div key={step.id} className="flex flex-col items-center gap-4 group bg-[#fafafa] px-2">
-                  <div className={cn(
-                    "w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-500 border-2 relative z-10",
-                    currentStep === step.id 
-                      ? "bg-slate-950 border-slate-950 text-white shadow-xl scale-110" 
-                      : currentStep > step.id 
-                        ? "bg-slate-950 border-slate-950 text-white" 
-                        : "bg-white border-slate-200 text-slate-300"
-                  )}>
-                    {currentStep > step.id ? <CheckCircle className="w-4 h-4" /> : `0${step.id}`}
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span className={cn(
-                      "text-[9px] font-black uppercase tracking-widest mb-1",
-                      currentStep === step.id ? "text-orange-500" : "text-slate-300"
-                    )}>
-                      {t("stage")} 0{step.id}
-                    </span>
-                    <span className={cn(
-                      "text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center max-w-[100px]",
-                      currentStep === step.id ? "text-slate-900" : "text-slate-400"
-                    )}>
-                      {step.label}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Main Form Workspace */}
-          <div className="bg-white rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.03)] border border-slate-100 p-8 md:p-16 lg:p-20 overflow-hidden relative group">
-            {/* Decorative Soft Accents */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_70%)] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.03)_0%,transparent_70%)] pointer-events-none" />
-
-            <div className="relative z-10 min-h-[500px]">
-              <div className="step-content">
-                {currentStep === 1 && <Step1Author data={formData.author} setFormData={setFormData} showErrors={showErrors} />}
-                {currentStep === 2 && <Step2CoAuthors list={formData.coAuthors} setFormData={setFormData} showErrors={showErrors} />}
-                {currentStep === 3 && (
-                  <Step3Details
-                    data={formData.abstract}
-                    setFormData={setFormData}
-                    categories={categories}
-                    showErrors={showErrors}
-                    keywordCount={authoritativeCount.result?.counts.keywords ?? null}
-                    keywordLimit={authoritativeCount.result?.limits.keywordMax ?? null}
-                    wordCountStale={authoritativeCount.isStale}
-                  />
-                )}
-                {currentStep === 4 && (
-                  <Step4Content
-                    content={formData.content}
-                    files={formData.files}
-                    setFormData={setFormData}
-                    showErrors={showErrors}
-                    isEditMode={isEditMode}
-                    existingFiles={existingFiles}
-                    revisionRequest={revisionRequest}
-                    sectionWordCounts={authoritativeCount.result?.counts.sections ?? null}
-                    sectionWordMinimum={authoritativeCount.result?.limits.sectionMin ?? null}
-                    totalWords={authoritativeCount.result?.counts.total ?? null}
-                    totalWordLimit={authoritativeCount.result?.limits.totalMax ?? null}
-                    wordCountLoading={authoritativeCount.status === "loading"}
-                    wordCountStale={authoritativeCount.isStale}
-                  />
-                )}
-                {currentStep === 5 && <Step5Review data={formData} isEditMode={isEditMode} trackingId={trackingId} />}
-              </div>
-
-              {/* Navigation Controls */}
-              <div className="mt-32 pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div>
-                  {currentStep > 1 && (
-                    <button 
-                      onClick={handleBack}
-                      className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[3px] text-slate-400 hover:text-slate-950 transition-colors"
+                <div className="flex gap-4 items-start justify-center text-left max-w-3xl mx-auto">
+                  <Info className="w-5 h-5 text-blue-600 shrink-0 mt-1" />
+                  <div>
+                    <h4 className="text-sm font-bold text-blue-900 mb-1">
+                      {tu("importantNote")}
+                    </h4>
+                    <p className="text-sm text-blue-700/80 leading-relaxed">
+                      {tu("importantNoteDesc")}
+                    </p>
+                    <Link
+                      href="/abstract-guidelines"
+                      className="text-xs font-bold text-blue-600 uppercase tracking-widest mt-2 inline-flex items-center gap-2 hover:text-blue-800 transition-colors"
                     >
-                      <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                      {t("previousPhase")}
-                    </button>
-                  )}
-                </div>
-                
-                {submitError && (
-                  <div className="w-full md:w-auto px-6 py-4 bg-rose-50 border border-rose-200 rounded-2xl text-sm text-rose-700 font-bold">
-                    {submitError}
+                      {t("warning")} <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </div>
-                )}
-                <button 
-                  onClick={currentStep === 5 ? handleSubmit : handleNext}
-                  disabled={isSubmitting || isCountingForNavigation || (!isEditMode && !isAbstractOpen)}
-                  className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isCountingForNavigation ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> {tu("wordCountChecking")}</>
-                  ) : isSubmitting ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> {isEditMode ? tu("resubmitting") : tu("submitting")}</>
-                  ) : !isEditMode && !isAbstractOpen ? (
-                    tg("abstractNotice")
-                  ) : currentStep === 5 ? (
-                    isEditMode ? tu("resubmitRevised") : t("submitFinalAbstract")
-                  ) : (
-                    t("proceedToNextStage")
-                  )}
-                  {!isSubmitting && !isCountingForNavigation && (isAbstractOpen || isEditMode) && <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />}
-                </button>
+                </div>
               </div>
-            </div>
-          </div>
+
+              {/* Horizontal Stepper */}
+              <div className="mb-16 relative w-full">
+                {/* Connecting Lines Base */}
+                <div className="absolute top-5 left-8 right-8 h-[2px] bg-slate-200 z-0"></div>
+                {/* Progress Fill */}
+                <div
+                  className="absolute top-5 left-8 h-[2px] bg-slate-950 z-0 transition-all duration-500"
+                  style={{
+                    width: `calc(${((currentStep - 1) / (steps.length - 1)) * 100}% - 4rem + ${currentStep === 1 ? "4rem" : currentStep === steps.length ? "0rem" : "2rem"})`,
+                  }}
+                ></div>
+
+                <div className="relative z-10 flex justify-between items-start">
+                  {steps.map((step) => (
+                    <div
+                      key={step.id}
+                      className="flex flex-col items-center gap-4 group bg-[#fafafa] px-2"
+                    >
+                      <div
+                        className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center text-[10px] font-black transition-all duration-500 border-2 relative z-10",
+                          currentStep === step.id
+                            ? "bg-slate-950 border-slate-950 text-white shadow-xl scale-110"
+                            : currentStep > step.id
+                              ? "bg-slate-950 border-slate-950 text-white"
+                              : "bg-white border-slate-200 text-slate-300",
+                        )}
+                      >
+                        {currentStep > step.id ? (
+                          <CheckCircle className="w-4 h-4" />
+                        ) : (
+                          `0${step.id}`
+                        )}
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <span
+                          className={cn(
+                            "text-[9px] font-black uppercase tracking-widest mb-1",
+                            currentStep === step.id
+                              ? "text-orange-500"
+                              : "text-slate-300",
+                          )}
+                        >
+                          {t("stage")} 0{step.id}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center max-w-[100px]",
+                            currentStep === step.id
+                              ? "text-slate-900"
+                              : "text-slate-400",
+                          )}
+                        >
+                          {step.label}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Main Form Workspace */}
+              <div className="bg-white rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.03)] border border-slate-100 p-8 md:p-16 lg:p-20 overflow-hidden relative group">
+                {/* Decorative Soft Accents */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.03)_0%,transparent_70%)] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-[radial-gradient(circle_at_center,rgba(249,115,22,0.03)_0%,transparent_70%)] pointer-events-none" />
+
+                <div className="relative z-10 min-h-[500px]">
+                  <div className="step-content">
+                    {currentStep === 1 && (
+                      <Step1Author
+                        data={formData.author}
+                        setFormData={setFormData}
+                        showErrors={showErrors}
+                      />
+                    )}
+                    {currentStep === 2 && (
+                      <Step2CoAuthors
+                        list={formData.coAuthors}
+                        setFormData={setFormData}
+                        showErrors={showErrors}
+                      />
+                    )}
+                    {currentStep === 3 && (
+                      <Step3Details
+                        data={formData.abstract}
+                        setFormData={setFormData}
+                        categories={categories}
+                        showErrors={showErrors}
+                        keywordCount={
+                          authoritativeCount.result?.counts.keywords ?? null
+                        }
+                        keywordLimit={
+                          authoritativeCount.result?.limits.keywordMax ?? null
+                        }
+                        wordCountStale={authoritativeCount.isStale}
+                      />
+                    )}
+                    {currentStep === 4 && (
+                      <Step4Content
+                        content={formData.content}
+                        files={formData.files}
+                        setFormData={setFormData}
+                        showErrors={showErrors}
+                        isEditMode={isEditMode}
+                        existingFiles={existingFiles}
+                        revisionRequest={revisionRequest}
+                        sectionWordCounts={
+                          authoritativeCount.result?.counts.sections ?? null
+                        }
+                        sectionWordMinimum={
+                          authoritativeCount.result?.limits.sectionMin ?? null
+                        }
+                        totalWords={
+                          authoritativeCount.result?.counts.total ?? null
+                        }
+                        totalWordLimit={
+                          authoritativeCount.result?.limits.totalMax ?? null
+                        }
+                        wordCountLoading={
+                          authoritativeCount.status === "loading"
+                        }
+                        wordCountStale={authoritativeCount.isStale}
+                      />
+                    )}
+                    {currentStep === 5 && (
+                      <Step5Review
+                        data={formData}
+                        isEditMode={isEditMode}
+                        trackingId={trackingId}
+                      />
+                    )}
+                  </div>
+
+                  {/* Navigation Controls */}
+                  <div className="mt-32 pt-12 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div>
+                      {currentStep > 1 && (
+                        <button
+                          onClick={handleBack}
+                          className="group flex items-center gap-4 text-[10px] font-black uppercase tracking-[3px] text-slate-400 hover:text-slate-950 transition-colors"
+                        >
+                          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                          {t("previousPhase")}
+                        </button>
+                      )}
+                    </div>
+
+                    {submitError && (
+                      <div className="w-full md:w-auto px-6 py-4 bg-rose-50 border border-rose-200 rounded-2xl text-sm text-rose-700 font-bold">
+                        {submitError}
+                      </div>
+                    )}
+                    <button
+                      onClick={currentStep === 5 ? handleSubmit : handleNext}
+                      disabled={
+                        isSubmitting ||
+                        isCountingForNavigation ||
+                        (!isEditMode && !isAbstractOpen)
+                      }
+                      className="w-full md:w-auto px-16 py-6 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[11px] hover:bg-gold hover:text-black transition-all flex items-center justify-center gap-4 group/next shadow-2xl active:scale-95 ml-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isCountingForNavigation ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />{" "}
+                          {tu("wordCountChecking")}
+                        </>
+                      ) : isSubmitting ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />{" "}
+                          {isEditMode ? tu("resubmitting") : tu("submitting")}
+                        </>
+                      ) : !isEditMode && !isAbstractOpen ? (
+                        tg("abstractNotice")
+                      ) : currentStep === 5 ? (
+                        isEditMode ? (
+                          tu("resubmitRevised")
+                        ) : (
+                          t("submitFinalAbstract")
+                        )
+                      ) : (
+                        t("proceedToNextStage")
+                      )}
+                      {!isSubmitting &&
+                        !isCountingForNavigation &&
+                        (isAbstractOpen || isEditMode) && (
+                          <ArrowRight className="w-4 h-4 group-hover/next:translate-x-1 transition-transform" />
+                        )}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </>
           )}
-
         </div>
       </section>
 
@@ -808,12 +961,18 @@ export default function AbstractSubmission() {
               <CheckCircle className="w-12 h-12 text-emerald-500" />
             </div>
             <h2 className="text-3xl font-black text-slate-900 uppercase tracking-tight mb-4">
-              {isEditMode ? tu("resubmissionComplete") : t("submissionComplete")}
+              {isEditMode
+                ? tu("resubmissionComplete")
+                : t("submissionComplete")}
             </h2>
             {trackingId && (
               <div className="bg-slate-50 rounded-2xl px-6 py-4 mb-4">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-1">{tu("trackingId")}</p>
-                <p className="text-2xl font-black text-slate-900">{trackingId}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-1">
+                  {tu("trackingId")}
+                </p>
+                <p className="text-2xl font-black text-slate-900">
+                  {trackingId}
+                </p>
               </div>
             )}
             {isEditMode ? (
@@ -821,14 +980,14 @@ export default function AbstractSubmission() {
                 {tu("resubmissionSuccessDesc")}
               </p>
             ) : (
-            <p className="text-lg text-slate-500 font-medium mb-3 whitespace-pre-line">
-              {t("successDesc")}
-            </p>
+              <p className="text-lg text-slate-500 font-medium mb-3 whitespace-pre-line">
+                {t("successDesc")}
+              </p>
             )}
             <p className="text-xs font-bold text-slate-400 mb-10 px-6 uppercase tracking-widest">
               {t("successDescEn")}
             </p>
-            <Link 
+            <Link
               href={isEditMode ? "/profile" : "/"}
               onClick={() => setIsSubmitted(false)}
               className="px-10 py-5 rounded-2xl bg-slate-950 text-white font-black uppercase tracking-[4px] text-[10px] sm:text-[11px] hover:bg-gold hover:text-black shadow-lg transition-all block w-full sm:w-auto"
@@ -843,7 +1002,15 @@ export default function AbstractSubmission() {
 }
 
 // Sub-component: Step 1
-function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
+function Step1Author({
+  data,
+  setFormData,
+  showErrors,
+}: {
+  data: any;
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
+  showErrors: boolean;
+}) {
   const t = useTranslations("abstractSubmission");
   const locale = useLocale();
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -851,7 +1018,7 @@ function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      author: { ...prev.author, [name]: value }
+      author: { ...prev.author, [name]: value },
     }));
   };
 
@@ -864,45 +1031,103 @@ function Step1Author({ data, setFormData, showErrors }: { data: any, setFormData
             {locale === "en" ? " " : null}
             <span className="text-orange-500/80">{t("step1.title2")}</span>
           </h2>
-          <p className="text-slate-500 font-medium text-lg italic">{t("step1.subtitle")}</p>
+          <p className="text-slate-500 font-medium text-lg italic">
+            {t("step1.subtitle")}
+          </p>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <InputGroup label={t("step1.firstName")} name="firstName" value={data.firstName} onChange={handleChange} placeholder={t("step1.firstNamePlaceholder")} required error={showErrors && !data.firstName.trim()} />
-        <InputGroup label={t("step1.lastName")} name="lastName" value={data.lastName} onChange={handleChange} placeholder={t("step1.lastNamePlaceholder")} required error={showErrors && !data.lastName.trim()} />
+        <InputGroup
+          label={t("step1.firstName")}
+          name="firstName"
+          value={data.firstName}
+          onChange={handleChange}
+          placeholder={t("step1.firstNamePlaceholder")}
+          required
+          error={showErrors && !data.firstName.trim()}
+        />
+        <InputGroup
+          label={t("step1.lastName")}
+          name="lastName"
+          value={data.lastName}
+          onChange={handleChange}
+          placeholder={t("step1.lastNamePlaceholder")}
+          required
+          error={showErrors && !data.lastName.trim()}
+        />
         <div className="md:col-span-2">
-          <InputGroup label={t("step1.email")} name="email" value={data.email} onChange={handleChange} placeholder="john.doe@university.edu" type="email" required error={showErrors && (!data.email.trim() || !emailRe.test(data.email.trim()))} />
+          <InputGroup
+            label={t("step1.email")}
+            name="email"
+            value={data.email}
+            onChange={handleChange}
+            placeholder="john.doe@university.edu"
+            type="email"
+            required
+            error={
+              showErrors &&
+              (!data.email.trim() || !emailRe.test(data.email.trim()))
+            }
+          />
         </div>
         <div className="md:col-span-2">
-          <InputGroup label={t("step1.affiliation")} name="affiliation" value={data.affiliation} onChange={handleChange} placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University" required error={showErrors && !data.affiliation.trim()} />
+          <InputGroup
+            label={t("step1.affiliation")}
+            name="affiliation"
+            value={data.affiliation}
+            onChange={handleChange}
+            placeholder="e.g. Faculty of Pharmacy, Chulalongkorn University"
+            required
+            error={showErrors && !data.affiliation.trim()}
+          />
         </div>
-        <InputGroup label={t("step1.phone")} name="phone" value={data.phone} onChange={handleChange} placeholder={t("step1.phonePlaceholder")} />
+        <InputGroup
+          label={t("step1.phone")}
+          name="phone"
+          value={data.phone}
+          onChange={handleChange}
+          placeholder={t("step1.phonePlaceholder")}
+        />
       </div>
     </div>
   );
 }
 
 // Sub-component: Step 2
-function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFormData: React.Dispatch<React.SetStateAction<any>>, showErrors: boolean }) {
+function Step2CoAuthors({
+  list,
+  setFormData,
+  showErrors,
+}: {
+  list: any[];
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
+  showErrors: boolean;
+}) {
   const t = useTranslations("abstractSubmission");
   const tu = useTranslations("abstractSubmission.ui");
   const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const addAuthor = () => {
     setFormData((prev: any) => ({
       ...prev,
-      coAuthors: [...prev.coAuthors, { firstName: "", lastName: "", institution: "", email: "" }]
+      coAuthors: [
+        ...prev.coAuthors,
+        { firstName: "", lastName: "", institution: "", email: "" },
+      ],
     }));
   };
 
   const removeAuthor = (index: number) => {
     setFormData((prev: any) => ({
       ...prev,
-      coAuthors: prev.coAuthors.filter((_: any, i: number) => i !== index)
+      coAuthors: prev.coAuthors.filter((_: any, i: number) => i !== index),
     }));
   };
 
-  const handleChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const { name, value } = e.target;
     const newList = [...list];
     newList[index][name] = value;
@@ -913,10 +1138,15 @@ function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFor
     <div className="space-y-10">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step2.title1")}<span className="text-orange-500/80">{t("step2.title2")}</span></h2>
-          <p className="text-slate-500 font-medium text-lg italic">{t("step2.subtitle")}</p>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">
+            {t("step2.title1")}
+            <span className="text-orange-500/80">{t("step2.title2")}</span>
+          </h2>
+          <p className="text-slate-500 font-medium text-lg italic">
+            {t("step2.subtitle")}
+          </p>
         </div>
-        <button 
+        <button
           onClick={addAuthor}
           className="px-8 py-4 bg-slate-950 text-white rounded-xl hover:bg-blue-600 transition-all flex items-center gap-3 font-black text-[10px] uppercase tracking-[3px] shadow-xl"
         >
@@ -931,12 +1161,17 @@ function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFor
             <div className="w-20 h-20 bg-blue-100/50 rounded-full flex items-center justify-center mx-auto mb-6">
               <Users className="w-10 h-10 text-blue-400" />
             </div>
-            <p className="text-blue-900/40 font-black uppercase tracking-[3px] text-xs">{t("step2.empty")}</p>
+            <p className="text-blue-900/40 font-black uppercase tracking-[3px] text-xs">
+              {t("step2.empty")}
+            </p>
           </div>
         )}
         {list.map((author: any, idx: number) => (
-          <div key={idx} className="p-10 bg-white shadow-sm rounded-[3rem] border border-slate-100 relative group hover:border-orange-500/30 transition-all duration-500">
-            <button 
+          <div
+            key={idx}
+            className="p-10 bg-white shadow-sm rounded-[3rem] border border-slate-100 relative group hover:border-orange-500/30 transition-all duration-500"
+          >
+            <button
               onClick={() => removeAuthor(idx)}
               className="absolute top-8 right-8 text-rose-400 hover:text-rose-600 transition-colors p-3 bg-rose-50 hover:bg-rose-100 rounded-2xl"
               aria-label={tu("removeCoAuthor")}
@@ -944,13 +1179,49 @@ function Step2CoAuthors({ list, setFormData, showErrors }: { list: any[], setFor
               <Trash2 className="w-5 h-5" />
             </button>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <InputGroup label={t("step2.firstName")} name="firstName" value={author.firstName} onChange={(e: any) => handleChange(idx, e)} placeholder={t("step2.firstNamePlaceholder")} required error={showErrors && !author.firstName.trim()} />
-              <InputGroup label={t("step2.lastName")} name="lastName" value={author.lastName} onChange={(e: any) => handleChange(idx, e)} placeholder={t("step2.lastNamePlaceholder")} required error={showErrors && !author.lastName.trim()} />
+              <InputGroup
+                label={t("step2.firstName")}
+                name="firstName"
+                value={author.firstName}
+                onChange={(e: any) => handleChange(idx, e)}
+                placeholder={t("step2.firstNamePlaceholder")}
+                required
+                error={showErrors && !author.firstName.trim()}
+              />
+              <InputGroup
+                label={t("step2.lastName")}
+                name="lastName"
+                value={author.lastName}
+                onChange={(e: any) => handleChange(idx, e)}
+                placeholder={t("step2.lastNamePlaceholder")}
+                required
+                error={showErrors && !author.lastName.trim()}
+              />
               <div className="md:col-span-2">
-                <InputGroup label={t("step2.affiliation")} name="institution" value={author.institution} onChange={(e: any) => handleChange(idx, e)} placeholder={tu("institutionPlaceholder")} required error={showErrors && !author.institution.trim()} />
+                <InputGroup
+                  label={t("step2.affiliation")}
+                  name="institution"
+                  value={author.institution}
+                  onChange={(e: any) => handleChange(idx, e)}
+                  placeholder={tu("institutionPlaceholder")}
+                  required
+                  error={showErrors && !author.institution.trim()}
+                />
               </div>
               <div className="md:col-span-2">
-                <InputGroup label={t("step2.email")} name="email" value={author.email} onChange={(e: any) => handleChange(idx, e)} placeholder="jane.smith@example.com" type="email" required error={showErrors && (!author.email.trim() || !emailRe.test(author.email.trim()))} />
+                <InputGroup
+                  label={t("step2.email")}
+                  name="email"
+                  value={author.email}
+                  onChange={(e: any) => handleChange(idx, e)}
+                  placeholder="jane.smith@example.com"
+                  type="email"
+                  required
+                  error={
+                    showErrors &&
+                    (!author.email.trim() || !emailRe.test(author.email.trim()))
+                  }
+                />
               </div>
             </div>
           </div>
@@ -970,13 +1241,13 @@ function Step3Details({
   keywordLimit,
   wordCountStale,
 }: {
-  data: any,
-  setFormData: React.Dispatch<React.SetStateAction<any>>,
-  categories: CategoryOption[],
-  showErrors: boolean,
-  keywordCount: number | null,
-  keywordLimit: number | null,
-  wordCountStale: boolean,
+  data: any;
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
+  categories: CategoryOption[];
+  showErrors: boolean;
+  keywordCount: number | null;
+  keywordLimit: number | null;
+  wordCountStale: boolean;
 }) {
   const t = useTranslations("abstractSubmission");
   const locale = useLocale();
@@ -986,7 +1257,10 @@ function Step3Details({
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
+      if (
+        categoryRef.current &&
+        !categoryRef.current.contains(e.target as Node)
+      ) {
         setIsCategoryOpen(false);
       }
     };
@@ -994,18 +1268,20 @@ function Step3Details({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      abstract: { ...prev.abstract, [name]: value }
+      abstract: { ...prev.abstract, [name]: value },
     }));
   };
 
   const selectCategory = (cat: CategoryOption) => {
     setFormData((prev: any) => ({
       ...prev,
-      abstract: { ...prev.abstract, categoryId: cat.id, category: cat.name }
+      abstract: { ...prev.abstract, categoryId: cat.id, category: cat.name },
     }));
     setIsCategoryOpen(false);
   };
@@ -1018,10 +1294,14 @@ function Step3Details({
           {locale === "en" ? " " : null}
           <span className="text-orange-500/80">{t("step3.title2")}</span>
         </h2>
-        <p className="text-slate-500 font-medium text-lg italic">{t("step3.subtitle")}</p>
-        <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> {tu("requiredFieldHint")}</p>
+        <p className="text-slate-500 font-medium text-lg italic">
+          {t("step3.subtitle")}
+        </p>
+        <p className="text-xs font-bold text-slate-400 mt-2">
+          <span className="text-rose-500">*</span> {tu("requiredFieldHint")}
+        </p>
       </div>
-      
+
       <div className="space-y-10">
         <div className="space-y-2">
           <InputGroup
@@ -1031,27 +1311,43 @@ function Step3Details({
             onChange={handleChange}
             placeholder={t("step3.abstractTitlePlaceholder")}
             required
-            error={showErrors && (
-              data.title.trim().length < 10 ||
-              data.title.trim().length > 500
-            )}
+            error={
+              showErrors &&
+              (data.title.trim().length < 10 || data.title.trim().length > 500)
+            }
           />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex flex-col gap-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px]">{t("step3.category")} <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px]">
+              {t("step3.category")} <span className="text-rose-500">*</span>
+            </label>
             <div className="relative" ref={categoryRef}>
               <button
                 type="button"
                 onClick={() => setIsCategoryOpen(!isCategoryOpen)}
                 className={`w-full text-left px-6 py-5 bg-white border rounded-2xl text-sm font-bold outline-none transition-all flex items-center justify-between shadow-sm ${
-                  isCategoryOpen ? "border-blue-500 ring-2 ring-blue-500/20" : showErrors && !data.category ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"
+                  isCategoryOpen
+                    ? "border-blue-500 ring-2 ring-blue-500/20"
+                    : showErrors && !data.category
+                      ? "border-rose-400 ring-2 ring-rose-100"
+                      : "border-slate-200"
                 } ${data.category ? "text-slate-900" : "text-slate-400"}`}
               >
                 <span>{data.category || t("step3.selectCategory")}</span>
-                <svg className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isCategoryOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                <svg
+                  className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isCategoryOpen ? "rotate-180" : ""}`}
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </button>
               {isCategoryOpen && (
@@ -1074,20 +1370,31 @@ function Step3Details({
               )}
             </div>
           </div>
-          
+
           <div className="flex flex-col gap-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px]">{t("step3.preferPresentationMode")} <span className="text-rose-500">*</span></label>
+            <label className="text-sm font-black text-gold uppercase tracking-[2px]">
+              {t("step3.preferPresentationMode")}{" "}
+              <span className="text-rose-500">*</span>
+            </label>
             <div className="flex gap-3">
-              {['Oral', 'Poster'].map(type => (
-                  <button 
-                    key={type}
-                    onClick={() => handleChange({ target: { name: 'type', value: type } } as unknown as React.ChangeEvent<HTMLInputElement>)}
-                    className={`flex-1 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[3px] transition-all ${
-                      data.type === type ? "bg-blue-600 text-white border-blue-600 shadow-md" : showErrors && !data.type ? "bg-white text-slate-400 border-rose-400 ring-2 ring-rose-100" : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
-                    }`}
-                  >
-                    {type}
-                  </button>
+              {["Oral", "Poster"].map((type) => (
+                <button
+                  key={type}
+                  onClick={() =>
+                    handleChange({
+                      target: { name: "type", value: type },
+                    } as unknown as React.ChangeEvent<HTMLInputElement>)
+                  }
+                  className={`flex-1 py-4 rounded-2xl border font-black text-[10px] uppercase tracking-[3px] transition-all ${
+                    data.type === type
+                      ? "bg-blue-600 text-white border-blue-600 shadow-md"
+                      : showErrors && !data.type
+                        ? "bg-white text-slate-400 border-rose-400 ring-2 ring-rose-100"
+                        : "bg-white text-slate-400 border-slate-200 hover:border-gold hover:text-gold"
+                  }`}
+                >
+                  {type}
+                </button>
               ))}
             </div>
           </div>
@@ -1101,16 +1408,25 @@ function Step3Details({
             onChange={handleChange}
             placeholder={tu("keywordsPlaceholderShort")}
             required
-            error={showErrors && (
-              !data.keywords.trim() ||
-              (!wordCountStale && keywordCount !== null && keywordLimit !== null && keywordCount > keywordLimit)
-            )}
+            error={
+              showErrors &&
+              (!data.keywords.trim() ||
+                (!wordCountStale &&
+                  keywordCount !== null &&
+                  keywordLimit !== null &&
+                  keywordCount > keywordLimit))
+            }
           />
-          <p className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
-            !wordCountStale && keywordCount !== null && keywordLimit !== null && keywordCount >= keywordLimit
-              ? "text-amber-500"
-              : "text-slate-300"
-          }`}>
+          <p
+            className={`text-[10px] font-black uppercase tracking-[2px] text-right ${
+              !wordCountStale &&
+              keywordCount !== null &&
+              keywordLimit !== null &&
+              keywordCount >= keywordLimit
+                ? "text-amber-500"
+                : "text-slate-300"
+            }`}
+          >
             {tu("keywordCount", {
               current: wordCountStale ? "—" : (keywordCount ?? "—"),
               limit: keywordLimit ?? "—",
@@ -1138,19 +1454,19 @@ function Step4Content({
   wordCountLoading,
   wordCountStale,
 }: {
-  content: any,
-  files: File[],
-  setFormData: React.Dispatch<React.SetStateAction<any>>,
-  showErrors: boolean,
-  isEditMode?: boolean,
-  existingFiles?: ExistingAbstractFile[],
-  revisionRequest?: RevisionRequest | null,
-  sectionWordCounts: Record<AbstractSectionName, number> | null,
-  sectionWordMinimum: number | null,
-  totalWords: number | null,
-  totalWordLimit: number | null,
-  wordCountLoading: boolean,
-  wordCountStale: boolean,
+  content: any;
+  files: File[];
+  setFormData: React.Dispatch<React.SetStateAction<any>>;
+  showErrors: boolean;
+  isEditMode?: boolean;
+  existingFiles?: ExistingAbstractFile[];
+  revisionRequest?: RevisionRequest | null;
+  sectionWordCounts: Record<AbstractSectionName, number> | null;
+  sectionWordMinimum: number | null;
+  totalWords: number | null;
+  totalWordLimit: number | null;
+  wordCountLoading: boolean;
+  wordCountStale: boolean;
 }) {
   const t = useTranslations("abstractSubmission");
   const tu = useTranslations("abstractSubmission.ui");
@@ -1162,7 +1478,7 @@ function Step4Content({
     const { name, value } = e.target;
     setFormData((prev: any) => ({
       ...prev,
-      content: { ...prev.content, [name]: value }
+      content: { ...prev.content, [name]: value },
     }));
   };
 
@@ -1183,7 +1499,9 @@ function Step4Content({
       return;
     }
 
-    const oversizedFile = selectedFiles.find((file) => file.size > MAX_ABSTRACT_FILE_SIZE);
+    const oversizedFile = selectedFiles.find(
+      (file) => file.size > MAX_ABSTRACT_FILE_SIZE,
+    );
     if (oversizedFile) {
       toast.error(ts("fileExceedsLimit", { name: oversizedFile.name }));
       return;
@@ -1207,7 +1525,11 @@ function Step4Content({
 
     const totalSize = mergedFiles.reduce((sum, file) => sum + file.size, 0);
     if (totalSize > MAX_ABSTRACT_TOTAL_SIZE) {
-      toast.error(ts("totalSizeExceeded", { size: formatFileSize(MAX_ABSTRACT_TOTAL_SIZE) }));
+      toast.error(
+        ts("totalSizeExceeded", {
+          size: formatFileSize(MAX_ABSTRACT_TOTAL_SIZE),
+        }),
+      );
       return;
     }
 
@@ -1217,45 +1539,62 @@ function Step4Content({
   const removeFile = (index: number) => {
     setFormData((prev: any) => ({
       ...prev,
-      files: prev.files.filter((_: File, fileIndex: number) => fileIndex !== index),
+      files: prev.files.filter(
+        (_: File, fileIndex: number) => fileIndex !== index,
+      ),
     }));
   };
 
-  const hasFreshWordCount = !wordCountStale && totalWords !== null && totalWordLimit !== null;
-  const wordPercent = totalWords !== null && totalWordLimit
-    ? Math.min((totalWords / totalWordLimit) * 100, 100)
-    : 0;
+  const hasFreshWordCount =
+    !wordCountStale && totalWords !== null && totalWordLimit !== null;
+  const wordPercent =
+    totalWords !== null && totalWordLimit
+      ? Math.min((totalWords / totalWordLimit) * 100, 100)
+      : 0;
   const attachedSize = files.reduce((sum, file) => sum + file.size, 0);
   const hasFileError = showErrors && files.length === 0;
 
   const sections: Array<{ key: AbstractSectionName; label: string }> = [
-    { key: 'background', label: t("step4.background") },
-    { key: 'objective', label: tu("objective") },
-    { key: 'methods', label: t("step4.methods") },
-    { key: 'results', label: t("step4.results") },
-    { key: 'conclusion', label: tu("conclusion") },
+    { key: "background", label: t("step4.background") },
+    { key: "objective", label: tu("objective") },
+    { key: "methods", label: t("step4.methods") },
+    { key: "results", label: t("step4.results") },
+    { key: "conclusion", label: tu("conclusion") },
   ];
 
   return (
     <div className="space-y-12">
       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
         <div>
-          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">{t("step4.title1")} <span className="text-orange-500/80">{t("step4.title2")}</span></h2>
-          <p className="text-slate-500 font-medium text-lg italic">{t("step4.subtitle")}</p>
-          <p className="text-xs font-bold text-slate-400 mt-2"><span className="text-rose-500">*</span> {tu("requiredFieldHint")}</p>
+          <h2 className="text-4xl lg:text-5xl font-black text-slate-900 mb-3 uppercase tracking-tight">
+            {t("step4.title1")}{" "}
+            <span className="text-orange-500/80">{t("step4.title2")}</span>
+          </h2>
+          <p className="text-slate-500 font-medium text-lg italic">
+            {t("step4.subtitle")}
+          </p>
+          <p className="text-xs font-bold text-slate-400 mt-2">
+            <span className="text-rose-500">*</span> {tu("requiredFieldHint")}
+          </p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <div className={`px-5 py-3 rounded-2xl text-sm font-black ${hasFreshWordCount && totalWords > totalWordLimit ? 'bg-rose-50 text-rose-600' : hasFreshWordCount && totalWords >= totalWordLimit * 0.83 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-500'}`}>
-            {tu("wordsTotal", { current: totalWords ?? "—", limit: totalWordLimit ?? "—" })}
+          <div
+            className={`px-5 py-3 rounded-2xl text-sm font-black ${hasFreshWordCount && totalWords > totalWordLimit ? "bg-rose-50 text-rose-600" : hasFreshWordCount && totalWords >= totalWordLimit * 0.83 ? "bg-amber-50 text-amber-600" : "bg-slate-50 text-slate-500"}`}
+          >
+            {tu("wordsTotal", {
+              current: totalWords ?? "—",
+              limit: totalWordLimit ?? "—",
+            })}
           </div>
           <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full transition-all duration-300 ${hasFreshWordCount && totalWords > totalWordLimit ? 'bg-rose-500' : hasFreshWordCount && totalWords >= totalWordLimit * 0.83 ? 'bg-amber-400' : 'bg-emerald-400'}`}
+              className={`h-full rounded-full transition-all duration-300 ${hasFreshWordCount && totalWords > totalWordLimit ? "bg-rose-500" : hasFreshWordCount && totalWords >= totalWordLimit * 0.83 ? "bg-amber-400" : "bg-emerald-400"}`}
               style={{ width: `${wordPercent}%` }}
             />
           </div>
           <p className="max-w-xs text-right text-[10px] font-bold leading-relaxed text-slate-400">
-            {(wordCountLoading || wordCountStale) && `${tu("wordCountStale")} · `}
+            {(wordCountLoading || wordCountStale) &&
+              `${tu("wordCountStale")} · `}
             {tu("wordCountPolicyNote")}
           </p>
         </div>
@@ -1283,7 +1622,9 @@ function Step4Content({
                   className="inline-flex max-w-full items-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-2 text-xs font-black text-blue-600 hover:text-blue-700"
                 >
                   <FileText className="w-4 h-4 shrink-0" />
-                  <span className="truncate">{file.fileName || tu("revisionFile", { index: index + 1 })}</span>
+                  <span className="truncate">
+                    {file.fileName || tu("revisionFile", { index: index + 1 })}
+                  </span>
                   <ExternalLink className="w-3 h-3 shrink-0" />
                 </a>
               ))}
@@ -1291,43 +1632,57 @@ function Step4Content({
           )}
         </div>
       )}
-      
+
       <div className="space-y-10 max-h-[600px] overflow-y-auto pr-6 custom-scrollbar">
-        {sections.map(section => {
-          const currentText = (content[section.key] || '').trim();
+        {sections.map((section) => {
+          const currentText = (content[section.key] || "").trim();
           const currentCount = sectionWordCounts?.[section.key] ?? null;
-          const hasFreshSectionCount = !wordCountStale && currentCount !== null && sectionWordMinimum !== null;
-          const hasError = showErrors && (
-            !currentText || (hasFreshSectionCount && currentCount < sectionWordMinimum)
-          );
+          const hasFreshSectionCount =
+            !wordCountStale &&
+            currentCount !== null &&
+            sectionWordMinimum !== null;
+          const hasError =
+            showErrors &&
+            (!currentText ||
+              (hasFreshSectionCount && currentCount < sectionWordMinimum));
           return (
-          <div key={section.key} className="space-y-4">
-            <label className="text-sm font-black text-gold uppercase tracking-[2px] block">{section.label} <span className="text-rose-500">*</span></label>
-            <textarea 
-              name={section.key}
-              value={content[section.key]}
-              onChange={handleTextChange}
-              className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${hasError ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
-              placeholder={tu("elaboratePlaceholder", { label: section.label })}
-            />
-            <p className="text-right text-[10px] font-black uppercase tracking-[2px] text-slate-300">
-              {tu("sectionWordCount", {
-                current: currentCount ?? "—",
-                min: sectionWordMinimum ?? "—",
-              })}
-              {(wordCountLoading || wordCountStale) && ` · ${tu("wordCountStale")}`}
-            </p>
-          </div>
+            <div key={section.key} className="space-y-4">
+              <label className="text-sm font-black text-gold uppercase tracking-[2px] block">
+                {section.label} <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                name={section.key}
+                value={content[section.key]}
+                onChange={handleTextChange}
+                className={`w-full px-6 py-6 bg-white border rounded-3xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-medium text-slate-700 min-h-[120px] resize-none leading-relaxed shadow-sm ${hasError ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"}`}
+                placeholder={tu("elaboratePlaceholder", {
+                  label: section.label,
+                })}
+              />
+              <p className="text-right text-[10px] font-black uppercase tracking-[2px] text-slate-300">
+                {tu("sectionWordCount", {
+                  current: currentCount ?? "—",
+                  min: sectionWordMinimum ?? "—",
+                })}
+                {(wordCountLoading || wordCountStale) &&
+                  ` · ${tu("wordCountStale")}`}
+              </p>
+            </div>
           );
         })}
-        
+
         <div className="pt-10 border-t border-white/5 flex flex-col gap-5">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
             <label className="text-sm font-black text-gold uppercase tracking-[2px] block">
-              {isEditMode ? tu("replacementDocsLabel") : tu("fullDocsLabel")} <span className="text-rose-500">*</span>
+              {isEditMode ? tu("replacementDocsLabel") : tu("fullDocsLabel")}{" "}
+              <span className="text-rose-500">*</span>
             </label>
             <p className="text-[10px] text-slate-400 font-black uppercase tracking-[2px]">
-              {tu("filesMeta", { count: files.length, max: MAX_ABSTRACT_FILES, size: formatFileSize(attachedSize) })}
+              {tu("filesMeta", {
+                count: files.length,
+                max: MAX_ABSTRACT_FILES,
+                size: formatFileSize(attachedSize),
+              })}
             </p>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-amber-50/70 px-5 py-4">
@@ -1364,22 +1719,32 @@ function Step4Content({
 
           {files.length < MAX_ABSTRACT_FILES && (
             <div className="relative group order-2">
-              <input 
-                type="file" 
+              <input
+                type="file"
                 accept=".pdf"
                 multiple
                 className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 onChange={handleFileChange}
               />
-              <div className={`p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white group-hover:border-gold group-hover:bg-gold/5 ${
-                hasFileError ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"
-              }`}>
+              <div
+                className={`p-16 border-2 border-dashed rounded-[3rem] text-center transition-all duration-500 bg-white group-hover:border-gold group-hover:bg-gold/5 ${
+                  hasFileError
+                    ? "border-rose-400 ring-2 ring-rose-100"
+                    : "border-slate-200"
+                }`}
+              >
                 <div className="flex flex-col items-center">
                   <div className="w-20 h-20 rounded-full bg-slate-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                     <Upload className="w-10 h-10 text-slate-300 group-hover:text-gold" />
                   </div>
                   <p className="text-sm font-black text-slate-400 mb-2 uppercase tracking-[3px]">
-                    {files.length > 0 ? (isEditMode ? tu("addMoreReplacement") : tu("addMoreDocuments")) : (isEditMode ? tu("uploadReplacement") : tu("uploadDocuments"))}
+                    {files.length > 0
+                      ? isEditMode
+                        ? tu("addMoreReplacement")
+                        : tu("addMoreDocuments")
+                      : isEditMode
+                        ? tu("uploadReplacement")
+                        : tu("uploadDocuments")}
                   </p>
                   <p className="text-[10px] text-slate-300 font-bold uppercase tracking-[2px]">
                     {tu("pdfOnlyHint", { max: MAX_ABSTRACT_FILES })}
@@ -1392,21 +1757,26 @@ function Step4Content({
           {files.length > 0 ? (
             <div className="space-y-3 order-1">
               {files.map((file, index) => (
-                <div key={`${file.name}-${file.size}-${file.lastModified}`} className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4">
+                <div
+                  key={`${file.name}-${file.size}-${file.lastModified}`}
+                  className="p-5 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-center justify-between gap-4"
+                >
                   <div className="flex items-center gap-4 overflow-hidden">
                     <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                       <CheckCircle className="w-5 h-5 text-emerald-600" />
                     </div>
                     <div className="overflow-hidden">
-                      <p className="text-sm font-black text-emerald-950 truncate">{file.name}</p>
+                      <p className="text-sm font-black text-emerald-950 truncate">
+                        {file.name}
+                      </p>
                       <p className="text-[10px] text-emerald-600/60 font-black uppercase tracking-[2px] mt-1">
                         {formatFileSize(file.size)} • {t("step5.pdfDoc")}
                       </p>
                     </div>
                   </div>
-                  <button 
+                  <button
                     type="button"
-                    onClick={() => removeFile(index)} 
+                    onClick={() => removeFile(index)}
                     className="p-3 bg-rose-50 hover:bg-rose-100 rounded-xl text-rose-400 hover:text-rose-600 transition-colors shadow-sm"
                     aria-label={`Remove ${file.name}`}
                   >
@@ -1418,7 +1788,9 @@ function Step4Content({
           ) : (
             hasFileError && (
               <p className="order-1 text-xs font-bold text-rose-500 uppercase tracking-[2px]">
-                {isEditMode ? tu("pleaseAttachReplacementPdf") : tu("pleaseAttachPdf")}
+                {isEditMode
+                  ? tu("pleaseAttachReplacementPdf")
+                  : tu("pleaseAttachPdf")}
               </p>
             )
           )}
@@ -1429,7 +1801,15 @@ function Step4Content({
 }
 
 // Sub-component: Step 5
-function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: boolean, trackingId?: string }) {
+function Step5Review({
+  data,
+  isEditMode,
+  trackingId,
+}: {
+  data: any;
+  isEditMode: boolean;
+  trackingId?: string;
+}) {
   const t = useTranslations("abstractSubmission");
   const tu = useTranslations("abstractSubmission.ui");
 
@@ -1445,35 +1825,53 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
     <div className="space-y-10">
       <div className="space-y-2">
         <h2 className="text-2xl lg:text-3xl font-black text-slate-950 uppercase tracking-tight leading-tight">
-          {isEditMode ? tu("revisionVerification") : tu("manuscriptVerification")}
+          {isEditMode
+            ? tu("revisionVerification")
+            : tu("manuscriptVerification")}
         </h2>
-        <p className="text-slate-400 font-bold uppercase tracking-[0.25em] text-[11px]">{t("step5.subtitle")}</p>
+        <p className="text-slate-400 font-bold uppercase tracking-[0.25em] text-[11px]">
+          {t("step5.subtitle")}
+        </p>
       </div>
-      
+
       <div className="relative">
         {/* Subtle Architectural Background Lines */}
         <div className="absolute -inset-10 border border-slate-100 rounded-[3rem] pointer-events-none" />
-        
+
         <div className="relative z-10 space-y-20">
           {/* Header Metadata Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pb-16 border-b border-slate-100">
             <div className="space-y-3">
-              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">{t("step5.category")}</span>
-              <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.category || t("step5.generalPharmacy")}</p>
+              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">
+                {t("step5.category")}
+              </span>
+              <p className="text-xl font-black text-slate-900 uppercase">
+                {data.abstract.category || t("step5.generalPharmacy")}
+              </p>
             </div>
             <div className="space-y-3">
-              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">{t("step5.presentation")}</span>
-              <p className="text-xl font-black text-slate-900 uppercase">{data.abstract.type || "Oral"} {t("step5.modeSuffix")}</p>
+              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">
+                {t("step5.presentation")}
+              </span>
+              <p className="text-xl font-black text-slate-900 uppercase">
+                {data.abstract.type || "Oral"} {t("step5.modeSuffix")}
+              </p>
             </div>
             <div className="space-y-3">
-              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">{t("step5.reference")}</span>
-              <p className="text-xl font-black text-slate-900 uppercase">{trackingId || "PRIS-2026-TMP"}</p>
+              <span className="text-sm font-black text-orange-500/70 uppercase tracking-[2px]">
+                {t("step5.reference")}
+              </span>
+              <p className="text-xl font-black text-slate-900 uppercase">
+                {trackingId || "PRIS-2026-TMP"}
+              </p>
             </div>
           </div>
 
           {/* Research Title Section */}
           <div className="space-y-8">
-            <span className="text-sm font-black text-blue-600/60 uppercase tracking-[3px] block">{t("step5.fullTitle")}</span>
+            <span className="text-sm font-black text-blue-600/60 uppercase tracking-[3px] block">
+              {t("step5.fullTitle")}
+            </span>
             <h3 className="text-4xl md:text-6xl font-black text-slate-950 leading-[1.1] uppercase tracking-tight">
               &quot;{data.abstract.title || t("step5.untitled")}&quot;
             </h3>
@@ -1482,15 +1880,21 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
           {/* Authors Dossier — Principal */}
           <div className="space-y-10">
             <div className="pb-4 border-b-2 border-slate-950 w-fit">
-              <span className="text-sm font-black text-slate-950 uppercase tracking-[2px]">{t("step5.author")}</span>
+              <span className="text-sm font-black text-slate-950 uppercase tracking-[2px]">
+                {t("step5.author")}
+              </span>
             </div>
             <div className="space-y-4">
               <p className="text-3xl font-black text-slate-950 uppercase leading-none">
                 {data.author.firstName} {data.author.lastName}
               </p>
               <div className="space-y-2">
-                <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">{data.author.affiliation}</p>
-                <p className="text-xs text-blue-600/60 font-black tracking-widest">{data.author.email}</p>
+                <p className="text-sm text-slate-500 font-bold uppercase tracking-wider">
+                  {data.author.affiliation}
+                </p>
+                <p className="text-xs text-blue-600/60 font-black tracking-widest">
+                  {data.author.email}
+                </p>
               </div>
             </div>
           </div>
@@ -1498,19 +1902,29 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
           {/* Authors Dossier — Co-Authors */}
           <div className="space-y-10 pt-10 border-t border-slate-100">
             <div className="pb-4 border-b border-slate-200 w-fit">
-              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">{t("step5.coauthors")}</span>
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">
+                {t("step5.coauthors")}
+              </span>
             </div>
             <div className="space-y-6">
               {data.coAuthors.length === 0 ? (
-                <p className="text-slate-300 italic font-medium">{t("step5.noCoauthors")}</p>
+                <p className="text-slate-300 italic font-medium">
+                  {t("step5.noCoauthors")}
+                </p>
               ) : (
                 <div className="grid grid-cols-1 gap-6">
                   {data.coAuthors.map((ca: any, i: number) => (
                     <div key={i} className="flex items-start gap-4">
-                      <span className="text-[10px] font-black text-slate-300 pt-1">0{i+1}</span>
+                      <span className="text-[10px] font-black text-slate-300 pt-1">
+                        0{i + 1}
+                      </span>
                       <div>
-                        <p className="text-sm font-black text-slate-900 uppercase">{ca.firstName} {ca.lastName}</p>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{ca.institution}</p>
+                        <p className="text-sm font-black text-slate-900 uppercase">
+                          {ca.firstName} {ca.lastName}
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
+                          {ca.institution}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -1522,18 +1936,37 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
           {/* Abstract Content Overview */}
           <div className="space-y-10 pt-10 border-t border-slate-100">
             <div className="pb-4 border-b border-slate-200 w-fit">
-              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">{t("step5.contentOverview")}</span>
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">
+                {t("step5.contentOverview")}
+              </span>
             </div>
             <div className="space-y-8">
               <div>
-                <span className="text-sm items-center text-blue-600/70 uppercase tracking-[2px] font-black mb-2 block">{t("step5.keywords")}</span>
-                <p className="text-sm font-bold text-slate-900">{data.abstract.keywords || t("step5.none")}</p>
+                <span className="text-sm items-center text-blue-600/70 uppercase tracking-[2px] font-black mb-2 block">
+                  {t("step5.keywords")}
+                </span>
+                <p className="text-sm font-bold text-slate-900">
+                  {data.abstract.keywords || t("step5.none")}
+                </p>
               </div>
               <div className="space-y-6">
-                {['background', 'objective', 'methods', 'results', 'conclusion'].map((section) => (
-                  <div key={section} className="pb-6 border-b border-slate-100 last:border-b-0 last:pb-0">
-                    <span className="text-sm items-center text-slate-500 uppercase tracking-[2px] font-black mb-2 block">{sectionLabels[section] || section}</span>
-                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{data.content[section] || t("step5.none")}</p>
+                {[
+                  "background",
+                  "objective",
+                  "methods",
+                  "results",
+                  "conclusion",
+                ].map((section) => (
+                  <div
+                    key={section}
+                    className="pb-6 border-b border-slate-100 last:border-b-0 last:pb-0"
+                  >
+                    <span className="text-sm items-center text-slate-500 uppercase tracking-[2px] font-black mb-2 block">
+                      {sectionLabels[section] || section}
+                    </span>
+                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+                      {data.content[section] || t("step5.none")}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -1543,12 +1976,19 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
           {/* Attached Document */}
           <div className="space-y-10 pt-10 border-t border-slate-100">
             <div className="pb-4 border-b border-slate-200 w-fit">
-              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">{isEditMode ? t("step5.replacementDocs") : t("step5.attachedDocs")}</span>
+              <span className="text-sm font-black text-slate-500 uppercase tracking-[2px]">
+                {isEditMode
+                  ? t("step5.replacementDocs")
+                  : t("step5.attachedDocs")}
+              </span>
             </div>
             {data.files.length > 0 ? (
               <div className="space-y-3">
                 {data.files.map((file: File, index: number) => (
-                  <div key={`${file.name}-${file.size}-${file.lastModified}`} className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4">
+                  <div
+                    key={`${file.name}-${file.size}-${file.lastModified}`}
+                    className="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 flex items-start gap-4"
+                  >
                     <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
                       <FileText className="w-5 h-5 text-emerald-600" />
                     </div>
@@ -1569,13 +2009,16 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
                   <AlertCircle className="w-5 h-5 text-rose-600" />
                 </div>
                 <div>
-                  <p className="text-sm font-black text-rose-900">{t("step5.noDocs")}</p>
-                  <p className="text-[10px] text-rose-600 font-bold uppercase tracking-[2px] mt-1">{t("step5.required")}</p>
+                  <p className="text-sm font-black text-rose-900">
+                    {t("step5.noDocs")}
+                  </p>
+                  <p className="text-[10px] text-rose-600 font-bold uppercase tracking-[2px] mt-1">
+                    {t("step5.required")}
+                  </p>
                 </div>
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>
@@ -1583,17 +2026,37 @@ function Step5Review({ data, isEditMode, trackingId }: { data: any, isEditMode: 
 }
 
 // Helper: Input Group
-function InputGroup({ label, placeholder, value, onChange, name, type = "text", required = false, error = false }: { label: string, placeholder: string, value: string, onChange: (e: any) => void, name: string, type?: string, required?: boolean, error?: boolean }) {
+function InputGroup({
+  label,
+  placeholder,
+  value,
+  onChange,
+  name,
+  type = "text",
+  required = false,
+  error = false,
+}: {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: any) => void;
+  name: string;
+  type?: string;
+  required?: boolean;
+  error?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-4">
-      <label className="text-sm font-black text-gold uppercase tracking-[2px]">{label} {required && <span className="text-rose-500">*</span>}</label>
-      <input 
+      <label className="text-sm font-black text-gold uppercase tracking-[2px]">
+        {label} {required && <span className="text-rose-500">*</span>}
+      </label>
+      <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`w-full px-6 py-5 bg-white border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 placeholder:text-slate-200 placeholder:font-black placeholder:uppercase placeholder:tracking-[2px] shadow-sm ${error ? 'border-rose-400 ring-2 ring-rose-100' : 'border-slate-200'}`}
+        className={`w-full px-6 py-5 bg-white border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-bold text-slate-900 placeholder:text-slate-200 placeholder:font-black placeholder:uppercase placeholder:tracking-[2px] shadow-sm ${error ? "border-rose-400 ring-2 ring-rose-100" : "border-slate-200"}`}
       />
     </div>
   );

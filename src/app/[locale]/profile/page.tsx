@@ -3,7 +3,26 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
-import { LogOut, Mail, Briefcase, BadgeCheck, FileText, User, Phone, Building2, Globe, Ticket, ArrowRight, Loader2, GraduationCap, UploadCloud, CheckCircle2, Clock3, AlertCircle, Download } from "lucide-react";
+import {
+  LogOut,
+  Mail,
+  Briefcase,
+  BadgeCheck,
+  FileText,
+  User,
+  Phone,
+  Building2,
+  Globe,
+  Ticket,
+  ArrowRight,
+  Loader2,
+  GraduationCap,
+  UploadCloud,
+  CheckCircle2,
+  Clock3,
+  AlertCircle,
+  Download,
+} from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import toast from "react-hot-toast";
 import gsap from "gsap";
@@ -45,50 +64,95 @@ interface StudentEligibilityInfo {
 function getDelegateLabel(
   t: ReturnType<typeof useTranslations<"profile">>,
   delegateType?: string,
-  role?: string
+  role?: string,
 ): string {
   if (role === "healthhack") return t("delegateTypes.healthHack");
   if (role === "booth") return t("delegateTypes.booth");
   switch (delegateType) {
-    case "thai_student": return t("delegateTypes.thaiStudent");
-    case "international_student": return t("delegateTypes.internationalStudent");
-    case "thai_pharmacist": return t("delegateTypes.thaiPharmacist");
-    case "international_pharmacist": return t("delegateTypes.internationalPharmacist");
-    case "medical_professional": return t("delegateTypes.medicalProfessional");
-    case "general": return t("delegateTypes.generalPublic");
+    case "thai_student":
+      return t("delegateTypes.thaiStudent");
+    case "international_student":
+      return t("delegateTypes.internationalStudent");
+    case "thai_pharmacist":
+      return t("delegateTypes.thaiPharmacist");
+    case "international_pharmacist":
+      return t("delegateTypes.internationalPharmacist");
+    case "medical_professional":
+      return t("delegateTypes.medicalProfessional");
+    case "general":
+      return t("delegateTypes.generalPublic");
   }
   switch (role) {
-    case "student": return t("delegateTypes.student");
-    case "pharmacist": return t("delegateTypes.pharmacist");
-    case "medical_professional": return t("delegateTypes.medicalProfessional");
-    case "general": return t("delegateTypes.generalPublic");
-    default: return t("delegateTypes.delegate");
+    case "student":
+      return t("delegateTypes.student");
+    case "pharmacist":
+      return t("delegateTypes.pharmacist");
+    case "medical_professional":
+      return t("delegateTypes.medicalProfessional");
+    case "general":
+      return t("delegateTypes.generalPublic");
+    default:
+      return t("delegateTypes.delegate");
   }
 }
 
-function getStatusBadge(t: ReturnType<typeof useTranslations<"profile">>, status?: string) {
+function getStatusBadge(
+  t: ReturnType<typeof useTranslations<"profile">>,
+  status?: string,
+) {
   switch (status) {
     case "active":
-      return { label: t("status.active"), className: "bg-emerald-50 text-emerald-700 border-emerald-100" };
+      return {
+        label: t("status.active"),
+        className: "bg-emerald-50 text-emerald-700 border-emerald-100",
+      };
     case "pending_approval":
-      return { label: t("status.pendingApproval"), className: "bg-amber-50 text-amber-700 border-amber-100" };
+      return {
+        label: t("status.pendingApproval"),
+        className: "bg-amber-50 text-amber-700 border-amber-100",
+      };
     case "rejected":
-      return { label: t("status.rejected"), className: "bg-red-50 text-red-700 border-red-100" };
+      return {
+        label: t("status.rejected"),
+        className: "bg-red-50 text-red-700 border-red-100",
+      };
     default:
-      return { label: t("status.member"), className: "bg-slate-50 text-slate-600 border-slate-200" };
+      return {
+        label: t("status.member"),
+        className: "bg-slate-50 text-slate-600 border-slate-200",
+      };
   }
 }
 
-function getEligibilityBadge(t: ReturnType<typeof useTranslations<"profile">>, status?: StudentEligibilityInfo["status"]) {
+function getEligibilityBadge(
+  t: ReturnType<typeof useTranslations<"profile">>,
+  status?: StudentEligibilityInfo["status"],
+) {
   switch (status) {
     case "approved":
-      return { label: t("eligibility.approved"), className: "bg-emerald-50 text-emerald-700 border-emerald-100", icon: CheckCircle2 };
+      return {
+        label: t("eligibility.approved"),
+        className: "bg-emerald-50 text-emerald-700 border-emerald-100",
+        icon: CheckCircle2,
+      };
     case "pending":
-      return { label: t("eligibility.pending"), className: "bg-amber-50 text-amber-700 border-amber-100", icon: Clock3 };
+      return {
+        label: t("eligibility.pending"),
+        className: "bg-amber-50 text-amber-700 border-amber-100",
+        icon: Clock3,
+      };
     case "rejected":
-      return { label: t("eligibility.rejected"), className: "bg-rose-50 text-rose-700 border-rose-100", icon: AlertCircle };
+      return {
+        label: t("eligibility.rejected"),
+        className: "bg-rose-50 text-rose-700 border-rose-100",
+        icon: AlertCircle,
+      };
     default:
-      return { label: t("eligibility.notSubmitted"), className: "bg-slate-50 text-slate-600 border-slate-200", icon: GraduationCap };
+      return {
+        label: t("eligibility.notSubmitted"),
+        className: "bg-slate-50 text-slate-600 border-slate-200",
+        icon: GraduationCap,
+      };
   }
 }
 
@@ -103,13 +167,20 @@ export default function ProfilePage() {
   const qrCanvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
   const { logout, user, token, isAuthenticated } = useAuth();
-  const [activeTab, setActiveTab] = useState<"profile" | "abstracts">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "abstracts">(
+    "profile",
+  );
   const [profileData, setProfileData] = useState(user);
-  const [registration, setRegistration] = useState<RegistrationInfo | null>(null);
+  const [registration, setRegistration] = useState<RegistrationInfo | null>(
+    null,
+  );
   const [registrationLoading, setRegistrationLoading] = useState(!!EVENT_CODE);
-  const [receiptTicket, setReceiptTicket] = useState<ReceiptTicketInfo | null>(null);
+  const [receiptTicket, setReceiptTicket] = useState<ReceiptTicketInfo | null>(
+    null,
+  );
   const [receiptLoading, setReceiptLoading] = useState(!!EVENT_CODE);
-  const [studentEligibility, setStudentEligibility] = useState<StudentEligibilityInfo | null>(null);
+  const [studentEligibility, setStudentEligibility] =
+    useState<StudentEligibilityInfo | null>(null);
   const [eligibilityLoading, setEligibilityLoading] = useState(false);
   const [eligibilitySubmitting, setEligibilitySubmitting] = useState(false);
   const [eligibilityFileName, setEligibilityFileName] = useState("");
@@ -136,13 +207,19 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!token || !EVENT_CODE) return;
-    fetch(`${API_URL}/api/registrations/check?eventCode=${encodeURIComponent(EVENT_CODE)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    fetch(
+      `${API_URL}/api/registrations/check?eventCode=${encodeURIComponent(EVENT_CODE)}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setRegistration({ isRegistered: !!data.isRegistered, regCode: data.regCode ?? null });
+          setRegistration({
+            isRegistered: !!data.isRegistered,
+            regCode: data.regCode ?? null,
+          });
         }
       })
       .catch(() => {})
@@ -160,7 +237,7 @@ export default function ProfilePage() {
       .then((data) => {
         if (cancelled || !data.success || !Array.isArray(data.data)) return;
         const currentEventTicket = data.data.find(
-          (ticket: ReceiptTicketInfo) => ticket.eventCode === EVENT_CODE
+          (ticket: ReceiptTicketInfo) => ticket.eventCode === EVENT_CODE,
         );
         setReceiptTicket(currentEventTicket ?? null);
       })
@@ -180,9 +257,12 @@ export default function ProfilePage() {
     if (!token || !EVENT_CODE || profileData?.role !== "pharmacist") return;
     setEligibilityLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/events/${encodeURIComponent(EVENT_CODE)}/student-eligibility/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `${API_URL}/api/events/${encodeURIComponent(EVENT_CODE)}/student-eligibility/me`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       const data = await res.json();
       if (data.success) {
         setStudentEligibility(data.eligibility ?? null);
@@ -211,11 +291,14 @@ export default function ProfilePage() {
       const fd = new FormData();
       fd.append("verificationDoc", file);
 
-      const res = await fetch(`${API_URL}/api/events/${encodeURIComponent(EVENT_CODE)}/student-eligibility-requests`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
-      });
+      const res = await fetch(
+        `${API_URL}/api/events/${encodeURIComponent(EVENT_CODE)}/student-eligibility-requests`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          body: fd,
+        },
+      );
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -257,18 +340,27 @@ export default function ProfilePage() {
     }
   };
 
-  useGSAP(() => {
-    gsap.fromTo(
-      ".fade-in-stagger",
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" }
-    );
-  }, { scope: containerRef });
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ".fade-in-stagger",
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out" },
+      );
+    },
+    { scope: containerRef },
+  );
 
   if (!isAuthenticated || !profileData) return null;
 
-  const fullName = `${profileData.firstName ?? ""} ${profileData.lastName ?? ""}`.trim() || profileData.email;
-  const delegateLabel = getDelegateLabel(t, profileData.delegateType, profileData.role);
+  const fullName =
+    `${profileData.firstName ?? ""} ${profileData.lastName ?? ""}`.trim() ||
+    profileData.email;
+  const delegateLabel = getDelegateLabel(
+    t,
+    profileData.delegateType,
+    profileData.role,
+  );
   const org = profileData.institution || profileData.university || null;
   const statusBadge = getStatusBadge(t, profileData.status);
   const memberCode = registration?.regCode ?? "—";
@@ -279,7 +371,6 @@ export default function ProfilePage() {
       className="min-h-screen flex flex-col items-center bg-[#f4f6f8] text-slate-900 pt-20 pb-12 px-4 sm:px-6 lg:px-10 selection:bg-blue-600 selection:text-white relative overflow-hidden"
     >
       <div className="w-full max-w-7xl relative z-10 flex flex-col">
-
         {/* Top Action Bar */}
         <div className="w-full flex justify-between items-end mb-6 fade-in-stagger pl-2">
           <div>
@@ -328,427 +419,518 @@ export default function ProfilePage() {
         {/* ─── Tab: Profile (Ticket) ─── */}
         {activeTab === "profile" && (
           <div className="space-y-6 fade-in-stagger">
-          <div className="w-full bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden flex flex-col md:flex-row relative">
+            <div className="w-full bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-200/60 overflow-hidden flex flex-col md:flex-row relative">
+              {/* Subtle Perforation Line on Mobile */}
+              <div className="block md:hidden absolute left-0 right-0 top-[60%] border-t-2 border-dashed border-slate-200 z-20" />
 
-            {/* Subtle Perforation Line on Mobile */}
-            <div className="block md:hidden absolute left-0 right-0 top-[60%] border-t-2 border-dashed border-slate-200 z-20" />
-
-            {/* LEFT PANEL: User Info */}
-            <div className="w-full md:w-[65%] p-8 md:p-10 lg:p-12 flex flex-col justify-between relative bg-white z-10">
-
-              {/* Minimalist Watermark */}
-              <div className="absolute top-8 right-8 opacity-5 pointer-events-none select-none">
-                <span className="text-7xl md:text-8xl font-black tracking-tighter mix-blend-multiply">PRIS</span>
-              </div>
-
-              <div className="relative z-10">
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md border shadow-sm ${statusBadge.className}`}>
-                    <BadgeCheck className="w-3.5 h-3.5" />
-                    {statusBadge.label}
+              {/* LEFT PANEL: User Info */}
+              <div className="w-full md:w-[65%] p-8 md:p-10 lg:p-12 flex flex-col justify-between relative bg-white z-10">
+                {/* Minimalist Watermark */}
+                <div className="absolute top-8 right-8 opacity-5 pointer-events-none select-none">
+                  <span className="text-7xl md:text-8xl font-black tracking-tighter mix-blend-multiply">
+                    PRIS
                   </span>
-                  {profileData.country && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-md border border-slate-200 shadow-sm">
-                      <Globe className="w-3 h-3" />
-                      {profileData.country}
-                    </span>
-                  )}
                 </div>
 
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 leading-none mb-4">
-                  {fullName}
-                </h2>
-                <div className="flex items-center gap-2 text-base md:text-lg font-bold text-blue-600 mb-8 uppercase tracking-wide">
-                  <Briefcase className="w-5 h-5 hidden sm:block" /> {delegateLabel}
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
-                    <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                      <Mail className="w-4 h-4 text-slate-600" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("email")}</p>
-                      <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide break-all">{profileData.email}</p>
-                    </div>
-                  </div>
-
-                  {profileData.phone && (
-                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                        <Phone className="w-4 h-4 text-slate-600" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("phone")}</p>
-                        <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{profileData.phone}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {org && (
-                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                        <Building2 className="w-4 h-4 text-slate-600" />
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("organization")}</p>
-                        <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{org}</p>
-                      </div>
-                    </div>
-                  )}
-                  {profileData.role === "healthhack" && profileData.healthHackLevel && (
-                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0"><GraduationCap className="w-4 h-4 text-slate-600" /></div>
-                      <div><p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{ta("healthHackGroup")}</p><p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{ta(`healthHackLevels.${profileData.healthHackLevel}`)}</p></div>
-                    </div>
-                  )}
-                  {profileData.role === "booth" && profileData.boothName && (
-                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0"><Building2 className="w-4 h-4 text-slate-600" /></div>
-                      <div><p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{ta("boothName")}</p><p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{profileData.boothName}</p></div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Footer Branding */}
-              <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between opacity-80">
-                <div>
-                  <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">{t("event")}</p>
-                  <p className="font-black text-sm md:text-base tracking-widest uppercase text-slate-900">PRIS 2026</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">{t("delegateType")}</p>
-                  <p className="font-black text-sm md:text-base tracking-widest uppercase text-slate-900">{delegateLabel}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* RIGHT PANEL: QR Code / Not-Registered (Dark Mode) */}
-            <div className="w-full md:w-[35%] bg-slate-900 border-l border-slate-800 p-8 md:p-10 flex flex-col items-center justify-center relative overflow-hidden z-10 shrink-0">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.15),transparent_50%)]" />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.15),transparent_50%)]" />
-              <div className="hidden md:block absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#f4f6f8] rounded-full shadow-[inset_-5px_0px_10px_rgba(0,0,0,0.05)] border-r border-[#f4f6f8]" />
-
-              <div className="relative z-10 w-full flex flex-col items-center justify-center h-full">
-                {registrationLoading ? (
-                  <Loader2 className="w-8 h-8 text-slate-500 animate-spin" />
-                ) : registration?.isRegistered ? (
-                  <>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 text-center bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700/50">
-                      {t("scanAtEntrance")}
-                    </p>
-
-                    <div className="bg-white p-5 rounded-3xl shadow-2xl mb-6 relative group">
-                      <div className="absolute inset-0 ring-4 ring-white/10 rounded-3xl -m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <QRCodeCanvas
-                        ref={qrCanvasRef}
-                        value={memberCode}
-                        size={1000}
-                        level="M"
-                        marginSize={2}
-                        bgColor="#ffffff"
-                        fgColor="#0f172a"
-                        className="!w-32 !h-32 md:!w-40 md:!h-40"
-                      />
-                    </div>
-
-                    <div className="text-center w-full">
-                      <p className="font-mono text-lg md:text-xl font-bold tracking-[0.2em] text-white break-all">{memberCode}</p>
-                      <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4" />
-                    </div>
-
-                    <button
-                      onClick={handleDownloadQr}
-                      className="group mt-6 inline-flex items-center gap-2 px-5 py-3 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
+                <div className="relative z-10">
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-md border shadow-sm ${statusBadge.className}`}
                     >
-                      <Download className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
-                      {t("downloadPng")}
-                    </button>
-                  </>
-                ) : (
-                  <div className="text-center flex flex-col items-center gap-5 py-6">
-                    <div className="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-center">
-                      <Ticket className="w-8 h-8 text-slate-400" />
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">{t("notRegistered")}</p>
-                      <p className="text-base md:text-lg font-bold text-white leading-snug">
-                        {t("notRegisteredDesc")}
-                      </p>
-                      <p className="text-xs text-slate-400 leading-relaxed max-w-xs">
-                        {t("notRegisteredHint")}
-                      </p>
-                    </div>
-                    {REGISTRATION_OPEN ? (
-                      <Link
-                        href="/registration"
-                        className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
-                      >
-                        {t("registerNow")}
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                      </Link>
-                    ) : (
-                      <div
-                        aria-disabled="true"
-                        title={tg("registrationNotice")}
-                        className="inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white/70 text-slate-900 rounded-xl text-[11px] font-black tracking-wide shadow-lg cursor-not-allowed select-none"
-                      >
-                        {tg("registrationNotice")}
-                      </div>
+                      <BadgeCheck className="w-3.5 h-3.5" />
+                      {statusBadge.label}
+                    </span>
+                    {profileData.country && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 text-slate-600 text-[10px] font-bold uppercase tracking-widest rounded-md border border-slate-200 shadow-sm">
+                        <Globe className="w-3 h-3" />
+                        {profileData.country}
+                      </span>
                     )}
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
 
-          {!registrationLoading && registration?.isRegistered && (
-            <section className="w-full overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-lg shadow-slate-200/40">
-              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
-                <div className="p-7 md:p-8 lg:p-9">
-                  <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50">
-                        <FileText className="h-6 w-6 text-blue-600" />
+                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900 leading-none mb-4">
+                    {fullName}
+                  </h2>
+                  <div className="flex items-center gap-2 text-base md:text-lg font-bold text-blue-600 mb-8 uppercase tracking-wide">
+                    <Briefcase className="w-5 h-5 hidden sm:block" />{" "}
+                    {delegateLabel}
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                        <Mail className="w-4 h-4 text-slate-600" />
                       </div>
                       <div>
-                        <p className="mb-1.5 text-[10px] font-black uppercase tracking-[2.5px] text-blue-600">
-                          {t("receipt.eyebrow")}
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                          {t("email")}
                         </p>
-                        <h3 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
-                          {t("receipt.title")}
-                        </h3>
-                        <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-500">
-                          {t("receipt.description")}
+                        <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide break-all">
+                          {profileData.email}
                         </p>
                       </div>
                     </div>
 
-                    {receiptLoading ? (
-                      <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        {t("receipt.loading")}
-                      </span>
-                    ) : receiptTicket?.receiptUrl ? (
-                      <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-emerald-700">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        {t("receipt.ready")}
-                      </span>
-                    ) : (
-                      <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
-                        <Clock3 className="h-3.5 w-3.5" />
-                        {t("receipt.unavailable")}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
-                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
-                        {t("receipt.registrationCode")}
-                      </p>
-                      <p className="mt-1.5 truncate font-mono text-sm font-bold tracking-wide text-slate-900">
-                        {receiptTicket?.regCode || memberCode}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
-                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
-                        {t("receipt.eventName")}
-                      </p>
-                      <p className="mt-1.5 truncate text-sm font-bold text-slate-900">
-                        {receiptTicket?.eventName || "PRIS 2026"}
-                      </p>
-                    </div>
-                    <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
-                      <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
-                        {t("receipt.ticket")}
-                      </p>
-                      <p className="mt-1.5 truncate text-sm font-bold text-slate-900">
-                        {receiptTicket?.ticketName || "—"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col justify-between border-t border-slate-200 bg-slate-950 p-7 text-white lg:border-l lg:border-t-0 md:p-8">
-                  <div>
-                    <div className="mb-6 flex items-center justify-between">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-                        <FileText className="h-6 w-6 text-white" />
-                      </div>
-                      <span className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-[2px] text-slate-300">
-                        {t("receipt.fileType")}
-                      </span>
-                    </div>
-                    <p className="text-lg font-black tracking-tight">{t("receipt.title")}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-slate-400">
-                      PRIS 2026 · {receiptTicket?.regCode || memberCode}
-                    </p>
-                  </div>
-
-                  <div className="mt-7">
-                    {receiptLoading ? (
-                      <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-300">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        {t("receipt.loading")}
-                      </div>
-                    ) : receiptTicket?.receiptUrl ? (
-                      <a
-                        href={receiptTicket.receiptUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-950 shadow-lg transition-all hover:bg-blue-50 hover:text-blue-700"
-                      >
-                        <Download className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
-                        {t("receipt.download")}
-                      </a>
-                    ) : (
-                      <>
-                        <button
-                          type="button"
-                          disabled
-                          className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-500"
-                        >
-                          <Download className="h-4 w-4" />
-                          {t("receipt.unavailable")}
-                        </button>
-                        <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
-                          {t("receipt.unavailableHint")}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {profileData.role === "pharmacist" && EVENT_CODE && (
-            <div className="w-full bg-white rounded-[2rem] shadow-lg shadow-slate-200/40 border border-slate-200/70 overflow-hidden">
-              <div className="p-7 md:p-8 border-b border-slate-100 flex flex-col lg:flex-row gap-4 lg:items-start lg:justify-between">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
-                    <GraduationCap className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
-                      {t("postgradTitle")}
-                    </h3>
-                    <p className="text-sm text-slate-500 font-medium mt-1 max-w-2xl">
-                      {t("postgradDesc")}
-                    </p>
-                  </div>
-                </div>
-                {(() => {
-                  const badge = getEligibilityBadge(t, studentEligibility?.status);
-                  const Icon = badge.icon;
-                  return (
-                    <span className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-[10px] font-black uppercase tracking-[2px] ${badge.className}`}>
-                      <Icon className="w-4 h-4" />
-                      {badge.label}
-                    </span>
-                  );
-                })()}
-              </div>
-
-              <div className="p-7 md:p-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
-                <div className="space-y-4">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
-                    <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 mb-2">
-                      {t("requestedLevel")}
-                    </p>
-                    <p className="text-lg font-black text-slate-900">{t("postgradOnly")}</p>
-                    <p className="text-sm text-slate-500 mt-1">
-                      {t("postgradNote")}
-                    </p>
-                  </div>
-
-                  {eligibilityLoading ? (
-                    <div className="flex items-center gap-3 text-sm font-semibold text-slate-500">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {t("loadingEligibility")}
-                    </div>
-                  ) : studentEligibility ? (
-                    <div className="rounded-2xl border border-slate-200 p-5">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">{t("document")}</p>
-                          <p className="text-sm font-bold text-slate-800 mt-1 break-all">{studentEligibility.documentFileName}</p>
+                    {profileData.phone && (
+                      <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                          <Phone className="w-4 h-4 text-slate-600" />
                         </div>
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">{t("submitted")}</p>
-                          <p className="text-sm font-bold text-slate-800 mt-1">
-                            {new Date(studentEligibility.createdAt).toLocaleString(locale === "th" ? "th-TH" : "en-US")}
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                            {t("phone")}
+                          </p>
+                          <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">
+                            {profileData.phone}
                           </p>
                         </div>
                       </div>
-                      {studentEligibility.status === "rejected" && studentEligibility.rejectionReason && (
-                        <div className="mt-4 rounded-xl bg-rose-50 border border-rose-100 p-4">
-                          <p className="text-[10px] font-black uppercase tracking-[2px] text-rose-500">{t("reason")}</p>
-                          <p className="text-sm text-rose-900 font-semibold mt-1">{studentEligibility.rejectionReason}</p>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-500 font-medium">
-                      {t("noRequestYet")}
-                    </div>
-                  )}
-                </div>
+                    )}
 
-                <div className="rounded-2xl border border-slate-200 p-5 bg-white">
-                  {studentEligibility?.status === "approved" ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center py-8">
-                      <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
-                      <p className="font-black text-slate-900">{t("approved")}</p>
-                      <p className="text-sm text-slate-500 mt-1">
-                        {t("approvedDesc")}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm font-black text-slate-900 mb-2">
-                          {t("verificationDoc")} <span className="text-rose-500">*</span>
-                        </p>
-                        <div className="relative group cursor-pointer">
-                          <input
-                            ref={eligibilityFileRef}
-                            type="file"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                            onChange={(event) => setEligibilityFileName(event.target.files?.[0]?.name || "")}
-                          />
-                          <div className={`min-h-[108px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 px-4 text-center transition-all ${
-                            eligibilityFileName
-                              ? "border-slate-900 bg-slate-50"
-                              : "border-slate-300 bg-slate-50/60 group-hover:border-blue-400 group-hover:bg-blue-50/40"
-                          }`}>
-                            <UploadCloud className={`w-7 h-7 ${eligibilityFileName ? "text-slate-900" : "text-slate-400 group-hover:text-blue-500"}`} />
-                            <span className="text-sm font-bold text-slate-700 break-all">
-                              {eligibilityFileName || t("fileFormat")}
-                            </span>
-                          </div>
+                    {org && (
+                      <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                          <Building2 className="w-4 h-4 text-slate-600" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                            {t("organization")}
+                          </p>
+                          <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">
+                            {org}
+                          </p>
                         </div>
                       </div>
-                      <p className="text-xs leading-relaxed text-slate-500">
-                        {t("eligibilityNote")}
+                    )}
+                    {profileData.role === "healthhack" &&
+                      profileData.healthHackLevel && (
+                        <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                          <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                            <GraduationCap className="w-4 h-4 text-slate-600" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                              {ta("healthHackGroup")}
+                            </p>
+                            <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">
+                              {ta(
+                                `healthHackLevels.${profileData.healthHackLevel}`,
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    {profileData.role === "booth" && profileData.boothName && (
+                      <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
+                          <Building2 className="w-4 h-4 text-slate-600" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                            {ta("boothName")}
+                          </p>
+                          <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">
+                            {profileData.boothName}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Footer Branding */}
+                <div className="mt-10 pt-6 border-t border-slate-100 flex items-center justify-between opacity-80">
+                  <div>
+                    <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">
+                      {t("event")}
+                    </p>
+                    <p className="font-black text-sm md:text-base tracking-widest uppercase text-slate-900">
+                      PRIS 2026
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-[10px] tracking-widest uppercase text-slate-400 mb-1">
+                      {t("delegateType")}
+                    </p>
+                    <p className="font-black text-sm md:text-base tracking-widest uppercase text-slate-900">
+                      {delegateLabel}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT PANEL: QR Code / Not-Registered (Dark Mode) */}
+              <div className="w-full md:w-[35%] bg-slate-900 border-l border-slate-800 p-8 md:p-10 flex flex-col items-center justify-center relative overflow-hidden z-10 shrink-0">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.15),transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.15),transparent_50%)]" />
+                <div className="hidden md:block absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#f4f6f8] rounded-full shadow-[inset_-5px_0px_10px_rgba(0,0,0,0.05)] border-r border-[#f4f6f8]" />
+
+                <div className="relative z-10 w-full flex flex-col items-center justify-center h-full">
+                  {registrationLoading ? (
+                    <Loader2 className="w-8 h-8 text-slate-500 animate-spin" />
+                  ) : registration?.isRegistered ? (
+                    <>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-6 text-center bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700/50">
+                        {t("scanAtEntrance")}
                       </p>
+
+                      <div className="bg-white p-5 rounded-3xl shadow-2xl mb-6 relative group">
+                        <div className="absolute inset-0 ring-4 ring-white/10 rounded-3xl -m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <QRCodeCanvas
+                          ref={qrCanvasRef}
+                          value={memberCode}
+                          size={1000}
+                          level="M"
+                          marginSize={2}
+                          bgColor="#ffffff"
+                          fgColor="#0f172a"
+                          className="!w-32 !h-32 md:!w-40 md:!h-40"
+                        />
+                      </div>
+
+                      <div className="text-center w-full">
+                        <p className="font-mono text-lg md:text-xl font-bold tracking-[0.2em] text-white break-all">
+                          {memberCode}
+                        </p>
+                        <div className="w-12 h-1 bg-white/10 rounded-full mx-auto mt-4" />
+                      </div>
+
                       <button
-                        onClick={submitStudentEligibility}
-                        disabled={eligibilitySubmitting || !eligibilityFileName}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-[11px] font-black uppercase tracking-[2px] text-white transition-all hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={handleDownloadQr}
+                        className="group mt-6 inline-flex items-center gap-2 px-5 py-3 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
                       >
-                        {eligibilitySubmitting && <Loader2 className="w-4 h-4 animate-spin" />}
-                        {studentEligibility?.status === "rejected" ? t("resubmitDocument") : studentEligibility?.status === "pending" ? t("replaceDocument") : t("submitRequest")}
+                        <Download className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
+                        {t("downloadPng")}
                       </button>
+                    </>
+                  ) : (
+                    <div className="text-center flex flex-col items-center gap-5 py-6">
+                      <div className="w-16 h-16 rounded-2xl bg-slate-800/60 border border-slate-700/50 flex items-center justify-center">
+                        <Ticket className="w-8 h-8 text-slate-400" />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-amber-400">
+                          {t("notRegistered")}
+                        </p>
+                        <p className="text-base md:text-lg font-bold text-white leading-snug">
+                          {t("notRegisteredDesc")}
+                        </p>
+                        <p className="text-xs text-slate-400 leading-relaxed max-w-xs">
+                          {t("notRegisteredHint")}
+                        </p>
+                      </div>
+                      {REGISTRATION_OPEN ? (
+                        <Link
+                          href="/registration"
+                          className="group inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white text-slate-900 rounded-xl text-[11px] font-black uppercase tracking-widest shadow-lg hover:scale-105 transition-transform"
+                        >
+                          {t("registerNow")}
+                          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                      ) : (
+                        <div
+                          aria-disabled="true"
+                          title={tg("registrationNotice")}
+                          className="inline-flex items-center gap-2 px-5 py-3 mt-2 bg-white/70 text-slate-900 rounded-xl text-[11px] font-black tracking-wide shadow-lg cursor-not-allowed select-none"
+                        >
+                          {tg("registrationNotice")}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
             </div>
-          )}
+
+            {!registrationLoading && registration?.isRegistered && (
+              <section className="w-full overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-lg shadow-slate-200/40">
+                <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
+                  <div className="p-7 md:p-8 lg:p-9">
+                    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="flex items-start gap-4">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50">
+                          <FileText className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <p className="mb-1.5 text-[10px] font-black uppercase tracking-[2.5px] text-blue-600">
+                            {t("receipt.eyebrow")}
+                          </p>
+                          <h3 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
+                            {t("receipt.title")}
+                          </h3>
+                          <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-slate-500">
+                            {t("receipt.description")}
+                          </p>
+                        </div>
+                      </div>
+
+                      {receiptLoading ? (
+                        <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          {t("receipt.loading")}
+                        </span>
+                      ) : receiptTicket?.receiptUrl ? (
+                        <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-emerald-700">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          {t("receipt.ready")}
+                        </span>
+                      ) : (
+                        <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
+                          <Clock3 className="h-3.5 w-3.5" />
+                          {t("receipt.unavailable")}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
+                        <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                          {t("receipt.registrationCode")}
+                        </p>
+                        <p className="mt-1.5 truncate font-mono text-sm font-bold tracking-wide text-slate-900">
+                          {receiptTicket?.regCode || memberCode}
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
+                        <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                          {t("receipt.eventName")}
+                        </p>
+                        <p className="mt-1.5 truncate text-sm font-bold text-slate-900">
+                          {receiptTicket?.eventName || "PRIS 2026"}
+                        </p>
+                      </div>
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50/70 px-4 py-4">
+                        <p className="text-[9px] font-black uppercase tracking-[2px] text-slate-400">
+                          {t("receipt.ticket")}
+                        </p>
+                        <p className="mt-1.5 truncate text-sm font-bold text-slate-900">
+                          {receiptTicket?.ticketName || "—"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-between border-t border-slate-200 bg-slate-950 p-7 text-white lg:border-l lg:border-t-0 md:p-8">
+                    <div>
+                      <div className="mb-6 flex items-center justify-between">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
+                          <FileText className="h-6 w-6 text-white" />
+                        </div>
+                        <span className="rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-black uppercase tracking-[2px] text-slate-300">
+                          {t("receipt.fileType")}
+                        </span>
+                      </div>
+                      <p className="text-lg font-black tracking-tight">
+                        {t("receipt.title")}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                        PRIS 2026 · {receiptTicket?.regCode || memberCode}
+                      </p>
+                    </div>
+
+                    <div className="mt-7">
+                      {receiptLoading ? (
+                        <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-300">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          {t("receipt.loading")}
+                        </div>
+                      ) : receiptTicket?.receiptUrl ? (
+                        <a
+                          href={receiptTicket.receiptUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-950 shadow-lg transition-all hover:bg-blue-50 hover:text-blue-700"
+                        >
+                          <Download className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+                          {t("receipt.download")}
+                        </a>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            disabled
+                            className="flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-500"
+                          >
+                            <Download className="h-4 w-4" />
+                            {t("receipt.unavailable")}
+                          </button>
+                          <p className="mt-3 text-[11px] leading-relaxed text-slate-500">
+                            {t("receipt.unavailableHint")}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {profileData.role === "pharmacist" && EVENT_CODE && (
+              <div className="w-full bg-white rounded-[2rem] shadow-lg shadow-slate-200/40 border border-slate-200/70 overflow-hidden">
+                <div className="p-7 md:p-8 border-b border-slate-100 flex flex-col lg:flex-row gap-4 lg:items-start lg:justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+                      <GraduationCap className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                        {t("postgradTitle")}
+                      </h3>
+                      <p className="text-sm text-slate-500 font-medium mt-1 max-w-2xl">
+                        {t("postgradDesc")}
+                      </p>
+                    </div>
+                  </div>
+                  {(() => {
+                    const badge = getEligibilityBadge(
+                      t,
+                      studentEligibility?.status,
+                    );
+                    const Icon = badge.icon;
+                    return (
+                      <span
+                        className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl border text-[10px] font-black uppercase tracking-[2px] ${badge.className}`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        {badge.label}
+                      </span>
+                    );
+                  })()}
+                </div>
+
+                <div className="p-7 md:p-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
+                  <div className="space-y-4">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/60 p-5">
+                      <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400 mb-2">
+                        {t("requestedLevel")}
+                      </p>
+                      <p className="text-lg font-black text-slate-900">
+                        {t("postgradOnly")}
+                      </p>
+                      <p className="text-sm text-slate-500 mt-1">
+                        {t("postgradNote")}
+                      </p>
+                    </div>
+
+                    {eligibilityLoading ? (
+                      <div className="flex items-center gap-3 text-sm font-semibold text-slate-500">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {t("loadingEligibility")}
+                      </div>
+                    ) : studentEligibility ? (
+                      <div className="rounded-2xl border border-slate-200 p-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">
+                              {t("document")}
+                            </p>
+                            <p className="text-sm font-bold text-slate-800 mt-1 break-all">
+                              {studentEligibility.documentFileName}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-[2px] text-slate-400">
+                              {t("submitted")}
+                            </p>
+                            <p className="text-sm font-bold text-slate-800 mt-1">
+                              {new Date(
+                                studentEligibility.createdAt,
+                              ).toLocaleString(
+                                locale === "th" ? "th-TH" : "en-US",
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        {studentEligibility.status === "rejected" &&
+                          studentEligibility.rejectionReason && (
+                            <div className="mt-4 rounded-xl bg-rose-50 border border-rose-100 p-4">
+                              <p className="text-[10px] font-black uppercase tracking-[2px] text-rose-500">
+                                {t("reason")}
+                              </p>
+                              <p className="text-sm text-rose-900 font-semibold mt-1">
+                                {studentEligibility.rejectionReason}
+                              </p>
+                            </div>
+                          )}
+                      </div>
+                    ) : (
+                      <div className="rounded-2xl border border-dashed border-slate-300 p-5 text-sm text-slate-500 font-medium">
+                        {t("noRequestYet")}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 p-5 bg-white">
+                    {studentEligibility?.status === "approved" ? (
+                      <div className="h-full flex flex-col items-center justify-center text-center py-8">
+                        <CheckCircle2 className="w-12 h-12 text-emerald-500 mb-4" />
+                        <p className="font-black text-slate-900">
+                          {t("approved")}
+                        </p>
+                        <p className="text-sm text-slate-500 mt-1">
+                          {t("approvedDesc")}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-sm font-black text-slate-900 mb-2">
+                            {t("verificationDoc")}{" "}
+                            <span className="text-rose-500">*</span>
+                          </p>
+                          <div className="relative group cursor-pointer">
+                            <input
+                              ref={eligibilityFileRef}
+                              type="file"
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                              onChange={(event) =>
+                                setEligibilityFileName(
+                                  event.target.files?.[0]?.name || "",
+                                )
+                              }
+                            />
+                            <div
+                              className={`min-h-[108px] rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 px-4 text-center transition-all ${
+                                eligibilityFileName
+                                  ? "border-slate-900 bg-slate-50"
+                                  : "border-slate-300 bg-slate-50/60 group-hover:border-blue-400 group-hover:bg-blue-50/40"
+                              }`}
+                            >
+                              <UploadCloud
+                                className={`w-7 h-7 ${eligibilityFileName ? "text-slate-900" : "text-slate-400 group-hover:text-blue-500"}`}
+                              />
+                              <span className="text-sm font-bold text-slate-700 break-all">
+                                {eligibilityFileName || t("fileFormat")}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="text-xs leading-relaxed text-slate-500">
+                          {t("eligibilityNote")}
+                        </p>
+                        <button
+                          onClick={submitStudentEligibility}
+                          disabled={
+                            eligibilitySubmitting || !eligibilityFileName
+                          }
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-[11px] font-black uppercase tracking-[2px] text-white transition-all hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {eligibilitySubmitting && (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          )}
+                          {studentEligibility?.status === "rejected"
+                            ? t("resubmitDocument")
+                            : studentEligibility?.status === "pending"
+                              ? t("replaceDocument")
+                              : t("submitRequest")}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

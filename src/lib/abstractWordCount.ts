@@ -22,10 +22,7 @@ export type AbstractWordCountRequest = {
 };
 
 export type AbstractWordCountIssue = {
-  code:
-    | "TOO_MANY_KEYWORDS"
-    | "SECTION_TOO_SHORT"
-    | "TOTAL_TOO_LONG";
+  code: "TOO_MANY_KEYWORDS" | "SECTION_TOO_SHORT" | "TOTAL_TOO_LONG";
   field: "title" | "keywords" | AbstractSectionName | "abstract";
   current: number;
   limit: number;

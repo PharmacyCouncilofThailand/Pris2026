@@ -10,19 +10,19 @@ Composition: original site Header, wheel/history navigation, one continuous whit
 
 Component grammar: 2px near-black frame, approximately 22px outer corners, orange top rule and primary action, white/#fafafa surfaces, moderate rounding on controls, restrained elevation. Noto Sans Thai and Outfit from existing app variables. One title tier (roughly 24–28px at mobile), 14–16px body and controls, 12px minimum secondary copy. Thai has normal tracking. Color values come from current ticket CSS; adapt foreground/button contrast as needed rather than tracing an inaccessible raster.
 
-| Ingredient / commitment | Implementation medium |
-| --- | --- |
-| Header/logo/language switch | Existing PRIS components/assets; generated header excluded |
-| White ticket, orange strip, frame and notched dashed seam | Semantic HTML/CSS; keep geometry of B |
-| Exact equally sized wheel sectors, pointer, zero-stock gray states | SVG geometry and semantic text/list, stable segment IDs |
-| Wheel rotation | Result-driven CSS transform or installed GSAP; never determines the result |
-| Prize images | Admin-uploaded R2 raster images; sample pen/shirt/mug images excluded |
-| No-prize symbol | Existing neutral icon; generated gift icons excluded |
-| Main action below seam | Native button, full width, min 48px height, visible focus; exact one primary action |
-| Wheel/history navigation | Native links/buttons with clear current state |
-| Availability rows and rules | Semantic list and native disclosure, include zero-stock labels |
-| Reward proof QR | Existing qrcode.react, opaque white, four-module quiet zone, real server token |
-| History/proof/status copy | TH/EN semantic UI with owner-only server data |
+| Ingredient / commitment                                            | Implementation medium                                                               |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Header/logo/language switch                                        | Existing PRIS components/assets; generated header excluded                          |
+| White ticket, orange strip, frame and notched dashed seam          | Semantic HTML/CSS; keep geometry of B                                               |
+| Exact equally sized wheel sectors, pointer, zero-stock gray states | SVG geometry and semantic text/list, stable segment IDs                             |
+| Wheel rotation                                                     | Result-driven CSS transform or installed GSAP; never determines the result          |
+| Prize images                                                       | Admin-uploaded R2 raster images; sample pen/shirt/mug images excluded               |
+| No-prize symbol                                                    | Existing neutral icon; generated gift icons excluded                                |
+| Main action below seam                                             | Native button, full width, min 48px height, visible focus; exact one primary action |
+| Wheel/history navigation                                           | Native links/buttons with clear current state                                       |
+| Availability rows and rules                                        | Semantic list and native disclosure, include zero-stock labels                      |
+| Reward proof QR                                                    | Existing qrcode.react, opaque white, four-module quiet zone, real server token      |
+| History/proof/status copy                                          | TH/EN semantic UI with owner-only server data                                       |
 
 Stock changes preserve positions. A winning result animates its committed snapshot even if current stock is depleted or admin publishes. All real prizes sold out blocks play despite unlimited no-prize slots. History remains accessible outside spin hours. Missing auth, no check-in today, session closed, paused, updated configuration, unknown network outcome, already played, prize/no-prize, claimed/deadline passed and failed image states are mandatory.
 

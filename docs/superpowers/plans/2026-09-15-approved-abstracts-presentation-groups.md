@@ -23,10 +23,12 @@
 ### Task 1: Render presentation groups in the all-results list
 
 **Files:**
+
 - Modify: `src/app/[locale]/approved-abstracts/page.tsx`
 - Test: browser QA at `/th/approved-abstracts` and `/en/approved-abstracts`; existing `src/lib/acceptedAbstractsFilter.test.ts` remains the regression suite
 
 **Interfaces:**
+
 - Consumes: `filteredAbstracts`, `selectedType`, existing translated presentation labels, and existing row markup
 - Produces: a grouped list only when `selectedType === "all"`; a flat list with unchanged row markup for a specific type
 
@@ -59,27 +61,29 @@ Move the current `filteredAbstracts.map` row body into a local `renderAbstractRo
 Replace the single flat map inside the existing results `<ul>` with this behavior:
 
 ```tsx
-{selectedType === "all"
-  ? presentationGroupOrder.map((presentationType) => {
-      const groupItems = filteredAbstracts.filter(
-        (item) => item.presentationType === presentationType,
-      );
+{
+  selectedType === "all"
+    ? presentationGroupOrder.map((presentationType) => {
+        const groupItems = filteredAbstracts.filter(
+          (item) => item.presentationType === presentationType,
+        );
 
-      if (groupItems.length === 0) {
-        return null;
-      }
+        if (groupItems.length === 0) {
+          return null;
+        }
 
-      return (
-        <Fragment key={`presentation-group-${presentationType}`}>
-          <li className={groupHeaderClass[presentationType]}>
-            <p>{t("filterType")}</p>
-            <h3>{presentationLabels[presentationType]}</h3>
-          </li>
-          {groupItems.map(renderAbstractRow)}
-        </Fragment>
-      );
-    })
-  : filteredAbstracts.map(renderAbstractRow)}
+        return (
+          <Fragment key={`presentation-group-${presentationType}`}>
+            <li className={groupHeaderClass[presentationType]}>
+              <p>{t("filterType")}</p>
+              <h3>{presentationLabels[presentationType]}</h3>
+            </li>
+            {groupItems.map(renderAbstractRow)}
+          </Fragment>
+        );
+      })
+    : filteredAbstracts.map(renderAbstractRow);
+}
 ```
 
 The group header must be a full-width list item with a 4px left accent, a light tinted background, and responsive padding. Use orange for `oral`, emerald for `highlighted-poster`, and blue for `poster`. The header must contain a semantic `<h3>`, keep the exact translated presentation label, and allow the label to wrap naturally on small screens.

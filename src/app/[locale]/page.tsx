@@ -1,4 +1,3 @@
-
 import Hero from "@/components/sections/Hero";
 import StickyStackWrapper from "@/components/layout/StickyStackWrapper";
 import {
@@ -9,7 +8,7 @@ import {
   SponsorSection,
   HighlightVideoSection,
   RecentMemoriesSection,
-  VideoCarouselSection
+  VideoCarouselSection,
 } from "@/components/sections/LazySections";
 import InViewWrapper from "@/components/layout/InViewWrapper";
 
@@ -65,8 +64,6 @@ export default function Home() {
           <RecentMemoriesSection />
         </InViewWrapper>
       </div>
-
-
     </main>
   );
 }

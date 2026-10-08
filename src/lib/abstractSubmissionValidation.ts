@@ -1,8 +1,7 @@
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type AbstractEmailValidationTarget =
-  | { kind: "author" }
-  | { kind: "coAuthor"; index: number };
+  { kind: "author" } | { kind: "coAuthor"; index: number };
 
 export function normalizeEmail(value: string): string {
   return value.trim();

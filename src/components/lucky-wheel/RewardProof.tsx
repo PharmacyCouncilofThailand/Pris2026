@@ -26,19 +26,27 @@ export function RewardProof({ detail }: Props) {
         process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL,
       )
     : null;
-  const formatter = new Intl.DateTimeFormat(locale === "th" ? "th-TH" : "en-GB", {
-    timeZone: "Asia/Bangkok",
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const formatter = new Intl.DateTimeFormat(
+    locale === "th" ? "th-TH" : "en-GB",
+    {
+      timeZone: "Asia/Bangkok",
+      dateStyle: "medium",
+      timeStyle: "short",
+    },
+  );
 
   if (!detail.rewardProof) {
     return (
       <article className={`${ticketStyles.ticket} ${styles.activityTicket}`}>
         <section className="px-4 pb-4 pt-7 text-center sm:px-5 sm:pt-9">
-          <h1 className="text-2xl font-black text-zinc-950">{t("rewardProofTitle")}</h1>
+          <h1 className="text-2xl font-black text-zinc-950">
+            {t("rewardProofTitle")}
+          </h1>
         </section>
-        <div className={`${ticketStyles.perforation} ${styles.activitySeam}`} aria-hidden="true" />
+        <div
+          className={`${ticketStyles.perforation} ${styles.activitySeam}`}
+          aria-hidden="true"
+        />
         <section className="px-4 pb-5 pt-2 text-center sm:px-5 sm:pb-6">
           <p className="text-sm leading-6 text-zinc-700">{t("noProof")}</p>
         </section>
@@ -70,11 +78,16 @@ export function RewardProof({ detail }: Props) {
             )}
           </div>
           <div className="min-w-0 break-words text-left">
-            <p className="text-xl font-black text-zinc-950">{detail.prize.name.th}</p>
+            <p className="text-xl font-black text-zinc-950">
+              {detail.prize.name.th}
+            </p>
             <p className="mt-1 text-sm text-zinc-500">{detail.prize.name.en}</p>
             <dl className="mt-3 space-y-2 text-sm">
               <div className="flex items-start gap-2">
-                <UserRound className="mt-0.5 h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
+                <UserRound
+                  className="mt-0.5 h-4 w-4 shrink-0 text-orange-700"
+                  aria-hidden="true"
+                />
                 <div className="min-w-0">
                   <dt className="sr-only">{t("owner")}</dt>
                   <dd className="font-bold text-zinc-800">
@@ -83,10 +96,15 @@ export function RewardProof({ detail }: Props) {
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-orange-700" aria-hidden="true" />
+                <Clock3
+                  className="mt-0.5 h-4 w-4 shrink-0 text-orange-700"
+                  aria-hidden="true"
+                />
                 <div className="min-w-0">
                   <dt className="sr-only">{t("awardedAt")}</dt>
-                  <dd className="text-zinc-700">{formatter.format(new Date(detail.prize.awardedAt))}</dd>
+                  <dd className="text-zinc-700">
+                    {formatter.format(new Date(detail.prize.awardedAt))}
+                  </dd>
                 </div>
               </div>
             </dl>
@@ -94,7 +112,10 @@ export function RewardProof({ detail }: Props) {
         </div>
       </section>
 
-      <div className={`${ticketStyles.perforation} ${styles.activitySeam}`} aria-hidden="true" />
+      <div
+        className={`${ticketStyles.perforation} ${styles.activitySeam}`}
+        aria-hidden="true"
+      />
 
       <section className="space-y-5 px-4 pb-5 pt-2 sm:px-5 sm:pb-6">
         <div className={`${styles.proofQr} rounded-[18px]`}>
@@ -120,12 +141,18 @@ export function RewardProof({ detail }: Props) {
             type="button"
             className={`${styles.secondaryAction} mt-3`}
             onClick={async () => {
-              await navigator.clipboard.writeText(detail.rewardProof!.displayCode);
+              await navigator.clipboard.writeText(
+                detail.rewardProof!.displayCode,
+              );
               setCopied(true);
               setTimeout(() => setCopied(false), 1500);
             }}
           >
-            {copied ? <Check className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
+            {copied ? (
+              <Check className="mr-2 h-4 w-4" />
+            ) : (
+              <Clipboard className="mr-2 h-4 w-4" />
+            )}
             {copied ? t("copied") : t("copyCode")}
           </button>
         </div>
@@ -141,7 +168,10 @@ export function RewardProof({ detail }: Props) {
 
         {detail.status !== "redeemed" && (
           <div className="flex items-start gap-3 rounded-xl bg-orange-50 p-4 text-sm font-semibold leading-6 text-orange-950">
-            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-orange-700" aria-hidden="true" />
+            <MapPin
+              className="mt-0.5 h-5 w-5 shrink-0 text-orange-700"
+              aria-hidden="true"
+            />
             <p>{t("pickupNotice")}</p>
           </div>
         )}

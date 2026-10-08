@@ -9,14 +9,35 @@ interface VideoSlide {
 }
 
 const SLIDES: VideoSlide[] = [
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/09.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/06.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/02.mp4", title: "" },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/09.mp4",
+    title: "",
+  },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/06.mp4",
+    title: "",
+  },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/02.mp4",
+    title: "",
+  },
   // { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/03.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/04.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/05.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/01.mp4", title: "" },
-  { src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/08.mp4", title: "" },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/04.mp4",
+    title: "",
+  },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/05.mp4",
+    title: "",
+  },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/01.mp4",
+    title: "",
+  },
+  {
+    src: "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Pris%20สัมภาษณ์/08.mp4",
+    title: "",
+  },
 ];
 
 export default function VideoCarouselSection() {
@@ -39,7 +60,7 @@ export default function VideoCarouselSection() {
 
       if (i === activeIndex) {
         if (isPlaying) {
-          video.play().catch(() => { });
+          video.play().catch(() => {});
         } else {
           video.pause();
         }
@@ -49,14 +70,11 @@ export default function VideoCarouselSection() {
     });
   }, [activeIndex, isPlaying, isMuted, volume]);
 
-  const goTo = useCallback(
-    (index: number) => {
-      if (index < 0 || index >= SLIDES.length) return;
-      setActiveIndex(index);
-      setIsPlaying(true);
-    },
-    [],
-  );
+  const goTo = useCallback((index: number) => {
+    if (index < 0 || index >= SLIDES.length) return;
+    setActiveIndex(index);
+    setIsPlaying(true);
+  }, []);
 
   const goPrev = useCallback(() => {
     setActiveIndex((prev) => (prev === 0 ? SLIDES.length - 1 : prev - 1));
@@ -79,12 +97,15 @@ export default function VideoCarouselSection() {
     });
   }, [volume]);
 
-  const handleVolumeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (newVolume === 0) setIsMuted(true);
-    else setIsMuted(false);
-  }, []);
+  const handleVolumeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newVolume = parseFloat(e.target.value);
+      setVolume(newVolume);
+      if (newVolume === 0) setIsMuted(true);
+      else setIsMuted(false);
+    },
+    [],
+  );
 
   // Keyboard navigation
   useEffect(() => {
@@ -133,7 +154,6 @@ export default function VideoCarouselSection() {
 
       {/* Carousel Track */}
       <div className="relative w-full z-10">
-
         {/* Slides Container — overflow visible so side panels peek */}
         <div
           className="carousel-track overflow-hidden cursor-grab active:cursor-grabbing"
@@ -158,14 +178,17 @@ export default function VideoCarouselSection() {
                   onClick={() => !isActive && goTo(i)}
                 >
                   <div
-                    className={`relative aspect-video bg-neutral-900 rounded-2xl md:rounded-[28px] overflow-hidden border transition-all duration-700 ${isActive
+                    className={`relative aspect-video bg-neutral-900 rounded-2xl md:rounded-[28px] overflow-hidden border transition-all duration-700 ${
+                      isActive
                         ? "border-white/15 shadow-[0_0_60px_rgba(37,99,235,0.15)] scale-100 opacity-100"
                         : "border-white/5 shadow-none scale-[0.92] opacity-60 cursor-pointer hover:opacity-80"
-                      }`}
+                    }`}
                   >
                     {slide.src ? (
                       <video
-                        ref={(el) => { videoRefs.current[i] = el; }}
+                        ref={(el) => {
+                          videoRefs.current[i] = el;
+                        }}
                         src={`${slide.src}#t=0.1`}
                         preload="metadata"
                         autoPlay={i === 0}
@@ -190,7 +213,7 @@ export default function VideoCarouselSection() {
                     )}
 
                     {/* Slide Title Overlay */}
-                    {(slide.src && slide.title) && (
+                    {slide.src && slide.title && (
                       <div className="absolute bottom-0 left-0 right-0 p-4 md:p-8 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none">
                         <p className="text-white/90 text-sm md:text-lg font-semibold tracking-wide">
                           {slide.title}
@@ -229,10 +252,11 @@ export default function VideoCarouselSection() {
               <button
                 key={i}
                 onClick={() => goTo(i)}
-                className={`transition-all duration-500 rounded-full flex-shrink-0 focus:outline-none ${i === activeIndex
-                  ? "w-5 sm:w-7 md:w-9 h-1.5 sm:h-2 bg-white"
-                  : "w-1.5 sm:w-2 h-1.5 sm:h-2 bg-white/30 hover:bg-white/50"
-                  }`}
+                className={`transition-all duration-500 rounded-full flex-shrink-0 focus:outline-none ${
+                  i === activeIndex
+                    ? "w-5 sm:w-7 md:w-9 h-1.5 sm:h-2 bg-white"
+                    : "w-1.5 sm:w-2 h-1.5 sm:h-2 bg-white/30 hover:bg-white/50"
+                }`}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}
@@ -275,7 +299,7 @@ export default function VideoCarouselSection() {
               <div
                 className="absolute w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-white rounded-full shadow-md pointer-events-none transition-transform"
                 style={{
-                  left: `calc(${(isMuted ? 0 : volume) * 100}% - ${((isMuted ? 0 : volume) * 14)}px)`
+                  left: `calc(${(isMuted ? 0 : volume) * 100}% - ${(isMuted ? 0 : volume) * 14}px)`,
                 }}
               ></div>
             </div>

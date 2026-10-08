@@ -82,7 +82,9 @@ export function parseScheduleTime(value: string): ParsedTime | null {
 }
 
 export function formatMinutes(value: number) {
-  const hours = Math.floor(value / 60).toString().padStart(2, "0");
+  const hours = Math.floor(value / 60)
+    .toString()
+    .padStart(2, "0");
   const minutes = (value % 60).toString().padStart(2, "0");
 
   return `${hours}:${minutes}`;
@@ -123,7 +125,10 @@ export function resolveVenueKey(event: Event) {
   return resolveVenueKeys(event)[0];
 }
 
-export function buildVenueColumns(events: Event[], locale: string): VenueColumn[] {
+export function buildVenueColumns(
+  events: Event[],
+  locale: string,
+): VenueColumn[] {
   const roomColumns = STANDARD_TRACKS.map((track) => ({
     key: `track:${track}`,
     label: locale === "th" ? `ห้อง ${track}` : track,
@@ -147,13 +152,18 @@ export function buildVenueColumns(events: Event[], locale: string): VenueColumn[
     if (!commonByKey.has(key)) {
       commonByKey.set(key, {
         key,
-        label: locale === "th" && event.locationTh ? event.locationTh : event.location,
+        label:
+          locale === "th" && event.locationTh
+            ? event.locationTh
+            : event.location,
         kind: "common",
       });
     }
   }
 
-  const hasFallback = events.some((event) => resolveVenueKey(event) === "fallback:other");
+  const hasFallback = events.some(
+    (event) => resolveVenueKey(event) === "fallback:other",
+  );
 
   return [
     ...roomColumns,
@@ -184,10 +194,12 @@ export function buildScheduleLayout(events: Event[]): ScheduleLayout {
       ? [{ event, time, columnKey: columnKeys.join("|"), columnKeys }]
       : [];
   });
-  const fallbackEvents = events.filter((event) => !parseScheduleTime(event.time));
-  const boundaries = [...new Set(parsed.flatMap(({ time }) => [time.start, time.end]))].sort(
-    (left, right) => left - right,
+  const fallbackEvents = events.filter(
+    (event) => !parseScheduleTime(event.time),
   );
+  const boundaries = [
+    ...new Set(parsed.flatMap(({ time }) => [time.start, time.end])),
+  ].sort((left, right) => left - right);
   const pending = [...parsed].sort(
     (left, right) =>
       left.time.start - right.time.start ||

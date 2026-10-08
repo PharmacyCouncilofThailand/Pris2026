@@ -9,7 +9,10 @@ export default function AbstractGuidelines() {
   const t = useTranslations("abstractGuidelines");
   const tp = useTranslations("abstractPage");
 
-  const guidelines = locale === "th" ? submissionGuidelines.guidelinesTh : submissionGuidelines.guidelines;
+  const guidelines =
+    locale === "th"
+      ? submissionGuidelines.guidelinesTh
+      : submissionGuidelines.guidelines;
 
   return (
     <div className="bg-white">
@@ -32,16 +35,19 @@ export default function AbstractGuidelines() {
 
           <div className="border-t border-gray-200">
             {guidelines.map((rule, idx) => (
-              <div key={idx} className="flex items-start gap-4 py-5 border-b border-gray-100">
+              <div
+                key={idx}
+                className="flex items-start gap-4 py-5 border-b border-gray-100"
+              >
                 <span className="text-blue-200 text-sm font-bold tracking-widest shrink-0 pt-0.5">
                   {String(idx + 1).padStart(2, "0")}
                 </span>
-                <p className="text-slate-600 text-base leading-relaxed">{rule}</p>
+                <p className="text-slate-600 text-base leading-relaxed">
+                  {rule}
+                </p>
               </div>
             ))}
           </div>
-
-
         </div>
       </section>
 

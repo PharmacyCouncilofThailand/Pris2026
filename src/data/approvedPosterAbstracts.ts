@@ -11,7 +11,8 @@ export interface ApprovedPosterAbstract {
 export const approvedPosterAbstracts: ApprovedPosterAbstract[] = [
   {
     id: "ABS-P-2026-001",
-    title: "Impact of Pharmacist-Led Medication Reconciliation on Readmission Rates",
+    title:
+      "Impact of Pharmacist-Led Medication Reconciliation on Readmission Rates",
     presenter: "Nattapol Srisuk",
     affiliation: "Khon Kaen University",
     category: "Clinical Pharmacy",
@@ -92,7 +93,8 @@ export const approvedPosterAbstracts: ApprovedPosterAbstract[] = [
   },
   {
     id: "ABS-O-2026-092",
-    title: "Cost-Effectiveness Analysis of Novel Diabetes Treatments in Thailand",
+    title:
+      "Cost-Effectiveness Analysis of Novel Diabetes Treatments in Thailand",
     presenter: "Siraphat Maneewan",
     affiliation: "Mahidol University",
     category: "Pharmacoeconomics",
@@ -119,7 +121,8 @@ export const approvedPosterAbstracts: ApprovedPosterAbstract[] = [
   },
   {
     id: "ABS-P-2026-125",
-    title: "A Comprehensive Multi-Center Randomized Controlled Trial Evaluating the Long-Term Efficacy and Safety of Pharmacist-Led Chronic Disease Management Interventions in Community Pharmacy Settings Across Rural Thailand",
+    title:
+      "A Comprehensive Multi-Center Randomized Controlled Trial Evaluating the Long-Term Efficacy and Safety of Pharmacist-Led Chronic Disease Management Interventions in Community Pharmacy Settings Across Rural Thailand",
     presenter: "Waraporn Khamkaew",
     affiliation: "Khon Kaen University",
     category: "Clinical Pharmacy",
@@ -128,7 +131,8 @@ export const approvedPosterAbstracts: ApprovedPosterAbstract[] = [
   },
   {
     id: "ABS-O-2026-131",
-    title: "Development, Validation, and Implementation of an Artificial Intelligence-Powered Clinical Decision Support System for Real-Time Detection of Clinically Significant Drug-Drug Interactions in Hospital Electronic Prescribing Systems",
+    title:
+      "Development, Validation, and Implementation of an Artificial Intelligence-Powered Clinical Decision Support System for Real-Time Detection of Clinically Significant Drug-Drug Interactions in Hospital Electronic Prescribing Systems",
     presenter: "Thanaporn Ritthidej",
     affiliation: "Chulalongkorn University",
     category: "Digital Pharmacy and Health Technology",
@@ -137,11 +141,12 @@ export const approvedPosterAbstracts: ApprovedPosterAbstract[] = [
   },
   {
     id: "ABS-P-2026-142",
-    title: "Investigating the Impact of Structured Pharmaceutical Care Programs on Medication Adherence, Clinical Outcomes, and Quality of Life Among Elderly Patients With Multiple Chronic Comorbidities in Primary Care Settings",
+    title:
+      "Investigating the Impact of Structured Pharmaceutical Care Programs on Medication Adherence, Clinical Outcomes, and Quality of Life Among Elderly Patients With Multiple Chronic Comorbidities in Primary Care Settings",
     presenter: "Siriwan Meechaiyo",
     affiliation: "Mahidol University",
     category: "Social and Administrative Pharmacy",
     presentationType: "Poster",
     status: "Approved",
-  }
+  },
 ];

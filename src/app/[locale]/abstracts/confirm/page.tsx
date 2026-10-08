@@ -17,12 +17,7 @@ import { REGISTRATION_OPEN } from "@/lib/registrationGate";
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
 type LookupState =
-  | "loading"
-  | "valid"
-  | "already_confirmed"
-  | "expired"
-  | "invalid"
-  | "error";
+  "loading" | "valid" | "already_confirmed" | "expired" | "invalid" | "error";
 
 type SubmitState = "idle" | "submitting" | "success" | "error";
 
@@ -151,7 +146,9 @@ function ConfirmAbstractContent() {
           <div>
             <div className="mb-6 flex items-center gap-3">
               <CheckCircle2 className="h-8 w-8 text-emerald-500" />
-              <h1 className="text-2xl font-bold text-slate-900">{t("validTitle")}</h1>
+              <h1 className="text-2xl font-bold text-slate-900">
+                {t("validTitle")}
+              </h1>
             </div>
             <p className="mb-6 text-slate-600">
               {abstract.presenterFirstName
@@ -163,12 +160,16 @@ function ConfirmAbstractContent() {
               <dl className="space-y-2">
                 <div>
                   <dt className="text-slate-500">{t("fieldTitle")}</dt>
-                  <dd className="font-medium text-slate-900">{abstract.title}</dd>
+                  <dd className="font-medium text-slate-900">
+                    {abstract.title}
+                  </dd>
                 </div>
                 {abstract.trackingId && (
                   <div>
                     <dt className="text-slate-500">{t("fieldCode")}</dt>
-                    <dd className="font-mono text-slate-900">{abstract.trackingId}</dd>
+                    <dd className="font-mono text-slate-900">
+                      {abstract.trackingId}
+                    </dd>
                   </div>
                 )}
                 <div>
@@ -179,7 +180,9 @@ function ConfirmAbstractContent() {
                 </div>
                 <div>
                   <dt className="text-slate-500">{t("fieldDeadline")}</dt>
-                  <dd className="text-slate-900">{formatDateTime(abstract.deadline)}</dd>
+                  <dd className="text-slate-900">
+                    {formatDateTime(abstract.deadline)}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -210,20 +213,27 @@ function ConfirmAbstractContent() {
           <div className="text-center">
             <CheckCircle2 className="mx-auto mb-4 h-14 w-14 text-emerald-500" />
             <h1 className="mb-2 text-2xl font-bold text-slate-900">
-              {submitState === "success" ? t("successTitle") : t("alreadyConfirmedTitle")}
+              {submitState === "success"
+                ? t("successTitle")
+                : t("alreadyConfirmedTitle")}
             </h1>
             <p className="mb-6 text-slate-600">
-              {submitState === "success" ? t("successBody") : t("alreadyConfirmedBody")}
+              {submitState === "success"
+                ? t("successBody")
+                : t("alreadyConfirmedBody")}
             </p>
             {abstract && (
               <div className="mb-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-left text-sm">
                 <p className="font-medium text-emerald-900">{abstract.title}</p>
                 {abstract.trackingId && (
-                  <p className="font-mono text-emerald-800">{abstract.trackingId}</p>
+                  <p className="font-mono text-emerald-800">
+                    {abstract.trackingId}
+                  </p>
                 )}
                 {abstract.confirmedAt && (
                   <p className="mt-2 text-emerald-700">
-                    {t("confirmedAtLabel")}: {formatDateTime(abstract.confirmedAt)}
+                    {t("confirmedAtLabel")}:{" "}
+                    {formatDateTime(abstract.confirmedAt)}
                   </p>
                 )}
               </div>
@@ -258,7 +268,9 @@ function ConfirmAbstractContent() {
         {state === "expired" && (
           <div className="text-center">
             <Clock className="mx-auto mb-4 h-14 w-14 text-amber-500" />
-            <h1 className="mb-2 text-2xl font-bold text-slate-900">{t("expiredTitle")}</h1>
+            <h1 className="mb-2 text-2xl font-bold text-slate-900">
+              {t("expiredTitle")}
+            </h1>
             <p className="mb-6 text-slate-600">{t("expiredBody")}</p>
             <a
               href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || "pr@pharmacycouncil.org"}`}
@@ -273,7 +285,9 @@ function ConfirmAbstractContent() {
         {state === "invalid" && (
           <div className="text-center">
             <AlertTriangle className="mx-auto mb-4 h-14 w-14 text-red-500" />
-            <h1 className="mb-2 text-2xl font-bold text-slate-900">{t("invalidTitle")}</h1>
+            <h1 className="mb-2 text-2xl font-bold text-slate-900">
+              {t("invalidTitle")}
+            </h1>
             <p className="mb-6 text-slate-600">{t("invalidBody")}</p>
             <Link
               href="/profile"
@@ -287,7 +301,9 @@ function ConfirmAbstractContent() {
         {state === "error" && (
           <div className="text-center">
             <AlertTriangle className="mx-auto mb-4 h-14 w-14 text-amber-500" />
-            <h1 className="mb-2 text-2xl font-bold text-slate-900">{t("errorTitle")}</h1>
+            <h1 className="mb-2 text-2xl font-bold text-slate-900">
+              {t("errorTitle")}
+            </h1>
             <p className="mb-6 text-slate-600">{t("errorBody")}</p>
             <button
               type="button"

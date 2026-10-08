@@ -7,7 +7,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
 import Swiper from "swiper";
-import { EffectCoverflow, Autoplay, Navigation, Keyboard } from "swiper/modules";
+import {
+  EffectCoverflow,
+  Autoplay,
+  Navigation,
+  Keyboard,
+} from "swiper/modules";
 
 // Import Swiper styles
 import "swiper/css";
@@ -32,7 +37,13 @@ export default function SpeakerSection() {
   // Initialize GSAP Animations
   useGSAP(
     () => {
-      if (!sectionRef.current || !overlayRef.current || !textRef.current || !swiperContainerRef.current) return;
+      if (
+        !sectionRef.current ||
+        !overlayRef.current ||
+        !textRef.current ||
+        !swiperContainerRef.current
+      )
+        return;
 
       const mm = gsap.matchMedia();
       const bgLayer = sectionRef.current.querySelector(".bg-speaker-img");
@@ -42,32 +53,65 @@ export default function SpeakerSection() {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top top", 
-            end: "+=150%",    // Reduced duration
-            pin: true,        
-            scrub: 0.5,       // Faster response to scroll
+            start: "top top",
+            end: "+=150%", // Reduced duration
+            pin: true,
+            scrub: 0.5, // Faster response to scroll
           },
         });
 
         // 0. Slow zoom on the background image
         if (bgLayer) {
-          tl.to(bgLayer, { scale: 1.1, transformOrigin: "center center", duration: 15, ease: "none", force3D: true }, 0);
+          tl.to(
+            bgLayer,
+            {
+              scale: 1.1,
+              transformOrigin: "center center",
+              duration: 15,
+              ease: "none",
+              force3D: true,
+            },
+            0,
+          );
         }
 
         // 1. Darken BG
-        tl.to(overlayRef.current, { backgroundColor: "rgba(0, 0, 0, 0.85)", duration: 2.5, ease: "none", force3D: true }, 0);
+        tl.to(
+          overlayRef.current,
+          {
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            duration: 2.5,
+            ease: "none",
+            force3D: true,
+          },
+          0,
+        );
 
         // 2. Text slides up
-        tl.fromTo(textRef.current, { y: 100, opacity: 0, force3D: true }, { y: 0, opacity: 1, duration: 4, ease: "power2.out" }, 1.5);
+        tl.fromTo(
+          textRef.current,
+          { y: 100, opacity: 0, force3D: true },
+          { y: 0, opacity: 1, duration: 4, ease: "power2.out" },
+          1.5,
+        );
 
         // 3. Short hold
         tl.to({}, { duration: 1 }, 5.5);
 
         // 4. Text fades out
-        tl.to(textRef.current, { y: -50, opacity: 0, duration: 3, ease: "power2.in", force3D: true }, 6.5);
+        tl.to(
+          textRef.current,
+          { y: -50, opacity: 0, duration: 3, ease: "power2.in", force3D: true },
+          6.5,
+        );
 
         // 5. Swiper fades in smoothly
-        tl.fromTo(swiperContainerRef.current, { y: 40, autoAlpha: 0, scale: 0.98, force3D: true }, { y: 0, autoAlpha: 1, scale: 1, duration: 3, ease: "power3.out" }, 8.5);
+        tl.fromTo(
+          swiperContainerRef.current,
+          { y: 40, autoAlpha: 0, scale: 0.98, force3D: true },
+          { y: 0, autoAlpha: 1, scale: 1, duration: 3, ease: "power3.out" },
+          8.5,
+        );
 
         // 6. Hold Swiper
         tl.to({}, { duration: 4 }, 11.5);
@@ -75,14 +119,16 @@ export default function SpeakerSection() {
 
       // Mobile/Tablet: No pinning, no scrub. Just make elements statically visible.
       mm.add("(max-width: 1023px)", () => {
-        gsap.set(overlayRef.current, { backgroundColor: "rgba(0, 0, 0, 0.85)" });
+        gsap.set(overlayRef.current, {
+          backgroundColor: "rgba(0, 0, 0, 0.85)",
+        });
         gsap.set(textRef.current, { y: 0, opacity: 1 });
         gsap.set(swiperContainerRef.current, { autoAlpha: 1, y: 0, scale: 1 });
       });
 
       return () => mm.revert();
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   // Initialize Swiper Vanilla JS
@@ -129,8 +175,8 @@ export default function SpeakerSection() {
   }, []);
 
   return (
-    <section 
-      ref={sectionRef} 
+    <section
+      ref={sectionRef}
       className="relative w-full min-h-[100dvh] lg:h-screen overflow-hidden bg-black z-[2] flex flex-col lg:flex-row items-center justify-center"
     >
       {/* Background SVG layer */}
@@ -170,26 +216,27 @@ export default function SpeakerSection() {
       </div>
 
       {/* Swiper Carousel Container (starts hidden via GSAP autoAlpha) */}
-      <div 
+      <div
         ref={swiperContainerRef}
         className="relative lg:absolute lg:inset-0 z-[3] flex items-center justify-center px-4 w-full pb-8 lg:pb-0"
-        style={{ visibility: "hidden", opacity: 0 }} 
+        style={{ visibility: "hidden", opacity: 0 }}
       >
         <div className="w-full max-w-6xl mx-auto h-[55vh] sm:h-[60vh] lg:h-[65vh] relative">
-          
           {/* Slider main container */}
           <div className="swiper w-full h-full pb-12" ref={swiperDomRef}>
             {/* Additional required wrapper */}
             <div className="swiper-wrapper">
               {/* Slides */}
-              {[...SPEAKERS_DATA, ...SPEAKERS_DATA.map(s => ({ ...s, id: s.id + '_clone' }))].map((speaker) => (
-                <div 
-                  key={speaker.id} 
+              {[
+                ...SPEAKERS_DATA,
+                ...SPEAKERS_DATA.map((s) => ({ ...s, id: s.id + "_clone" })),
+              ].map((speaker) => (
+                <div
+                  key={speaker.id}
                   className="swiper-slide aspect-[3/4] rounded-2xl overflow-hidden will-change-transform"
                 >
                   {/* Speaker Card Design */}
                   <div className="relative w-full h-full group bg-[#0a0a0a] border border-white/10 rounded-2xl flex flex-col justify-end p-6 shadow-2xl">
-                    
                     {/* Speaker Image */}
                     {speaker.image && (
                       <div className="absolute inset-0 z-0">
@@ -205,7 +252,7 @@ export default function SpeakerSection() {
 
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/95 z-10 pointer-events-none" />
                     <div className="absolute inset-0 bg-gold/10 opacity-0 hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
-                    
+
                     {/* Speaker Info */}
                     <div className="relative z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                       <span className="text-gold text-xs font-bold uppercase tracking-wider mb-2 block">
@@ -226,9 +273,7 @@ export default function SpeakerSection() {
             {/* Navigation buttons */}
             <div className="swiper-button-prev !text-gold after:!text-2xl"></div>
             <div className="swiper-button-next !text-gold after:!text-2xl"></div>
-            
           </div>
-
         </div>
       </div>
 

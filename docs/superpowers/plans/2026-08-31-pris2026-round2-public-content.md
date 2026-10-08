@@ -37,9 +37,11 @@
 ## File Map
 
 **Create:**
+
 - `src/lib/abstractGate.test.ts` — focused tests for public abstract-open/closed date behavior if gate helper is split from existing file.
 
 **Modify:**
+
 - `src/lib/registrationGate.ts` — replace manual abstract close state with date-aware gate contract while preserving registration gate.
 - `src/components/sections/Hero.tsx` — consume current abstract gate result if boolean becomes function/state.
 - `src/app/[locale]/call-for-abstracts/page.tsx` — consume current abstract gate result.
@@ -51,6 +53,7 @@
 - `src/components/sections/RegistrationCTASection.tsx` — minimal changes only if new translation keys/labels need rendering; pricing rows remain Early/Regular/Postgrad/Undergrad.
 
 **Verify:**
+
 - Current pages importing `ABSTRACT_OPEN` found by repository search. No CTA may be left on old static boolean semantics.
 
 ---
@@ -58,15 +61,19 @@
 ### Task 1: Replace Static Abstract Boolean with Date-Aware Public Gate
 
 **Files:**
+
 - Modify: `src/lib/registrationGate.ts`
 - Create: `src/lib/abstractGate.test.ts`
 
 **Interfaces:**
+
 - Preserve `REGISTRATION_OPEN` behavior.
 - Replace static abstract boolean dependency with pure evaluator:
 
 ```ts
-export const ABSTRACT_SUBMISSION_CLOSE_AT = new Date("2026-09-20T17:00:00.000Z");
+export const ABSTRACT_SUBMISSION_CLOSE_AT = new Date(
+  "2026-09-20T17:00:00.000Z",
+);
 
 export interface AbstractGateState {
   open: boolean;
@@ -97,28 +104,28 @@ import test from "node:test";
 import { getAbstractGateState } from "./registrationGate.js";
 
 test("keeps abstract submission open through final Round 1 instant", () => {
-  assert.deepEqual(
-    getAbstractGateState(new Date("2026-08-31T16:59:59.999Z")),
-    { open: true, phase: "round1" },
-  );
+  assert.deepEqual(getAbstractGateState(new Date("2026-08-31T16:59:59.999Z")), {
+    open: true,
+    phase: "round1",
+  });
 });
 
 test("switches directly to Round 2 at Sep 1 Bangkok with no closed gap", () => {
-  assert.deepEqual(
-    getAbstractGateState(new Date("2026-08-31T17:00:00.000Z")),
-    { open: true, phase: "round2" },
-  );
+  assert.deepEqual(getAbstractGateState(new Date("2026-08-31T17:00:00.000Z")), {
+    open: true,
+    phase: "round2",
+  });
 });
 
 test("closes at Sep 21 Bangkok exclusive boundary", () => {
-  assert.deepEqual(
-    getAbstractGateState(new Date("2026-09-20T16:59:59.999Z")),
-    { open: true, phase: "round2" },
-  );
-  assert.deepEqual(
-    getAbstractGateState(new Date("2026-09-20T17:00:00.000Z")),
-    { open: false, phase: "closed" },
-  );
+  assert.deepEqual(getAbstractGateState(new Date("2026-09-20T16:59:59.999Z")), {
+    open: true,
+    phase: "round2",
+  });
+  assert.deepEqual(getAbstractGateState(new Date("2026-09-20T17:00:00.000Z")), {
+    open: false,
+    phase: "closed",
+  });
 });
 ```
 
@@ -163,12 +170,14 @@ git commit -m "fix: keep PRIS abstract submission open for round 2"
 ### Task 2: Update Every Abstract CTA Consumer to Date-Aware Gate
 
 **Files:**
+
 - Modify: `src/components/sections/Hero.tsx`
 - Modify: `src/app/[locale]/call-for-abstracts/page.tsx`
 - Modify: `src/app/[locale]/abstract-guidelines/page.tsx`
 - Modify: `src/app/[locale]/abstract-status/page.tsx`
 
 **Interfaces:**
+
 - Consumes `getAbstractGateState()`.
 - Produces no stale static `ABSTRACT_OPEN` condition.
 
@@ -246,9 +255,11 @@ git commit -m "refactor: use date-aware abstract submission gate"
 ### Task 3: Rewrite Abstract Timeline for Round 1 and Round 2
 
 **Files:**
+
 - Modify: `src/data/abstractData.ts:1-50`
 
 **Interfaces:**
+
 - Produces timeline/important dates used by public abstract sections.
 
 - [ ] **Step 1: Replace timeline entries**
@@ -285,6 +296,7 @@ export const abstractTimeline = [
 ```
 
 Add the official Round 2 result entry:
+
 - `Round 2 Result Announcement`
 - `30 September 2026`
 - `ประกาศผลบทคัดย่อรอบที่ 2`
@@ -293,6 +305,7 @@ Add the official Round 2 result entry:
 - [ ] **Step 2: Mirror same dates in `submissionGuidelines.importantDates`**
 
 Order should communicate continuous submission clearly:
+
 1. Round1 submission;
 2. Round2 submission;
 3. Round1 result Sep10;
@@ -332,9 +345,11 @@ git commit -m "content: add PRIS abstract round 2 timeline"
 ### Task 4: Replace Approved-Only Early Bird Copy with Account + Abstract Cutoff Rule
 
 **Files:**
+
 - Modify: `src/data/abstractData.ts:35-70`
 
 **Interfaces:**
+
 - Produces public explanatory text only. Does not determine actual price.
 
 - [ ] **Step 1: Replace reservation note**
@@ -366,6 +381,7 @@ Thai equivalent with exact amounts/deadline.
 - [ ] **Step 3: Rewrite segmented emphasized copy**
 
 Highlight the two required facts separately:
+
 - account created by Aug31 23:59;
 - at least one PRIS abstract submitted by Aug31 23:59;
 - payment privilege ends Sep15 23:59;
@@ -412,9 +428,11 @@ git commit -m "content: clarify PRIS Early Bird eligibility"
 ### Task 5: Remove Obsolete June Acceptance and Withdrawal Deadlines
 
 **Files:**
+
 - Modify: `src/data/abstractData.ts:160-180`
 
 **Interfaces:**
+
 - Produces non-contradictory acceptance/withdrawal policies.
 
 - [ ] **Step 1: Keep first acceptance sentence**
@@ -476,11 +494,13 @@ git commit -m "content: remove obsolete PRIS abstract deadlines"
 ### Task 6: Update Registration Timeline Copy in Thai and English
 
 **Files:**
+
 - Modify: `messages/en.json:158-190`
 - Modify: `messages/th.json:158-190`
 - Verify: `src/components/sections/RegistrationCTASection.tsx:185-250`
 
 **Interfaces:**
+
 - Produces public registration timeline explaining original Early Bird and Regular windows plus special extension qualification.
 
 - [ ] **Step 1: Keep Early Bird original period**
@@ -564,10 +584,12 @@ git commit -m "content: update PRIS registration pricing periods"
 ### Task 7: Verify Pricing Rows and Remove Any Remaining Late Public Surface
 
 **Files:**
+
 - Verify/Modify: `src/components/sections/RegistrationCTASection.tsx:280-365`
 - Modify only if necessary: `messages/en.json`, `messages/th.json`
 
 **Interfaces:**
+
 - Produces four visible pricing rows only: Early Bird, Regular, Postgraduate, Undergraduate.
 
 - [ ] **Step 1: Verify current four-row structure**
@@ -626,10 +648,12 @@ If verification finds no source change after Task 6, do not create empty commit.
 ### Task 8: Add Public Copy Regression Checks
 
 **Files:**
+
 - Create or Modify: `src/lib/abstractGate.test.ts`
 - Optional Create: `src/data/abstractData.test.ts` using existing `tsx --test` runner.
 
 **Interfaces:**
+
 - Produces cheap protection against accidentally restoring old dates/rules.
 
 - [ ] **Step 1: Add data assertions**
@@ -644,14 +668,24 @@ import { abstractTimeline, submissionGuidelines } from "./abstractData.js";
 test("publishes Round 1, Round 1 result, and Round 2 dates", () => {
   assert.ok(abstractTimeline.some((item) => item.label.includes("Round 1")));
   assert.ok(abstractTimeline.some((item) => item.label.includes("Round 2")));
-  assert.ok(abstractTimeline.some((item) => item.date.includes("10 September 2026")));
-  assert.ok(abstractTimeline.some((item) => item.date.includes("20 September 2026")));
+  assert.ok(
+    abstractTimeline.some((item) => item.date.includes("10 September 2026")),
+  );
+  assert.ok(
+    abstractTimeline.some((item) => item.date.includes("20 September 2026")),
+  );
 });
 
 test("Early Bird copy no longer requires abstract approval", () => {
-  assert.doesNotMatch(submissionGuidelines.presenterRegistrationNote, /approved/i);
+  assert.doesNotMatch(
+    submissionGuidelines.presenterRegistrationNote,
+    /approved/i,
+  );
   assert.match(submissionGuidelines.presenterRegistrationNote, /1,250/);
-  assert.match(submissionGuidelines.presenterRegistrationNote, /15 September 2026/);
+  assert.match(
+    submissionGuidelines.presenterRegistrationNote,
+    /15 September 2026/,
+  );
 });
 ```
 
@@ -685,9 +719,11 @@ git commit -m "test: lock PRIS round 2 public rules"
 ### Task 9: Public Site Manual QA Across Boundary Content
 
 **Files:**
+
 - No expected source change. Reopen specific task if defect appears.
 
 **Interfaces:**
+
 - Consumes built site with current copy/gates.
 - Produces visual/content verification.
 
@@ -706,6 +742,7 @@ During Round2 date, abstract CTA remains active and reaches current abstract sub
 - [ ] **Step 3: Verify Call for Abstracts**
 
 Must show:
+
 - Round1 submission Jul1–Aug31;
 - Round2 submission Sep1–20;
 - Round1 result Sep10;
@@ -719,6 +756,7 @@ Must state account + abstract cutoff requirement for extension. Must not say app
 - [ ] **Step 5: Verify Registration section**
 
 Must show:
+
 - Early Bird 1,250;
 - Regular 2,500;
 - Postgraduate 1,250;
@@ -751,9 +789,11 @@ Expected: PASS; only intended files before commits, clean after commits.
 ### Task 10: Deployment Ordering and Production Content Verification
 
 **Files:**
+
 - No source mutation expected.
 
 **Interfaces:**
+
 - Consumes API/Web deployment readiness.
 - Produces safe public cutover.
 

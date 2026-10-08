@@ -117,12 +117,22 @@ export default function AbstractTracker() {
         icon: PencilLine,
       },
     }),
-    [t]
+    [t],
   );
 
   const getRevisionTopicLabel = (topic?: string) => {
     if (!topic) return t("revisionTopics.default");
-    const knownKeys = ["title", "keywords", "background", "objective", "methods", "results", "conclusion", "documents", "other"];
+    const knownKeys = [
+      "title",
+      "keywords",
+      "background",
+      "objective",
+      "methods",
+      "results",
+      "conclusion",
+      "documents",
+      "other",
+    ];
     if (knownKeys.includes(topic)) {
       return t(`revisionTopics.${topic}` as Parameters<typeof t>[0]);
     }
@@ -179,8 +189,12 @@ export default function AbstractTracker() {
         <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto">
           <Inbox className="w-9 h-9 text-slate-300" />
         </div>
-        <p className="text-lg font-black text-slate-400 uppercase tracking-wider">{t("emptyTitle")}</p>
-        <p className="text-sm text-slate-400 max-w-sm mx-auto">{t("emptyDesc")}</p>
+        <p className="text-lg font-black text-slate-400 uppercase tracking-wider">
+          {t("emptyTitle")}
+        </p>
+        <p className="text-sm text-slate-400 max-w-sm mx-auto">
+          {t("emptyDesc")}
+        </p>
       </div>
     );
   }
@@ -188,15 +202,20 @@ export default function AbstractTracker() {
   return (
     <div className="space-y-5">
       {abstracts.map((item) => {
-        const status = statusConfig[item.status as keyof typeof statusConfig] || statusConfig.pending;
+        const status =
+          statusConfig[item.status as keyof typeof statusConfig] ||
+          statusConfig.pending;
         const StatusIcon = status.icon;
         const isExpanded = expandedId === item.id;
-        const typeLabel = item.presentationType === "oral" ? t("oral") : t("poster");
+        const typeLabel =
+          item.presentationType === "oral" ? t("oral") : t("poster");
         const revisionRequest = item.latestRevisionRequest;
         const revisionFiles = revisionRequest?.files || [];
         const documentFiles =
           item.files && item.files.length > 0
-            ? [...item.files].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+            ? [...item.files].sort(
+                (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+              )
             : item.fullPaperUrl
               ? [{ fileName: t("viewPdf"), fileUrl: item.fullPaperUrl }]
               : [];
@@ -213,14 +232,18 @@ export default function AbstractTracker() {
           <div
             key={item.id}
             className={`bg-white rounded-3xl border shadow-sm overflow-hidden transition-all duration-300 ${
-              isExpanded ? "shadow-lg border-slate-200" : "border-slate-100 hover:border-slate-200"
+              isExpanded
+                ? "shadow-lg border-slate-200"
+                : "border-slate-100 hover:border-slate-200"
             }`}
           >
             <button
               onClick={() => toggleExpand(item.id)}
               className="w-full px-8 py-7 flex items-center gap-6 text-left group transition-colors hover:bg-slate-50/50"
             >
-              <div className={`w-11 h-11 rounded-2xl ${status.bg} ${status.border} border flex items-center justify-center shrink-0`}>
+              <div
+                className={`w-11 h-11 rounded-2xl ${status.bg} ${status.border} border flex items-center justify-center shrink-0`}
+              >
                 <StatusIcon className={`w-5 h-5 ${status.color}`} />
               </div>
 
@@ -232,33 +255,49 @@ export default function AbstractTracker() {
                   <span className="text-[10px] font-bold text-slate-400 tracking-widest uppercase">
                     {item.trackingId}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-300">•</span>
+                  <span className="text-[10px] font-bold text-slate-300">
+                    •
+                  </span>
                   <span className="text-[10px] font-bold text-blue-500 tracking-widest uppercase">
                     {typeLabel}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-300">•</span>
+                  <span className="text-[10px] font-bold text-slate-300">
+                    •
+                  </span>
                   <span className="text-[10px] font-bold text-slate-400 tracking-wide">
                     {item.category}
                   </span>
                 </div>
               </div>
 
-              <div className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl ${status.bg} ${status.border} border`}>
-                <span className={`text-[10px] font-black uppercase tracking-widest ${status.color}`}>
+              <div
+                className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl ${status.bg} ${status.border} border`}
+              >
+                <span
+                  className={`text-[10px] font-black uppercase tracking-widest ${status.color}`}
+                >
                   {status.label}
                 </span>
               </div>
 
               <div className="text-slate-300 group-hover:text-slate-500 transition-colors shrink-0">
-                {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                {isExpanded ? (
+                  <ChevronUp className="w-5 h-5" />
+                ) : (
+                  <ChevronDown className="w-5 h-5" />
+                )}
               </div>
             </button>
 
             {isExpanded && (
               <div className="px-8 pb-8 border-t border-slate-100 animate-in fade-in slide-in-from-top-1 duration-200">
-                <div className={`sm:hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl ${status.bg} ${status.border} border mt-6 mb-4`}>
+                <div
+                  className={`sm:hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl ${status.bg} ${status.border} border mt-6 mb-4`}
+                >
                   <StatusIcon className={`w-3.5 h-3.5 ${status.color}`} />
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${status.color}`}>
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-widest ${status.color}`}
+                  >
                     {status.label}
                   </span>
                 </div>
@@ -274,7 +313,8 @@ export default function AbstractTracker() {
                           {getRevisionTopicLabel(revisionRequest?.topic)}
                         </p>
                         <p className="mt-3 text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
-                          {revisionRequest?.comment || t("revisionDefaultComment")}
+                          {revisionRequest?.comment ||
+                            t("revisionDefaultComment")}
                         </p>
                         {revisionFiles.length > 0 && (
                           <div className="mt-4 flex flex-wrap gap-3">
@@ -287,7 +327,10 @@ export default function AbstractTracker() {
                                 className="inline-flex max-w-full items-center gap-2 rounded-xl border border-blue-100 bg-white px-4 py-2 text-xs font-black text-blue-600 hover:text-blue-700 transition-colors"
                               >
                                 <FileText className="w-4 h-4 shrink-0" />
-                                <span className="truncate">{file.fileName || t("revisionFile", { index: index + 1 })}</span>
+                                <span className="truncate">
+                                  {file.fileName ||
+                                    t("revisionFile", { index: index + 1 })}
+                                </span>
                                 <ExternalLink className="w-3 h-3 shrink-0" />
                               </a>
                             ))}
@@ -307,7 +350,9 @@ export default function AbstractTracker() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">{t("submitted")}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">
+                      {t("submitted")}
+                    </p>
                     <p className="text-sm font-bold text-slate-700">
                       {new Date(item.createdAt).toLocaleDateString(dateLocale, {
                         year: "numeric",
@@ -317,11 +362,17 @@ export default function AbstractTracker() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">{t("keywords")}</p>
-                    <p className="text-sm font-bold text-slate-700">{item.keywords || "—"}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">
+                      {t("keywords")}
+                    </p>
+                    <p className="text-sm font-bold text-slate-700">
+                      {item.keywords || "—"}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">{t("documents", { count: documentFiles.length })}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-2">
+                      {t("documents", { count: documentFiles.length })}
+                    </p>
                     {documentFiles.length > 0 ? (
                       <div className="space-y-2">
                         {documentFiles.map((file, index) => (
@@ -350,8 +401,12 @@ export default function AbstractTracker() {
                 <div className="mt-8 space-y-5">
                   {sections.map((section) => (
                     <div key={section.label}>
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-1.5">{section.label}</p>
-                      <p className="text-sm text-slate-600 leading-relaxed">{section.value || "—"}</p>
+                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-1.5">
+                        {section.label}
+                      </p>
+                      <p className="text-sm text-slate-600 leading-relaxed">
+                        {section.value || "—"}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -372,7 +427,9 @@ export default function AbstractTracker() {
                         >
                           {ca.firstName} {ca.lastName}
                           {ca.institution && (
-                            <span className="text-slate-400 font-medium ml-1.5">— {ca.institution}</span>
+                            <span className="text-slate-400 font-medium ml-1.5">
+                              — {ca.institution}
+                            </span>
                           )}
                         </div>
                       ))}
