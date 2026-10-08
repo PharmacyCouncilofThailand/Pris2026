@@ -747,6 +747,17 @@
     }
   },
   "auth": {
+    "joinAsHealthHack": "ลงทะเบียน (HealthHack)",
+    "joinAsBooth": "ลงทะเบียน (Booth)",
+    "specialInstitution": "โรงเรียน / มหาวิทยาลัย / สถาบัน",
+    "boothName": "ชื่อบูธในงาน",
+    "healthHackGroup": "ระดับการศึกษา",
+    "healthHackGrade": "ชั้นเรียน",
+    "selectHealthHackGrade": "เลือกชั้นเรียน",
+    "selectHealthHackLevelError": "กรุณาเลือกระดับการศึกษาและชั้นเรียนให้ครบ",
+    "lowerSecondary": "มัธยมศึกษาตอนต้น",
+    "upperSecondary": "มัธยมศึกษาตอนปลาย",
+    "healthHackLevels": {"m1":"ม.1","m2":"ม.2","m3":"ม.3","m4":"ม.4","m5":"ม.5","m6":"ม.6","undergraduate":"ปริญญาตรี"},
     "login": "เข้าสู่ระบบ",
     "loginDesc": "กรอกอีเมลและรหัสผ่านเพื่อเข้าสู่บัญชีของคุณ",
     "email": "อีเมล",
@@ -981,6 +992,8 @@
     "replaceDocument": "เปลี่ยนเอกสาร",
     "submitRequest": "ส่งคำขอ",
     "delegateTypes": {
+      "healthHack": "HealthHack",
+      "booth": "Booth",
       "thaiStudent": "นักศึกษา (ไทย)",
       "internationalStudent": "นักศึกษา (ต่างชาติ)",
       "thaiPharmacist": "เภสัชกร (ไทย)",

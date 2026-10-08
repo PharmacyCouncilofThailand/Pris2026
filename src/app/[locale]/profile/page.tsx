@@ -47,6 +47,8 @@ function getDelegateLabel(
   delegateType?: string,
   role?: string
 ): string {
+  if (role === "healthhack") return t("delegateTypes.healthHack");
+  if (role === "booth") return t("delegateTypes.booth");
   switch (delegateType) {
     case "thai_student": return t("delegateTypes.thaiStudent");
     case "international_student": return t("delegateTypes.internationalStudent");
@@ -92,6 +94,7 @@ function getEligibilityBadge(t: ReturnType<typeof useTranslations<"profile">>, s
 
 export default function ProfilePage() {
   const t = useTranslations("profile");
+  const ta = useTranslations("auth");
   const tg = useTranslations("registrationGate");
   const tt = useTranslations("toasts");
   const locale = useLocale();
@@ -391,6 +394,18 @@ export default function ProfilePage() {
                         <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{t("organization")}</p>
                         <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{org}</p>
                       </div>
+                    </div>
+                  )}
+                  {profileData.role === "healthhack" && profileData.healthHackLevel && (
+                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0"><GraduationCap className="w-4 h-4 text-slate-600" /></div>
+                      <div><p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{ta("healthHackGroup")}</p><p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{ta(`healthHackLevels.${profileData.healthHackLevel}`)}</p></div>
+                    </div>
+                  )}
+                  {profileData.role === "booth" && profileData.boothName && (
+                    <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0"><Building2 className="w-4 h-4 text-slate-600" /></div>
+                      <div><p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">{ta("boothName")}</p><p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">{profileData.boothName}</p></div>
                     </div>
                   )}
                 </div>
