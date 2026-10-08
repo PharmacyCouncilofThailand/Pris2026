@@ -47,7 +47,7 @@ export default function Home() {
 
       {/* Sponsor Marquee */}
       <div className="w-full relative" style={{ zIndex: 2 }}>
-        <InViewWrapper minHeight="400px">
+        <InViewWrapper minHeight="550px">
           <SponsorSection />
         </InViewWrapper>
       </div>

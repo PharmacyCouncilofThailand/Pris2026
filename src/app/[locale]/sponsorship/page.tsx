@@ -105,7 +105,7 @@ const sponsorLogos = [
     id: 10,
     name: "MP Group",
     logo: "/assets/Img/sponsors/mp-group.png",
-    scaleClass: "scale-[1.1]",
+    scaleClass: "scale-[1.05]",
   },
   {
     id: 11,
@@ -117,7 +117,7 @@ const sponsorLogos = [
     id: 12,
     name: "Circlife Medical",
     logo: "/assets/Img/sponsors/circlife-medical.png",
-    scaleClass: "scale-[1.2]",
+    scaleClass: "scale-[1.45]",
   },
   {
     id: 13,
@@ -159,37 +159,37 @@ const sponsorLogos = [
     id: 19,
     name: "บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด",
     logo: "/assets/Img/sponsors/บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด.jpg",
-    scaleClass: "scale-[1.25]",
+    scaleClass: "scale-[1.65]",
   },
   {
     id: 20,
     name: "บริษัท ชุมชนเภสัชกรรม จำกัด (มหาชน)",
     logo: "/assets/Img/sponsors/บริษัทชุมชนเภสัชกรรมจำกัด  (มหาชน).png",
-    scaleClass: "scale-[1.25]",
+    scaleClass: "scale-[1.55]",
   },
   {
     id: 21,
     name: "บริษัท ดีจีโฟร์ จำกัด",
     logo: "/assets/Img/sponsors/บริษัทดีจีโฟร์ จำกัด.png",
-    scaleClass: "scale-[1.2]",
+    scaleClass: "scale-[1.55]",
   },
   {
     id: 22,
     name: "บริษัท บุญซัพพลาย จำกัด",
     logo: "/assets/Img/sponsors/บริษัทบุญซัพพลาย จำกัด.png",
-    scaleClass: "scale-[1.2]",
+    scaleClass: "scale-[1.55]",
   },
   {
     id: 23,
     name: "บริษัท ศิริราชบํารุงเวช จํากัด",
     logo: "/assets/Img/sponsors/บริษัทศิริราชบํารุงเวช จํากัด.png",
-    scaleClass: "scale-[1.25]",
+    scaleClass: "scale-[1.5]",
   },
   {
     id: 24,
     name: "บริษัท อินโนซุส จำกัด",
     logo: "/assets/Img/sponsors/บริษัทอินโนซุส.png",
-    scaleClass: "scale-[2.1]",
+    scaleClass: "scale-[2.75]",
   },
   {
     id: 25,
@@ -265,8 +265,8 @@ export default function SponsorshipPage() {
       />
 
       {/* ══════ SPONSOR LOGOS ══════ */}
-      <section className="relative px-6 md:px-12 pb-12 md:pb-16 pt-8">
-        <div className="max-w-6xl mx-auto">
+      <section className="relative px-4 sm:px-6 md:px-12 lg:px-16 pb-16 md:pb-24 pt-8">
+        <div className="max-w-7xl 2xl:max-w-[1400px] mx-auto">
           
           {/* Organized By */}
           <div className="content-block mb-24">
@@ -286,7 +286,7 @@ export default function SponsorshipPage() {
                     src={sponsor.logo}
                     alt={sponsor.name}
                     className={`object-contain w-full h-full max-w-[100%] max-h-[100%] ${
-                      sponsor.id === 2 ? "scale-[1.6]" : "scale-125"
+                    sponsor.id === 2 ? "scale-[1.6]" : "scale-125"
                     }`}
                   />
                 </div>
@@ -343,23 +343,23 @@ export default function SponsorshipPage() {
           </div>
 
           {/* Sponsors */}
-          <div className="content-block mb-24">
-            <div className="flex flex-col items-center text-center mb-10 md:mb-14">
+          <div className="content-block mb-24 w-full">
+            <div className="flex flex-col items-center text-center mb-12 md:mb-16">
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter text-[#D4AF37] pb-4 border-b border-gray-200">
                 SPONSORS
               </h2>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-12 lg:gap-14 max-w-7xl mx-auto">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 items-center justify-items-center gap-x-6 sm:gap-x-12 lg:gap-x-20 xl:gap-x-28 gap-y-12 sm:gap-y-16 lg:gap-y-24 w-full max-w-7xl mx-auto px-1 sm:px-4 pb-8 lg:pb-16">
               {sponsorLogos.map((sponsor) => (
                 <div 
                   key={sponsor.id} 
-                  className="relative flex items-center justify-center w-24 h-16 sm:w-32 sm:h-20 md:w-40 md:h-24 lg:w-44 lg:h-28"
+                  className="relative flex items-center justify-center w-full max-w-[110px] sm:max-w-[150px] lg:max-w-[180px] h-12 sm:h-16 lg:h-20"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={sponsor.logo}
                     alt={sponsor.name}
-                    className={`object-contain w-full h-full max-h-[90%] max-w-[90%] ${sponsor.scaleClass || ""}`}
+                    className={`object-contain w-full h-full max-h-[75%] max-w-[75%] ${sponsor.scaleClass || ""}`}
                   />
                 </div>
               ))}
