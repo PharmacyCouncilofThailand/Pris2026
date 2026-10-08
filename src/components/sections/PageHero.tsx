@@ -14,6 +14,8 @@ interface PageHeroProps {
   title1: string;
   /** Second line (rendered with gradient) */
   title2?: string;
+  /** Override responsive title sizing for long titles */
+  titleSizeClassName?: string;
   /** Paragraph below the title */
   subtitle?: string;
   /** Use dark theme (for pages like committee) */
@@ -29,6 +31,7 @@ export default function PageHero({
   eyebrowSub,
   title1,
   title2,
+  titleSizeClassName,
   subtitle,
   dark = false,
   inlineTitle = false,
@@ -71,9 +74,9 @@ export default function PageHero({
   const gradientFrom = dark
     ? "from-white via-white to-white/60"
     : "from-blue-500 via-blue-600 to-orange-500";
-  const titleSize = inlineTitle
+  const titleSize = titleSizeClassName ?? (inlineTitle
     ? "text-[clamp(2.2rem,5vw,6.25rem)]"
-    : "text-3xl sm:text-5xl md:text-7xl lg:text-[8rem]";
+    : "text-3xl sm:text-5xl md:text-7xl lg:text-[8rem]");
   const titlePartClass = inlineTitleTight
     ? "overflow-hidden py-2 -my-2"
     : "overflow-hidden py-2 -my-2 md:pl-2";

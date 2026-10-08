@@ -13,7 +13,6 @@ import {
   SlidersHorizontal,
   ChevronDown,
   AlertCircle,
-  RotateCcw,
   Copy,
   Check,
   Calendar,
@@ -22,11 +21,11 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/sections/PageHero";
-import { approvedRound1Abstracts } from "@/data/approvedRound1Abstracts";
+import { getApprovedAnnouncements } from "@/lib/presentationApi";
+import type { Announcement } from "@/types/presentations";
 import {
   extractDistinctCategories,
   filterAcceptedAbstracts,
-  type AcceptedAbstract,
 } from "@/lib/acceptedAbstractsFilter";
 
 const approvedAbstractsPdfUrl = "/documents/approved-abstracts-round-1.pdf";
@@ -35,7 +34,24 @@ const ITEMS_PER_PAGE = 10;
 export default function ApprovedAbstractsPage() {
   const t = useTranslations("approvedAbstracts");
 
-  const abstracts = approvedRound1Abstracts;
+  const [abstracts, setAbstracts] = useState<Announcement[]>([]);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "failed">("loading");
+  const [reload, setReload] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    // Keep prior rows hidden while this external API request is pending.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoadState("loading");
+    getApprovedAnnouncements(controller.signal).then((rows) => {
+      if (controller.signal.aborted) return;
+      setAbstracts(rows);
+      setLoadState("ready");
+    }).catch(() => {
+      if (!controller.signal.aborted) setLoadState("failed");
+    });
+    return () => controller.abort();
+  }, [reload]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const deferredSearchQuery = useDeferredValue(searchQuery);
@@ -71,12 +87,14 @@ export default function ApprovedAbstractsPage() {
 
   // Reset to page 1 whenever filters change
   useEffect(() => {
+    // Preserve the existing deferred-search pagination reset.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
   }, [deferredSearchQuery, selectedType, selectedRound, selectedCategory]);
 
   const categories = useMemo(
-    () => extractDistinctCategories(approvedRound1Abstracts),
-    [],
+    () => extractDistinctCategories(abstracts),
+    [abstracts],
   );
 
   const selectedCategoryName = useMemo(() => {
@@ -100,15 +118,21 @@ export default function ApprovedAbstractsPage() {
   }, [abstracts, selectedRound]);
 
   const filteredAbstracts = useMemo(() => {
-    return filterAcceptedAbstracts(approvedRound1Abstracts, {
+    return filterAcceptedAbstracts(abstracts, {
       search: deferredSearchQuery,
       presentationType: selectedType,
       round: selectedRound,
       categoryId: selectedCategory,
     });
-  }, [deferredSearchQuery, selectedType, selectedRound, selectedCategory]);
+  }, [abstracts, deferredSearchQuery, selectedType, selectedRound, selectedCategory]);
 
   const totalPages = Math.max(1, Math.ceil(filteredAbstracts.length / ITEMS_PER_PAGE));
+
+  useEffect(() => {
+    // Reconcile pagination when the external announcement source shrinks.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage((page) => Math.min(page, totalPages));
+  }, [totalPages]);
 
   const paginatedAbstracts = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -272,7 +296,7 @@ export default function ApprovedAbstractsPage() {
                         "px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-mono font-bold shrink-0",
                         isActive ? "bg-white text-orange-600" : "bg-white text-slate-700 border border-slate-200 shadow-2xs"
                       )}>
-                        {tab.count}
+                        {loadState === "ready" ? tab.count : "—"}
                       </span>
                     </button>
                   );
@@ -419,7 +443,7 @@ export default function ApprovedAbstractsPage() {
             </div>
 
             {/* Results Count & Range Indicator */}
-            <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-medium pt-1">
+            {loadState === "ready" && <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 font-medium pt-1">
               <span>
                 แสดง <strong className="text-slate-900 font-bold">{startIndex} – {endIndex}</strong> จากทั้งหมด {filteredAbstracts.length} ผลงาน
               </span>
@@ -428,12 +452,17 @@ export default function ApprovedAbstractsPage() {
                   หน้า {currentPage} จาก {totalPages}
                 </span>
               )}
-            </div>
+            </div>}
 
           </div>
 
           {/* ── Box D: Standalone Cards List (10 Items Per Page) ── */}
-          {abstracts.length === 0 ? (
+          {loadState !== "ready" ? (
+            <div role={loadState === "failed" ? "alert" : "status"} className="bg-white rounded-2xl border border-slate-300 p-8 sm:p-10 text-center">
+              <p className="text-sm text-slate-700">{t(loadState === "loading" ? "loading" : "loadError")}</p>
+              {loadState === "failed" && <button type="button" onClick={() => setReload((value) => value + 1)} className="mt-4 px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition cursor-pointer">{t("retry")}</button>}
+            </div>
+          ) : abstracts.length === 0 ? (
             <div className="bg-white rounded-2xl border border-dashed border-slate-300 p-8 sm:p-12 text-center shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
               <h2 className="text-base font-bold text-slate-900">{t("zeroRecordsTitle")}</h2>
               <p className="mt-1 text-xs text-slate-500">{t("zeroRecordsDesc")}</p>
@@ -471,7 +500,7 @@ export default function ApprovedAbstractsPage() {
 
                 return (
                   <article
-                    key={item.id}
+                    key={`${item.round}:${item.id}`}
                     className="bg-white rounded-2xl border border-slate-300 p-4 sm:p-6 shadow-[0_4px_16px_rgba(0,0,0,0.06)] hover:border-orange-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] transition-all duration-200"
                   >
                     {/* Card Top Row: Sequence, Tracking ID, and Type Badge */}
@@ -563,7 +592,7 @@ export default function ApprovedAbstractsPage() {
           {/* ═══════════════════════════════════════════════════════════
               4. PAGINATION CONTROLS (แบ่งหน้าละ 10 ผลงาน - Responsive Single Bar)
              ═══════════════════════════════════════════════════════════ */}
-          {totalPages > 1 && (
+          {loadState === "ready" && totalPages > 1 && (
             <nav
               className="mt-6 sm:mt-8 flex items-center justify-between gap-1.5 sm:gap-4 bg-white p-2.5 sm:p-4 rounded-2xl border border-slate-300 shadow-[0_4px_16px_rgba(0,0,0,0.06)]"
               aria-label="Pagination"

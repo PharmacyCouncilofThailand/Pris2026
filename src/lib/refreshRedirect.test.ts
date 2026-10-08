@@ -16,6 +16,21 @@ test("reload redirect exemption keeps home and invitation confirmation routes", 
   }
 });
 
+test("poster reloads and auth-return reloads preserve the work and request context", () => {
+  const search = "?abstractId=501&requestId=123e4567-e89b-42d3-a456-426614174000";
+  for (const path of ["/presentation-submission", "/th/presentation-submission", "/en/presentation-submission/"]) {
+    assert.equal(shouldRedirectReload(path, "?abstractId=501"), false, path);
+    assert.equal(shouldRedirectReload(path, search), false, path);
+    assert.equal(shouldRedirectReload(path, "?abstractId=0"), true, path);
+    assert.equal(shouldRedirectReload(path, "?abstractId=501&email=owner@example.com"), true, path);
+  }
+  const returnQuery = `?redirect=${encodeURIComponent(`/th/presentation-submission${search}`)}`;
+  for (const path of ["/th/login", "/en/signup", "/signup/student", "/signup/pending"]) {
+    assert.equal(shouldRedirectReload(path, returnQuery), false, path);
+    assert.equal(shouldRedirectReload(path, "?redirect=%2Fpresentation-submission%3FabstractId%3D0"), true, path);
+  }
+});
+
 test("ordinary routes still redirect reload to home", () => {
   assert.equal(shouldRedirectReload("/profile"), true);
   assert.equal(shouldRedirectReload("/th/profile"), true);
