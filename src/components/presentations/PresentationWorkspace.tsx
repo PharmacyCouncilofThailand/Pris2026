@@ -39,6 +39,8 @@ export function PresentationWorkspace(p: {
       ? "highlighted"
       : "poster";
   const maxMB = PRESENTATION_LIMITS[oral ? "oral" : "poster"].mb;
+  const formats = oral ? "PDF" : "PNG / PDF";
+  const png = !oral && /\.png$/i.test(p.file?.name ?? "");
   const pageRule = t(oral ? "pageRuleOral" : "pageRulePoster");
   const templateUrl = oral
     ? "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Template%20Abstract/Presentation%20Oral%20Template.zip"
@@ -50,7 +52,9 @@ export function PresentationWorkspace(p: {
       p.file && !fileProblem(p.file, o.presentationType)
         ? URL.createObjectURL(
             new Blob([p.file], {
-              type: "application/pdf",
+              type: /\.png$/i.test(p.file.name)
+                ? "image/png"
+                : "application/pdf",
             }),
           )
         : null;
@@ -254,14 +258,20 @@ export function PresentationWorkspace(p: {
                     <span className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors group-hover:text-gold motion-reduce:transition-none">
                       <UploadCloud size={28} aria-hidden="true" />
                     </span>
-                    <span className="text-sm font-bold">{t("chooseFile")}</span>
+                    <span className="text-sm font-bold">
+                      {t("chooseFile", { formats })}
+                    </span>
                     <span className="text-sm text-slate-500">
-                      PDF · {maxMB} MB
+                      {formats} · {maxMB} MB
                     </span>
                     <input
                       className="sr-only"
                       type="file"
-                      accept="application/pdf,.pdf"
+                      accept={
+                        oral
+                          ? "application/pdf,.pdf"
+                          : "application/pdf,image/png,.pdf,.png"
+                      }
                       disabled={p.sending}
                       onChange={(e) => {
                         p.onFile(e.target.files?.[0] ?? null);
@@ -296,11 +306,21 @@ export function PresentationWorkspace(p: {
                 )}
                 {preview && p.file && (
                   <div className="mt-5 rounded-2xl border border-slate-100 bg-slate-50/60 p-3 sm:p-4">
-                    <iframe
-                      src={preview}
-                      title={p.file.name}
-                      className="h-80 w-full rounded-lg border border-slate-200"
-                    />
+                    {png ? (
+                      // The selected local blob has no Next image optimization endpoint.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={preview}
+                        alt={p.file.name}
+                        className="max-h-80 w-full rounded-lg object-contain"
+                      />
+                    ) : (
+                      <iframe
+                        src={preview}
+                        title={p.file.name}
+                        className="h-80 w-full rounded-lg border border-slate-200"
+                      />
+                    )}
                     <a
                       href={preview}
                       target="_blank"
@@ -354,7 +374,7 @@ export function PresentationWorkspace(p: {
                 role="alert"
               >
                 {t.has(`errors.${p.error}`)
-                  ? t(`errors.${p.error}`, { maxMB, pageRule })
+                  ? t(`errors.${p.error}`, { maxMB, pageRule, formats })
                   : t("uploadError")}
               </p>
             )}

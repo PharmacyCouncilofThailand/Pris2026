@@ -179,6 +179,23 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.equal(templateLink.props.rel, "noopener noreferrer");
       assert.equal(renderer!.root.findAllByType("input").length, 0);
       assert.equal(renderer!.root.findAllByType("iframe").length, 1);
+      await act(async () => {
+        renderer!.update(
+          React.createElement(PresentationWorkspace, {
+            ...props,
+            file: new File(["png"], "poster.png", { type: "image/png" }),
+          }),
+        );
+      });
+      assert.equal(renderer!.root.findAllByType("iframe").length, 0);
+      assert.ok(
+        renderer!.root
+          .findAllByType("img")
+          .some((node) => node.props.alt === "poster.png"),
+      );
+      await act(async () => {
+        renderer!.update(React.createElement(PresentationWorkspace, props));
+      });
       assert.equal(
         renderer!.root
           .findAllByType("dt")
@@ -203,9 +220,9 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
       assert.equal(renderer!.root.findAllByType("input").length, 1);
       assert.equal(
         renderer!.root.findByType("input").props.accept,
-        "application/pdf,.pdf",
+        "application/pdf,image/png,.pdf,.png",
       );
-      assert.equal(JSON.stringify(renderer!.toJSON()).includes("PNG"), false);
+      assert.equal(JSON.stringify(renderer!.toJSON()).includes("PNG"), true);
       assert.equal(renderer!.root.findAllByType("iframe").length, 0);
       await act(async () =>
         renderer!.update(React.createElement(PresentationWorkspace, props)),

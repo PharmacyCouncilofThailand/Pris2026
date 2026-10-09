@@ -31,11 +31,14 @@ const owner: OwnerPresentationDto = {
   uploads: [],
 };
 
-test("declared file checks accept PDF only and inclusive 30 MB; reject empty, oversized or mismatched declarations", () => {
+test("poster declarations accept PDF/PNG and inclusive 30 MB; reject empty, oversized or mismatched declarations", () => {
   for (const [name, type] of [
     ["x.pdf", "application/pdf"],
     ["x.pdf", ""],
     ["x.PDF", "application/octet-stream"],
+    ["x.png", "image/png"],
+    ["x.PNG", "application/octet-stream"],
+    ["x.png", ""],
   ]) {
     assert.equal(fileProblem(new File(["x"], name, { type }), "poster"), null);
   }
@@ -56,8 +59,6 @@ test("declared file checks accept PDF only and inclusive 30 MB; reject empty, ov
     "PRESENTATION_FILE_TOO_LARGE",
   );
   for (const [name, type] of [
-    ["x.png", "image/png"],
-    ["x.png", "application/octet-stream"],
     ["x.jpg", "image/jpeg"],
     ["x.png.exe", "image/png"],
     ["x.png", "application/pdf"],
@@ -76,6 +77,12 @@ test("declared file checks accept PDF only and inclusive 30 MB; reject empty, ov
     ),
     null,
   );
+});
+
+test("Highlighted Poster accepts PNG while Oral remains PDF-only", () => {
+  const file = new File(["image"], "poster.png", { type: "image/png" });
+  assert.equal(fileProblem(file, "highlighted-poster"), null);
+  assert.equal(fileProblem(file, "oral"), "PRESENTATION_FILE_TYPE");
 });
 
 test("Oral accepts exactly 50 MB while both Poster types retain 30 MB", () => {

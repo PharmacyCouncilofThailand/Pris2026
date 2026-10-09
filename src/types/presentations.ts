@@ -18,7 +18,7 @@ export type UploadDto = {
   version: number;
   fileName: string;
   storedFileName: string;
-  mimeType: "application/pdf";
+  mimeType: "application/pdf" | "image/png";
   sizeBytes: number;
   fileUrl: string;
   storageProvider: "drive" | "r2";

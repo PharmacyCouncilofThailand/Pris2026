@@ -10,10 +10,13 @@ export function fileProblem(file: File, type: AnnouncementType): string | null {
     file.size > PRESENTATION_LIMITS[type === "oral" ? "oral" : "poster"].bytes
   )
     return "PRESENTATION_FILE_TOO_LARGE";
-  const extension = /\.pdf$/i.test(file.name);
+  const mimeType = /\.pdf$/i.test(file.name)
+    ? "application/pdf"
+    : type !== "oral" && /\.png$/i.test(file.name)
+      ? "image/png"
+      : null;
   const mime = file.type.toLowerCase();
-  return extension &&
-    ["", "application/octet-stream", "application/pdf"].includes(mime)
+  return mimeType && ["", "application/octet-stream", mimeType].includes(mime)
     ? null
     : "PRESENTATION_FILE_TYPE";
 }
