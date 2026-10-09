@@ -31,6 +31,7 @@ export const navigationData: NavItem[] = [
         labelKey: "acceptedAbstractsAnnouncement",
         href: "/approved-abstracts",
       },
+      { labelKey: "presentationTemplates", href: "/presentation-templates" },
     ],
   },
   {

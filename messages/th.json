@@ -139,6 +139,58 @@
     "imageUnavailable": "ไม่มีรูป",
     "serverTime": "วันที่สิทธิ์วันนี้: {date}"
   },
+  "presentationTemplates": {
+    "title1": "แม่แบบ",
+    "title2": "การนำเสนอ",
+    "subtitle": "สำหรับผลงาน Oral และ Poster ในงาน PRIS 2026",
+    "types": "ประเภทการนำเสนอ",
+    "preparation": "ข้อแนะนำในการเตรียมผลงาน",
+    "slidePreview": "ตัวอย่างแม่แบบ PowerPoint",
+    "slideAlt": "{label} จากแม่แบบต้นฉบับ สไลด์ {number}",
+    "previewLabels": {
+      "cover": "หน้าปก",
+      "dark": "พื้นดำ",
+      "color": "พื้นสี",
+      "blank": "พื้นว่าง",
+      "guidance": "ข้อแนะนำ"
+    },
+    "posterPreview": "เอกสารแนะนำจาก Poster.pdf",
+    "posterAlt": "เอกสาร Poster.pdf ต้นฉบับ พร้อมส่วนหัว PRIS2026 และข้อแนะนำในการจัดทำโปสเตอร์",
+    "oralCaption": "ตัวอย่างจากแม่แบบต้นฉบับ ข้อความงานวิจัยเป็นข้อความจำลอง",
+    "posterCaption": "เอกสารแนะนำต้นฉบับ ผลงานโปสเตอร์ใช้อัตราส่วน 9:16",
+    "openSlides": "ขยายตัวอย่าง PowerPoint",
+    "openPoster": "ขยายตัวอย่าง Poster",
+    "closePreview": "ปิดตัวอย่าง",
+    "download": "ดาวน์โหลดแม่แบบ {type}",
+    "files": "ไฟล์ในชุดแม่แบบ",
+    "fileCount": "{count} ไฟล์",
+    "related": "ข้อมูลที่เกี่ยวข้องกับบทคัดย่อ",
+    "acceptedAbstracts": "ประกาศผลงานที่ผ่านการคัดเลือก",
+    "fileLabels": {
+      "slides": "แม่แบบ PowerPoint พร้อมตัวอย่างรูปแบบสไลด์",
+      "header": "ภาพส่วนหัวสำหรับการนำเสนอจากไฟล์ต้นฉบับ",
+      "footer": "ภาพส่วนท้ายสำหรับการนำเสนอจากไฟล์ต้นฉบับ",
+      "posterGuide": "ตัวอย่างโปสเตอร์และข้อแนะนำในการจัดทำ"
+    },
+    "oral": {
+      "title": "นำเสนอแบบปากเปล่า",
+      "description": "แม่แบบ PowerPoint พร้อมหน้าปก พื้นหลัง และตัวอย่างการจัดวางเนื้อหาในรูปแบบ PRIS 2026",
+      "slides": "เนื้อหาทั้งหมดไม่เกิน 10 สไลด์",
+      "images": "รูปภาพประกอบ 1–2 รูป",
+      "duration": "นำเสนอไม่เกิน 10 นาที",
+      "questions": "ซักถามไม่เกิน 5 นาที",
+      "package": "PowerPoint (.pptx) พร้อมภาพส่วนหัวและส่วนท้าย (.png)"
+    },
+    "poster": {
+      "title": "นำเสนอแบบโปสเตอร์",
+      "description": "ภาพส่วนหัว PRIS 2026 และเอกสาร PDF ต้นฉบับ พร้อมข้อแนะนำในการจัดทำโปสเตอร์",
+      "ratio": "แนวตั้ง อัตราส่วน 9:16 หรือขนาด 18 × 32 ซม.",
+      "margins": "ส่งออกเป็น PDF โดยไม่เว้นขอบกระดาษหรือขอบขาว",
+      "images": "รูปภาพประกอบไม่เกิน 3 รูป",
+      "header": "ใช้ภาพส่วนหัว Poster Header.png ที่แนบมา",
+      "package": "เอกสารแนะนำโปสเตอร์ (.pdf) พร้อมภาพส่วนหัว (.png)"
+    }
+  },
   "common": {
     "home": "หน้าแรก",
     "innovationWork": "ผลงานนวัตกรรม",
@@ -149,6 +201,7 @@
     "abstracts": "บทคัดย่อ",
     "callForAbstracts": "เปิดรับบทคัดย่อ",
     "abstractGuideline": "คำแนะนำบทคัดย่อ",
+    "presentationTemplates": "แม่แบบการนำเสนอผลงาน",
     "approvedPosterAbstracts": "บทคัดย่อที่ได้รับการอนุมัติ",
     "acceptedAbstractsAnnouncement": "ประกาศผลการคัดเลือก",
     "registration": "ลงทะเบียน",

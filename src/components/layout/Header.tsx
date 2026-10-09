@@ -65,6 +65,7 @@ export default function Header() {
     "/agenda",
     "/abstract-submission",
     "/presentation-submission",
+    "/presentation-templates",
     "/about",
     "/call-for-abstracts",
     "/welcome-messages",

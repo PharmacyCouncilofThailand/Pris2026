@@ -139,6 +139,58 @@
     "imageUnavailable": "No image",
     "serverTime": "Today's entitlement date: {date}"
   },
+  "presentationTemplates": {
+    "title1": "Presentation",
+    "title2": "Templates",
+    "subtitle": "Oral and Poster presentation materials for PRIS 2026",
+    "types": "Presentation type",
+    "preparation": "Preparation guidelines",
+    "slidePreview": "PowerPoint template preview",
+    "slideAlt": "{label} from the original template, slide {number}",
+    "previewLabels": {
+      "cover": "Cover",
+      "dark": "Dark",
+      "color": "Color",
+      "blank": "Blank",
+      "guidance": "Guidance"
+    },
+    "posterPreview": "Poster.pdf guidance sheet",
+    "posterAlt": "Original Poster.pdf guidance sheet with the PRIS2026 header and poster preparation instructions",
+    "oralCaption": "Original template samples. Research text is illustrative.",
+    "posterCaption": "Original guidance sheet. Final poster format: 9:16.",
+    "openSlides": "Expand PowerPoint preview",
+    "openPoster": "Expand Poster preview",
+    "closePreview": "Close preview",
+    "download": "Download {type} template",
+    "files": "Files in this template",
+    "fileCount": "{count} files",
+    "related": "Related abstract resources",
+    "acceptedAbstracts": "Announcement of selected presentations",
+    "fileLabels": {
+      "slides": "PowerPoint template with sample slide layouts",
+      "header": "Original presentation header image",
+      "footer": "Original presentation footer image",
+      "posterGuide": "Poster example and preparation guidelines"
+    },
+    "oral": {
+      "title": "Oral presentation",
+      "description": "PowerPoint template with cover, backgrounds, and sample content layouts in the PRIS 2026 identity.",
+      "slides": "No more than 10 content slides",
+      "images": "1-2 supporting images",
+      "duration": "Presentation: no more than 10 minutes",
+      "questions": "Questions: no more than 5 minutes",
+      "package": "PowerPoint (.pptx) and header/footer images (.png)"
+    },
+    "poster": {
+      "title": "Poster presentation",
+      "description": "Original PRIS 2026 header and a PDF guidance sheet for preparing your poster.",
+      "ratio": "Portrait format: 9:16 or 18 × 32 cm",
+      "margins": "Export to PDF with no margins or white borders",
+      "images": "No more than 3 supporting images",
+      "header": "Use the supplied Poster Header.png",
+      "package": "Poster guidance sheet (.pdf) and header image (.png)"
+    }
+  },
   "common": {
     "home": "Home",
     "innovationWork": "Innovation Work",
@@ -149,6 +201,7 @@
     "abstracts": "Abstracts",
     "callForAbstracts": "Call for Abstracts",
     "abstractGuideline": "Abstract Guideline",
+    "presentationTemplates": "Presentation Templates",
     "approvedPosterAbstracts": "Approved Abstracts",
     "acceptedAbstractsAnnouncement": "Announcement of Results",
     "registration": "Registration",
