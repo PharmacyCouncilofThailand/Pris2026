@@ -28,7 +28,10 @@ import {
   filterAcceptedAbstracts,
 } from "@/lib/acceptedAbstractsFilter";
 
-const approvedAbstractsPdfUrl = "/documents/approved-abstracts-round-1.pdf";
+const approvedAbstractsPdfUrls = {
+  "1": "/documents/approved-abstracts-round-1.pdf",
+  "2": "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Completed%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%9C%E0%B8%A5%20PRIS2026%20Presentation%20%E0%B8%A3%E0%B8%AD%E0%B8%9A%E0%B8%97%E0%B8%B5%E0%B9%88%202.pdf",
+};
 const ITEMS_PER_PAGE = 10;
 
 export default function ApprovedAbstractsPage() {
@@ -62,7 +65,8 @@ export default function ApprovedAbstractsPage() {
   const [selectedType, setSelectedType] = useState<
     "all" | "oral" | "highlighted-poster" | "poster"
   >("all");
-  const [selectedRound, setSelectedRound] = useState<"1" | "2">("1");
+  const [selectedRound, setSelectedRound] = useState<"1" | "2">("2");
+  const approvedAbstractsPdfUrl = approvedAbstractsPdfUrls[selectedRound];
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -167,7 +171,7 @@ export default function ApprovedAbstractsPage() {
   const handleResetFilters = () => {
     setSearchQuery("");
     setSelectedType("all");
-    setSelectedRound("1");
+    setSelectedRound("2");
     setSelectedCategory("all");
     setCurrentPage(1);
   };
@@ -261,11 +265,15 @@ export default function ApprovedAbstractsPage() {
                 </span>
               </div>
               <h2 className="text-sm sm:text-lg md:text-xl font-bold text-slate-900 leading-snug">
-                {t("pdfDocumentTitle")}
+                {t("pdfDocumentTitle", { round: selectedRound })}
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 shrink-0 w-full sm:w-auto">
+            <div
+              role="group"
+              aria-label={t("pdfActionsLabel", { round: selectedRound })}
+              className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 shrink-0 w-full sm:w-auto"
+            >
               <a
                 href={approvedAbstractsPdfUrl}
                 target="_blank"
@@ -277,7 +285,9 @@ export default function ApprovedAbstractsPage() {
               </a>
               <a
                 href={approvedAbstractsPdfUrl}
-                download="approved-abstracts-round-1.pdf"
+                download={`approved-abstracts-round-${selectedRound}.pdf`}
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 px-3 sm:px-4 text-xs font-bold text-white transition active:scale-95 shadow-[0_4px_14px_rgba(249,115,22,0.35)]"
               >
                 <Download className="size-3.5" />
@@ -290,21 +300,13 @@ export default function ApprovedAbstractsPage() {
           {selectedRound === "1" ? (
             <div className="rounded-2xl bg-amber-50/80 border border-amber-300/90 px-4 sm:px-5 py-3 sm:py-3.5 flex items-start gap-2.5 sm:gap-3 text-xs sm:text-sm text-slate-800 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
               <AlertCircle className="size-4.5 text-amber-600 shrink-0 mt-0.5" />
-              <div className="leading-relaxed">
-                <strong className="font-bold text-amber-950 mr-1.5">
-                  {t("revisionDeadlineNote")} (ภายในวันที่ 15 กันยายน 2569 เวลา
-                  23:59 น.)
-                </strong>
-                <span className="text-slate-600">
-                  {t("pendingAnnouncementNote")}
-                </span>
-              </div>
+              <p className="leading-relaxed">{t("round1HistoricalDesc")}</p>
             </div>
-          ) : (
+          ) : loadState === "ready" && stats.all > 0 ? (
             <div className="rounded-2xl bg-slate-50 border border-slate-300 px-4 sm:px-5 py-3 sm:py-3.5 text-xs sm:text-sm text-slate-600 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-              {t("round2EmptyDesc")}
+              {t("round2PublishedDesc")}
             </div>
-          )}
+          ) : null}
 
           {/* ── Box C: Filter Hub (Tabs + Search + Category) ── */}
           <div className="bg-white rounded-2xl border border-slate-300 p-3.5 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] space-y-3.5 sm:space-y-4">

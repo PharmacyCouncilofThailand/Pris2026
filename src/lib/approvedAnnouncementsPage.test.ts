@@ -4,13 +4,16 @@ import { createRequire, Module } from "node:module";
 import type { EffectCallback, DependencyList } from "react";
 import type { ReactTestRenderer } from "react-test-renderer";
 import type { Announcement } from "../types/presentations";
+import { createTranslator } from "next-intl";
+import thMessages from "../../messages/th.json";
+import enMessages from "../../messages/en.json";
 
 const require = createRequire(import.meta.url);
 const testGlobal = globalThis as typeof globalThis & {
   IS_REACT_ACT_ENVIRONMENT?: boolean;
 };
 
-test("announcement reload clamps the last page after the API source shrinks", async () => {
+test("latest round selects its document and notice, resets filters, and clamps pagination after reload", async () => {
   const React = require("react") as typeof import("react");
   const { act, create } =
     require("react-test-renderer") as typeof import("react-test-renderer");
@@ -32,8 +35,9 @@ test("announcement reload clamps the last page after the API source shrinks", as
     categoryName: "Synthetic",
     submitterName: null,
     affiliation: null,
-    round: 1,
+    round: 2,
   }));
+  rows.push({ ...rows[0], id: 99, title: "Historical Round 1", round: 1 });
   let renderer: ReactTestRenderer | undefined;
   try {
     testGlobal.IS_REACT_ACT_ENVIRONMENT = true;
@@ -63,6 +67,68 @@ test("announcement reload clamps the last page after the API source shrinks", as
       renderer = create(React.createElement(Page));
     });
     assert.ok(renderer);
+    const pdfUrl =
+      "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Completed%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%9C%E0%B8%A5%20PRIS2026%20Presentation%20%E0%B8%A3%E0%B8%AD%E0%B8%9A%E0%B8%97%E0%B8%B5%E0%B9%88%202.pdf";
+    const pdfLinks = () => renderer!.root.findAllByType("a");
+    assert.equal(pdfLinks().length, 2);
+    assert.ok(pdfLinks().every((node) => node.props.href === pdfUrl));
+    assert.equal(
+      pdfLinks()[1].props.download,
+      "approved-abstracts-round-2.pdf",
+    );
+    assert.ok(
+      renderer.root
+        .findAllByType("div")
+        .some((node) => node.children.includes("round2PublishedDesc")),
+    );
+    assert.ok(
+      !renderer.root
+        .findAllByType("div")
+        .some((node) => node.children.includes("round2EmptyDesc")),
+    );
+    const round1 = renderer.root
+      .findAllByType("button")
+      .find((node) => node.children.includes("filterRound1"));
+    assert.ok(round1);
+    await act(async () => {
+      round1.props.onClick();
+    });
+    assert.equal(renderer.root.findAllByType("article").length, 1);
+    assert.ok(
+      renderer.root
+        .findAllByType("article")[0]
+        .findAllByType("h2")[0]
+        .children.includes("Historical Round 1"),
+    );
+    assert.ok(
+      pdfLinks().every(
+        (node) =>
+          node.props.href === "/documents/approved-abstracts-round-1.pdf",
+      ),
+    );
+    assert.equal(
+      pdfLinks()[1].props.download,
+      "approved-abstracts-round-1.pdf",
+    );
+    assert.ok(
+      renderer.root
+        .findAllByType("p")
+        .some((node) => node.children.includes("round1HistoricalDesc")),
+    );
+    await act(async () => {
+      renderer!.root
+        .findByType("input")
+        .props.onChange({ target: { value: "no matching work" } });
+    });
+    const reset = renderer.root
+      .findAllByType("button")
+      .find((node) => node.children.includes("resetFilters"));
+    assert.ok(reset);
+    await act(async () => {
+      reset.props.onClick();
+    });
+    assert.ok(pdfLinks().every((node) => node.props.href === pdfUrl));
+    assert.equal(renderer.root.findAllByType("article").length, 10);
     const page3 = renderer.root
       .findAllByType("button")
       .find((node) => node.children.length === 1 && node.children[0] === "3");
@@ -93,6 +159,21 @@ test("announcement reload clamps the last page after the API source shrinks", as
         .children.includes("Synthetic 1"),
     );
     assert.equal(renderer.root.findAllByType("nav").length, 0);
+    rows = [{ ...rows[0], round: 1 }];
+    await act(async () => {
+      reloadEffect!();
+    });
+    assert.equal(renderer.root.findAllByType("article").length, 0);
+    assert.ok(
+      renderer.root
+        .findAllByType("h2")
+        .some((node) => node.children.includes("round2EmptyTitle")),
+    );
+    assert.ok(
+      !renderer.root
+        .findAllByType("div")
+        .some((node) => node.children.includes("round2PublishedDesc")),
+    );
     if (typeof replay.cleanup === "function") replay.cleanup();
   } finally {
     if (renderer) await act(async () => renderer?.unmount());
@@ -104,5 +185,26 @@ test("announcement reload clamps the last page after the API source shrinks", as
     else delete require.cache[intlPath];
     if (previousHero) require.cache[heroPath] = previousHero;
     else delete require.cache[heroPath];
+  }
+});
+
+test("both locales interpolate document rounds and describe the current and historical announcements", () => {
+  for (const [locale, messages] of [
+    ["th", thMessages],
+    ["en", enMessages],
+  ] as const) {
+    const t = createTranslator({
+      locale,
+      messages,
+      namespace: "approvedAbstracts",
+    });
+    for (const round of ["1", "2"]) {
+      assert.ok(t("pdfDocumentTitle", { round }).includes(round));
+      assert.ok(t("pdfActionsLabel", { round }).includes(round));
+    }
+    assert.ok(t("round2PublishedDesc").includes("1"));
+    assert.ok(t("round1HistoricalDesc").includes("2"));
+    assert.ok(t("desc").includes("2"));
+    assert.ok(!t("round2EmptyDesc").includes("30"));
   }
 });
