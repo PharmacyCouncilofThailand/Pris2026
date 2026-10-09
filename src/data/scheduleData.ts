@@ -527,8 +527,8 @@ const day1Events = [
         roleTh: "ผู้ดำเนินรายการ",
       },
       {
-        name: "ภก.พงษ์ศิวะ ภู่นอก (Assistant Secretary-General, Pharmacy Council)",
-        nameTh: "ภก.พงษ์ศิวะ ภู่นอก (ผู้ช่วยเลขาธิการ สภาเภสัชกรรม)",
+        name: "ภก.พงษ์ศิวะ กู่นอก (Assistant Secretary-General, Pharmacy Council)",
+        nameTh: "ภก.พงษ์ศิวะ กู่นอก (ผู้ช่วยเลขาธิการ สภาเภสัชกรรม)",
         role: "Moderator",
         roleTh: "ผู้ดำเนินรายการ",
       },

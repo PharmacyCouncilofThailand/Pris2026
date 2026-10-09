@@ -64,7 +64,7 @@ test("Day1 Jupiter 11-13 corrections retain organizers and separate moderator ro
   assert.equal(panel.moderators.length, 2);
   assert.equal(
     panel.moderators[1].nameTh,
-    "ภก.พงษ์ศิวะ ภู่นอก (ผู้ช่วยเลขาธิการ สภาเภสัชกรรม)",
+    "ภก.พงษ์ศิวะ กู่นอก (ผู้ช่วยเลขาธิการ สภาเภสัชกรรม)",
   );
 });
 
