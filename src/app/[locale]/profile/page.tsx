@@ -44,6 +44,7 @@ interface ReceiptTicketInfo {
   eventName: string;
   regCode: string;
   ticketName: string;
+  paidAmount: string | null;
   receiptUrl: string | null;
 }
 
@@ -227,6 +228,8 @@ export default function ProfilePage() {
   }, [token]);
 
   useEffect(() => {
+    setReceiptTicket(null);
+    setReceiptLoading(Boolean(token && EVENT_CODE));
     if (!token || !EVENT_CODE) return;
 
     let cancelled = false;
@@ -237,7 +240,14 @@ export default function ProfilePage() {
       .then((data) => {
         if (cancelled || !data.success || !Array.isArray(data.data)) return;
         const currentEventTicket = data.data.find(
-          (ticket: ReceiptTicketInfo) => ticket.eventCode === EVENT_CODE,
+          (ticket: ReceiptTicketInfo) => {
+            const paidAmount = Number(ticket.paidAmount);
+            return (
+              ticket.eventCode === EVENT_CODE &&
+              Number.isFinite(paidAmount) &&
+              paidAmount > 0
+            );
+          },
         );
         setReceiptTicket(currentEventTicket ?? null);
       })
@@ -364,6 +374,11 @@ export default function ProfilePage() {
   const org = profileData.institution || profileData.university || null;
   const statusBadge = getStatusBadge(t, profileData.status);
   const memberCode = registration?.regCode ?? "—";
+  const showReceipt =
+    !registrationLoading &&
+    registration?.isRegistered &&
+    !receiptLoading &&
+    receiptTicket !== null;
 
   return (
     <main
@@ -642,7 +657,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {!registrationLoading && registration?.isRegistered && (
+            {showReceipt && (
               <section className="w-full overflow-hidden rounded-[2rem] border border-slate-200/70 bg-white shadow-lg shadow-slate-200/40">
                 <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px]">
                   <div className="p-7 md:p-8 lg:p-9">
@@ -664,12 +679,7 @@ export default function ProfilePage() {
                         </div>
                       </div>
 
-                      {receiptLoading ? (
-                        <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-slate-500">
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          {t("receipt.loading")}
-                        </span>
-                      ) : receiptTicket?.receiptUrl ? (
+                      {receiptTicket?.receiptUrl ? (
                         <span className="inline-flex w-fit items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2 text-[10px] font-black uppercase tracking-[1.5px] text-emerald-700">
                           <CheckCircle2 className="h-3.5 w-3.5" />
                           {t("receipt.ready")}
@@ -729,12 +739,7 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="mt-7">
-                      {receiptLoading ? (
-                        <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 text-[11px] font-black uppercase tracking-[1.5px] text-slate-300">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          {t("receipt.loading")}
-                        </div>
-                      ) : receiptTicket?.receiptUrl ? (
+                      {receiptTicket?.receiptUrl ? (
                         <a
                           href={receiptTicket.receiptUrl}
                           target="_blank"
