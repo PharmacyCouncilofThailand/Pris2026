@@ -149,8 +149,8 @@ export default function PresentationTemplatesPage() {
                     <ul className={styles.guidelines}>
                       {(isOral
                         ? ([
-                            { Icon: Scan, key: "poster.ratio" },
-                            { Icon: Maximize2, key: "poster.margins" },
+                            { Icon: Scan, key: "oral.ratio" },
+                            { Icon: Maximize2, key: "oral.margins" },
                             { Icon: Layers, key: "oral.slides" },
                             { Icon: Images, key: "oral.images" },
                             { Icon: Clock3, key: "oral.duration" },
