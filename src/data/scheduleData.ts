@@ -336,28 +336,44 @@ const day1Events = [
     description: "6 presentations selected",
     descriptionTh: "คัดเลือก 6 ผลงาน",
   },
-  day1Event(
-    1012,
-    "12:00 – 12:30",
-    "Lunch Symposium 1",
-    "Lunch Symposium 1",
-    "JUPITER 4-7",
-    "ห้อง JUPITER 4-7",
-    "Lunch",
-    "บรรยาย",
-    "JUPITER 4-7",
-  ),
-  day1Event(
+  {
+    ...day1Event(
+      1012,
+      "12:00 – 12:30",
+      "Lunch Precision Diagnostics in Action: Integrating Pharmacogenomics HLA Genotyping and POCT for Personalized NCD Care",
+      "Lunch Precision Diagnostics in Action: Integrating Pharmacogenomics HLA Genotyping and POCT for Personalized NCD Care",
+      "JUPITER 4-7",
+      "ห้อง JUPITER 4-7",
+      "Lunch",
+      "บรรยาย",
+      "JUPITER 4-7",
+    ),
+    speakers: [
+      {
+        name: "Professor Dr. Chonlaphat Sukasem (Faculty of Medicine Ramathibodi Hospital, Mahidol University)",
+        nameTh: "ศาสตราจารย์ ดร. เภสัชกรชลภัทร สุขเกษม (คณะแพทยศาสตร์โรงพยาบาลรามาธิบดี มหาวิทยาลัยมหิดล)",
+      },
+    ],
+  },
+  {
+  ...day1Event(
     1013,
     "12:30 – 13:00",
-    "Lunch Symposium 2",
-    "Lunch Symposium 2",
+    "5 Things Pharmacists Must Not Miss When Selecting Medications for Dizziness and Vertigo",
+    "5 สิ่งที่เภสัชกรห้ามพลาด ในการเลือกยารักษาอาการเวียนศีรษะ บ้านหมุน",
     "JUPITER 4-7",
     "ห้อง JUPITER 4-7",
     "Lunch",
     "บรรยาย",
     "JUPITER 4-7",
   ),
+      speakers: [
+      {
+        name: "Asst. Prof. Dr. Pharmacist Thanompong Sathienluckana (Faculty of Pharmacy, Siam University)",
+        nameTh: "ผศ.ดร.ภก. ถนอมพงษ์ เสถียรลัคนา (คณะเภสัชศาสตร์ มหาวิทยาลัยสยาม)",
+      },
+    ],
+},
   {
     ...day1Event(
       1014,
@@ -894,29 +910,26 @@ const day2Events = [
       },
     ],
   },
-  day1Event(
-    207,
-    "12:00 – 12:30",
-    "Lunch Symposium 1",
-    "Lunch Symposium 1",
-    "JUPITER 4-7",
-    "ห้อง JUPITER 4-7",
-    "Lunch",
-    "บรรยาย",
-    "JUPITER 4-7",
-  ),
-  day1Event(
+  {
+    ...day1Event(
     208,
     "12:30 – 13:00",
-    "Lunch Symposium 2",
-    "Lunch Symposium 2",
+    "The Evolution of COCs: Unlocking the Clinical Benefits of E4/DRSP on VTE risk, Metabolism, and Breast Tissue",
+    "The Evolution of COCs: Unlocking the Clinical Benefits of E4/DRSP on VTE risk, Metabolism, and Breast Tissue",
     "JUPITER 4-7",
     "ห้อง JUPITER 4-7",
     "Lunch",
     "บรรยาย",
     "JUPITER 4-7",
   ),
-  {
+    speakers: [
+      {
+        name: "Dr. Pharmacist Ananchai Assawamakin",
+        nameTh: "ดร.ภก.อนันต์ชัย อัศวเมฆิน",
+      },
+    ],
+},
+{
     ...day1Event(
       209,
       "13:00 – 14:00",
