@@ -807,7 +807,7 @@
     "joinAsHealthHack": "Register as HealthHack",
     "joinAsBooth": "Register as Booth",
     "specialInstitution": "School / University / Institution",
-    "boothName": "Booth name",
+    "boothName": "Event booth",
     "healthHackGroup": "Education level",
     "healthHackGrade": "Grade",
     "selectHealthHackGrade": "Select grade",
@@ -937,7 +937,19 @@
     "invalidTokenDesc": "This password reset link is invalid or has expired. Please request a new one.",
     "requestNewLink": "Request New Link",
     "passwordTooShort": "Password must be at least 6 characters.",
-    "missingToken": "No reset token provided. Please use the link from your email."
+    "missingToken": "No reset token provided. Please use the link from your email.",
+    "selectBooth": "Select a Booth",
+    "boothCouponTitle": "Note: meal coupons per booth",
+    "boothCouponCount": "{count} coupons",
+    "boothsRetry": "Retry",
+    "boothsEmpty": "No Booths are available for this event",
+    "boothsLoading": "Loading Booths",
+    "boothTypes": {
+      "symposium": "Symposium",
+      "standard": "Standard",
+      "premium": "Premium"
+    },
+    "boothsLoadFailed": "Unable to load Booths"
   },
   "abstractsConfirm": {
     "loading": "Validating your confirmation link…",
@@ -1387,5 +1399,13 @@
     "downloadPosterTemplate": "Download Poster Template (.ZIP)",
     "pageRuleOral": "a valid page count",
     "pageRulePoster": "exactly 1 page"
+  },
+  "booth": {
+    "retry": "Retry",
+    "eligible": "Eligible for a meal coupon",
+    "overQuota": "No meal coupon entitlement (quota reached)",
+    "pending": "No qualifying ticket confirmed yet",
+    "error": "Unable to load eligibility",
+    "loading": "Loading Booth information"
   }
 }

@@ -8,6 +8,7 @@ import styles from "./ticket.module.css";
 import { Link, useRouter } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { loadEntryTickets, type EntryTicket } from "@/lib/entryTicket";
+import BoothMembershipNote from "@/components/booths/BoothMembershipNote";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
@@ -227,8 +228,10 @@ export default function TicketPage() {
                     <dt className="text-[clamp(10px,2.9cqw,12px)] font-bold text-zinc-500">
                       TIER · {t("type")}
                     </dt>
-                    <dd className="mt-1 inline-block max-w-full break-words rounded-sm bg-[#ea580c] px-2 py-1 text-xs font-extrabold uppercase text-white">
-                      {ticket.ticketName}
+                    <dd className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="inline-block max-w-full break-words rounded-sm bg-[#ea580c] px-2 py-1 text-xs font-extrabold uppercase text-white">
+                        {ticket.ticketName}
+                      </span>
                     </dd>
                   </div>
                   <div className="min-w-0 border-l-2 border-zinc-200 pl-1.5">
@@ -240,6 +243,14 @@ export default function TicketPage() {
                     </dd>
                   </div>
                 </dl>
+                {user?.role === "booth" && (
+                  <BoothMembershipNote
+                    api={API_URL}
+                    eventCode={EVENT_CODE || ""}
+                    eventId={ticket.eventId}
+                    variant="ticket"
+                  />
+                )}
               </section>
               <div
                 aria-hidden="true"
