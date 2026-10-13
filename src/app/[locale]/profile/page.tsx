@@ -29,6 +29,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations, useLocale } from "next-intl";
 import AbstractTracker from "@/components/profile/AbstractTracker";
+import BoothMembershipNote from "@/components/booths/BoothMembershipNote";
 import { REGISTRATION_OPEN } from "@/lib/registrationGate";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
@@ -535,20 +536,11 @@ export default function ProfilePage() {
                           </div>
                         </div>
                       )}
-                    {profileData.role === "booth" && profileData.boothName && (
-                      <div className="flex items-center gap-4 border-l-2 border-slate-200 pl-4 py-0.5">
-                        <div className="w-10 h-10 rounded-full bg-slate-50 border border-slate-100 shadow-sm flex items-center justify-center shrink-0">
-                          <Building2 className="w-4 h-4 text-slate-600" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
-                            {ta("boothName")}
-                          </p>
-                          <p className="text-sm md:text-base font-semibold text-slate-800 tracking-wide">
-                            {profileData.boothName}
-                          </p>
-                        </div>
-                      </div>
+                    {profileData.role === "booth" && (
+                      <BoothMembershipNote
+                        api={API_URL}
+                        eventCode={EVENT_CODE || ""}
+                      />
                     )}
                   </div>
                 </div>

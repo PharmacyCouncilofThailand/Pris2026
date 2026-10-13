@@ -2,12 +2,14 @@
 
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import Image from "next/image";
-import { ArrowLeft, ChevronDown } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { useLocale, useTranslations } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
+import BoothSelector from "./BoothSelector";
+import SignupDropdown from "./SignupDropdown";
 import {
   eventReturnQuery,
   normalizeLocalizedRedirectPath,
@@ -24,111 +26,6 @@ const inputClass =
   "w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100";
 const labelClass = "block text-sm font-bold text-gray-900 mb-2";
 
-function EducationDropdown({
-  id,
-  label,
-  placeholder,
-  value,
-  options,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  placeholder: string;
-  value: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    const closeOutside = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener("mousedown", closeOutside);
-    return () => document.removeEventListener("mousedown", closeOutside);
-  }, []);
-  return (
-    <div
-      className="relative"
-      ref={rootRef}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
-      }}
-      onKeyDown={(event) => {
-        if (event.key === "Escape") {
-          setOpen(false);
-          triggerRef.current?.focus();
-        }
-        if (open && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
-          event.preventDefault();
-          const buttons = Array.from(
-            event.currentTarget.querySelectorAll<HTMLButtonElement>(
-              '[role="option"]',
-            ),
-          );
-          const index = buttons.indexOf(
-            document.activeElement as HTMLButtonElement,
-          );
-          buttons[
-            (index + (event.key === "ArrowDown" ? 1 : -1) + buttons.length) %
-              buttons.length
-          ]?.focus();
-        }
-      }}
-    >
-      <label className={labelClass} htmlFor={id}>
-        {label} <span className="text-red-500">*</span>
-      </label>
-      <button
-        ref={triggerRef}
-        id={id}
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        aria-controls={`${id}-options`}
-        onClick={() => setOpen(!open)}
-        className={`w-full text-left bg-[#f8f9fc] border rounded-2xl py-3.5 px-5 text-sm font-medium outline-none transition-all flex items-center justify-between focus:border-gray-200 focus:ring-4 focus:ring-gray-100 ${open ? "bg-white border-gray-200 ring-4 ring-gray-100" : "border-transparent"} ${value ? "text-gray-900" : "text-gray-400"}`}
-      >
-        <span>
-          {options.find((option) => option.value === value)?.label ||
-            placeholder}
-        </span>
-        <ChevronDown
-          aria-hidden="true"
-          className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      {open && (
-        <div
-          id={`${id}-options`}
-          role="listbox"
-          aria-labelledby={id}
-          className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150"
-        >
-          {options.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              role="option"
-              aria-selected={value === option.value}
-              onClick={() => {
-                onChange(option.value);
-                setOpen(false);
-                triggerRef.current?.focus();
-              }}
-              className={`w-full text-left px-5 py-3 text-sm font-medium transition-colors focus:bg-gray-100 focus:text-gray-900 outline-none ${value === option.value ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-[#f8f9fc]"}`}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export default function SpecialRoleSignUpForm({
   accountType,
 }: {
@@ -144,6 +41,7 @@ export default function SpecialRoleSignUpForm({
   const [group, setGroup] = useState<HealthHackGroup>("");
   const [grade, setGrade] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [boothsReady, setBoothsReady] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
@@ -169,6 +67,11 @@ export default function SpecialRoleSignUpForm({
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    if (!isHealthHack && (!boothsReady || !fd.get("boothId"))) {
+      toast.error(t("selectBooth"));
+      e.currentTarget.querySelector<HTMLButtonElement>("#boothId")?.focus();
+      return;
+    }
     if (fd.get("password") !== fd.get("confirmPassword")) {
       toast.error(t("passNotMatch"));
       return;
@@ -347,7 +250,7 @@ export default function SpecialRoleSignUpForm({
                       required
                     />
                   </div>
-                  <EducationDropdown
+                  <SignupDropdown
                     id="educationGroup"
                     label={t("healthHackGroup")}
                     placeholder={t("selectLevel")}
@@ -363,7 +266,7 @@ export default function SpecialRoleSignUpForm({
                     ]}
                   />
                   {secondaryGrades && (
-                    <EducationDropdown
+                    <SignupDropdown
                       key={group}
                       id="educationGrade"
                       label={t("healthHackGrade")}
@@ -399,19 +302,11 @@ export default function SpecialRoleSignUpForm({
                 </div>
               </div>
               {!isHealthHack && (
-                <div>
-                  <label className={labelClass} htmlFor="boothName">
-                    {t("boothName")} <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="boothName"
-                    name="boothName"
-                    className={inputClass}
-                    maxLength={255}
-                    placeholder={t("boothName")}
-                    required
-                  />
-                </div>
+                <BoothSelector
+                  api={API_URL}
+                  eventCode={EVENT_CODE}
+                  onReady={setBoothsReady}
+                />
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {(["password", "confirmPassword"] as const).map((name) => (
@@ -456,7 +351,7 @@ export default function SpecialRoleSignUpForm({
               <div className="pt-4 pb-2">
                 <button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || (!isHealthHack && !boothsReady)}
                   className="w-full bg-black hover:bg-gray-900 text-white font-bold text-base py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {isLoading ? t("creatingAcc") : t("createBtn")}
