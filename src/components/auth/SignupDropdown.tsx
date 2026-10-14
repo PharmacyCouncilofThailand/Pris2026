@@ -123,6 +123,10 @@ export default function SignupDropdown({
               type="button"
               role="option"
               aria-selected={value === option.value}
+              onMouseDown={(event) => {
+                // Safari can blur the focused option before click selects a value.
+                if (event.button === 0) event.preventDefault();
+              }}
               onClick={() => {
                 onChange(option.value);
                 setOpen(false);

@@ -443,7 +443,7 @@ export default function AgendaSchedule() {
               <>
                 <div className="relative hidden md:block">
                   <div
-                    className="schedule-scroll max-h-[80vh] overflow-auto overscroll-contain rounded-2xl border border-slate-200 bg-slate-50/50 shadow-inner focus-visible:outline-none"
+                    className="schedule-scroll max-h-[80vh] overflow-auto overscroll-x-contain overscroll-y-auto rounded-2xl border border-slate-200 bg-slate-50/50 shadow-inner focus-visible:outline-none"
                     tabIndex={0}
                   >
                     <div role="table" className="w-full">
