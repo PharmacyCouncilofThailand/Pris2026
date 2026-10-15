@@ -572,7 +572,7 @@
     {
       "id": "P07",
       "status": "passed",
-      "commit": null,
+      "commit": "dab98c7f66f591220e243215a5d2257f5d147b30",
       "tests": [
         {
           "command": "cart unit red before implementation",
@@ -697,9 +697,113 @@
     },
     {
       "id": "P08",
-      "status": "not_started",
+      "status": "pending_dependency",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "recipient unit red before implementation",
+          "status": "expected_failure_missing_module",
+          "proof": {
+            "path": ".merchandise-local/p08-unit-red.txt",
+            "sha256": "cf56037cc40f0d33a873e7e7afa68f2f7e2b76b3bb5f832c333570cb381f85af"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 139,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p08-all-tests.txt",
+            "sha256": "f442a728d9b0f8d931e3c3a107aff29dd3039f55458eb8b80015a7c132de2751"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p08-types-complete.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build with local fixture API origin, no env-file edits",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p08-build-complete.txt",
+            "sha256": "ac5388ca73d68740ed7dd6bee27b62515eb219c2c45a6f68183ec14565c198b7"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p08-lint-complete.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "impeccable detect recipient/checkout components/styles",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p08-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "production-build recipient/quote/layout, Chromium Firefox WebKit",
+          "passed": 21,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p08-browser-final.txt",
+            "sha256": "b5b237dd4f84cdd8f60737d13510678d0cba8d994bae14d068e7de1ea8dc1167"
+          }
+        }
+      ],
+      "proof": "recipient-quote-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p08-recipient-mobile.png",
+          "sha256": "fb8ad9f31a2c034f2031a43ad91a85ae2bb64350551e8d30ba2468e1061a33a5"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p08-recipient-tablet.png",
+          "sha256": "f5bb8ac52e83b5e6e7cd8dad93d53d692b1e22680cdb919fe7c3f20edcab53f3"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p08-recipient-desktop.png",
+          "sha256": "3f38110261f0e6ff3e8236d312dfa11b4e5ce5e6ad04c429872ad9bcb5d1fcd4"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p08-review-mobile.png",
+          "sha256": "11a72c57b156561376d00f0c5444a26d4aa21448d4cea131707ec3c3db4adb9f"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p08-review-desktop.png",
+          "sha256": "f4a00ac49e2727f380ad4b7121e49f5c67a0d2530424d14f8f78afc6eb1322b3"
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "P08-P09-CONFIRM",
+          "requires": "P09",
+          "status": "pending",
+          "reason": "Confirmation handler/order/QR belong to P09. Return to the real address→quote→one confirmed order→locked fields journey in all three engines before P10. Review confirmation remains disabled until wired."
+        }
+      ],
+      "notes": [
+        "Recipient, optional company/note and quote stay in component memory. No profile/address-book/browser-storage write. Actual R08 and server canonical prices/totals/BOM tested; no order created by P08.",
+        "Initial tablet field-clearance failure corrected with checkout-specific root scroll padding and native focus/scroll checks. Complete production browser suite then passed with no retries.",
+        "Five initial/final viewport captures inspected. Review confirmation is visibly gated pending P09, not claimed as a finished checkout or payment flow.",
+        "User explicitly permits this later-task dependency; return and record its passing test before P10. The P08 checkpoint is the commit containing this record; exact hash is recorded by P09.",
+        "API/Backoffice contracts, retained single database, real-provider User Test deferral and not_ready release gate unchanged."
+      ]
     },
     {
       "id": "P09",
@@ -738,5 +842,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T14:36:19.645Z"
+  "updatedAt": "2026-10-15T14:55:06.055Z"
 }

@@ -370,6 +370,10 @@ await withMerchandiseFixture(async (f) => {
             cartMutations,
             unitCount: r.json().data.unitCount,
             cart: r.json().data,
+            orderCount: Number(
+              (await f.sql`SELECT count(*) AS count FROM merch_orders`)[0]
+                .count,
+            ),
           };
         } else if (action === "closeStore") {
           f.setNow("2026-10-14T06:00:00Z");
