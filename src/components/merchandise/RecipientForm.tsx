@@ -1,0 +1,134 @@
+"use client";
+import { useLayoutEffect, useRef } from "react";
+import type { Recipient } from "@/types/merchandise";
+import type { RecipientErrors } from "@/lib/merchandiseRecipient";
+export default function RecipientForm({
+  value,
+  onChange,
+  onSubmit,
+  errors,
+  busy,
+  buyerEmail,
+  focusName,
+}: {
+  value: Recipient;
+  onChange(value: Recipient): void;
+  onSubmit(): void;
+  errors: RecipientErrors;
+  busy: boolean;
+  buyerEmail: string;
+  focusName: boolean;
+}) {
+  const form = useRef<HTMLFormElement>(null);
+  useLayoutEffect(() => {
+    if (focusName)
+      form.current
+        ?.querySelector<HTMLInputElement>("#recipient-fullName")
+        ?.focus();
+  }, [focusName]);
+  useLayoutEffect(() => {
+    if (Object.keys(errors).length)
+      form.current
+        ?.querySelector<HTMLElement>('[aria-invalid="true"]')
+        ?.focus();
+  }, [errors]);
+  const field = (
+    name: Exclude<keyof Recipient, "country">,
+    label: string,
+    autoComplete?: string,
+    multiline = false,
+    optional = false,
+    maxLength = 200,
+  ) => (
+    <div className={`merch-recipient-field merch-recipient-${name}`} key={name}>
+      <label htmlFor={`recipient-${name}`}>
+        {label}
+        {optional && <span> (ไม่บังคับ)</span>}
+      </label>
+      {multiline ? (
+        <textarea
+          id={`recipient-${name}`}
+          name={name}
+          value={value[name] ?? ""}
+          disabled={busy}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
+          required={!optional}
+          aria-invalid={Boolean(errors[name])}
+          aria-describedby={
+            errors[name] ? `recipient-${name}-error` : undefined
+          }
+          onChange={(e) => onChange({ ...value, [name]: e.target.value })}
+        />
+      ) : (
+        <input
+          id={`recipient-${name}`}
+          name={name}
+          value={value[name] ?? ""}
+          type={name === "phone" ? "tel" : "text"}
+          inputMode={
+            name === "postalCode"
+              ? "numeric"
+              : name === "phone"
+                ? "tel"
+                : "text"
+          }
+          disabled={busy}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
+          required={!optional}
+          aria-invalid={Boolean(errors[name])}
+          aria-describedby={
+            errors[name] ? `recipient-${name}-error` : undefined
+          }
+          onChange={(e) => onChange({ ...value, [name]: e.target.value })}
+        />
+      )}
+      {errors[name] && (
+        <p className="merch-recipient-error" id={`recipient-${name}-error`}>
+          {errors[name]}
+        </p>
+      )}
+    </div>
+  );
+  return (
+    <form
+      id="merch-recipient-form"
+      ref={form}
+      className="merch-recipient-form"
+      noValidate
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+    >
+      <p className="merch-recipient-intro">
+        ผู้รับเป็นคนละคนกับผู้ซื้อได้
+        <br />
+        ข้อมูลนี้ใช้เฉพาะคำสั่งซื้อนี้ ไม่เปลี่ยนข้อมูลบัญชีผู้ซื้อ
+      </p>
+      {Object.keys(errors).length > 0 && (
+        <div className="merch-cart-notice" role="alert">
+          กรุณาตรวจสอบข้อมูลผู้รับ ยังไม่ได้สร้างคำสั่งซื้อ
+          {errors.country && <p>{errors.country}</p>}
+        </div>
+      )}
+      <div className="merch-recipient-fields">
+        {field("fullName", "ชื่อ–นามสกุลผู้รับ", "name", false, false, 200)}
+        {field("phone", "เบอร์โทรผู้รับ", "tel", false, false, 30)}
+        {field("addressLine", "ที่อยู่", "street-address", true, false, 1000)}
+        {field("subdistrict", "ตำบล/แขวง", "address-level3")}
+        {field("district", "อำเภอ/เขต", "address-level2")}
+        {field("province", "จังหวัด", "address-level1")}
+        {field("postalCode", "รหัสไปรษณีย์", "postal-code", false, false, 5)}
+        {field("company", "ชื่อบริษัท", "organization", false, true, 300)}
+        {field("deliveryNote", "หมายเหตุจัดส่ง", "off", true, true, 1000)}
+      </div>
+      <p className="merch-cart-muted">
+        ประเทศ: ไทย · จัดส่งภายในประเทศเท่านั้น
+        <br />
+        ส่งรายละเอียดออเดอร์ไปยัง {buyerEmail}
+      </p>
+    </form>
+  );
+}
