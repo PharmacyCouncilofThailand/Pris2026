@@ -23,6 +23,7 @@ import {
 import type { CartDto } from "@/types/merchandise";
 import toast from "react-hot-toast";
 import { MerchandiseApiError } from "@/lib/merchandiseApi";
+import { clearOtherOrderRequests } from "@/lib/merchandiseOrderRequest";
 
 // Header is already mounted for every auth journey, including its null view on
 // login. Observe ownership here without modifying the incumbent AuthContext.
@@ -43,10 +44,13 @@ export function useMerchandiseSessionCleanup(buyerId: number | null) {
             window.localStorage.getItem("pris_token") ||
             window.sessionStorage.getItem("pris_token")
           ))
-      )
+      ) {
         clearPurchaseIntent(window.sessionStorage);
-      else if (buyerId !== null)
+        clearOtherOrderRequests(window.sessionStorage, buyerId);
+      } else if (buyerId !== null) {
         clearForeignPurchaseIntent(window.sessionStorage, buyerId);
+        clearOtherOrderRequests(window.sessionStorage, buyerId);
+      }
     } catch {
       /* Storage denial cannot authorize any cart write. */
     }
