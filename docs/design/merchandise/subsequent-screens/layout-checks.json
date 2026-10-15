@@ -1,0 +1,415 @@
+{
+  "kind": "static_reference_layout_only",
+  "functionalOrProviderTest": false,
+  "capturedReferences": 25,
+  "additionalBreakpointChecks": 30,
+  "checks": [
+    {
+      "id": "01-product-options",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "02-bundle",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "03-cart",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "04-cart-unavailable",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "05-recipient",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "06-recipient-error",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "07-review",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "08-confirm-unknown",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "09-qr-ready",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "10-qr-creating",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "11-qr-checking",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "12-payment-unknown",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "13-qr-expired-open",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "14-qr-expired-closed",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "15-paid",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "16-history",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "17-order-shipped",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "18-history-empty",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "19-product-no-options",
+      "device": "mobile",
+      "width": 390,
+      "scrollWidth": 390,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "05-recipient",
+      "device": "tablet",
+      "width": 834,
+      "scrollWidth": 834,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "07-review",
+      "device": "tablet",
+      "width": 834,
+      "scrollWidth": 834,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "01-product-options",
+      "device": "desktop",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "07-review",
+      "device": "desktop",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "09-qr-ready",
+      "device": "desktop",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": true,
+      "logo": true,
+      "cta": [
+        {
+          "height": 56,
+          "font": "19px",
+          "weight": "700"
+        }
+      ],
+      "brokenImages": 0,
+      "pageErrors": []
+    },
+    {
+      "id": "16-history",
+      "device": "desktop",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "font": true,
+      "logo": true,
+      "cta": [],
+      "brokenImages": 0,
+      "pageErrors": []
+    }
+  ]
+}

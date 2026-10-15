@@ -1,0 +1,32 @@
+{
+  "fonts": "Copied without modification from the existing locked Next build; Noto Sans Thai and Outfit already used by the application.",
+  "logoSource": "public/assets/Img/logo/Logo-Final .png",
+  "productImages": "None; reserved image slots only.",
+  "QR": "No payment QR or provider payload is included.",
+  "assets": [
+    {
+      "file": "assets/fonts/61a7a85bb72f3355-s.woff2",
+      "sha256": "fbba4ed12731d3f5d07b9235795df1b6d21e9bca38c7809028686bbbcdb339c0"
+    },
+    {
+      "file": "assets/fonts/7b0b24f36b1a6d0b.p.woff2",
+      "sha256": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12"
+    },
+    {
+      "file": "assets/fonts/98848575513c9742.woff2",
+      "sha256": "9e38b3f1575daba3435ef09d33a202585ed5bd204bd0a8c744955c750c2b9091"
+    },
+    {
+      "file": "assets/fonts/cc95fdb254242a42-s.p.woff2",
+      "sha256": "65739977a0441cf1408ec304e7ffee4fb72773c6599480595b30938d8f8165d9"
+    },
+    {
+      "file": "assets/fonts/f196b1e65fee88ed-s.p.woff2",
+      "sha256": "0558c7649eb1625372943ac6ec3f7bf672da383754dc22dc868d68e2b006526c"
+    },
+    {
+      "file": "assets/logo.png",
+      "sha256": "416c0ca04b1f370c42fabc6523600963cd09ece1b09cf3ef08474c3bbc3c1a9e"
+    }
+  ]
+}
