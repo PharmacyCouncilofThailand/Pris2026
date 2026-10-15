@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -76,39 +76,56 @@ const universitiesRow = [
   {
     id: 1,
     name: "มหาวิทยาลัยขอนแก่น",
-    logo: "/assets/Img/University/มหาวิทยาลัยขอนแก่น.png",
+    logo: "/assets/Img/University/pharmkku_logo-ขอนแก่น.png",
+    twClass: "scale-100",
   },
   {
     id: 2,
     name: "มหาวิทยาลัยเชียงใหม่",
-    logo: "/assets/Img/University/มหาวิทยาลัยเชียงใหม่.webp",
+    logo: "/assets/Img/University/คณะเภสัชศาสตร์ เชียงใหม่.png",
+    twClass: "scale-[1.05]",
   },
   {
     id: 3,
     name: "มหาวิทยาลัยนเรศวร",
-    logo: "/assets/Img/University/มหาวิทยาลัยนเรศวร.png",
+    logo: "/assets/Img/University/มหาวิทยาลัย นเรศวร คณะ Pharmacy_Naresuan.png",
+    twClass: "scale-[0.92]",
   },
   {
     id: 4,
-    name: "มหาวิทยาลัยบูรพา",
-    logo: "/assets/Img/University/มหาวิทยาลัยบูรพา.webp",
+    name: "มหาวิทยาลัยปทุมธานี",
+    logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.jpeg",
+    twClass: "scale-100",
   },
   {
     id: 5,
-    name: "มหาวิทยาลัยปทุมธานี",
-    logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.png",
+    name: "มหาวิทยาลัยสงขลานครินทร์",
+    logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.jpg",
+    twClass: "scale-100",
   },
   {
     id: 6,
-    name: "มหาวิทยาลัยรังสิต",
-    logo: "/assets/Img/University/มหาวิทยาลัยรังสิต_circle_white.png",
-    twClass: "scale-[1.1]",
+    name: "สถาบันวิทยาการประกอบการแห่งอโยธยา",
+    logo: "/assets/Img/University/สถาบันวิทยาการประกอบการแห่งอโยธยา.jpeg",
+    twClass: "scale-[1.02]",
   },
   {
     id: 7,
-    name: "มหาวิทยาลัยสงขลานครินทร์",
-    logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.png",
-    twClass: "scale-[1.3]",
+    name: "มหาวิทยาลัยบูรพา",
+    logo: "/assets/Img/University/BUU RxBUU_0 (2) (1).png",
+    twClass: "scale-[0.92]",
+  },
+  {
+    id: 8,
+    name: "มหาวิทยาลัยมหิดล",
+    logo: "/assets/Img/University/มหาวิทยาลัยมหิดล คณะเภสัชศาสตร์.jpg",
+    twClass: "scale-[0.92]",
+  },
+  {
+    id: 9,
+    name: "มหาวิทยาลัยรังสิต",
+    logo: "/assets/Img/University/รังสิต.jpg",
+    twClass: "scale-[0.88]",
   },
 ];
 
@@ -124,14 +141,14 @@ const sponsorsRow = [
     id: 2,
     name: "TILSNA",
     logo: "/assets/Img/sponsors/S__109420674.jpg",
-    twClass: "scale-100",
+    twClass: "scale-[1.3]",
     marginClass: "mx-6 sm:mx-9 md:mx-12",
   },
   {
     id: 3,
     name: "Novaceutical",
     logo: "/assets/Img/sponsors/Novaceutical.jpg",
-    twClass: "scale-[1.2]",
+    twClass: "scale-[1.45]",
     marginClass: "mx-6 sm:mx-9 md:mx-12",
   },
   {
@@ -150,78 +167,79 @@ const sponsorsRow = [
   },
   {
     id: 6,
-    name: "ห้าม้าโอสถ",
-    logo: "/assets/Img/sponsors/บริษัทห้าม้า โอสถ จำกัด.jpeg",
-    twClass: "scale-[1.2]",
-    marginClass: "mx-6 sm:mx-9 md:mx-12",
-  },
-  {
-    id: 7,
     name: "AstraZeneca",
-    logo: "/assets/Img/sponsors/บริษัท แอสตร้าเซนเนก้า (ประเทศไทย).webp",
-    twClass: "scale-[1.1]",
+    logo: "/assets/Img/sponsors/astrazeneca.png",
+    twClass: "scale-[1.6]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
   },
   {
-    id: 8,
+    id: 7,
     name: "GPO",
     logo: "/assets/Img/sponsors/gpo.png",
     twClass: "scale-[1.1]",
     marginClass: "mx-6 sm:mx-9 md:mx-12",
   },
   {
-    id: 9,
+    id: 8,
     name: "Telehealth Thailand",
     logo: "/assets/Img/sponsors/telehealth-thailand.png",
     twClass: "scale-[1.15]",
     marginClass: "mx-8 sm:mx-12 md:mx-15",
   },
   {
-    id: 10,
+    id: 9,
     name: "MP Group",
     logo: "/assets/Img/sponsors/mp-group.png",
-    twClass: "scale-[1.05]",
+    twClass: "scale-[1.5]",
     marginClass: "mx-8 sm:mx-11 md:mx-14",
   },
   {
-    id: 11,
+    id: 10,
     name: "NIA Academy",
     logo: "/assets/Img/sponsors/nia-academy.png",
     twClass: "scale-[1.15]",
     marginClass: "mx-8 sm:mx-12 md:mx-15",
   },
   {
-    id: 12,
+    id: 11,
     name: "Circlife Medical",
     logo: "/assets/Img/sponsors/circlife-medical.png",
     twClass: "scale-[1.45]",
     marginClass: "mx-8 sm:mx-11 md:mx-14",
   },
   {
-    id: 13,
+    id: 12,
     name: "OLIC",
-    logo: "/assets/Img/sponsors/olic.png",
-    twClass: "scale-[1.2]",
+    logo: "/assets/Img/sponsors/olic.jpg",
+    twClass: "scale-[1.15]",
+    marginClass: "mx-10 sm:mx-14 md:mx-18",
+    unconstrained: true,
+  },
+  {
+    id: 13,
+    name: "Abbott",
+    logo: "/assets/Img/sponsors/abbott.png",
+    twClass: "scale-[1.6]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
   },
   {
     id: 14,
-    name: "Abbott",
-    logo: "/assets/Img/sponsors/บริษัท แอ๊บบ๊อต ลาบอแรตอรีส จำกั.png",
-    twClass: "scale-[1.2]",
+    name: "BLC Bangkok",
+    logo: "/assets/Img/sponsors/BLC Bangkok.png",
+    twClass: "scale-[1.6]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
   },
   {
     id: 15,
     name: "Bangkok Lab and Cosmetic",
-    logo: "/assets/Img/sponsors/บริษัท บางกอกแล็ป แอนด์ คอสเมติก จำกัด (มหาชน).png",
+    logo: "/assets/Img/sponsors/bangkoklab.jpg",
     twClass: "scale-[1.2]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
   },
   {
     id: 16,
     name: "Nest Up",
-    logo: "/assets/Img/sponsors/บริษัท เนสท์ อัพ (ประเทศไทย) จำกัด.png",
+    logo: "/assets/Img/sponsors/NEST UP-FINAL-01_crop.png",
     twClass: "scale-[1.15]",
     marginClass: "mx-8 sm:mx-12 md:mx-15",
   },
@@ -241,17 +259,19 @@ const sponsorsRow = [
   },
   {
     id: 19,
-    name: "Ranbaxy",
-    logo: "/assets/Img/sponsors/บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด.jpg",
-    twClass: "scale-[1.65]",
-    marginClass: "mx-6 sm:mx-9 md:mx-12",
+    name: "Sun Pharma",
+    logo: "/assets/Img/sponsors/Sun Pharma.jpg",
+    twClass: "scale-[1.15]",
+    marginClass: "mx-8 sm:mx-11 md:mx-14",
+    unconstrained: true,
   },
   {
     id: 20,
     name: "ชุมชนเภสัชกรรม",
-    logo: "/assets/Img/sponsors/บริษัทชุมชนเภสัชกรรมจำกัด  (มหาชน).png",
-    twClass: "scale-[1.55]",
+    logo: "/assets/Img/sponsors/Chumchon_Rx_Final-05 - Haris Boonchuen.png",
+    twClass: "scale-[1.15]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
+    unconstrained: true,
   },
   {
     id: 21,
@@ -269,28 +289,28 @@ const sponsorsRow = [
   },
   {
     id: 23,
-    name: "ศิริราชบํารุงเวช",
-    logo: "/assets/Img/sponsors/บริษัทศิริราชบํารุงเวช จํากัด.png",
-    twClass: "scale-[1.5]",
-    marginClass: "mx-11 sm:mx-15 md:mx-19",
-  },
-  {
-    id: 24,
     name: "Innosus",
-    logo: "/assets/Img/sponsors/บริษัทอินโนซุส.png",
-    twClass: "scale-[2.75]",
+    logo: "/assets/Img/sponsors/innozus.png",
+    twClass: "scale-[1.4]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
   },
   {
-    id: 25,
+    id: 24,
     name: "Greater Mybacin",
-    logo: "/assets/Img/sponsors/บริษัทเกร๊ทเตอร์มายบาซิน จำกัด.png",
+    logo: "/assets/Img/sponsors/เกร๊ทเตอร์มายบาซิน จำกัด.jpg",
     twClass: "scale-[1.25]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
   },
   {
-    id: 26,
+    id: 25,
     name: "Aerocare",
+    logo: "/assets/Img/sponsors/aerocare.jpg",
+    twClass: "scale-[1.6]",
+    marginClass: "mx-10 sm:mx-14 md:mx-18",
+  },
+  {
+    id: 26,
+    name: "AeroCare Inpac Pharma",
     logo: "/assets/Img/sponsors/บริษัทแอโรแคร์จํากัด.png",
     twClass: "scale-[1.2]",
     marginClass: "mx-10 sm:mx-14 md:mx-18",
@@ -312,9 +332,76 @@ const sponsorsRow = [
   {
     id: 29,
     name: "Biogenetech",
-    logo: "/assets/Img/sponsors/บริษัทไบโอจีนีเทค.png",
-    twClass: "scale-100",
+    logo: "/assets/Img/sponsors/biogenetech.jpg",
+    twClass: "scale-[1.6]",
     marginClass: "mx-8 sm:mx-12 md:mx-15",
+  },
+  {
+    id: 30,
+    name: "Boehringer Ingelheim",
+    logo: "/assets/Img/sponsors/boeheringer.jpg",
+    twClass: "scale-[1.2]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+  },
+  {
+    id: 31,
+    name: "Gateway Healthcare",
+    logo: "/assets/Img/sponsors/gate way healthcare.png",
+    twClass: "scale-[1.2]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+  },
+  {
+    id: 32,
+    name: "GSK",
+    logo: "/assets/Img/sponsors/gsk.png",
+    twClass: "scale-[1.2]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+  },
+  {
+    id: 33,
+    name: "สวทช.",
+    logo: "/assets/Img/sponsors/สวทช.png",
+    twClass: "scale-[1.65]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+  },
+  {
+    id: 34,
+    name: "ห้องปฏิบัติการเภสัชพันธุศาสตร์",
+    logo: "/assets/Img/sponsors/ห้องปฏิบัติการเภสัชพันธุศาสตร์.png",
+    twClass: "scale-[1.7]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+  },
+  {
+    id: 35,
+    name: "Neocosmed",
+    logo: "/assets/Img/sponsors/บริษัท นีโอคอสเมด จำกัด.jpg",
+    twClass: "scale-[1.35]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+    unconstrained: true,
+  },
+  {
+    id: 36,
+    name: "UOB",
+    logo: "/assets/Img/sponsors/UOB_LOGO_800x800.png",
+    twClass: "scale-[1.15]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+    unconstrained: true,
+  },
+  {
+    id: 37,
+    name: "ศิริราชบำรุงเวช",
+    logo: "/assets/Img/sponsors/ศิริราชบำรุงเวช.png",
+    twClass: "scale-[1.15]",
+    marginClass: "mx-10 sm:mx-14 md:mx-18",
+    unconstrained: true,
+  },
+  {
+    id: 38,
+    name: "ห้าม้าโอสถ",
+    logo: "/assets/Img/sponsors/บจก.ห้าม้าโอสถ-พื้นเขียว_1_.jpg",
+    twClass: "scale-[1.15]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+    unconstrained: true,
   },
 ];
 
@@ -329,6 +416,34 @@ export default function SponsorSection() {
   const marqueeSponsors = [...sponsorsRow, ...sponsorsRow, ...sponsorsRow];
   const subtitleRef = useRef<HTMLDivElement>(null);
   const marqueeContainerRef = useRef<HTMLDivElement>(null);
+  const partnersRowRef = useRef<HTMLDivElement>(null);
+  const universitiesRowRef = useRef<HTMLDivElement>(null);
+  const sponsorsRowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Uniform linear velocity (pixels per second) across all 3 tracks
+    const SPEED_PX_PER_SEC = 50;
+
+    const syncSpeeds = () => {
+      [partnersRowRef, universitiesRowRef, sponsorsRowRef].forEach((ref) => {
+        if (ref.current) {
+          const oneSetDistance = ref.current.scrollWidth / 3;
+          if (oneSetDistance > 0) {
+            const duration = oneSetDistance / SPEED_PX_PER_SEC;
+            ref.current.style.animationDuration = `${duration.toFixed(2)}s`;
+          }
+        }
+      });
+    };
+
+    syncSpeeds();
+    const timer = setTimeout(syncSpeeds, 600);
+    window.addEventListener("resize", syncSpeeds);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", syncSpeeds);
+    };
+  }, []);
 
   useGSAP(
     () => {
@@ -377,7 +492,10 @@ export default function SponsorSection() {
         <div className="absolute inset-y-0 right-0 w-16 md:w-40 bg-gradient-to-l from-white to-transparent z-30 pointer-events-none" />
 
         {/* Row 1: Partners — GPU-accelerated scroll (Left) */}
-        <div className="flex w-max animate-partners-scroll items-center will-change-transform transform-gpu py-3 sm:py-4">
+        <div
+          ref={partnersRowRef}
+          className="flex w-max animate-partners-scroll items-center will-change-transform transform-gpu py-3 sm:py-4"
+        >
           {marqueePartners.map((sponsor, index) => (
             <div
               key={`p-${sponsor.id}-${index}`}
@@ -406,18 +524,21 @@ export default function SponsorSection() {
         </div>
 
         {/* Row 2: Universities — GPU-accelerated scroll (Right/Reverse) */}
-        <div className="flex w-max animate-universities-scroll items-center will-change-transform transform-gpu py-3 sm:py-4">
+        <div
+          ref={universitiesRowRef}
+          className="flex w-max animate-universities-scroll items-center will-change-transform transform-gpu py-3 sm:py-4"
+        >
           {marqueeUniversities.map((uni, index) => (
             <div
               key={`u-${uni.id}-${index}`}
-              className="mx-5 sm:mx-7 md:mx-9 flex items-center justify-center flex-shrink-0"
+              className="mx-7 sm:mx-10 md:mx-14 flex items-center justify-center flex-shrink-0"
             >
               <div className="h-14 sm:h-16 md:h-20 flex items-center justify-center p-1">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={uni.logo}
                   alt={uni.name}
-                  className={`h-full w-auto max-w-[120px] sm:max-w-[150px] md:max-w-[180px] object-contain ${uni.twClass || ""}`}
+                  className={`h-full w-auto max-w-[140px] sm:max-w-[180px] md:max-w-[220px] object-contain ${uni.twClass || ""}`}
                   loading="lazy"
                 />
               </div>
@@ -435,23 +556,39 @@ export default function SponsorSection() {
         </div>
 
         {/* Row 3: Sponsors — GPU-accelerated scroll (Left) */}
-        <div className="flex w-max animate-sponsors-scroll items-center will-change-transform transform-gpu py-3 sm:py-4">
-          {marqueeSponsors.map((sponsor, index) => (
-            <div
-              key={`s-${sponsor.id}-${index}`}
-              className={`${sponsor.marginClass || "mx-8 sm:mx-12 md:mx-16"} flex items-center justify-center flex-shrink-0`}
-            >
-              <div className="h-10 sm:h-12 md:h-14 flex items-center justify-center p-1">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  className={`h-full w-auto max-w-[130px] sm:max-w-[160px] md:max-w-[190px] object-contain ${sponsor.twClass || ""}`}
-                  loading="lazy"
-                />
+        <div
+          ref={sponsorsRowRef}
+          className="flex w-max animate-sponsors-scroll items-center will-change-transform transform-gpu py-3 sm:py-4"
+        >
+          {marqueeSponsors.map((sponsor, index) => {
+            const isUnconstrained = (sponsor as { unconstrained?: boolean }).unconstrained;
+            return (
+              <div
+                key={`s-${sponsor.id}-${index}`}
+                className={`${sponsor.marginClass || "mx-8 sm:mx-12 md:mx-16"} flex items-center justify-center flex-shrink-0`}
+              >
+                <div
+                  className={`${
+                    isUnconstrained
+                      ? "h-14 sm:h-16 md:h-20"
+                      : "h-10 sm:h-12 md:h-14"
+                  } flex items-center justify-center p-1`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    className={`h-full w-auto ${
+                      isUnconstrained
+                        ? "max-w-[160px] sm:max-w-[200px] md:max-w-[240px]"
+                        : "max-w-[130px] sm:max-w-[160px] md:max-w-[190px]"
+                    } object-contain ${sponsor.twClass || ""}`}
+                    loading="lazy"
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -467,13 +604,13 @@ export default function SponsorSection() {
           100% { transform: translate3d(0, 0, 0); }
         }
         .animate-partners-scroll {
-          animation: scroll-left 40s linear infinite;
+          animation: scroll-left 42s linear infinite;
         }
         .animate-universities-scroll {
-          animation: scroll-right 28s linear infinite;
+          animation: scroll-right 45s linear infinite;
         }
         .animate-sponsors-scroll {
-          animation: scroll-left 140s linear infinite;
+          animation: scroll-left 185s linear infinite;
         }
         @media (prefers-reduced-motion: reduce) {
           .animate-partners-scroll,

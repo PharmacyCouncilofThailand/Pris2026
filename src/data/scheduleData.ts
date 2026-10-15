@@ -991,7 +991,7 @@ const day2Events = [
   {
     ...day1Event(
       223,
-      "11:00 – 11:50",
+      "09:00 – 09:50",
       "CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
       "CPAT session: Leading Innovative Pharmacy Practices in Thailand 🇹🇭",
       "JUPITER 11",

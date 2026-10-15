@@ -64,43 +64,63 @@ const partnerLogos = [
   },
 ];
 
-const universityLogos = [
+const universityCrests = [
   {
     id: 1,
     name: "มหาวิทยาลัยขอนแก่น",
-    logo: "/assets/Img/University/มหาวิทยาลัยขอนแก่น.png",
+    logo: "/assets/Img/University/pharmkku_logo-ขอนแก่น.png",
+    scaleClass: "scale-100", // หลักมาตรฐาน
   },
   {
     id: 2,
     name: "มหาวิทยาลัยเชียงใหม่",
-    logo: "/assets/Img/University/มหาวิทยาลัยเชียงใหม่.webp",
+    logo: "/assets/Img/University/คณะเภสัชศาสตร์ เชียงใหม่.png",
+    scaleClass: "scale-[1.05]",
   },
   {
     id: 3,
     name: "มหาวิทยาลัยนเรศวร",
-    logo: "/assets/Img/University/มหาวิทยาลัยนเรศวร.png",
+    logo: "/assets/Img/University/มหาวิทยาลัย นเรศวร คณะ Pharmacy_Naresuan.png",
+    scaleClass: "scale-[0.92]",
   },
   {
     id: 4,
-    name: "มหาวิทยาลัยบูรพา",
-    logo: "/assets/Img/University/มหาวิทยาลัยบูรพา.webp",
+    name: "มหาวิทยาลัยปทุมธานี",
+    logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.jpeg",
+    scaleClass: "scale-100",
   },
   {
     id: 5,
-    name: "มหาวิทยาลัยปทุมธานี",
-    logo: "/assets/Img/University/มหาวิทยาลัยปทุมธานี.png",
+    name: "มหาวิทยาลัยสงขลานครินทร์",
+    logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.jpg",
+    scaleClass: "scale-100",
   },
   {
     id: 6,
-    name: "มหาวิทยาลัยรังสิต",
-    logo: "/assets/Img/University/มหาวิทยาลัยรังสิต.png",
-    scaleClass: "scale-[1.9]",
+    name: "สถาบันวิทยาการประกอบการแห่งอโยธยา",
+    logo: "/assets/Img/University/สถาบันวิทยาการประกอบการแห่งอโยธยา.jpeg",
+    scaleClass: "scale-[1.02]",
   },
+];
+
+const universityWide = [
   {
     id: 7,
-    name: "มหาวิทยาลัยสงขลานครินทร์",
-    logo: "/assets/Img/University/มหาวิทยาลัยสงขลานครินทร์.png",
-    scaleClass: "scale-[1.45]",
+    name: "มหาวิทยาลัยบูรพา",
+    logo: "/assets/Img/University/BUU RxBUU_0 (2) (1).png",
+    scaleClass: "scale-[0.92]",
+  },
+  {
+    id: 8,
+    name: "มหาวิทยาลัยมหิดล",
+    logo: "/assets/Img/University/มหาวิทยาลัยมหิดล คณะเภสัชศาสตร์.jpg",
+    scaleClass: "scale-[0.92]",
+  },
+  {
+    id: 9,
+    name: "มหาวิทยาลัยรังสิต",
+    logo: "/assets/Img/University/รังสิต.jpg",
+    scaleClass: "scale-[0.88]",
   },
 ];
 
@@ -115,13 +135,13 @@ const sponsorLogos = [
     id: 2,
     name: "TILSNA",
     logo: "/assets/Img/sponsors/S__109420674.jpg",
-    scaleClass: "scale-100",
+    scaleClass: "scale-[1.3]",
   },
   {
     id: 3,
     name: "Novaceutical",
     logo: "/assets/Img/sponsors/Novaceutical.jpg",
-    scaleClass: "scale-[1.2]",
+    scaleClass: "scale-[1.45]",
   },
   {
     id: 4,
@@ -137,68 +157,69 @@ const sponsorLogos = [
   },
   {
     id: 6,
-    name: "บริษัท ห้าม้า โอสถ จำกัด",
-    logo: "/assets/Img/sponsors/บริษัทห้าม้า โอสถ จำกัด.jpeg",
-    scaleClass: "scale-[1.2]",
+    name: "บริษัท แอสตร้าเซนเนก้า (ประเทศไทย) จำกัด",
+    logo: "/assets/Img/sponsors/astrazeneca.png",
+    scaleClass: "scale-[1.6]",
   },
   {
     id: 7,
-    name: "บริษัท แอสตร้าเซนเนก้า (ประเทศไทย) จำกัด",
-    logo: "/assets/Img/sponsors/บริษัท แอสตร้าเซนเนก้า (ประเทศไทย).webp",
-    scaleClass: "scale-[1.1]",
-  },
-  {
-    id: 8,
     name: "องค์การเภสัชกรรม (GPO)",
     logo: "/assets/Img/sponsors/gpo.png",
     scaleClass: "scale-[1.1]",
   },
   {
-    id: 9,
+    id: 8,
     name: "Telehealth Thailand",
     logo: "/assets/Img/sponsors/telehealth-thailand.png",
     scaleClass: "scale-[1.15]",
   },
   {
-    id: 10,
+    id: 9,
     name: "MP Group",
     logo: "/assets/Img/sponsors/mp-group.png",
-    scaleClass: "scale-[1.05]",
+    scaleClass: "scale-[1.5]",
   },
   {
-    id: 11,
+    id: 10,
     name: "NIA Academy",
     logo: "/assets/Img/sponsors/nia-academy.png",
     scaleClass: "scale-[1.15]",
   },
   {
-    id: 12,
+    id: 11,
     name: "Circlife Medical",
     logo: "/assets/Img/sponsors/circlife-medical.png",
     scaleClass: "scale-[1.45]",
   },
   {
-    id: 13,
+    id: 12,
     name: "OLIC (Thailand)",
-    logo: "/assets/Img/sponsors/olic.png",
-    scaleClass: "scale-[1.2]",
+    logo: "/assets/Img/sponsors/olic.jpg",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
+  },
+  {
+    id: 13,
+    name: "บริษัท แอ๊บบ๊อต ลาบอแรตอรีส จำกัด",
+    logo: "/assets/Img/sponsors/abbott.png",
+    scaleClass: "scale-[1.6]",
   },
   {
     id: 14,
-    name: "บริษัท แอ๊บบ๊อต ลาบอแรตอรีส จำกัด",
-    logo: "/assets/Img/sponsors/บริษัท แอ๊บบ๊อต ลาบอแรตอรีส จำกั.png",
-    scaleClass: "scale-[1.2]",
+    name: "BLC Bangkok",
+    logo: "/assets/Img/sponsors/BLC Bangkok.png",
+    scaleClass: "scale-[1.6]",
   },
   {
     id: 15,
     name: "บริษัท บางกอกแล็ป แอนด์ คอสเมติก จำกัด (มหาชน)",
-    logo: "/assets/Img/sponsors/บริษัท บางกอกแล็ป แอนด์ คอสเมติก จำกัด (มหาชน).png",
+    logo: "/assets/Img/sponsors/bangkoklab.jpg",
     scaleClass: "scale-[1.2]",
   },
   {
     id: 16,
-    name: "บริษัท เนสท์ อัพ (ประเทศไทย) จำกัด",
-    logo: "/assets/Img/sponsors/บริษัท เนสท์ อัพ (ประเทศไทย) จำกัด.png",
+    name: "บริษัท เนสท์ อัพ (ประเทศไทย) จำกัด (Nest Up)",
+    logo: "/assets/Img/sponsors/NEST UP-FINAL-01_crop.png",
     scaleClass: "scale-[1.15]",
   },
   {
@@ -215,15 +236,17 @@ const sponsorLogos = [
   },
   {
     id: 19,
-    name: "บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด",
-    logo: "/assets/Img/sponsors/บริษัท แรนแบ็กซี่ (ประเทศไทย) จำกัด.jpg",
-    scaleClass: "scale-[1.65]",
+    name: "Sun Pharma",
+    logo: "/assets/Img/sponsors/Sun Pharma.jpg",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
   },
   {
     id: 20,
     name: "บริษัท ชุมชนเภสัชกรรม จำกัด (มหาชน)",
-    logo: "/assets/Img/sponsors/บริษัทชุมชนเภสัชกรรมจำกัด  (มหาชน).png",
-    scaleClass: "scale-[1.55]",
+    logo: "/assets/Img/sponsors/Chumchon_Rx_Final-05 - Haris Boonchuen.png",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
   },
   {
     id: 21,
@@ -239,25 +262,25 @@ const sponsorLogos = [
   },
   {
     id: 23,
-    name: "บริษัท ศิริราชบํารุงเวช จํากัด",
-    logo: "/assets/Img/sponsors/บริษัทศิริราชบํารุงเวช จํากัด.png",
-    scaleClass: "scale-[1.5]",
+    name: "บริษัท อินโนซุส จำกัด",
+    logo: "/assets/Img/sponsors/innozus.png",
+    scaleClass: "scale-[1.4]",
   },
   {
     id: 24,
-    name: "บริษัท อินโนซุส จำกัด",
-    logo: "/assets/Img/sponsors/บริษัทอินโนซุส.png",
-    scaleClass: "scale-[2.75]",
-  },
-  {
-    id: 25,
     name: "บริษัท เกร๊ทเตอร์มายบาซิน จำกัด",
-    logo: "/assets/Img/sponsors/บริษัทเกร๊ทเตอร์มายบาซิน จำกัด.png",
+    logo: "/assets/Img/sponsors/เกร๊ทเตอร์มายบาซิน จำกัด.jpg",
     scaleClass: "scale-[1.25]",
   },
   {
-    id: 26,
+    id: 25,
     name: "บริษัท แอโรแคร์ จำกัด",
+    logo: "/assets/Img/sponsors/aerocare.jpg",
+    scaleClass: "scale-[1.6]",
+  },
+  {
+    id: 26,
+    name: "AeroCare Inpac Pharma",
     logo: "/assets/Img/sponsors/บริษัทแอโรแคร์จํากัด.png",
     scaleClass: "scale-[1.2]",
   },
@@ -276,8 +299,66 @@ const sponsorLogos = [
   {
     id: 29,
     name: "บริษัท ไบโอจีนีเทค จำกัด",
-    logo: "/assets/Img/sponsors/บริษัทไบโอจีนีเทค.png",
-    scaleClass: "scale-100",
+    logo: "/assets/Img/sponsors/biogenetech.jpg",
+    scaleClass: "scale-[1.6]",
+  },
+  {
+    id: 30,
+    name: "Boehringer Ingelheim",
+    logo: "/assets/Img/sponsors/boeheringer.jpg",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 31,
+    name: "Gateway Healthcare",
+    logo: "/assets/Img/sponsors/gate way healthcare.png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 32,
+    name: "GSK",
+    logo: "/assets/Img/sponsors/gsk.png",
+    scaleClass: "scale-[1.2]",
+  },
+  {
+    id: 33,
+    name: "สวทช.",
+    logo: "/assets/Img/sponsors/สวทช.png",
+    scaleClass: "scale-[1.65]",
+  },
+  {
+    id: 34,
+    name: "ห้องปฏิบัติการเภสัชพันธุศาสตร์",
+    logo: "/assets/Img/sponsors/ห้องปฏิบัติการเภสัชพันธุศาสตร์.png",
+    scaleClass: "scale-[1.7]",
+  },
+  {
+    id: 35,
+    name: "บริษัท นีโอคอสเมด จำกัด",
+    logo: "/assets/Img/sponsors/บริษัท นีโอคอสเมด จำกัด.jpg",
+    scaleClass: "scale-[1.35]",
+    unconstrained: true,
+  },
+  {
+    id: 36,
+    name: "ธนาคารยูโอบี จำกัด (มหาชน)",
+    logo: "/assets/Img/sponsors/UOB_LOGO_800x800.png",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
+  },
+  {
+    id: 37,
+    name: "บริษัท ศิริราชบำรุงเวช จำกัด",
+    logo: "/assets/Img/sponsors/ศิริราชบำรุงเวช.png",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
+  },
+  {
+    id: 38,
+    name: "บริษัท ห้าม้า โอสถ จำกัด",
+    logo: "/assets/Img/sponsors/บจก.ห้าม้าโอสถ-พื้นเขียว_1_.jpg",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
   },
 ];
 
@@ -381,17 +462,35 @@ export default function SponsorshipPage() {
                 UNIVERSITY
               </h2>
             </div>
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-14">
-              {universityLogos.map((uni) => (
+            {/* Row 1: 6 Crests (Khon Kaen as benchmark) */}
+            <div className="flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 md:gap-x-14 lg:gap-x-16 xl:gap-x-20 gap-y-8 sm:gap-y-10 mb-12 sm:mb-16 md:mb-20 lg:mb-24">
+              {universityCrests.map((uni) => (
                 <div
                   key={uni.id}
-                  className="relative flex items-center justify-center w-24 h-20 sm:w-32 sm:h-24 md:w-44 md:h-32"
+                  className="relative flex items-center justify-center w-24 h-20 sm:w-28 sm:h-24 md:w-36 md:h-28"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={uni.logo}
                     alt={uni.name}
-                    className={`object-contain w-full h-full max-w-[90%] max-h-[90%] ${uni.scaleClass || ""}`}
+                    className={`object-contain w-full h-full max-w-[88%] max-h-[88%] ${uni.scaleClass || ""}`}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Row 2: 3 Wide Logos (BUU, Mahidol, Rangsit) */}
+            <div className="flex flex-wrap items-center justify-center gap-x-10 sm:gap-x-14 md:gap-x-18 lg:gap-x-24 xl:gap-x-28 gap-y-8 sm:gap-y-10">
+              {universityWide.map((uni) => (
+                <div
+                  key={uni.id}
+                  className="relative flex items-center justify-center w-36 h-12 sm:w-48 sm:h-16 md:w-56 md:h-18 lg:w-64 lg:h-20"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={uni.logo}
+                    alt={uni.name}
+                    className={`object-contain w-full h-full max-w-[92%] max-h-[92%] ${uni.scaleClass || ""}`}
                   />
                 </div>
               ))}
@@ -406,19 +505,30 @@ export default function SponsorshipPage() {
               </h2>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 items-center justify-items-center gap-x-6 sm:gap-x-12 lg:gap-x-20 xl:gap-x-28 gap-y-12 sm:gap-y-16 lg:gap-y-24 w-full max-w-7xl mx-auto px-1 sm:px-4 pb-8 lg:pb-16">
-              {sponsorLogos.map((sponsor) => (
-                <div
-                  key={sponsor.id}
-                  className="relative flex items-center justify-center w-full max-w-[110px] sm:max-w-[150px] lg:max-w-[180px] h-12 sm:h-16 lg:h-20"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={sponsor.logo}
-                    alt={sponsor.name}
-                    className={`object-contain w-full h-full max-h-[75%] max-w-[75%] ${sponsor.scaleClass || ""}`}
-                  />
-                </div>
-              ))}
+              {sponsorLogos.map((sponsor) => {
+                const isUnconstrained = (sponsor as { unconstrained?: boolean }).unconstrained;
+                return (
+                  <div
+                    key={sponsor.id}
+                    className={`relative flex items-center justify-center w-full ${
+                      isUnconstrained
+                        ? "max-w-[140px] sm:max-w-[180px] lg:max-w-[220px] h-16 sm:h-20 lg:h-28"
+                        : "max-w-[110px] sm:max-w-[150px] lg:max-w-[180px] h-12 sm:h-16 lg:h-20"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={sponsor.logo}
+                      alt={sponsor.name}
+                      className={`object-contain w-full h-full ${
+                        isUnconstrained
+                          ? "max-h-full max-w-full"
+                          : "max-h-[75%] max-w-[75%]"
+                      } ${sponsor.scaleClass || ""}`}
+                    />
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
