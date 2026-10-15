@@ -1,0 +1,404 @@
+{
+  "status": "baseline_only",
+  "baseline": "db6726c5f352736f4b8bfd91452055bf8bca5cf9",
+  "tool": "same current ESLint rules applied read-only to baseline Git blobs; no checkout/worktree or source-rule weakening",
+  "errors": 23,
+  "warnings": 6,
+  "filesWithFindings": 23,
+  "newFindings": 0,
+  "generatedArtifactIgnoreOnly": [
+    ".merchandise-local/**",
+    "test-results/**",
+    "playwright-report/**",
+    "playwright/.auth/**"
+  ],
+  "files": [
+    {
+      "path": "compress_images.js",
+      "sourceMatchesBaseline": true,
+      "errors": 3,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        },
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 2,
+          "column": 14,
+          "message": "A `require()` style import is forbidden."
+        },
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 3,
+          "column": 15,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "make_logo_black.js",
+      "sourceMatchesBaseline": true,
+      "errors": 2,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        },
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 2,
+          "column": 14,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "replace_all_logos.js",
+      "sourceMatchesBaseline": true,
+      "errors": 2,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        },
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 2,
+          "column": 14,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "replace_logo.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_auth_text2.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_auth_text_replace.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_black_logo.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_cleanup.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_fix_quotes.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_replace.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_update_auth.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_update_day2.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 1,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        },
+        {
+          "ruleId": "@typescript-eslint/no-unused-vars",
+          "severity": 1,
+          "line": 297,
+          "column": 7,
+          "message": "'day2StartTag' is assigned a value but never used."
+        }
+      ]
+    },
+    {
+      "path": "scratch_update_schedule.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "scratch_update_schedule_speakers.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "src/app/[locale]/about/page.tsx",
+      "sourceMatchesBaseline": true,
+      "errors": 0,
+      "warnings": 1,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-unused-vars",
+          "severity": 1,
+          "line": 291,
+          "column": 19,
+          "message": "'role' is defined but never used."
+        }
+      ]
+    },
+    {
+      "path": "src/app/[locale]/abstracts/confirm/page.tsx",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "react-hooks/set-state-in-effect",
+          "severity": 2,
+          "line": 49,
+          "column": 7,
+          "message": "Error: Calling setState synchronously within an effect can trigger cascading renders\n\nEffects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:\n* Update external systems with the latest state from React.\n* Subscribe for updates from some external system, calling setState in a callback function when external state changes.\n\nCalling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).\n\nD:\\confer\\confer\\conference\\Pris2026\\src\\app\\[locale]\\abstracts\\confirm\\page.tsx:49:7\n  47 |     let cancelled = false;\n  48 |     if (!token) {\n> 49 |       setState(\"invalid\");\n     |       ^^^^^^^^ Avoid calling setState() directly within an effect\n  50 |       return;\n  51 |     }\n  52 |"
+        }
+      ]
+    },
+    {
+      "path": "src/app/[locale]/page.tsx",
+      "sourceMatchesBaseline": true,
+      "errors": 0,
+      "warnings": 1,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-unused-vars",
+          "severity": 1,
+          "line": 7,
+          "column": 3,
+          "message": "'SpeakerSection' is defined but never used."
+        }
+      ]
+    },
+    {
+      "path": "src/app/[locale]/profile/page.tsx",
+      "sourceMatchesBaseline": true,
+      "errors": 0,
+      "warnings": 1,
+      "findings": [
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "line": 290,
+          "column": 6,
+          "message": "React Hook useEffect has a missing dependency: 'fetchStudentEligibility'. Either include it or remove the dependency array."
+        }
+      ]
+    },
+    {
+      "path": "src/components/sections/AbstractGuidelines.tsx",
+      "sourceMatchesBaseline": true,
+      "errors": 0,
+      "warnings": 1,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-unused-vars",
+          "severity": 1,
+          "line": 9,
+          "column": 9,
+          "message": "'t' is assigned a value but never used."
+        }
+      ]
+    },
+    {
+      "path": "src/components/ui/CountUp.tsx",
+      "sourceMatchesBaseline": true,
+      "errors": 0,
+      "warnings": 1,
+      "findings": [
+        {
+          "ruleId": "react-hooks/exhaustive-deps",
+          "severity": 1,
+          "line": 61,
+          "column": 6,
+          "message": "React Hook useCallback has unnecessary dependencies: 'prefix' and 'suffix'. Either exclude them or remove the dependency array."
+        }
+      ]
+    },
+    {
+      "path": "src/lib/profileReceipt.test.ts",
+      "sourceMatchesBaseline": true,
+      "errors": 2,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-explicit-any",
+          "severity": 2,
+          "line": 80,
+          "column": 23,
+          "message": "Unexpected any. Specify a different type."
+        },
+        {
+          "ruleId": "@typescript-eslint/no-explicit-any",
+          "severity": 2,
+          "line": 82,
+          "column": 24,
+          "message": "Unexpected any. Specify a different type."
+        }
+      ]
+    },
+    {
+      "path": "update-json-placeholders.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    },
+    {
+      "path": "update-json.js",
+      "sourceMatchesBaseline": true,
+      "errors": 1,
+      "warnings": 0,
+      "findings": [
+        {
+          "ruleId": "@typescript-eslint/no-require-imports",
+          "severity": 2,
+          "line": 1,
+          "column": 12,
+          "message": "A `require()` style import is forbidden."
+        }
+      ]
+    }
+  ]
+}

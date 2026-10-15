@@ -1,0 +1,12 @@
+{
+  "status": "approved_by_user",
+  "approvedOn": "2026-10-15",
+  "source": "Human reply in this implementation chat to the Pris2026 baseline lint scope question",
+  "userAnswer": "ยกเว้นเฉพาะ lint เดิมที่ตรง baseline คงกฎเดิม และบังคับโค้ดใหม่ผ่านครบ (แนะนำ)",
+  "baseline": "db6726c5f352736f4b8bfd91452055bf8bca5cf9",
+  "scope": "Identical findings in unchanged legacy files only; no new findings and no rule weakening",
+  "fullLintIsPassed": false,
+  "baselineErrors": 23,
+  "baselineWarnings": 6,
+  "baselineFiles": 23
+}
