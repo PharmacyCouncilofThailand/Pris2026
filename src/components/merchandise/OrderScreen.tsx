@@ -18,10 +18,18 @@ import {
   readOrderRequest,
   readAttemptRequest,
   type AttemptRequestRecord,
+  attemptResultKnown,
 } from "@/lib/merchandiseOrderRequest";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import {
+  mayRequestQr,
+  MERCHANDISE_ORDER_REFRESH_MS,
+} from "@/lib/merchandisePayment";
+import { usePaymentDeadline } from "./usePaymentDeadline";
+import type { OrderDetail } from "@/types/merchandise";
+import PaidOrder from "./PaidOrder";
 import PaymentPanel from "./PaymentPanel";
 export default function OrderScreen({ orderId }: { orderId: string }) {
   return (
@@ -84,11 +92,16 @@ function OrderWorkspace({
   const [operation, setOperation] = useState<"creating" | "checking" | null>(
       null,
     ),
-    [notice, setNotice] = useState<string | null>(null);
+    [notice, setNotice] = useState<string | null>(null),
+    [verificationFailed, setVerificationFailed] = useState(false);
+  const remaining = usePaymentDeadline(order.payment);
   const busy = operation !== null;
   const pending = useRef(false),
     active = useRef(false),
     automaticallyStarted = useRef(false),
+    expiredChecked = useRef<string | null>(null),
+    reading = useRef<Promise<OrderDetail | null> | null>(null),
+    readAbort = useRef<AbortController | null>(null),
     bar = useRef<HTMLDivElement>(null);
   const owner = useRef({ token, ownerId, eventCode, orderId: order.id });
   useLayoutEffect(() => {
@@ -96,6 +109,7 @@ function OrderWorkspace({
     owner.current = { token, ownerId, eventCode, orderId: order.id };
     return () => {
       active.current = false;
+      readAbort.current?.abort();
     };
   }, [token, ownerId, eventCode, order.id]);
   const current = useCallback(
@@ -122,7 +136,7 @@ function OrderWorkspace({
       observer.disconnect();
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
-  }, []);
+  }, [order.paymentStatus]);
   const accept = resource.accept,
     reloadCart = cart.reload;
   useEffect(() => {
@@ -147,7 +161,7 @@ function OrderWorkspace({
         ownerId,
         order.id,
       );
-      if (record)
+      if (record && attemptResultKnown(record, order.payment))
         acknowledgeAttemptRequest(
           window.sessionStorage,
           eventCode,
@@ -158,14 +172,7 @@ function OrderWorkspace({
     } catch {
       /* Preserve unresolved metadata rather than permitting a new request. */
     }
-  }, [
-    token,
-    ownerId,
-    eventCode,
-    order.id,
-    order.payment.state,
-    order.payment.attempt,
-  ]);
+  }, [token, ownerId, eventCode, order.id, order.payment]);
   useEffect(() => {
     let live = true;
     void Promise.resolve().then(async () => {
@@ -199,20 +206,43 @@ function OrderWorkspace({
       live = false;
     };
   }, [api, token, ownerId, eventCode, order.id, current, reloadCart]);
-  const refresh = useCallback(async () => {
-    const value = await api.order(order.id, token!);
-    if (!current()) return null;
-    if (value.eventId !== order.eventId || value.buyer.id !== ownerId)
-      throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-    accept(value);
-    return value;
-  }, [api, token, order.id, order.eventId, ownerId, current, accept]);
+  const refresh = useCallback(
+    (afterWrite = false) => {
+      if (afterWrite && reading.current) {
+        readAbort.current?.abort();
+        reading.current = null;
+      }
+      if (reading.current) return reading.current;
+      const controller = new AbortController();
+      readAbort.current = controller;
+      const request = api
+        .order(order.id, token!, controller.signal)
+        .then((value) => {
+          if (!current() || controller.signal.aborted) return null;
+          if (value.eventId !== order.eventId || value.buyer.id !== ownerId)
+            throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
+          accept(value);
+          return value;
+        })
+        .catch((error) => {
+          if (controller.signal.aborted) return null;
+          throw error;
+        })
+        .finally(() => {
+          if (reading.current === request) reading.current = null;
+        });
+      reading.current = request;
+      return request;
+    },
+    [api, token, order.id, order.eventId, ownerId, current, accept],
+  );
   const create = useCallback(async () => {
     if (
       pending.current ||
       !token ||
       !ownerId ||
-      !order.payment.canRequestNewQr ||
+      !mayRequestQr(order.payment) ||
+      verificationFailed ||
       !current()
     )
       return;
@@ -228,6 +258,7 @@ function OrderWorkspace({
         order.id,
         order.effectiveRevision,
         crypto.randomUUID(),
+        order.payment.attempt?.id ?? null,
       );
       const value = await api.createAttempt(
         order.id,
@@ -244,7 +275,7 @@ function OrderWorkspace({
           order.id,
           record.key,
         );
-      await refresh();
+      await refresh(true);
     } catch (error) {
       if (current()) {
         if (
@@ -269,7 +300,7 @@ function OrderWorkspace({
           "ยังยืนยันผลสร้าง QR ไม่ได้ ระบบจะตรวจสอบออเดอร์เดิม กรุณาตรวจสอบอีกครั้ง",
         );
         try {
-          await refresh();
+          await refresh(true);
         } catch {
           if (current())
             setNotice(
@@ -287,7 +318,8 @@ function OrderWorkspace({
     token,
     ownerId,
     order.id,
-    order.payment.canRequestNewQr,
+    order.payment,
+    verificationFailed,
     order.effectiveRevision,
     current,
     eventCode,
@@ -324,13 +356,23 @@ function OrderWorkspace({
     pending.current = true;
     setOperation("checking");
     try {
-      await api.checkPayment(order.id, token);
+      const result = await api.checkPayment(order.id, token);
       if (current()) {
-        await refresh();
+        if (
+          result.payment.attempt?.expiresAt &&
+          Date.parse(result.payment.attempt.expiresAt) <=
+            Date.parse(result.payment.serverNow)
+        )
+          expiredChecked.current = `${result.payment.attempt.id}:${result.payment.attempt.expiresAt}`;
+        await refresh(true);
+        setVerificationFailed(false);
         setNotice(null);
       }
     } catch {
-      if (current()) setNotice("ตรวจสอบสถานะไม่สำเร็จ กรุณาลองตรวจสอบอีกครั้ง");
+      if (current()) {
+        setVerificationFailed(true);
+        setNotice("ตรวจสอบสถานะไม่สำเร็จ กรุณาลองตรวจสอบอีกครั้ง");
+      }
     } finally {
       if (current()) {
         pending.current = false;
@@ -338,19 +380,102 @@ function OrderWorkspace({
       }
     }
   }, [token, current, api, order.id, refresh]);
-  const expired = useCallback(() => {
-    void check();
-  }, [check]);
+  const attemptId = order.payment.attempt?.id;
+  useEffect(() => {
+    const stamp = `${attemptId}:${order.payment.attempt?.expiresAt}`;
+    if (
+      remaining !== 0 ||
+      !attemptId ||
+      !order.payment.canCheck ||
+      busy ||
+      verificationFailed ||
+      !["qr_active", "checking"].includes(order.payment.state) ||
+      expiredChecked.current === stamp
+    )
+      return;
+    let live = true;
+    void Promise.resolve().then(() => {
+      if (live && current()) {
+        expiredChecked.current = stamp;
+        void check();
+      }
+    });
+    return () => {
+      live = false;
+    };
+  }, [
+    remaining,
+    attemptId,
+    order.payment.attempt?.expiresAt,
+    order.payment.canCheck,
+    order.payment.state,
+    busy,
+    verificationFailed,
+    current,
+    check,
+  ]);
+  useEffect(() => {
+    if (order.paymentStatus === "paid") return;
+    const read = async (returning: boolean) => {
+      if (
+        document.visibilityState === "hidden" ||
+        pending.current ||
+        !current()
+      )
+        return;
+      try {
+        const latest = await refresh();
+        if (
+          returning &&
+          latest?.payment.canCheck &&
+          latest.payment.state === "checking"
+        )
+          void check();
+      } catch {
+        if (current())
+          setNotice("โหลดสถานะคำสั่งซื้อไม่สำเร็จ กรุณาตรวจสอบอีกครั้ง");
+      }
+    };
+    const wake = () => {
+      void read(true);
+    };
+    const timer = setInterval(() => {
+      void read(false);
+    }, MERCHANDISE_ORDER_REFRESH_MS);
+    document.addEventListener("visibilitychange", wake);
+    window.addEventListener("focus", wake);
+    window.addEventListener("pageshow", wake);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", wake);
+      window.removeEventListener("focus", wake);
+      window.removeEventListener("pageshow", wake);
+    };
+  }, [current, refresh, check, order.paymentStatus]);
+  if (order.paymentStatus === "paid")
+    return <PaidOrder order={order} barRef={bar} />;
+  const payment = verificationFailed
+    ? {
+        ...order.payment,
+        state: "verification_unknown" as const,
+        canRequestNewQr: false,
+      }
+    : operation === "checking" ||
+        (remaining === 0 && order.payment.state === "qr_active")
+      ? { ...order.payment, state: "checking" as const, canRequestNewQr: false }
+      : order.payment;
+  const reissue = mayRequestQr(payment) && payment.state === "qr_expired_open";
+  const unknown = payment.state === "verification_unknown";
   const recipient = order.effective.recipient;
   return (
-    <main className="merch-cart merch-order">
+    <main className="merch-cart merch-order" aria-busy={busy}>
       <Link className="merch-cart-back" href="/souvenirs/orders">
         <ArrowLeft size={18} aria-hidden="true" />
         คำสั่งซื้อของฉัน
       </Link>
-      <h1>{order.paymentStatus === "paid" ? "ชำระเงินสำเร็จ" : "ชำระเงิน"}</h1>
+      <h1>ชำระเงิน</h1>
       <p className="merch-cart-muted">คำสั่งซื้อ {order.orderNumber}</p>
-      {notice && (
+      {notice && !unknown && (
         <p className="merch-cart-notice" role="status">
           {notice}
         </p>
@@ -358,8 +483,9 @@ function OrderWorkspace({
       <div className="merch-cart-grid">
         <PaymentPanel
           order={order}
+          payment={payment}
+          remaining={remaining}
           busy={busy}
-          onExpired={expired}
           onCreate={() => void create()}
           creating={operation === "creating"}
         />
@@ -433,13 +559,28 @@ function OrderWorkspace({
           </p>
         </div>
       </div>
-      <div className="merch-cart-bar merch-order-bar" ref={bar}>
+      <div
+        className={`merch-cart-bar merch-order-bar${reissue ? " merch-order-reissue" : ""}`}
+        ref={bar}
+      >
         <button
           type="button"
-          disabled={busy || !order.payment.canCheck}
-          onClick={() => void check()}
+          disabled={
+            busy ||
+            ["creating", "checking"].includes(payment.state) ||
+            (!reissue && !order.payment.canCheck)
+          }
+          onClick={() => void (reissue ? create() : check())}
         >
-          {busy ? "กำลังตรวจสอบ" : "ตรวจสอบการชำระเงิน"}
+          {operation === "creating"
+            ? "กำลังสร้าง QR"
+            : busy || payment.state === "checking"
+              ? "กำลังตรวจสอบ"
+              : reissue
+                ? "ขอ QR ใหม่"
+                : unknown
+                  ? "ตรวจสอบอีกครั้ง"
+                  : "ตรวจสอบการชำระเงิน"}
           <ArrowRight size={22} aria-hidden="true" />
         </button>
       </div>

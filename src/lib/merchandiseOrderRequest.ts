@@ -4,7 +4,7 @@ import {
   type MerchandiseApi,
 } from "./merchandiseApi";
 import { isMerchandiseId } from "./merchandiseRoutes";
-import type { OrderRequestDto } from "../types/merchandise";
+import type { OrderRequestDto, PaymentView } from "../types/merchandise";
 const PREFIX = "pris_merchandise_order_request:";
 const ATTEMPT_PREFIX = "pris_merchandise_attempt_request:";
 export interface OrderRequestRecord {
@@ -99,6 +99,25 @@ export function clearOtherOrderRequests(
 export interface AttemptRequestRecord {
   key: string;
   expectedOrderRevision: number;
+  previousAttemptId?: string | null;
+}
+export function attemptResultKnown(
+  record: AttemptRequestRecord,
+  payment: PaymentView,
+): boolean {
+  if (payment.state === "paid") return true;
+  return (
+    record.previousAttemptId !== undefined &&
+    !!payment.attempt &&
+    payment.attempt.id !== record.previousAttemptId &&
+    ([
+      "qr_active",
+      "qr_expired_open",
+      "qr_expired_closed",
+      "qr_expired_unavailable",
+    ].includes(payment.state) ||
+      payment.attempt.creationStatus === "failed")
+  );
 }
 const attemptScopeKey = (
   eventCode: string,
@@ -126,7 +145,13 @@ export function readAttemptRequest(
       throw Error("invalid");
     const record = value as Record<string, unknown>;
     if (
-      Object.keys(record).length !== 2 ||
+      Object.keys(record).some(
+        (key) =>
+          !["key", "expectedOrderRevision", "previousAttemptId"].includes(key),
+      ) ||
+      ("previousAttemptId" in record &&
+        record.previousAttemptId !== null &&
+        !isMerchandiseId(record.previousAttemptId)) ||
       !isMerchandiseId(record.key) ||
       typeof record.expectedOrderRevision !== "number" ||
       !Number.isSafeInteger(record.expectedOrderRevision) ||
@@ -136,6 +161,9 @@ export function readAttemptRequest(
     return {
       key: record.key,
       expectedOrderRevision: record.expectedOrderRevision,
+      ...("previousAttemptId" in record
+        ? { previousAttemptId: record.previousAttemptId as string | null }
+        : {}),
     };
   } catch {
     throw merchandiseFailure(0, "MERCH_STORAGE_UNAVAILABLE", true);
@@ -148,12 +176,18 @@ export function beginAttemptRequest(
   orderId: string,
   revision: number,
   key: string,
+  previousAttemptId: string | null = null,
 ): AttemptRequestRecord {
   const existing = readAttemptRequest(storage, eventCode, buyerId, orderId);
   if (existing) return existing;
-  if (!isMerchandiseId(key) || !Number.isSafeInteger(revision) || revision < 0)
+  if (
+    !isMerchandiseId(key) ||
+    (previousAttemptId !== null && !isMerchandiseId(previousAttemptId)) ||
+    !Number.isSafeInteger(revision) ||
+    revision < 0
+  )
     throw merchandiseFailure(422, "MERCH_INVALID_REQUEST_KEY");
-  const value = { key, expectedOrderRevision: revision };
+  const value = { key, expectedOrderRevision: revision, previousAttemptId };
   try {
     storage.setItem(
       attemptScopeKey(eventCode, buyerId, orderId),
