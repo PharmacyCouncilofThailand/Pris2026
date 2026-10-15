@@ -160,7 +160,7 @@
     },
     {
       "id": "P03",
-      "status": "awaiting_user_review",
+      "status": "passed",
       "commit": null,
       "tests": [
         {
@@ -200,6 +200,18 @@
           "mechanicalFixed": 3,
           "reviewOnlyAnnotations": 24,
           "proof": "../../design/merchandise/subsequent-screens/detector-results.json"
+        },
+        {
+          "command": "node docs/design/merchandise/subsequent-screens/verify-references.mjs --require-approval",
+          "status": "passed",
+          "images": 25,
+          "humanApprovalSource": {
+            "kind": "direct_human_reply_in_this_chat",
+            "questionItemId": "[\"request_user_input_async\",\"call_f32710d00ffe4c86b9f14deeb7e4d207\",0]",
+            "answer": "ยืนยัน P03 ทุกภาพ",
+            "recordedAt": "2026-10-15T12:29:39.711Z",
+            "reviewedPreparationCommit": "ed7084c"
+          }
         }
       ],
       "notes": [
@@ -208,8 +220,11 @@
         "Initial images inspected together, one correction batch, final images inspected together; no open-ended visual polish.",
         "Human approval is pending; approvedAt stays null and P-DESIGN is not passed.",
         "P04/P05 not started while awaiting review, preserving the user-requested task sequence.",
-        "A preparation checkpoint preserves the review artifacts in Git; it is not a P03 completion/approval commit. No later task is started."
-      ]
+        "A preparation checkpoint preserves the review artifacts in Git; it is not a P03 completion/approval commit. No later task is started.",
+        "User explicitly approved all P03 images; historical pending-review notes above describe the prior preparation checkpoint. No PNG was changed by approval. The P03 completion commit is the commit containing this record; exact hash will be recorded at P04."
+      ],
+      "preparationCommit": "ed7084c",
+      "approval": "../../design/merchandise/subsequent-screens/approval.json"
     },
     {
       "id": "P04",
@@ -278,5 +293,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T12:24:46.794Z"
+  "updatedAt": "2026-10-15T12:29:39.711Z"
 }

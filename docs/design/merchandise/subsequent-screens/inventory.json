@@ -1,7 +1,7 @@
 {
   "version": "1.0.0-review",
-  "status": "awaiting_user_review",
-  "approvedAt": null,
+  "status": "approved_by_user",
+  "approvedAt": "2026-10-15T12:29:39.711Z",
   "images": [
     {
       "id": "01-product-options",
@@ -14,7 +14,7 @@
       "file": "mockups/01-product-options-mobile.png",
       "sha256": "cf154daba711a3b288bebd68652a8c6f813db6f7c1eab081691dc594ea14a032",
       "bytes": 59692,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1315
@@ -31,7 +31,7 @@
       "file": "mockups/02-bundle-mobile.png",
       "sha256": "8b935359f36e9545ca5b32a36d58edcf35f2ec12d4e7b066410239596ba11c7d",
       "bytes": 61310,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1380
@@ -48,7 +48,7 @@
       "file": "mockups/03-cart-mobile.png",
       "sha256": "c53b1e0876417d61a7be0b0300d7bd7cb225bf7129c1a317e217b7d248df4213",
       "bytes": 64710,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1249
@@ -65,7 +65,7 @@
       "file": "mockups/04-cart-unavailable-mobile.png",
       "sha256": "1fff1a78d7aa4ea53779366cfd1c76f33f53c8e9da5277e74ed96632b123b1de",
       "bytes": 68155,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1263
@@ -82,7 +82,7 @@
       "file": "mockups/05-recipient-mobile.png",
       "sha256": "198b1c96c07dd3296cfb65591e10deb40f997e7a501041d58c3f1051480ef467",
       "bytes": 89585,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1778
@@ -99,7 +99,7 @@
       "file": "mockups/06-recipient-error-mobile.png",
       "sha256": "49b5fc7a53a3fa9e392abe8f78113df2bea26ecd5fb3dbbd82e763fe96ce60b0",
       "bytes": 64913,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1401
@@ -116,7 +116,7 @@
       "file": "mockups/07-review-mobile.png",
       "sha256": "5e88becb004262e65fea8497440c298a982d85ed7d0c48141a3fe666c911c86b",
       "bytes": 91576,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1618
@@ -133,7 +133,7 @@
       "file": "mockups/08-confirm-unknown-mobile.png",
       "sha256": "093652a39f85368ee7dafe7aaf8692d97063310dff698a2021d02df204167da1",
       "bytes": 50849,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 879
@@ -150,7 +150,7 @@
       "file": "mockups/09-qr-ready-mobile.png",
       "sha256": "c9e954f21b2ab34c626f5cedc513cd34cf3fe923c02151e6bd08435b92053688",
       "bytes": 95564,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1733
@@ -167,7 +167,7 @@
       "file": "mockups/10-qr-creating-mobile.png",
       "sha256": "ea4ad6cb705d14d1ef12c268a9a5315e16769de293141e5311c124e72c43cd72",
       "bytes": 81246,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1500
@@ -184,7 +184,7 @@
       "file": "mockups/11-qr-checking-mobile.png",
       "sha256": "89903c74f52da99476d4e86fa0c797422d2cbf7772efbf6485e56add1227f92a",
       "bytes": 80280,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1500
@@ -201,7 +201,7 @@
       "file": "mockups/12-payment-unknown-mobile.png",
       "sha256": "834c620fce1aa2b5656dac88da7d869975aca1763634cc7c032d5fd9d82124e0",
       "bytes": 85260,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1592
@@ -218,7 +218,7 @@
       "file": "mockups/13-qr-expired-open-mobile.png",
       "sha256": "c2a22aebc4ac8612d71d60d6e3201e59f42d9a4439ec6f05fe7687847fdd64e2",
       "bytes": 81428,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1500
@@ -235,7 +235,7 @@
       "file": "mockups/14-qr-expired-closed-mobile.png",
       "sha256": "815a12804fb6c49d2c24d4935f661918fe23071d7eb6df09cc3e9eab81a558c8",
       "bytes": 82528,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1536
@@ -252,7 +252,7 @@
       "file": "mockups/15-paid-mobile.png",
       "sha256": "6b810717032ddfeaf90a8906df09779998fb6cb42b62af1c694a6cecac7defe8",
       "bytes": 94306,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1710
@@ -269,7 +269,7 @@
       "file": "mockups/16-history-mobile.png",
       "sha256": "918ca839e566d595de305240d0fe56d0ebb31f6a9510afb01d0f1dd0fcf47b54",
       "bytes": 65823,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1063
@@ -286,7 +286,7 @@
       "file": "mockups/17-order-shipped-mobile.png",
       "sha256": "940f1a6972777707edfc7a3306994618a7d8bb317e2c20d638aee2ba68f99fe8",
       "bytes": 93822,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1584
@@ -303,7 +303,7 @@
       "file": "mockups/18-history-empty-mobile.png",
       "sha256": "ed17a622706653dcf66f11dccbaae0db9c0ea3e5d2c2bbcf1336d2573bc3889c",
       "bytes": 39675,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 844
@@ -320,7 +320,7 @@
       "file": "mockups/19-product-no-options-mobile.png",
       "sha256": "d80c7638558c6c97f1fe23ae98caeba38966e224b31059ba378dab8f7cc53bec",
       "bytes": 47851,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 390,
         "height": 1081
@@ -337,7 +337,7 @@
       "file": "mockups/05-recipient-tablet.png",
       "sha256": "ece3b594e23d0e10094fee795479f02192197a8ccefe6578175919926990e7b9",
       "bytes": 97829,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 834,
         "height": 1482
@@ -354,7 +354,7 @@
       "file": "mockups/07-review-tablet.png",
       "sha256": "08d5aea5fa9296acf87658f9c28ef6060dca6e8d6446b161894cd2c04b020105",
       "bytes": 100673,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 834,
         "height": 1334
@@ -371,7 +371,7 @@
       "file": "mockups/01-product-options-desktop.png",
       "sha256": "4a505ca16726b7b23ba271d50247e08366aac8471f3ef6ee5b044a266a2d0383",
       "bytes": 71498,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 1440,
         "height": 1042
@@ -388,7 +388,7 @@
       "file": "mockups/07-review-desktop.png",
       "sha256": "302f8843973d472f28e16bedbc0fe478286dcf69bf127c731b530b5908d6f396",
       "bytes": 108233,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 1440,
         "height": 1329
@@ -405,7 +405,7 @@
       "file": "mockups/09-qr-ready-desktop.png",
       "sha256": "d4dc4b0afba033279799a007b6d9055d911915dfc75366fbe728a3421aa39e77",
       "bytes": 110581,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 1440,
         "height": 1236
@@ -422,7 +422,7 @@
       "file": "mockups/16-history-desktop.png",
       "sha256": "96a10434ee5b1793675b3f7dbddaf5b4eb1f011ae8bdc2547fb899861823f5e4",
       "bytes": 80278,
-      "approvedAt": null,
+      "approvedAt": "2026-10-15T12:29:39.711Z",
       "pngDimensions": {
         "width": 1440,
         "height": 1101
