@@ -12,7 +12,7 @@
     {
       "id": "P01",
       "status": "passed",
-      "commit": null,
+      "commit": "9cd72fd2b76c0a8a7af2a506961bf82823383d0d",
       "tests": [
         {
           "command": "read-only frontend start preflight before any application writes",
@@ -94,9 +94,69 @@
     },
     {
       "id": "P02",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "npm run test",
+          "passed": 116,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p02-all-tests.txt",
+            "sha256": "de26f47237cb97361febb1a3c6158ff885f75f00cbaf9203134d7ea1a31e56a3"
+          }
+        },
+        {
+          "command": "npm run test:merchandise",
+          "passed": 18,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p02-unit.txt",
+            "sha256": "96345f49955901513abcfe3729f11ee4bb78857be1409fefacb89165ab659868"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p02-types.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p02-build.txt",
+            "sha256": "4a2745f9fd95c2d28a5a1f9615f7f196cf0fda0dfc4d6fd5f7c19ae7e5cd8bb3"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "exitCode": 0,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p02-lint.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "impeccable detect --json merchandise components and route scaffold",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p02-detector.json",
+            "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+          }
+        }
+      ],
+      "proof": "customer-api-verification.md",
+      "notes": [
+        "Customer R01-R14/R41 transport uses canonical contract validators, exact money/time and stable caller intent keys; it contains no registration merchant/provider credentials.",
+        "Owner state guards ignore stale reads across account, token and event changes, including a pending read on logout. Synthetic transport/React tests are not actual-provider evidence.",
+        "P02 adds only a scoped Provider and loading/error boundaries; approved-home implementation remains P05 and subsequent purchase visuals remain subject to P03 review."
+      ]
     },
     {
       "id": "P03",
@@ -171,5 +231,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T11:43:54.465Z"
+  "updatedAt": "2026-10-15T12:01:41.251Z"
 }
