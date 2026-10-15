@@ -95,7 +95,7 @@
     {
       "id": "P02",
       "status": "passed",
-      "commit": null,
+      "commit": "6683d21a5de6b759b541188f406540eb67bce775",
       "tests": [
         {
           "command": "npm run test",
@@ -160,9 +160,56 @@
     },
     {
       "id": "P03",
-      "status": "not_started",
+      "status": "awaiting_user_review",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "node docs/design/merchandise/subsequent-screens/render-references.mjs",
+          "status": "passed",
+          "capturedStaticReferences": 25,
+          "additionalOverflowChecks": 30,
+          "proof": "../../design/merchandise/subsequent-screens/layout-checks.json"
+        },
+        {
+          "command": "explicit ESLint on P03 reference renderer",
+          "status": "passed",
+          "newFindings": 0
+        },
+        {
+          "command": "static reference DOM checks, no new screenshot round",
+          "status": "passed",
+          "checks": 10,
+          "proof": "../../design/merchandise/subsequent-screens/dom-checks.json"
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p03-lint-baseline-final.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "impeccable detect --json on static reference pages and CSS",
+          "status": "reviewed_with_scoped_reference_annotations",
+          "rawFindings": 27,
+          "mechanicalFixed": 3,
+          "reviewOnlyAnnotations": 24,
+          "proof": "../../design/merchandise/subsequent-screens/detector-results.json"
+        }
+      ],
+      "notes": [
+        "Static references only. No application visual implementation or prototype was added.",
+        "19 mobile views/states, 2 tablet references and 4 desktop references. All fixture values explicitly synthetic.",
+        "Initial images inspected together, one correction batch, final images inspected together; no open-ended visual polish.",
+        "Human approval is pending; approvedAt stays null and P-DESIGN is not passed.",
+        "P04/P05 not started while awaiting review, preserving the user-requested task sequence.",
+        "A preparation checkpoint preserves the review artifacts in Git; it is not a P03 completion/approval commit. No later task is started."
+      ]
     },
     {
       "id": "P04",
@@ -231,5 +278,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T12:01:41.251Z"
+  "updatedAt": "2026-10-15T12:24:46.794Z"
 }

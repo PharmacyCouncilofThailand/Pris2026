@@ -1,0 +1,19 @@
+{
+  "runCount": 1,
+  "rawExitCode": 1,
+  "rawFindings": 27,
+  "groups": {
+    "cramped-padding": 15,
+    "undersized-ui-text": 9,
+    "skipped-heading": 3
+  },
+  "mechanicalHeadingCorrection": "h3 to h2, same computed type and rectangle verified",
+  "remainingReviewOnlyAnnotations": 24,
+  "review": "detector-review.md",
+  "rawReport": {
+    "path": ".merchandise-local/p03-detector.json",
+    "sha256": "d8d1a76f3ccdab4f83af39444a741724024f51e1715a3dfa6138e59882da175b"
+  },
+  "fullDetectorPass": false,
+  "lintExceptionExpanded": false
+}

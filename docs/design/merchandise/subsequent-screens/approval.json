@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0-review",
+  "task": "P03",
+  "status": "awaiting_user_review",
+  "approvedAt": null,
+  "approvedBy": null,
+  "approvalSource": null,
+  "inventory": "inventory.json",
+  "scope": "Subsequent purchase-flow visual references only; approved home unchanged; synthetic content is not sale data",
+  "functionalUiImplemented": false,
+  "P06ThroughP11VisualCodeAllowed": false,
+  "releaseGate": "not_ready",
+  "realProvider": "deferred_to_user_test",
+  "inventorySha256": "04c78a860d18ae055fcc42a07f45ef12c76c67294643219512e5d4ae7440c28a",
+  "inventoryDigestFormat": "JSON.stringify(parsed inventory)"
+}
