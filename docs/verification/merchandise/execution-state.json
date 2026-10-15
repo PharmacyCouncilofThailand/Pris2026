@@ -1134,7 +1134,7 @@
     {
       "id": "P11",
       "status": "passed",
-      "commit": null,
+      "commit": "d6b6938710c033260d54edd35aa985ce78fc874e",
       "tests": [
         {
           "command": "history query route unit red before implementation",
@@ -1271,9 +1271,153 @@
     },
     {
       "id": "P12",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "initial Chromium accessibility diagnostics",
+          "passed": 5,
+          "failed": 2,
+          "proof": {
+            "path": ".merchandise-local/p12-accessibility-initial.txt",
+            "sha256": "a52dbc8263c3e88e159ab19d9ff7d81306e4e587ce4b44d126d6d96fb20b0d1e"
+          }
+        },
+        {
+          "command": "initial Chromium performance and incumbent browser checks",
+          "passed": 11,
+          "failed": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-rest-initial.txt",
+            "sha256": "6990e3a3ca04ae928577546400191617e0cf6ba2b02f138e038e1aae61cc6d6d"
+          }
+        },
+        {
+          "command": "first cross-engine UI suite; Firefox DOMRect precision corrected",
+          "passed": 56,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p12-browser-final.txt",
+            "sha256": "bf59084293d99880af98e53bd5b47c3384b6140903d30d17f37f1878145f2821"
+          }
+        },
+        {
+          "command": "final complete UI suite, three engines",
+          "passed": 57,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-browser-confirmed.txt",
+            "sha256": "f7ebe4dcc47a031a542a0946edc6836e061ed4587386431b4ba48d6b14d25e4b"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 153,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-all-tests-final.txt",
+            "sha256": "da2f60c677a3782626b95960d31bc3ed4ad4539391637e21a64fb74d70332dec"
+          }
+        },
+        {
+          "command": "explicit required legacy helper tests",
+          "passed": 20,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-required-legacy-units.txt",
+            "sha256": "e894aad934dc16b129a5c0336f03c2f7f287cb7b2e8a1fced04d8e2c6bb94d33"
+          }
+        },
+        {
+          "command": "unchanged conference-web targeted checkout tests",
+          "passed": 37,
+          "failed": 0,
+          "files": 5,
+          "proof": {
+            "path": ".merchandise-local/p12-conference-web-checkout-regression.txt",
+            "sha256": "3eda8f484365aaedb4dd07a5a25b8613bc52873c8fdbebceaf228dde9992a7c8"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-types-confirmed.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "baseline-aware full lint",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "files": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-lint-confirmed.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "npm run build",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-build-final.txt",
+            "sha256": "e8899d63559fd20ebb04b513a29e4dcff2bc093fe71966ad4b42552b8d7cbbc2"
+          }
+        },
+        {
+          "command": "UI detector on changed shipment CSS, one run",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p12-detector.json",
+            "sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+          }
+        }
+      ],
+      "proof": "frontend-ui-report.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p12-shipped-mobile.png",
+          "sha256": "bf3f71eadfa94fa774f19145050f25421f9cc4de15c330cedad82cd4b1effe63"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p12-shipped-tablet.png",
+          "sha256": "694fefe119c2c4bb48909531afaee997df2a4ef8442b6b4920c58639e89d98ac"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p12-shipped-desktop.png",
+          "sha256": "e5237b03ebddaee2cbc0f06255461ef60cdd8aee571a0cb49f4c257eceae9c26"
+        }
+      ],
+      "measurements": [
+        {
+          "path": "docs/verification/merchandise/performance/p12-before-chromium.json",
+          "sha256": "4310a490113fe17e49ed794c7b3183afc276879cc50fee28e838fce4c939ca40"
+        },
+        {
+          "path": "docs/verification/merchandise/performance/p12-chromium.json",
+          "sha256": "ec4593481dbb166b7a77cf446730707d76f70761a454c3ed101c571dcdb7cadc"
+        },
+        {
+          "path": "docs/verification/merchandise/performance/p12-firefox.json",
+          "sha256": "8e9f4c07073e51a252329e6e9784c763a902907880381462c5803c1433a026e3"
+        },
+        {
+          "path": "docs/verification/merchandise/performance/p12-webkit.json",
+          "sha256": "b12a2f26d0b9fa52ba886165f1829f071d466636783a39675eada52cacf3970f"
+        }
+      ],
+      "notes": [
+        "Only production source change: min-width:0 and overflow-wrap:anywhere on the shipment detail section, proven by a long saved carrier regression.",
+        "Source identity assertions preserve incumbent checkout/receipt/invitation/presentation/activity code; conference-web was tested without editing it.",
+        "Local measurements are not field INP, production SLA or reconstructed pre-feature bundle measurements. Physical devices and actual provider/mail remain User Test release conditions.",
+        "Exact checkpoint commit is recorded by the next task."
+      ]
     },
     {
       "id": "P13",
@@ -1288,5 +1432,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T16:38:41.311Z"
+  "updatedAt": "2026-10-15T16:54:46.680Z"
 }

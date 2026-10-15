@@ -103,6 +103,8 @@
 .merch-order-delivery {
   padding-block: 20px;
   max-width: 900px;
+  min-width: 0;
+  overflow-wrap: anywhere;
   border-bottom: 1px solid #d4def0;
   margin-bottom: 24px;
   line-height: 1.8;
