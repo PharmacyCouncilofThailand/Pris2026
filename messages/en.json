@@ -175,6 +175,7 @@
     "oral": {
       "title": "Oral presentation",
       "description": "PowerPoint template with cover, backgrounds, and sample content layouts in the PRIS 2026 identity.",
+      "ratio": "Landscape format: 16:9 or 32 × 18 cm or 1920 × 1080 px, maximum {maxMB} MB",
       "slides": "No more than 10 content slides",
       "images": "1-2 supporting images",
       "duration": "Presentation: no more than 10 minutes",
@@ -1229,7 +1230,17 @@
     "errorTitle": "Unable to load accepted abstracts",
     "errorDesc": "A network or server error occurred while retrieving abstracts. Please check your connection and try again.",
     "retry": "Try again",
-    "backHome": "Back to Home"
+    "backHome": "Back to Home",
+    "participantGroupsLabel": "Work groups",
+    "generalWorks": "General works",
+    "studentWorks": "Student works",
+    "presentationTypesLabel": "Presentation types",
+    "studentAnnouncement": "Student announcement",
+    "studentPdfTitle": "Selected student works for PRIS 2026",
+    "studentPdfActionsLabel": "Student announcement document",
+    "studentPublishedDesc": "Student works selected for Oral Presentation, listed separately from general works.",
+    "studentEmptyTitle": "No student works announced yet",
+    "studentEmptyDesc": "Please refer to the student announcement document above."
   },
   "abstractPage": {
     "topicsTitle": "Submission Themes & Topics",

@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { createTranslator } from "next-intl";
+import th from "../../messages/th.json";
+import en from "../../messages/en.json";
+import { PRESENTATION_LIMITS } from "./presentationLimits";
 import {
   formatTemplateFileSize,
   oralPreviewSlides,
@@ -9,6 +13,25 @@ import {
 
 const publicFile = (url: string) =>
   new URL(`../../public${decodeURIComponent(url)}`, import.meta.url);
+
+test("Oral template guidance and upload requirements use the same 100 MB limit in both locales", () => {
+  for (const [locale, messages] of [
+    ["th", th],
+    ["en", en],
+  ] as const) {
+    const t = createTranslator({ locale, messages });
+    assert.ok(
+      t("presentationTemplates.oral.ratio", {
+        maxMB: PRESENTATION_LIMITS.oral.mb,
+      }).includes("100 MB"),
+    );
+    assert.ok(
+      t("presentation.requirementsOral", {
+        maxMB: PRESENTATION_LIMITS.oral.mb,
+      }).includes("100 MB"),
+    );
+  }
+});
 
 test("template file sizes use the site's 1024-based KB and MB labels", () => {
   assert.equal(formatTemplateFileSize(9965106), "9.5 MB");

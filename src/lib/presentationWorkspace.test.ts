@@ -368,7 +368,7 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
       );
       assert.ok(
         JSON.stringify(renderer!.toJSON()).includes(
-          messages().requirementsOral.replace("{maxMB}", "50"),
+          messages().requirementsOral.replace("{maxMB}", "100"),
         ),
       );
       assert.ok(
@@ -395,7 +395,7 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
         JSON.stringify(renderer!.toJSON()).includes("{maxMB}"),
         false,
       );
-      assert.ok(JSON.stringify(renderer!.toJSON()).includes("50"));
+      assert.ok(JSON.stringify(renderer!.toJSON()).includes("100"));
       assert.ok(
         JSON.stringify(renderer!.toJSON()).includes(messages().pageRuleOral),
       );
@@ -434,7 +434,7 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
         JSON.stringify(renderer!.toJSON()).includes(
           messages().errors.PRESENTATION_FILE_TOO_LARGE.replace(
             "{maxMB}",
-            "50",
+            "100",
           ),
         ),
       );

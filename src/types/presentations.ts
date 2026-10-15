@@ -3,6 +3,7 @@ export type AnnouncementType = "oral" | "poster" | "highlighted-poster";
 export type RevisionStatus = "open" | "submitted" | "expired" | "cancelled";
 export type Announcement = {
   id: number;
+  participantGroup?: "general" | "student";
   sequence?: number;
   trackingId: string | null;
   title: string;

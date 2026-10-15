@@ -30,7 +30,7 @@ import {
 
 const approvedAbstractsPdfUrls = {
   "1": "/documents/approved-abstracts-round-1.pdf",
-  "2": "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Completed%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%9C%E0%B8%A5%20PRIS2026%20Presentation%20%E0%B8%A3%E0%B8%AD%E0%B8%9A%E0%B8%97%E0%B8%B5%E0%B9%88%202.pdf",
+  "2": "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Completed%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%9C%E0%B8%A5%20PRIS2026%20Presentation%20%E0%B8%A3%E0%B8%AD%E0%B8%9A%E0%B8%97%E0%B8%B5%E0%B9%88%202%20%E0%B9%80%E0%B8%9E%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B9%80%E0%B8%95%E0%B8%B4%E0%B8%A1.pdf",
 };
 const ITEMS_PER_PAGE = 10;
 
@@ -66,7 +66,13 @@ export default function ApprovedAbstractsPage() {
     "all" | "oral" | "highlighted-poster" | "poster"
   >("all");
   const [selectedRound, setSelectedRound] = useState<"1" | "2">("2");
-  const approvedAbstractsPdfUrl = approvedAbstractsPdfUrls[selectedRound];
+  const [selectedGroup, setSelectedGroup] = useState<"general" | "student">(
+    "general",
+  );
+  const isStudentGroup = selectedRound === "2" && selectedGroup === "student";
+  const approvedAbstractsPdfUrl = isStudentGroup
+    ? "https://pub-7078151ee47d4cc6a2666843e2f4cb5d.r2.dev/Completed%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B8%9C%E0%B8%A5%20PRIS2026%20Presentation%20%E0%B8%9C%E0%B8%A5%E0%B8%87%E0%B8%B2%E0%B8%99%E0%B8%99%E0%B8%B1%E0%B8%81%E0%B8%A8%E0%B8%B6%E0%B8%81%E0%B8%A9%E0%B8%B2.pdf"
+    : approvedAbstractsPdfUrls[selectedRound];
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,11 +104,41 @@ export default function ApprovedAbstractsPage() {
     // Preserve the existing deferred-search pagination reset.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
-  }, [deferredSearchQuery, selectedType, selectedRound, selectedCategory]);
+  }, [
+    deferredSearchQuery,
+    selectedType,
+    selectedRound,
+    selectedGroup,
+    selectedCategory,
+  ]);
+
+  const roundAbstracts = useMemo(
+    () =>
+      abstracts.filter((item) => (item.round ?? 1) === Number(selectedRound)),
+    [abstracts, selectedRound],
+  );
+  const groupAbstracts = useMemo(
+    () =>
+      filterAcceptedAbstracts(roundAbstracts, {
+        participantGroup: selectedGroup,
+      }),
+    [roundAbstracts, selectedGroup],
+  );
+  const groupCounts = useMemo(
+    () => ({
+      general: roundAbstracts.filter(
+        (item) => item.participantGroup !== "student",
+      ).length,
+      student: roundAbstracts.filter(
+        (item) => item.participantGroup === "student",
+      ).length,
+    }),
+    [roundAbstracts],
+  );
 
   const categories = useMemo(
-    () => extractDistinctCategories(abstracts),
-    [abstracts],
+    () => extractDistinctCategories(groupAbstracts),
+    [groupAbstracts],
   );
 
   const selectedCategoryName = useMemo(() => {
@@ -114,31 +150,28 @@ export default function ApprovedAbstractsPage() {
   }, [selectedCategory, categories, t]);
 
   const stats = useMemo(() => {
-    const roundAbstracts = abstracts.filter(
-      (item) => (item.round ?? 1) === Number(selectedRound),
-    );
     return {
-      all: roundAbstracts.length,
-      oral: roundAbstracts.filter((item) => item.presentationType === "oral")
+      all: groupAbstracts.length,
+      oral: groupAbstracts.filter((item) => item.presentationType === "oral")
         .length,
-      highlightedPoster: roundAbstracts.filter(
+      highlightedPoster: groupAbstracts.filter(
         (item) => item.presentationType === "highlighted-poster",
       ).length,
-      poster: roundAbstracts.filter(
+      poster: groupAbstracts.filter(
         (item) => item.presentationType === "poster",
       ).length,
     };
-  }, [abstracts, selectedRound]);
+  }, [groupAbstracts]);
 
   const filteredAbstracts = useMemo(() => {
-    return filterAcceptedAbstracts(abstracts, {
+    return filterAcceptedAbstracts(groupAbstracts, {
       search: deferredSearchQuery,
       presentationType: selectedType,
       round: selectedRound,
       categoryId: selectedCategory,
     });
   }, [
-    abstracts,
+    groupAbstracts,
     deferredSearchQuery,
     selectedType,
     selectedRound,
@@ -172,6 +205,7 @@ export default function ApprovedAbstractsPage() {
     setSearchQuery("");
     setSelectedType("all");
     setSelectedRound("2");
+    setSelectedGroup("general");
     setSelectedCategory("all");
     setCurrentPage(1);
   };
@@ -259,19 +293,27 @@ export default function ApprovedAbstractsPage() {
                 </span>
                 <span className="text-xs text-slate-600 font-semibold flex items-center gap-1 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
                   <Calendar className="size-3.5 text-slate-500" />
-                  {selectedRound === "1"
-                    ? t("round1Announcement")
-                    : t("round2Announcement")}
+                  {isStudentGroup
+                    ? t("studentAnnouncement")
+                    : selectedRound === "1"
+                      ? t("round1Announcement")
+                      : t("round2Announcement")}
                 </span>
               </div>
               <h2 className="text-sm sm:text-lg md:text-xl font-bold text-slate-900 leading-snug">
-                {t("pdfDocumentTitle", { round: selectedRound })}
+                {isStudentGroup
+                  ? t("studentPdfTitle")
+                  : t("pdfDocumentTitle", { round: selectedRound })}
               </h2>
             </div>
 
             <div
               role="group"
-              aria-label={t("pdfActionsLabel", { round: selectedRound })}
+              aria-label={
+                isStudentGroup
+                  ? t("studentPdfActionsLabel")
+                  : t("pdfActionsLabel", { round: selectedRound })
+              }
               className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-2.5 shrink-0 w-full sm:w-auto"
             >
               <a
@@ -285,7 +327,11 @@ export default function ApprovedAbstractsPage() {
               </a>
               <a
                 href={approvedAbstractsPdfUrl}
-                download={`approved-abstracts-round-${selectedRound}.pdf`}
+                download={
+                  isStudentGroup
+                    ? "approved-abstracts-students.pdf"
+                    : `approved-abstracts-round-${selectedRound}.pdf`
+                }
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex h-10 items-center justify-center gap-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 px-3 sm:px-4 text-xs font-bold text-white transition active:scale-95 shadow-[0_4px_14px_rgba(249,115,22,0.35)]"
@@ -304,19 +350,66 @@ export default function ApprovedAbstractsPage() {
             </div>
           ) : loadState === "ready" && stats.all > 0 ? (
             <div className="rounded-2xl bg-slate-50 border border-slate-300 px-4 sm:px-5 py-3 sm:py-3.5 text-xs sm:text-sm text-slate-600 shadow-[0_4px_16px_rgba(0,0,0,0.04)]">
-              {t("round2PublishedDesc")}
+              {t(
+                isStudentGroup ? "studentPublishedDesc" : "round2PublishedDesc",
+              )}
             </div>
           ) : null}
 
           {/* ── Box C: Filter Hub (Tabs + Search + Category) ── */}
           <div className="bg-white rounded-2xl border border-slate-300 p-3.5 sm:p-5 shadow-[0_4px_20px_rgba(0,0,0,0.08)] space-y-3.5 sm:space-y-4">
+            {selectedRound === "2" && (
+              <div
+                role="group"
+                aria-label={t("participantGroupsLabel")}
+                className="grid grid-cols-2 gap-2 border-b border-slate-200 pb-4 sm:flex"
+              >
+                {(
+                  [
+                    { key: "general", label: t("generalWorks") },
+                    { key: "student", label: t("studentWorks") },
+                  ] as const
+                ).map((group) => (
+                  <button
+                    key={group.key}
+                    type="button"
+                    aria-pressed={selectedGroup === group.key}
+                    onClick={() => {
+                      setSelectedGroup(group.key);
+                      setSelectedType("all");
+                      setSelectedCategory("all");
+                      setCurrentPage(1);
+                      setIsCategoryDropdownOpen(false);
+                    }}
+                    className={cn(
+                      "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-bold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 sm:px-5",
+                      selectedGroup === group.key
+                        ? "bg-slate-900 text-white"
+                        : "border border-slate-300 bg-white text-slate-700 hover:bg-slate-100",
+                    )}
+                  >
+                    {group.label}
+                    <span
+                      className={cn(
+                        "rounded-md px-1.5 py-0.5 text-xs tabular-nums",
+                        selectedGroup === group.key
+                          ? "bg-white/15 text-white"
+                          : "bg-slate-100 text-slate-700",
+                      )}
+                    >
+                      {loadState === "ready" ? groupCounts[group.key] : "—"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
             {/* Presentation Tabs Row */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 pb-3 sm:pb-3.5 border-b border-slate-200">
               {/* Type Switcher Tabs (Responsive 2-col on mobile / flex on tablet/desktop) */}
               <div
                 className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2 w-full lg:w-auto"
                 role="group"
-                aria-label="Presentation Type Tabs"
+                aria-label={t("presentationTypesLabel")}
               >
                 {[
                   {
@@ -339,34 +432,42 @@ export default function ApprovedAbstractsPage() {
                     label: t("posterPresentation"),
                     count: stats.poster,
                   },
-                ].map((tab) => {
-                  const isActive = selectedType === tab.key;
-                  return (
-                    <button
-                      key={tab.key}
-                      type="button"
-                      onClick={() => setSelectedType(tab.key)}
-                      className={cn(
-                        "inline-flex items-center justify-between sm:justify-center gap-1.5 sm:gap-2 h-10 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95",
-                        isActive
-                          ? "bg-orange-500 text-white shadow-[0_4px_14px_rgba(249,115,22,0.35)] ring-2 ring-orange-500/20"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200",
-                      )}
-                    >
-                      <span className="truncate">{tab.label}</span>
-                      <span
+                ]
+                  .filter(
+                    (tab) =>
+                      !isStudentGroup ||
+                      tab.key === "all" ||
+                      tab.key === "oral",
+                  )
+                  .map((tab) => {
+                    const isActive = selectedType === tab.key;
+                    return (
+                      <button
+                        key={tab.key}
+                        type="button"
+                        aria-pressed={isActive}
+                        onClick={() => setSelectedType(tab.key)}
                         className={cn(
-                          "px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-mono font-bold shrink-0",
+                          "inline-flex items-center justify-between sm:justify-center gap-1.5 sm:gap-2 h-10 px-2.5 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer active:scale-95",
                           isActive
-                            ? "bg-white text-orange-600"
-                            : "bg-white text-slate-700 border border-slate-200 shadow-2xs",
+                            ? "bg-orange-500 text-white shadow-[0_4px_14px_rgba(249,115,22,0.35)] ring-2 ring-orange-500/20"
+                            : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200",
                         )}
                       >
-                        {loadState === "ready" ? tab.count : "—"}
-                      </span>
-                    </button>
-                  );
-                })}
+                        <span className="truncate">{tab.label}</span>
+                        <span
+                          className={cn(
+                            "px-1.5 sm:px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-mono font-bold shrink-0",
+                            isActive
+                              ? "bg-white text-orange-600"
+                              : "bg-white text-slate-700 border border-slate-200 shadow-2xs",
+                          )}
+                        >
+                          {loadState === "ready" ? tab.count : "—"}
+                        </span>
+                      </button>
+                    );
+                  })}
               </div>
 
               {/* Round Switcher */}
@@ -380,7 +481,14 @@ export default function ApprovedAbstractsPage() {
                     <button
                       key={round.key}
                       type="button"
-                      onClick={() => setSelectedRound(round.key)}
+                      aria-pressed={isActive}
+                      onClick={() => {
+                        setSelectedRound(round.key);
+                        setSelectedGroup("general");
+                        setSelectedType("all");
+                        setSelectedCategory("all");
+                        setCurrentPage(1);
+                      }}
                       className={cn(
                         "h-8 px-3.5 rounded-lg text-xs font-bold transition cursor-pointer text-center",
                         isActive
@@ -576,10 +684,10 @@ export default function ApprovedAbstractsPage() {
                   <Clock className="size-7" />
                 </div>
                 <h2 className="text-lg font-bold text-slate-900">
-                  {t("round2EmptyTitle")}
+                  {t(isStudentGroup ? "studentEmptyTitle" : "round2EmptyTitle")}
                 </h2>
                 <p className="mt-1.5 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  {t("round2EmptyDesc")}
+                  {t(isStudentGroup ? "studentEmptyDesc" : "round2EmptyDesc")}
                 </p>
               </div>
             ) : (
