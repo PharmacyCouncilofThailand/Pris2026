@@ -974,7 +974,7 @@
     {
       "id": "P10",
       "status": "passed",
-      "commit": null,
+      "commit": "0d888ac05b53e7e1507566abfb1cdeb6fdbf1a42",
       "tests": [
         {
           "command": "deadline/payment action unit red before implementation",
@@ -1133,9 +1133,141 @@
     },
     {
       "id": "P11",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "history query route unit red before implementation",
+          "status": "expected_failure",
+          "proof": {
+            "path": ".merchandise-local/p11-routes-red.txt",
+            "sha256": "697f31472e6cc6ea09e415bbcdee3c80085e3bfec750ee8e24587ae5bfb76304"
+          }
+        },
+        {
+          "command": "empty history browser red before route implementation",
+          "status": "expected_failure_missing_route",
+          "proof": {
+            "path": ".merchandise-local/p11-browser-red.txt",
+            "sha256": "dafa4de7936f251a15548fb278d445882f68b20eb23029b66e535c987a591e97"
+          }
+        },
+        {
+          "command": "initial Chromium history suite; incorrect accessible-name selector",
+          "passed": 13,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p11-browser-initial.txt",
+            "sha256": "48069d687c16e494a973010c397141c9f22993081a6488b07436d2f59496e0af"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 153,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-all-tests-initial.txt",
+            "sha256": "bd9a43c5ab5d47260d90311a2473178b6f876f1004035538113d2d6ae63d61b0"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-types-final.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build, fixture origin in process environment only",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-build-final.txt",
+            "sha256": "498eab663e052a6dca58d70d7715824e6da4f73b9fa6d0e4cca4302326cb904c"
+          }
+        },
+        {
+          "command": "baseline-aware lint",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-lint-final.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "initial impeccable detector, history/status/detail components/styles",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "complete production history suite, Chromium Firefox WebKit",
+          "passed": 42,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-browser-final.txt",
+            "sha256": "ff88c441efa29c31a986d3160578a387dd682e5d4ede3f3f2321955a129766a2"
+          }
+        },
+        {
+          "command": "affected P09/P10 authentication/order/payment regressions, three engines",
+          "passed": 21,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p11-payment-regression.txt",
+            "sha256": "99293b8b4d8a67c47ba55e9980434d2de87d01e6e890cc49e6ef344e08fbf69a"
+          }
+        }
+      ],
+      "proof": "order-history-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p11-empty-mobile.png",
+          "sha256": "7ea4eb1299c4c5cee95a03f15a1c5aa0e16e422b7a495cc9ec5dc512d11c9bea"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p11-history-mobile.png",
+          "sha256": "301b3893b5244fcd34f97c201558e3ad367e501ea9f1b35e1fa781af96650f17"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p11-history-tablet.png",
+          "sha256": "038c1e43f30e9b945a39d3025138fe7f32bcf412d519916d9a652f5d711802aa"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p11-history-desktop.png",
+          "sha256": "00fb7be6b29af8f41dc5476a99ced457f3b3c51a7de9cfdb671cda3c072c4377"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p11-shipped-mobile.png",
+          "sha256": "91fbc34d4ecb687f415fe10c91e1cccca1a1db094d592bbf9622801eda959707"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p11-shipped-tablet.png",
+          "sha256": "5d96a5f64459423171e34634ca807626af912b312809d2e25d74d228f68f7876"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p11-shipped-desktop.png",
+          "sha256": "e805bd81aff42945620b7052ac41dd0e7d1756021b28caa25c14ba1c61d8e7de"
+        }
+      ],
+      "notes": [
+        "One initial and one confirmation batch of seven viewport captures inspected. Desktop history width and empty-page initial viewport corrected together; P03 approval unchanged.",
+        "R10 contains summaries only; items and recipient remain in owner detail without N+1 history reads. Original/current snapshots, actual tracking strings and separate payment/shipping statuses are preserved.",
+        "Clipboard tests explicitly use success/denial adapters and do not touch the host clipboard. Paid-page return reads fresh shipment data without initiating payment.",
+        "Real provider/physical devices/bank handling/actual Nipamail delivery remain deferred to User Test. Release not_ready, live false, retained single database unchanged.",
+        "The checkpoint is the commit containing this record; exact hash is recorded by the next task."
+      ]
     },
     {
       "id": "P12",
@@ -1156,5 +1288,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T16:13:07.413Z"
+  "updatedAt": "2026-10-15T16:38:41.311Z"
 }

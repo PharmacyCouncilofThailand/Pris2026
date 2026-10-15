@@ -31,6 +31,7 @@ import { usePaymentDeadline } from "./usePaymentDeadline";
 import type { OrderDetail } from "@/types/merchandise";
 import PaidOrder from "./PaidOrder";
 import PaymentPanel from "./PaymentPanel";
+import { OrderDelivery, OrderOriginal, OrderTimes } from "./OrderRecord";
 export default function OrderScreen({ orderId }: { orderId: string }) {
   return (
     <MerchandiseAuthBoundary>
@@ -136,7 +137,7 @@ function OrderWorkspace({
       observer.disconnect();
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
-  }, [order.paymentStatus]);
+  }, [order.paymentStatus, order.fulfillment.status]);
   const accept = resource.accept,
     reloadCart = cart.reload;
   useEffect(() => {
@@ -415,7 +416,6 @@ function OrderWorkspace({
     check,
   ]);
   useEffect(() => {
-    if (order.paymentStatus === "paid") return;
     const read = async (returning: boolean) => {
       if (
         document.visibilityState === "hidden" ||
@@ -439,14 +439,17 @@ function OrderWorkspace({
     const wake = () => {
       void read(true);
     };
-    const timer = setInterval(() => {
-      void read(false);
-    }, MERCHANDISE_ORDER_REFRESH_MS);
+    const timer =
+      order.paymentStatus === "paid"
+        ? null
+        : setInterval(() => {
+            void read(false);
+          }, MERCHANDISE_ORDER_REFRESH_MS);
     document.addEventListener("visibilitychange", wake);
     window.addEventListener("focus", wake);
     window.addEventListener("pageshow", wake);
     return () => {
-      clearInterval(timer);
+      if (timer) clearInterval(timer);
       document.removeEventListener("visibilitychange", wake);
       window.removeEventListener("focus", wake);
       window.removeEventListener("pageshow", wake);
@@ -475,6 +478,8 @@ function OrderWorkspace({
       </Link>
       <h1>ชำระเงิน</h1>
       <p className="merch-cart-muted">คำสั่งซื้อ {order.orderNumber}</p>
+      <OrderDelivery order={order} />
+      <OrderOriginal order={order} />
       {notice && !unknown && (
         <p className="merch-cart-notice" role="status">
           {notice}
@@ -548,6 +553,7 @@ function OrderWorkspace({
               ข้อมูลถูกล็อกหลังยืนยันคำสั่งซื้อ
             </p>
           </section>
+          <OrderTimes order={order} />
           <p className="merch-order-support">
             หากต้องการแก้ไขคำสั่งซื้อ กรุณาติดต่อ{" "}
             <a

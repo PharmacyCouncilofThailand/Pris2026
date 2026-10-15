@@ -5,6 +5,7 @@ import "@/components/merchandise/product-detail.css";
 import "@/components/merchandise/cart.css";
 import "@/components/merchandise/checkout.css";
 import "@/components/merchandise/order.css";
+import "@/components/merchandise/history.css";
 export default function SouvenirLayout({ children }: { children: ReactNode }) {
   return children;
 }
