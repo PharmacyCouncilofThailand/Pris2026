@@ -39,6 +39,10 @@ export const navigationData: NavItem[] = [
     href: "/registration",
   },
   {
+    labelKey: "merchandise",
+    href: "/souvenirs",
+  },
+  {
     labelKey: "sponsorship",
     href: "/sponsorship",
   },

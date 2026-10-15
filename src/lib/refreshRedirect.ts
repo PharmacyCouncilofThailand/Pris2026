@@ -1,6 +1,14 @@
 import { eventReturnQuery } from "./localizedRedirect";
+import { isMerchandisePath, merchandiseReturnPath } from "./merchandiseRoutes";
 
 export function shouldRedirectReload(pathname: string, search = ""): boolean {
+  if (isMerchandisePath(pathname))
+    return merchandiseReturnPath(pathname + search) === null;
+  if (
+    pathname.replace(/^\/(th|en)(?=\/|$)/, "") === "/auth/sso" &&
+    merchandiseReturnPath(eventReturnQuery(search)?.redirect)
+  )
+    return false;
   const normalized =
     pathname.replace(/^\/(th|en)(?=\/|$)/, "").replace(/\/$/, "") || "/";
   const directReturn = eventReturnQuery(

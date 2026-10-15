@@ -25,10 +25,16 @@ import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { navigationData } from "@/data/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { presentationReturnPath } from "@/lib/localizedRedirect";
+import {
+  isMerchandisePath,
+  merchandiseReturnPath,
+} from "@/lib/merchandiseRoutes";
+import { useMerchandiseSessionCleanup } from "@/components/merchandise/MerchandiseAuthBoundary";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
-  const { isAuthenticated: isLoggedIn } = useAuth();
+  const { isAuthenticated: isLoggedIn, user } = useAuth();
+  useMerchandiseSessionCleanup(isLoggedIn ? (user?.id ?? null) : null);
   const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
   const isTicketPage = pathname === "/ticket";
@@ -104,6 +110,14 @@ export default function Header() {
   const switchLocale = () => {
     const newLocale = locale === "en" ? "th" : "en";
     startTransition(() => {
+      if (isMerchandisePath(pathname) && typeof window !== "undefined") {
+        router.replace(
+          merchandiseReturnPath(pathname + window.location.search) ??
+            "/souvenirs",
+          { locale: newLocale },
+        );
+        return;
+      }
       if (
         pathname === "/presentation-submission" &&
         typeof window !== "undefined"
