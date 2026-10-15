@@ -539,7 +539,7 @@ export default function Hero() {
     <section
       ref={containerRef}
       lang={locale}
-      className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-x-hidden bg-[#04050d] text-white min-[1280px]:min-h-[100svh]"
+      className="font-heading relative isolate w-full min-h-[100svh] md:portrait:min-h-0 lg:portrait:min-h-0 overflow-clip bg-[#04050d] text-white min-[1280px]:min-h-[100svh]"
     >
       <video
         ref={videoRef}
