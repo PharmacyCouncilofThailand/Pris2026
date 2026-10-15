@@ -1,0 +1,6 @@
+{
+  "command": "npx playwright test -c playwright.merchandise.final.config.ts",
+  "exitCode": 0,
+  "log": "docs/verification/merchandise/final/browser.log.txt",
+  "result": "docs/verification/merchandise/final/browser-results.json"
+}

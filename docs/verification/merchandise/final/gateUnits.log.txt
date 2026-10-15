@@ -1,0 +1,19 @@
+✔ development evidence passes while physical/provider release remains closed (5.2957ms)
+✔ an unfinished task or missing checkpoint cannot be hidden by a complete final test count (3.8039ms)
+✔ missing and duplicate required checks cannot pass (1.0608ms)
+✔ device approval cannot be inferred from an emulator or a passed string (0.8785ms)
+✔ live activation and missing release blockers are rejected (2.5105ms)
+✔ missing and tampered real evidence fails its digest (1.0558ms)
+✔ verification files must be in the checksum manifest (0.508ms)
+✔ a forged passing summary cannot hide a nonzero command or new lint findings (2.4623ms)
+✔ skipped, retried, failed and expected-failure browser cases are rejected (5.9874ms)
+✔ API-only or smoke load cannot stand in for the integrated 1,000-session observation (2.3798ms)
+✔ absolute, traversal and backslash paths cannot read outside the evidence root (0.8546ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 134.7349

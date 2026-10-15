@@ -1422,7 +1422,7 @@
     {
       "id": "P13",
       "status": "passed_development",
-      "commit": null,
+      "commit": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda",
       "tests": [
         {
           "command": "initial customer Bundle label diagnostic (aborted)",
@@ -1549,10 +1549,85 @@
     },
     {
       "id": "P14",
-      "status": "not_started",
+      "status": "passed_development",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "npm run build",
+          "check": "build",
+          "exitCode": 0,
+          "proof": {
+            "path": "docs/verification/merchandise/final/build.log.txt",
+            "sha256": "174f2bced2f91c6a45ae3e3d992801f55fac45bf727b2d72c1dfaee94199c47c"
+          }
+        },
+        {
+          "command": "node node_modules/typescript/bin/tsc --noEmit",
+          "check": "types",
+          "exitCode": 0,
+          "proof": {
+            "path": "docs/verification/merchandise/final/types.log.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "node node_modules/tsx/dist/cli.mjs --test src/**/*.test.ts",
+          "check": "units",
+          "exitCode": 0,
+          "proof": {
+            "path": "docs/verification/merchandise/final/units.log.txt",
+            "sha256": "220e966198c44bee49238a065f8e66172d8ef26a4798072ac5c1fb6202a76c27"
+          }
+        },
+        {
+          "command": "node --test scripts/merchandise-frontend-gate.test.mjs",
+          "check": "gateUnits",
+          "exitCode": 0,
+          "proof": {
+            "path": "docs/verification/merchandise/final/gateUnits.log.txt",
+            "sha256": "aeb876458c378c55ef21114d7e8b503a4a7bcd57b32672542c0f1d4f11ec184d"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "check": "lint",
+          "exitCode": 0,
+          "proof": {
+            "path": "docs/verification/merchandise/final/lint.log.txt",
+            "sha256": "8b8829973ef1a5f2b940fcb34eb9a0bfa0c74b182876c6b621c7d3206da29fd8"
+          }
+        },
+        {
+          "command": "npx playwright test -c playwright.merchandise.final.config.ts",
+          "passed": 339,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "projects": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "proof": {
+            "path": "docs/verification/merchandise/final/browser-results.json",
+            "sha256": "d3d0e184761a285dcfb2fdff1c2694d0e651a84124759424b0839ea6c63c5226"
+          }
+        },
+        {
+          "command": "final artifact/source/upstream development gate",
+          "proof": "frontend-completion.json"
+        }
+      ],
+      "proof": "frontend-completion.json",
+      "notes": [
+        "Full final browser suite uses unchanged customer application source from the P13 checkpoint; P14 adds verification/reporting only.",
+        "Current generated images/measurements are frozen under final/ with a mapping. Earlier task output files are restored from the P13 commit, preserving historical evidence rather than replacing it.",
+        "Required checks retain all 20 IDs: 19 development checks passed, P-DEVICE explicitly deferred to User Test in release scope under the approved amendment. No physical/provider/mail proof is fabricated.",
+        "G_RELEASE remains not_ready and livePaymentsEnabled false. The database is retained until explicit deletion instructions.",
+        "Final checkpoint is the commit containing this record; a self-referential commit hash is not fabricated.",
+        "Initial completion-manifest producer joined a duplicate slash; the path verifier correctly rejected it. The producer was corrected, with no customer application/test change, and the final gate passed. Diagnostic is retained in final/manifest-path-diagnostic.txt."
+      ]
     }
   ],
-  "updatedAt": "2026-10-15T17:42:04.561Z"
+  "updatedAt": "2026-10-15T18:20:27.309Z"
 }
