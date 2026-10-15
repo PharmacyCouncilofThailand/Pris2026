@@ -25,6 +25,84 @@ const session = (
 });
 const json = (data: unknown) => Response.json({ success: true, data });
 const flush = () => new Promise<void>((done) => setTimeout(done, 0));
+
+test("accepting a mutation result is scoped to its live owner/token and cannot overwrite a new session", async () => {
+  const api = createMerchandiseApi({
+    fetcher: async (url, init) =>
+      String(url).endsWith("/store")
+        ? Response.json({ success: true, data: store })
+        : Response.json({
+            success: true,
+            data: new Headers(init?.headers)
+              .get("authorization")
+              ?.includes("first")
+              ? cart
+              : {
+                  ...cart,
+                  id: null,
+                  revision: 0,
+                  items: [],
+                  unitCount: "0",
+                  amounts: null,
+                },
+          }),
+  });
+  let current: MerchandiseResource<CartDto> | undefined;
+  function Probe() {
+    const value = useMerchandiseCart();
+    useEffect(() => {
+      current = value;
+    }, [value]);
+    return createElement("output", null, value.data?.unitCount ?? value.status);
+  }
+  const render = (value: MerchandiseSession) =>
+    createElement(
+      MerchandiseSessionProvider,
+      { api, session: value },
+      createElement(Probe),
+    );
+  const previous = environment.IS_REACT_ACT_ENVIRONMENT;
+  environment.IS_REACT_ACT_ENVIRONMENT = true;
+  let tree: ReactTestRenderer | undefined;
+  try {
+    await act(async () => {
+      tree = create(render(session(11, "first")));
+      await flush();
+    });
+    await act(flush);
+    const oldAccept = current!.accept;
+    await act(async () => {
+      tree!.update(render(session(11, "rotated")));
+      await flush();
+    });
+    await act(async () => {
+      await flush();
+      oldAccept(cart);
+    });
+    assert.equal(current!.data?.unitCount, "0");
+    assert.equal(current!.status, "ready");
+    const rotatedAccept = current!.accept;
+    await act(async () => {
+      tree!.update(render(session(22, "other")));
+      await flush();
+    });
+    await act(async () => {
+      await flush();
+      rotatedAccept(cart);
+    });
+    assert.equal(current!.data?.unitCount, "0");
+    await act(async () => {
+      tree!.update(render(session(null, null)));
+      await flush();
+      oldAccept(cart);
+    });
+    assert.equal(current!.data, null);
+    assert.equal(current!.status, "idle");
+  } finally {
+    await act(async () => tree?.unmount());
+    environment.IS_REACT_ACT_ENVIRONMENT = previous;
+  }
+});
 test("anonymous browsing never reads owner resources, including a stale token on an unauthenticated session", async () => {
   const calls: string[] = [];
   const api = createMerchandiseApi({
