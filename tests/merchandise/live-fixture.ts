@@ -7,6 +7,7 @@ import { test as base, expect } from "./fixtures";
 interface MerchandiseFixture {
   buyerToken: string;
   otherBuyerToken: string;
+  adminToken: string;
   origin: string;
   command<T = unknown>(action: string, payload?: unknown): Promise<T>;
   login(page: Page, other?: boolean): Promise<void>;
@@ -41,6 +42,7 @@ export const test = base.extend<{ merchandise: MerchandiseFixture }>({
       origin: string;
       buyerToken: string;
       otherBuyerToken: string;
+      adminToken: string;
     }>((resolveReady, reject) => {
       const timeout = setTimeout(
         () => reject(Error("Isolated merchandise fixture startup timed out")),
@@ -60,6 +62,7 @@ export const test = base.extend<{ merchandise: MerchandiseFixture }>({
           origin: string;
           buyerToken: string;
           otherBuyerToken: string;
+          adminToken: string;
         }) => {
           if (message.ready) {
             clearTimeout(timeout);

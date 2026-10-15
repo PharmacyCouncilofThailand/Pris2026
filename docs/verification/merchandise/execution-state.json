@@ -1272,7 +1272,7 @@
     {
       "id": "P12",
       "status": "passed",
-      "commit": null,
+      "commit": "8becf9464369c46a3b3616814fb387e4b399c4fd",
       "tests": [
         {
           "command": "initial Chromium accessibility diagnostics",
@@ -1421,9 +1421,131 @@
     },
     {
       "id": "P13",
-      "status": "not_started",
+      "status": "passed_development",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "initial customer Bundle label diagnostic (aborted)",
+          "status": "diagnostic_failure",
+          "proof": {
+            "path": ".merchandise-local/p13-acceptance-initial.txt",
+            "sha256": "31507fd434e29db9357b6dc6746f787af7dab7bbe1e7e158ddd41d3b2bba8435"
+          }
+        },
+        {
+          "command": "initial Chromium combined UI suite, Admin fixture JWT expiry corrected",
+          "passed": 3,
+          "failed": 2,
+          "proof": {
+            "path": ".merchandise-local/p13-acceptance-chromium.txt",
+            "sha256": "e86831cfc72bb60463fde20ac37018b8ae3f08f671c248a3871a276975a008f7"
+          }
+        },
+        {
+          "command": "final complete customer/Admin acceptance suite, three engines",
+          "passed": 15,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p13-acceptance-all.txt",
+            "sha256": "b1eacc0b2a4fcd2ab78c5ab7cf291d8a1c70d3e28415f49e425bd72c32e350a0"
+          }
+        },
+        {
+          "command": "integrated load initial ESM packaging failure before execution",
+          "status": "diagnostic_failure",
+          "proof": {
+            "path": ".merchandise-local/p13-load-smoke-esm-failure.txt",
+            "sha256": "3692e4a247bcc060a2e5688d91a0c088d9a145d7bc8c6ff011825f3a7758c3eb"
+          }
+        },
+        {
+          "command": "integrated 20-session smoke with three actual browser clients",
+          "status": "passed",
+          "proof": {
+            "path": ".merchandise-local/p13-load-smoke.json",
+            "sha256": "32ea92498d942b5ddd60c4054cc49c84725d38f6d6ab758bcd93f4d9bc2134a1"
+          }
+        },
+        {
+          "command": "integrated 1,000-session load, 50 registration readers, three extra browser owners",
+          "status": "passed",
+          "proof": {
+            "path": "docs/verification/merchandise/full-load-results.json",
+            "sha256": "3c918744b4f788f8728fb7ef840bc7f37e3885cc8aa32d99d7738628b4589924"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 153,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p13-units-final.txt",
+            "sha256": "090bfbc3d19b5ddd212e3535c11419e2a3fd6f897ac99744fd1791eae34bbbfe"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p13-types-final.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "baseline-aware full lint",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "files": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p13-lint-final.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "unchanged Backoffice production build with process-only local API origin",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p13-backoffice-build.txt",
+            "sha256": "caea3888001583be3da3ce354a5cec763d248cd1cd098118c06ee988faa2835e"
+          }
+        }
+      ],
+      "deferred": [
+        "real_merchant_credentials_and_payment",
+        "actual_inquiry_postback_timezone_contract",
+        "actual_nipamail_delivery",
+        "physical_ios_android_line_bank_saved_qr"
+      ],
+      "proof": "full-flow-results.md",
+      "artifacts": [
+        {
+          "path": "docs/verification/merchandise/device-results.md",
+          "sha256": "080b8a9366a6529f4900d637077ce7e3f0f3a1c7d6efc57e8b50ec9acdad2f97"
+        },
+        {
+          "path": "docs/verification/merchandise/full-flow-results.md",
+          "sha256": "4262d6435ac4e982009d9961abcba76d6b5a1aba28afdac4f551493a537441da"
+        },
+        {
+          "path": "docs/verification/merchandise/full-load-report.md",
+          "sha256": "86b1a1bceb6dd87bf179e5593c7c9141725af11516bdc4af918d889671be6236"
+        },
+        {
+          "path": "docs/verification/merchandise/full-load-results.json",
+          "sha256": "3c918744b4f788f8728fb7ef840bc7f37e3885cc8aa32d99d7738628b4589924"
+        }
+      ],
+      "notes": [
+        "No production application code changed in P13; only test fixtures/orchestration/evidence.",
+        "Actual merchant, Inquiry/Postback protocol/timezone, actual Nipamail, physical phones/LINE/bank/saved-QR proof explicitly remain deferred_to_user_test, not falsely passed or skipped.",
+        "The full integrated run augments the preserved A21 workload with actual browser UI clients; API-only evidence alone was not substituted.",
+        "G_RELEASE not_ready, live sales disabled, single local database retained. Exact checkpoint is recorded by P14."
+      ]
     },
     {
       "id": "P14",
@@ -1432,5 +1554,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T16:54:46.680Z"
+  "updatedAt": "2026-10-15T17:42:04.561Z"
 }
