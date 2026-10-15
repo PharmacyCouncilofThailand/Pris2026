@@ -320,7 +320,7 @@
     {
       "id": "P05",
       "status": "passed",
-      "commit": null,
+      "commit": "e378c2e405606786c9a1a73fe80d5ee3a7d55189",
       "tests": [
         {
           "command": "npm test",
@@ -427,9 +427,147 @@
     },
     {
       "id": "P06",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "selection unit red before implementation",
+          "status": "expected_failure_missing_module",
+          "proof": {
+            "path": ".merchandise-local/p06-selection-red.txt",
+            "sha256": "91b713556e0b4bea61e21a275c86c9c9026f5831a7602f6b4848c142a9e9f34b"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 132,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-all-tests.txt",
+            "sha256": "80bf19e21246937c66f3315f19fd862eeb7ec61f2a726f04ec55d5a2a41f4253"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-types-complete.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-build-final.txt",
+            "sha256": "0339fb4343e4e4e1dd32eec7c7bda479bc8e5246bfac889bd2e660d815e1601c"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-lint-complete.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "impeccable detect P06 components/styles",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "P06 product cases and P04/P05 purchase-intent regression across three engines",
+          "passed": 38,
+          "failed": 1,
+          "skipped": 0,
+          "status": "visual_hmr_failure_resolved_in_stable_source_recheck",
+          "proof": {
+            "path": ".merchandise-local/p06-browser-final.txt",
+            "sha256": "cd3c3d55141eb42c41dac8eea6421323f07617d8b10ef692b3b922afe3e6b26d"
+          }
+        },
+        {
+          "command": "stable-source visual, chosen-variant login and unknown fixed-Bundle reload recheck across three engines",
+          "passed": 8,
+          "failed": 1,
+          "skipped": 0,
+          "status": "chromium_visual_loop_failure_resolved_in_following_checks",
+          "proof": {
+            "path": ".merchandise-local/p06-browser-recheck.txt",
+            "sha256": "7f5cc16691c48b59b5295861336d4218d2cdd23c2f82653df80cd343e4f58bab"
+          }
+        },
+        {
+          "command": "Chromium visual reflow without redundant same-URL navigations",
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-visual-final.txt",
+            "sha256": "d1427d94a89e200fc7db29e5b742282ba277a8fb6fe2d0324bd1ef0d5d5ca8a2"
+          }
+        },
+        {
+          "command": "final viewport captures at scroll zero, Chromium",
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-visual-capture-final.txt",
+            "sha256": "e82a29b077934905c03a08fc98f896150f4d6e0c41a8a97c62501bf12b928acb"
+          }
+        },
+        {
+          "command": "production build product/reload/login/unknown fixed-Bundle smoke, Chromium",
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p06-production-browser.txt",
+            "sha256": "1df7a5479d2568e5095adcb0e810c91cbf1f29fc8a9e74ec1505de76f9425cc4"
+          }
+        }
+      ],
+      "proof": "product-selection-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p06-options-mobile.png",
+          "sha256": "3f6151cee5cbedb92fadb0940f62500a5ba2c0cb78de5cfd48e238bf59d3b44c"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p06-options-tablet.png",
+          "sha256": "7daf318c6872a88a155f420511dd8d2c54c6c13cdb2da45e446281bcae45d558"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p06-options-desktop.png",
+          "sha256": "edbf68f2b885caa0a11ab73296c8c98d28ca2d95b734459e39cb4d35f45ae047"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p06-bundle-mobile.png",
+          "sha256": "2561109197a5c163842787d254172f534f7faceb66a288b7440c918298a0effd"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p06-no-options-mobile.png",
+          "sha256": "f172fbc24c159bad49bff1e36a2f91a1fab333912e6aa387c98ae2b865153241"
+        }
+      ],
+      "notes": [
+        "P03 approved references 01/02/19 guide the implemented product surfaces. Prices/images/variants are isolated synthetic fixture data, not production catalog defaults.",
+        "Internal UI selections include fixed components for display/readiness; canonical Add sends only buyer-selectable rows. Persisted wire payload and key remain stable across unknown-result retries. Real fixed/configurable Bundle integration verified.",
+        "P04/P05 login and unknown/session recovery regressions rerun after the request projection change. API and Backoffice source/contracts remain unchanged.",
+        "All 42 unique browser cases have passing executions: 38 initial passes; 8 recheck passes include new unknown fixed-Bundle reload checks; the remaining Chromium visual failure passes after removing redundant same-URL navigations and again at final capture. Production smoke adds 3 passes. Failed logs retained; this is not described as a single clean 42-case run.",
+        "Turbopack stale route diagnostics and interrupted generated typings investigated. Owned dev server now uses Webpack. A recurring manifest JSON error in the Chromium visual loop was not proven to be caused by HMR alone; resize now reuses the page and functional reload is independently verified against the production build.",
+        "One retained database, actual-provider User Test deferral and not_ready release gate unchanged. Exact P06 completion commit is recorded by the next task."
+      ]
     },
     {
       "id": "P07",
@@ -480,5 +618,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T13:42:18.746Z"
+  "updatedAt": "2026-10-15T14:09:41.899Z"
 }

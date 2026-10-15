@@ -269,7 +269,25 @@ async function run(
             returnPath: `/souvenirs/products/${intent.selection.productId}`,
           }),
         };
-      draft = { ...draft, selection };
+      // Fixed components are resolved/displayed in the UI, but the canonical
+      // backend contract accepts buyer choices only. It derives fixed BOM rows
+      // itself. Persist this exact wire selection before the first POST so an
+      // unknown reply replays the same key/body without re-reading a changed set.
+      draft = {
+        ...draft,
+        selection:
+          product.kind === "bundle"
+            ? {
+                ...selection,
+                bundleSelections: selection.bundleSelections.filter((s) =>
+                  product.components.some(
+                    (c) =>
+                      c.id === s.componentId && c.optionMode === "selectable",
+                  ),
+                ),
+              }
+            : selection,
+      };
     }
     const cart = await api.cart(eventCode, token);
     if (!current()) return { kind: "cancelled" };
