@@ -5,6 +5,7 @@ import {
   merchandiseReturnPath,
   merchandiseLoginPath,
   merchandiseSsoReturnPath,
+  isMerchandiseReauthentication,
 } from "./merchandiseRoutes";
 import {
   eventReturnQuery,
@@ -12,6 +13,23 @@ import {
 } from "./localizedRedirect";
 import { shouldRedirectReload } from "./refreshRedirect";
 const id = "10000000-0000-4000-8000-000000000001";
+test("forced login is restricted to a single validated merchandise return", () => {
+  assert.equal(
+    isMerchandiseReauthentication(
+      merchandiseLoginPath("/souvenirs", true).split("?")[1],
+    ),
+    true,
+  );
+  for (const search of [
+    "?reauth=merchandise",
+    "?reauth=merchandise&redirect=/profile",
+    "?reauth=merchandise&redirect=//evil.test",
+    "?reauth=merchandise&reauth=merchandise&redirect=/souvenirs",
+    "?reauth=merchandise&redirect=/souvenirs&redirect=/profile",
+    "?redirect=/souvenirs",
+  ])
+    assert.equal(isMerchandiseReauthentication(search), false);
+});
 test("shop route allowlist includes only actual locale-relative routes", () => {
   for (const path of [
     "/souvenirs",

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { MerchandiseProvider } from "@/components/merchandise/MerchandiseProvider";
+import "@conference/merchandise-storefront-view/styles.css";
+import "@/components/merchandise/storefront-host.css";
 export default function SouvenirLayout({ children }: { children: ReactNode }) {
-  return <MerchandiseProvider>{children}</MerchandiseProvider>;
+  return children;
 }

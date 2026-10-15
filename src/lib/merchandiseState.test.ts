@@ -81,13 +81,15 @@ test("account changes and logout abort old private reads; late old recipient dat
     fetcher: async (url, init) =>
       String(url).endsWith("/store")
         ? json(store)
-        : new Promise<Response>((resolve) =>
-            pending.push({
-              token: new Headers(init?.headers).get("authorization")!,
-              signal: init?.signal as AbortSignal,
-              resolve,
-            }),
-          ),
+        : String(url).endsWith("/cart")
+          ? json(cart)
+          : new Promise<Response>((resolve) =>
+              pending.push({
+                token: new Headers(init?.headers).get("authorization")!,
+                signal: init?.signal as AbortSignal,
+                resolve,
+              }),
+            ),
   });
   let current: MerchandiseResource<OrderDetail> | undefined;
   const snapshot = () => current;
@@ -174,6 +176,43 @@ test("account changes and logout abort old private reads; late old recipient dat
   } finally {
     await act(async () => tree?.unmount());
     environment.IS_REACT_ACT_ENVIRONMENT = old;
+  }
+});
+
+test("Header and page cart consumers share one owner read", async () => {
+  let reads = 0;
+  const api = createMerchandiseApi({
+    fetcher: async (url) => {
+      if (String(url).endsWith("/store")) return json(store);
+      reads++;
+      return json(cart);
+    },
+  });
+  function Probe() {
+    const c = useMerchandiseCart();
+    return createElement("output", null, c.data?.unitCount ?? c.status);
+  }
+  const previous = environment.IS_REACT_ACT_ENVIRONMENT;
+  environment.IS_REACT_ACT_ENVIRONMENT = true;
+  let tree: ReactTestRenderer | undefined;
+  try {
+    await act(async () => {
+      tree = create(
+        createElement(
+          MerchandiseSessionProvider,
+          { api, session: session(11, "token") },
+          createElement(Probe),
+          createElement(Probe),
+        ),
+      );
+      await flush();
+    });
+    await act(flush);
+    assert.equal(reads, 1);
+    assert.equal(tree!.root.findAllByType("output").length, 2);
+  } finally {
+    await act(async () => tree?.unmount());
+    environment.IS_REACT_ACT_ENVIRONMENT = previous;
   }
 });
 test("event changes reject foreign cart data and a denied reload hides previously displayed recipient data", async () => {
