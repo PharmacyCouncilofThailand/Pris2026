@@ -1,0 +1,175 @@
+{
+  "plan": "2026-10-14-pris-souvenir-preorder",
+  "executionMode": "this_chat_sequential_no_subagents",
+  "frontendBaseline": "db6726c5f352736f4b8bfd91452055bf8bca5cf9",
+  "upstreamApiCommit": "693e39946bee9bbfe3a8b5ff4c6813b9b58a1e7c",
+  "upstreamBackofficeCommit": "cf6e84e547653f508f0bea21cfcbc287257a5e27",
+  "realProvider": "deferred_to_user_test",
+  "releaseGate": "not_ready",
+  "database": "pris_merchandise_dev_test",
+  "databaseDeletion": "explicit_user_instruction_only",
+  "tasks": [
+    {
+      "id": "P01",
+      "status": "passed",
+      "commit": null,
+      "tests": [
+        {
+          "command": "read-only frontend start preflight before any application writes",
+          "status": "passed",
+          "apiChecks": 29,
+          "boChecks": 18,
+          "artifacts": 52,
+          "sourceInputs": 260
+        },
+        {
+          "command": "npm run test baseline",
+          "passed": 98,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p01-baseline-test.txt",
+            "sha256": "6d55fc264b43e6d0da296d9212bbf4672bdbe0de8ca171f09641dc8928e7965b"
+          }
+        },
+        {
+          "command": "npm run test after verified artifacts",
+          "passed": 104,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p01-test.txt",
+            "sha256": "d5727f05887684ddf203c1b106224b5900ae3b809f9fffce3c9ce6648d3856cb"
+          }
+        },
+        {
+          "command": "npm run build after npm ci restored lockfile",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p01-build.txt",
+            "sha256": "03d22bb9049f0c48aa4c69011ef76aed3970b1eca98046cfce9e7b481597e49e"
+          }
+        },
+        {
+          "command": "npx playwright test -c playwright.merchandise.config.ts tests/merchandise/harness.spec.ts",
+          "passed": 3,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p01-browser.txt",
+            "sha256": "607837616f4916a1904090ce9f2e0b0aea3fcc63994d9f0167b9b17052a47623"
+          }
+        },
+        {
+          "command": "npm run lint -- --format json --output-file .merchandise-local/p01-lint-restored.json",
+          "exitCode": 1,
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": "lint-baseline-comparison.json",
+          "approval": "lint-baseline-exception.json"
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "exitCode": 0,
+          "newFindings": 0
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0
+        },
+        {
+          "command": "explicit P01 new-source ESLint",
+          "exitCode": 0,
+          "warnings": 0
+        }
+      ],
+      "notes": [
+        "User explicitly approved the Pris2026 baseline-only lint exception on 2026-10-15. No source rule disabled; files with findings must remain identical.",
+        "P01 first verified API and BO completion before writes. One retained database and actual-provider User Test deferral are unchanged.",
+        "P01 commit is the Git commit containing this record; its exact hash will be recorded in P02."
+      ]
+    },
+    {
+      "id": "P02",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P03",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P04",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P05",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P06",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P07",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P08",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P09",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P10",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P11",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P12",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P13",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    },
+    {
+      "id": "P14",
+      "status": "not_started",
+      "commit": null,
+      "tests": []
+    }
+  ],
+  "updatedAt": "2026-10-15T11:43:54.465Z"
+}

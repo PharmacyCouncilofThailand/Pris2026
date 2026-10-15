@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local merchandise development evidence and browser sessions
+/.merchandise-local/
+/test-results/
+/playwright-report/
+/playwright/.auth/
