@@ -241,7 +241,9 @@ test("catalog transport failure offers retry without claiming an empty catalog",
     }),
   );
   await page.goto("/th/souvenirs");
-  await expect(page.locator(".merchandise-host-message").getByRole("alert")).toHaveText("โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง");
+  await expect(
+    page.locator(".merchandise-host-message").getByRole("alert"),
+  ).toHaveText("โหลดข้อมูลไม่สำเร็จ กรุณาลองอีกครั้ง");
   await expect(
     page.getByText("ยังไม่มีสินค้าที่เปิดแสดง", { exact: true }),
   ).toHaveCount(0);
@@ -360,7 +362,13 @@ for (const failure of ["rejected", "expired"] as const)
       .getByRole("button", { name: "เข้าสู่ระบบ", exact: true })
       .click();
     await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-    expect(posts).toBe(2);
+    // The badge can read the already committed cart before replay finishes.
+    await expect.poll(() => posts).toBe(2);
+    await expect
+      .poll(() =>
+        page.evaluate(() => sessionStorage.getItem("pris_merchandise_intent")),
+      )
+      .toBeNull();
     expect(
       (await merchandise.command<{ unitCount: string }>("inspect")).unitCount,
     ).toBe("1");

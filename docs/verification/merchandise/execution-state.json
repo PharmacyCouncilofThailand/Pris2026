@@ -697,8 +697,8 @@
     },
     {
       "id": "P08",
-      "status": "pending_dependency",
-      "commit": null,
+      "status": "passed",
+      "commit": "3cbddc450cc922870d8bd1d8dbb3011faedbcda9",
       "tests": [
         {
           "command": "recipient unit red before implementation",
@@ -764,6 +764,16 @@
             "path": ".merchandise-local/p08-browser-final.txt",
             "sha256": "b5b237dd4f84cdd8f60737d13510678d0cba8d994bae14d068e7de1ea8dc1167"
           }
+        },
+        {
+          "command": "P08 complete production regression after P09 wiring, three engines",
+          "passed": 21,
+          "failed": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-p08-regression.txt",
+            "sha256": "56f309f28e5d04944f0de186eb7ff19e1dfee58b2e8c8dc61463376c6bcf39d9"
+          }
         }
       ],
       "proof": "recipient-quote-verification.md",
@@ -782,19 +792,24 @@
         },
         {
           "path": "docs/verification/merchandise/visual/p08-review-mobile.png",
-          "sha256": "11a72c57b156561376d00f0c5444a26d4aa21448d4cea131707ec3c3db4adb9f"
+          "sha256": "119a21e2f60251203287eb213f729f20325e6bf13f443413c8209f6e5698c158"
         },
         {
           "path": "docs/verification/merchandise/visual/p08-review-desktop.png",
-          "sha256": "f4a00ac49e2727f380ad4b7121e49f5c67a0d2530424d14f8f78afc6eb1322b3"
+          "sha256": "bbd01c2e57a0959b0502d4dfe02b09dde7d86e95073b24e052caf10c82241cba"
         }
       ],
       "dependencies": [
         {
           "id": "P08-P09-CONFIRM",
           "requires": "P09",
-          "status": "pending",
-          "reason": "Confirmation handler/order/QR belong to P09. Return to the real address→quote→one confirmed order→locked fields journey in all three engines before P10. Review confirmation remains disabled until wired."
+          "status": "resolved",
+          "reason": "Enabled confirmation verified through actual address→quote→one order→private QR→locked fields in Chromium, Firefox and WebKit; P08 suite rerun before P10.",
+          "resolvedBy": "P09",
+          "proof": {
+            "path": ".merchandise-local/p09-browser-final.txt",
+            "sha256": "a208b48199cacf0dfe315e11df7fe53d93a1b9f142ddd3ee96de6df340514ecc"
+          }
         }
       ],
       "notes": [
@@ -802,14 +817,158 @@
         "Initial tablet field-clearance failure corrected with checkout-specific root scroll padding and native focus/scroll checks. Complete production browser suite then passed with no retries.",
         "Five initial/final viewport captures inspected. Review confirmation is visibly gated pending P09, not claimed as a finished checkout or payment flow.",
         "User explicitly permits this later-task dependency; return and record its passing test before P10. The P08 checkpoint is the commit containing this record; exact hash is recorded by P09.",
-        "API/Backoffice contracts, retained single database, real-provider User Test deferral and not_ready release gate unchanged."
+        "API/Backoffice contracts, retained single database, real-provider User Test deferral and not_ready release gate unchanged.",
+        "P09 regression regenerated the P08 viewport captures with the now-enabled confirmation action. Current hashes are recorded; original checkpoint images remain in the P08 commit."
       ]
     },
     {
       "id": "P09",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "request recovery red before implementation",
+          "status": "expected_failure_missing_module",
+          "proof": {
+            "path": ".merchandise-local/p09-order-request-red.txt",
+            "sha256": "b4a8de261594603eba4c443911f82bff39de57c028ec8919db3df1899df03c2d"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 147,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-all-tests-final.txt",
+            "sha256": "fc91c576771c570db18ed636cd8c1c46a12bbac834c10fed11d4c82f1fcc1ab4"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-types-final.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build, local fixture origin in process environment only",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-build-final.txt",
+            "sha256": "50395cc8f95f13914b2d829f596b27c2d42e08c55d2958207610b543249d295a"
+          }
+        },
+        {
+          "command": "baseline-aware lint",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-lint-final.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "initial impeccable detector, order/QR/confirmation UI",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "initial Chromium order suite",
+          "passed": 9,
+          "failed": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-browser-chromium.txt",
+            "sha256": "1ca857ea7d439f0d55df5aaed918c9c63c48cb3640d73bb5bfd8c98356d42207"
+          }
+        },
+        {
+          "command": "additional Chromium failure/privacy cases",
+          "passed": 5,
+          "failed": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-browser-additional.txt",
+            "sha256": "c6492902b3e586648489b050f03c6113b71b0e90477352ff44b3b33eb34fe36a"
+          }
+        },
+        {
+          "command": "complete production order suite, Chromium Firefox WebKit",
+          "passed": 42,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-browser-final.txt",
+            "sha256": "a208b48199cacf0dfe315e11df7fe53d93a1b9f142ddd3ee96de6df340514ecc"
+          }
+        },
+        {
+          "command": "login/owner/uncertain intent session regression, three engines",
+          "passed": 12,
+          "failed": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p09-session-regression.txt",
+            "sha256": "7e3b885ec6b27858295b28cd2099117fb7301babd816901f3a0b0d13efb873a3"
+          }
+        },
+        {
+          "command": "initial session regression before external CAPTCHA isolation in test fixture",
+          "passed": 11,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p09-session-regression-initial.txt",
+            "sha256": "4826799ed9bbae13cca262c4d7619d2a6a0f1248551311a68ebbd34c10d0bc70"
+          }
+        },
+        {
+          "command": "isolated session regression exposed an early synchronous test assertion",
+          "passed": 11,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p09-session-regression-isolated.txt",
+            "sha256": "b4e7f5909ff5537748f035f0d88cb862ccacb4d4a52b9a1ee5f56182845764e9"
+          }
+        }
+      ],
+      "proof": "order-confirmation-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p09-enabled-review-mobile.png",
+          "sha256": "2697535d4d63f183ba216618a30febbc19495956c202461e77835d5a209e190e"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p09-creating-mobile.png",
+          "sha256": "6f6ef5a017717ec0597e1bedbf17b24bef8daaf7c5b13196c7c7dea61e3d73f2"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p09-qr-mobile.png",
+          "sha256": "ae736db4f492e5f5ca6c581f0ecdef72b7b3cce00aaef5a26ee59db71d71f3aa"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p09-qr-tablet.png",
+          "sha256": "1d0888e2e24d012b2742d9bc43d6950f07a684622d936fbde36ec234708f6692"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p09-qr-desktop.png",
+          "sha256": "92bd0bcfebeb0ef8b0416c1fae1a050a51be6646a5215f853f5226ca4138a9c5"
+        }
+      ],
+      "notes": [
+        "P03 human approval unchanged. Initial and final five viewport captures inspected; duplicate inline payment-check control removed to retain one fixed primary check action.",
+        "Initial WebKit expired-session regression did not submit the mocked login. Its trace showed external Cloudflare iframe errors and no auth POST. The local mockLogin fixture now blocks that external CAPTCHA resource; production authentication and CAPTCHA behavior were not changed. Complete session regression rerun is recorded separately.",
+        "The isolated run reached the committed cart before the pending intent replay completed; the test now waits for the second POST and the intent acknowledgement rather than treating an already-1 badge as replay completion. No production cart/auth behavior changed.",
+        "P08-P09-CONFIRM resolved before P10. Confirmation and attempt metadata contain no recipient, token, QR or price.",
+        "Synthetic provider only; actual provider, real email and physical bank/device tests remain deferred to User Test. Release not_ready and live sales disabled; one physical local database retained.",
+        "This task checkpoint is the commit containing this record; its exact hash is recorded by the next task."
+      ]
     },
     {
       "id": "P10",
@@ -842,5 +1001,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T14:55:06.055Z"
+  "updatedAt": "2026-10-15T15:39:03.977Z"
 }

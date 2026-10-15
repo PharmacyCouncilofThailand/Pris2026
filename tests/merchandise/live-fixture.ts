@@ -115,6 +115,11 @@ export const test = base.extend<{ merchandise: MerchandiseFixture }>({
           );
         },
         async mockLogin(page) {
+          // This fixture tests local auth-return state, not the external CAPTCHA.
+          // Prevent its remote iframe from changing the form during submission.
+          await page.route("https://challenges.cloudflare.com/**", (route) =>
+            route.abort("blockedbyclient"),
+          );
           await page.route(ready.origin + "/auth/login", (route) =>
             route.fulfill({
               status: route.request().method() === "OPTIONS" ? 204 : 200,

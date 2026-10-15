@@ -1,0 +1,130 @@
+.merch-order-bar > button {
+  background: #0055ff;
+}
+.merch-order-message {
+  background: white;
+  border-radius: 16px;
+  padding: 44px 24px;
+  text-align: center;
+  margin-block: 28px;
+  line-height: 1.8;
+}
+.merch-order-message h2 {
+  font-size: 23px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+.merch-payment-panel {
+  align-self: start;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: white;
+  text-align: center;
+}
+.merch-payment-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.merch-payment-heading h2 {
+  font-size: 17px;
+  font-weight: 700;
+}
+.merch-payment-heading span {
+  background: #e7efff;
+  color: #0055ff;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.merch-payment-amount {
+  font-family: var(--font-outfit), var(--font-noto-sans-thai), sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  margin-block: 22px;
+  overflow-wrap: anywhere;
+}
+.merch-payment-qr {
+  display: block;
+  max-width: 100%;
+  width: 280px;
+  height: auto;
+  margin: 20px auto;
+  image-rendering: crisp-edges;
+}
+.merch-qr-save {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #b8c9e9;
+  color: #0055ff;
+  border-radius: 12px;
+  min-height: 48px;
+  padding: 10px 16px;
+  margin-block: 22px;
+  font-weight: 600;
+}
+.merch-payment-panel > p {
+  line-height: 1.8;
+}
+.merch-payment-working {
+  display: grid;
+  place-items: center;
+  gap: 18px;
+  background: #f5f8fe;
+  border-radius: 12px;
+  margin: 22px auto;
+  padding: 28px 18px;
+  min-height: 160px;
+  color: #526787;
+}
+.merch-payment-working svg {
+  animation: merch-payment-spin 1s linear infinite;
+}
+.merch-payment-breakdown {
+  border-top: 1px solid #d4def0;
+  padding-top: 18px;
+  margin-top: 28px;
+  color: #526787;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.merch-order .merch-review-section:first-child {
+  padding-top: 0;
+}
+.merch-order .merch-review-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.merch-order-item {
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.merch-order-item h3 {
+  font-weight: 700;
+}
+.merch-order-support {
+  font-size: 14px;
+  line-height: 1.8;
+  padding-block: 24px;
+}
+.merch-order-support a {
+  color: #0055ff;
+  text-decoration: underline;
+}
+@keyframes merch-payment-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .merch-payment-working svg {
+    animation: none;
+  }
+}

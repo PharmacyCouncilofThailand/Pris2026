@@ -1,0 +1,17 @@
+# P09 — Confirmed orders, recovery and private QR loading
+
+The approved review now confirms the canonical R08 quote through R09. A UUID request key is written before the POST; session storage contains only that key and event code in a buyer/event namespace. Recipient, price, token, order snapshots and QR bytes are never persisted by this feature. Denied or corrupt storage blocks confirmation rather than discarding an unresolved request.
+
+Double clicks are guarded locally and by backend idempotency. A lost confirmation reply or a reload recovers through owner-only R41. Completed requests open the same order; processing, unknown and not-found requests retain their key and offer another read. Only a definite failed request returns to review before a new explicit confirmation. Concurrent recovery reads share one in-flight request while every consumer still checks its current ownership scope. The confirmation record is acknowledged only after the corresponding known order is loaded.
+
+Confirmed order pages display server snapshots, Bundle components, amounts and recipient as read-only data. Buyers cannot change items, options, quantities or delivery information. The support link includes the order number and uses the confirmed support email. R12 has a separate persisted key and original expected revision; uncertain attempts read R11 rather than creating another order. A definitive revision rejection permits a later explicit request with a fresh key. QR creation success does not become payment success.
+
+R14 is fetched with the buyer token and accepts only validated PNG bytes. The image and download link use an object URL for that private response, not a public provider URL. Leaving the view, changing scope or expiring the image aborts stale reads and releases object URLs. Image retry repeats R14 without creating another payment attempt. A creating or unknown outcome shows no premature QR or paid claim. The fixed check action is the single payment-check control, following the approved P03 reference.
+
+The browser fixture runs the real local backend in isolated schemas of the retained development database. Its provider creates explicitly synthetic QR payloads; negative transport responses are separately labelled in tests. This proves application behavior and does not prove a live PaySolution payment, bank handling or email delivery. Those checks remain deferred to User Test, and live sales remain disabled.
+
+Verification results and exact proof hashes are recorded in `execution-state.json` after the final runs. P08's confirmation dependency must be marked resolved there before P10 starts.
+
+The first session-regression run passed 11 cases and failed one WebKit expired-session login submission. Its trace contained external Cloudflare iframe errors and no auth POST. The test-only `mockLogin` fixture now blocks that remote resource so local auth-return tests do not depend on third-party iframe loading or form shifts. This is test isolation, not a production CAPTCHA or authentication change; the original failed log is retained alongside the final rerun.
+
+The isolated rerun reached the cart but exposed a second test race: the badge could already show the committed quantity before the preserved intent's replay finished. The test now explicitly waits for the second POST and removal of the acknowledged intent, then verifies the real backend still contains one unit. This strengthens completion evidence without changing production auth/cart behavior. Both intermediate failed logs are retained.

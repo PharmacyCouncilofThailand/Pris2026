@@ -12,6 +12,7 @@ const requireApi = createRequire(
   new URL("../../conference-api/package.json", import.meta.url),
 );
 const sharp = requireApi("sharp");
+const QRCode = requireApi("qrcode");
 await withMerchandiseFixture(async (f) => {
   await f.sql`UPDATE events SET event_code='PRIS-2026' WHERE id=1`;
   f.eventCode = "PRIS-2026";
@@ -33,6 +34,20 @@ await withMerchandiseFixture(async (f) => {
     cartMutations = 0,
     initialized = false,
     metadata = null;
+  let releaseProvider = null;
+  const issuedQr = async (input) => ({
+    kind: "issued",
+    referenceNo: input.referenceNo,
+    orderNo: `SIM-${input.referenceNo}`,
+    grossMinor: input.totalMinor,
+    rawStatus: "success",
+    rawCreatedAt: f.now().toISOString(),
+    rawExpiresAt: "",
+    qrBytes: await QRCode.toBuffer(`SIMULATION ONLY ${input.referenceNo}`, {
+      type: "png",
+    }),
+    safeErrorCode: null,
+  });
   const base = "/api/backoffice/events/1/merchandise",
     headers = { authorization: `Bearer ${f.adminToken}` };
   const admin = async (method, url, payload) => {
@@ -314,7 +329,21 @@ await withMerchandiseFixture(async (f) => {
         let data;
         if (action === "catalog") data = await catalog(payload);
         else if (action === "variantCatalog") data = await variantCatalog();
-        else if (action === "sale") {
+        else if (action === "provider") {
+          f.provider.createQr = async (input) => {
+            f.provider.creations.push(structuredClone(input));
+            if (payload?.hold)
+              await new Promise((resolve) => {
+                releaseProvider = resolve;
+              });
+            return issuedQr(input);
+          };
+          data = { simulated: true };
+        } else if (action === "releaseProvider") {
+          releaseProvider?.();
+          releaseProvider = null;
+          data = { released: true };
+        } else if (action === "sale") {
           const product = await admin("GET", `/products/${payload.id}`);
           data = await admin("POST", `/products/${product.id}/state`, {
             expectedVersion: product.version,
@@ -369,6 +398,12 @@ await withMerchandiseFixture(async (f) => {
             cartReads,
             cartMutations,
             unitCount: r.json().data.unitCount,
+            attemptCount: Number(
+              (
+                await f.sql`SELECT count(*) AS count FROM merch_payment_attempts`
+              )[0].count,
+            ),
+            providerCreations: f.provider.creations.length,
             cart: r.json().data,
             orderCount: Number(
               (await f.sql`SELECT count(*) AS count FROM merch_orders`)[0]

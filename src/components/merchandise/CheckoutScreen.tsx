@@ -1,5 +1,5 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
@@ -17,23 +17,16 @@ import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { QuoteDto, Amounts } from "@/types/merchandise";
 import RecipientForm from "./RecipientForm";
+import { useMerchandiseConfirmation } from "./useMerchandiseConfirmation";
 
-export default function CheckoutScreen({
-  onConfirm,
-}: {
-  onConfirm?: (quote: QuoteDto) => void;
-}) {
+export default function CheckoutScreen() {
   return (
     <MerchandiseAuthBoundary>
-      <CheckoutLoader onConfirm={onConfirm} />
+      <CheckoutLoader />
     </MerchandiseAuthBoundary>
   );
 }
-function CheckoutLoader({
-  onConfirm,
-}: {
-  onConfirm?: (quote: QuoteDto) => void;
-}) {
+function CheckoutLoader() {
   const { cart, store } = useMerchandise();
   const error = cart.error ?? store.error;
   if (error || !cart.data || !store.data)
@@ -67,13 +60,9 @@ function CheckoutLoader({
         )}
       </main>
     );
-  return <CheckoutWorkspace onConfirm={onConfirm} />;
+  return <CheckoutWorkspace />;
 }
-function CheckoutWorkspace({
-  onConfirm,
-}: {
-  onConfirm?: (quote: QuoteDto) => void;
-}) {
+function CheckoutWorkspace() {
   const { user } = useAuth();
   const { api, eventCode, token, ownerId, cart, store } = useMerchandise();
   const [recipient, setRecipient] = useState(() =>
@@ -85,6 +74,12 @@ function CheckoutWorkspace({
     [notice, setNotice] = useState<string | null>(null),
     [unauthorized, setUnauthorized] = useState(false),
     [focusName, setFocusName] = useState(false);
+  const reviewRequired = useCallback((message: string) => {
+    setQuote(null);
+    setNotice(message);
+    setFocusName(true);
+  }, []);
+  const confirmation = useMerchandiseConfirmation(reviewRequired);
   const active = useRef(false),
     pending = useRef(false),
     abort = useRef<AbortController | null>(null),
@@ -112,7 +107,7 @@ function CheckoutWorkspace({
       observer.disconnect();
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
-  }, []);
+  }, [confirmation.state.phase]);
   useLayoutEffect(() => {
     if (quote) {
       heading.current?.focus();
@@ -120,7 +115,8 @@ function CheckoutWorkspace({
     }
   }, [quote]);
   const submit = async () => {
-    if (pending.current || !token || !canCheckout(cart.data!, store.data!)) return;
+    if (pending.current || !token || !canCheckout(cart.data!, store.data!))
+      return;
     const validated = validateRecipientDraft(recipient);
     setErrors(validated.errors);
     if (!validated.recipient) return;
@@ -221,6 +217,59 @@ function CheckoutWorkspace({
   };
   const eligible = canCheckout(cart.data!, store.data!);
   const amounts = quote?.amounts ?? cart.data!.amounts;
+  if (confirmation.state.phase !== "ready") {
+    const state = confirmation.state;
+    const error =
+      state.phase === "recovery" && state.result.kind === "unknown"
+        ? state.result.error
+        : null;
+    const working = state.phase !== "recovery";
+    return (
+      <main className="merch-cart merch-order-recovery" aria-busy={working}>
+        <h1>กำลังตรวจสอบคำสั่งซื้อ</h1>
+        <section className="merch-order-message" role="status">
+          <h2>
+            {state.phase === "confirming"
+              ? "กำลังยืนยันคำสั่งซื้อ"
+              : state.phase === "completed"
+                ? "กำลังเปิดคำสั่งซื้อ"
+                : working
+                  ? "กำลังตรวจสอบคำขอเดิม"
+                  : "ยังยืนยันผลไม่สำเร็จ"}
+          </h2>
+          <p>ระบบจะตรวจสอบคำขอเดิม โดยไม่สร้างคำสั่งซื้อซ้ำ</p>
+          {error?.body.code === "MERCH_STORAGE_UNAVAILABLE" && (
+            <p>
+              ไม่สามารถอ่านหรือเก็บข้อมูลคำขอได้
+              กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์
+            </p>
+          )}
+          <Link className="merch-cart-secondary" href="/souvenirs/orders">
+            คำสั่งซื้อของฉัน
+          </Link>
+        </section>
+        <div className="merch-cart-bar merch-order-bar" ref={bar}>
+          {error?.status === 401 ? (
+            <Link
+              className="merch-cart-secondary"
+              href={merchandiseLoginPath("/souvenirs/checkout", true)}
+            >
+              เข้าสู่ระบบอีกครั้ง
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled={working}
+              onClick={() => void confirmation.recover()}
+            >
+              {working ? "กำลังตรวจสอบคำสั่งซื้อ" : "ตรวจสอบอีกครั้ง"}
+              <ArrowRight size={22} aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      </main>
+    );
+  }
   return (
     <main className="merch-cart merch-checkout">
       {quote ? (
@@ -423,8 +472,8 @@ function CheckoutWorkspace({
         {quote ? (
           <button
             type="button"
-            disabled={busy || !eligible || !onConfirm}
-            onClick={() => onConfirm?.(quote)}
+            disabled={busy || !eligible}
+            onClick={() => void confirmation.confirm(quote)}
           >
             ยืนยันคำสั่งซื้อ · {formatMinorBaht(quote.amounts.totalMinor)}
             <ArrowRight size={22} aria-hidden="true" />
