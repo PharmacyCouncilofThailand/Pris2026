@@ -1,3 +1,8 @@
+import {
+  merchandiseReturnPath,
+  targetsMerchandiseNamespace,
+} from "./merchandiseRoutes";
+
 const SUPPORTED_LOCALE_PREFIX = /^\/(?:en|th)(?=\/|\?|#|$)/;
 const REWARD_PROOF_PATH =
   /^\/lucky-wheel\/rewards\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -40,6 +45,9 @@ export function normalizeLocalizedRedirectPath(
   const destination = new URL(withoutLocale, "https://internal.invalid");
   if (destination.origin !== "https://internal.invalid") return "/";
   const resolvedPath = destination.pathname.replace(/\/+$/, "");
+  if (targetsMerchandiseNamespace(withoutLocale)) {
+    return merchandiseReturnPath(value) ?? "/";
+  }
   if (resolvedPath === "/presentation-submission") {
     if (withoutLocale.split(/[?#]/)[0] !== "/presentation-submission")
       return "/";
@@ -60,6 +68,11 @@ export function eventReturnQuery(
   if (!raw || raw.includes("\\")) return undefined;
 
   const redirect = normalizeLocalizedRedirectPath(raw);
+  const merchandise = merchandiseReturnPath(redirect);
+  if (merchandise)
+    return new URLSearchParams(search).getAll("redirect").length === 1
+      ? { redirect: merchandise }
+      : undefined;
   if (
     redirect.split("?")[0] === "/presentation-submission" &&
     !redirect.includes("#")

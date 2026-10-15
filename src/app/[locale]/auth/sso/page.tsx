@@ -3,11 +3,14 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { merchandiseSsoReturnPath } from "@/lib/merchandiseRoutes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
 function sanitizeRedirect(redirect: string | null, locale: string): string {
   if (!redirect) return `/${locale}`;
+  const merchandise = merchandiseSsoReturnPath(redirect, locale);
+  if (merchandise !== null) return merchandise;
   if (!redirect.startsWith("/") || redirect.startsWith("//"))
     return `/${locale}`;
   return redirect;

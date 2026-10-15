@@ -161,7 +161,7 @@
     {
       "id": "P03",
       "status": "passed",
-      "commit": null,
+      "commit": "11ad15c0a565d968fb51b31931d8f44f1640ba6c",
       "tests": [
         {
           "command": "node docs/design/merchandise/subsequent-screens/render-references.mjs",
@@ -228,9 +228,80 @@
     },
     {
       "id": "P04",
-      "status": "not_started",
+      "status": "pending_dependency",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "npm run test",
+          "passed": 125,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p04-all-tests.txt",
+            "sha256": "c338a00dd8df538fb321d5b3c1ef80e4d44991384f3fce770c8e475d71414956"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p04-types.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p04-build.txt",
+            "sha256": "a6a0da1d1d823ffd58b350a368962373b7278155cc47c82ce5048df9287adaaa"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p04-lint-baseline.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "playwright route-login.spec.ts, three engines, final source",
+          "passed": 9,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p04-browser-final.txt",
+            "sha256": "d99768d381fce1ead5e46a85c355650b27beb712a68b347f94fbee098f361f09"
+          }
+        },
+        {
+          "command": "impeccable detect --json MerchandiseAuthBoundary.tsx",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p04-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        }
+      ],
+      "proof": "routes-and-intent.md",
+      "dependencies": [
+        {
+          "id": "P04-P05-LOGIN-ADD",
+          "requires": "P05",
+          "status": "pending",
+          "reason": "No storefront index exists before P05. Verify direct/reload/locale/anonymous Add/login/resume against the real local merchandise API, then return here before P06."
+        }
+      ],
+      "notes": [
+        "Implementation/unit/types/build and existing auth-router browser checks passed. This checkpoint does not claim the dependent storefront purchase journey passed.",
+        "SSO response in route-only tests is explicitly synthetic; actual merchandise API integration follows with P05.",
+        "No AuthContext rewrite, provider configuration or registration-payment endpoint change. Session cleanup is scoped to merchandise intent."
+      ]
     },
     {
       "id": "P05",
@@ -293,5 +364,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T12:29:39.711Z"
+  "updatedAt": "2026-10-15T12:46:42.564Z"
 }
