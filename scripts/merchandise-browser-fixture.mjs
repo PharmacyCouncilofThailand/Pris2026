@@ -133,6 +133,97 @@ await withMerchandiseFixture(async (f) => {
     initialized = true;
     return (metadata = { category, products, bundle });
   }
+  async function variantCatalog() {
+    const current = await catalog({ banners: 0 });
+    const common = {
+      descriptionTh: "รายละเอียดสังเคราะห์\n<script>ไม่ใช่ HTML</script>",
+      sizeInfoTh: "ข้อมูลขนาดสังเคราะห์",
+      imageIds: [current.products[0].images[0].id],
+      categoryId: null,
+      sortOrder: 30,
+    };
+    let product = await admin("POST", "/products", {
+      ...common,
+      kind: "single",
+      nameTh: "สินค้าตัวเลือกสังเคราะห์",
+      optionMode: "size_color",
+      basePriceMinor: "10000",
+    });
+    product = await admin("PUT", `/products/${product.id}/variants`, {
+      expectedVersion: product.version,
+      variants: [
+        {
+          sizeTh: "M",
+          colorTh: "น้ำเงิน",
+          isDefault: false,
+          saleEnabled: true,
+          priceOverrideMinor: null,
+        },
+        {
+          sizeTh: "L",
+          colorTh: "น้ำเงิน",
+          isDefault: false,
+          saleEnabled: true,
+          priceOverrideMinor: "15000",
+        },
+        {
+          sizeTh: "M",
+          colorTh: "ส้ม",
+          isDefault: false,
+          saleEnabled: true,
+          priceOverrideMinor: "13000",
+        },
+        {
+          sizeTh: "L",
+          colorTh: "ส้ม",
+          isDefault: false,
+          saleEnabled: false,
+          priceOverrideMinor: null,
+        },
+      ],
+    });
+    product = await admin("POST", `/products/${product.id}/state`, {
+      expectedVersion: product.version,
+      publishState: "published",
+      saleEnabled: true,
+    });
+    let bundle = await admin("POST", "/products", {
+      ...common,
+      kind: "bundle",
+      nameTh: "ชุดเลือกตัวเลือกสังเคราะห์",
+      optionMode: "none",
+      basePriceMinor: "22000",
+    });
+    bundle = await admin("PUT", `/products/${bundle.id}/components`, {
+      expectedVersion: bundle.version,
+      components: [
+        {
+          productId: current.products[2].id,
+          quantityPerBundle: 2,
+          optionMode: "fixed",
+          fixedVariantId: current.products[2].variants[0].id,
+          allowedVariantIds: [],
+          sortOrder: 0,
+        },
+        {
+          productId: product.id,
+          quantityPerBundle: 1,
+          optionMode: "selectable",
+          fixedVariantId: null,
+          allowedVariantIds: product.variants
+            .filter((v) => v.saleEnabled)
+            .map((v) => v.id),
+          sortOrder: 1,
+        },
+      ],
+    });
+    bundle = await admin("POST", `/products/${bundle.id}/state`, {
+      expectedVersion: bundle.version,
+      publishState: "published",
+      saleEnabled: true,
+    });
+    return { product, bundle, noOptions: current.products[2] };
+  }
   const server = createServer(async (req, res) => {
     const origin = req.headers.origin;
     if (origin && !/^http:\/\/(127\.0\.0\.1|localhost):3102$/.test(origin)) {
@@ -189,15 +280,13 @@ await withMerchandiseFixture(async (f) => {
       res.writeHead(result.statusCode);
       res.end(result.rawPayload);
     } catch {
-      res
-        .writeHead(500, { "content-type": "application/json" })
-        .end(
-          JSON.stringify({
-            success: false,
-            code: "FIXTURE_FAILURE",
-            error: "Local synthetic fixture failed",
-          }),
-        );
+      res.writeHead(500, { "content-type": "application/json" }).end(
+        JSON.stringify({
+          success: false,
+          code: "FIXTURE_FAILURE",
+          error: "Local synthetic fixture failed",
+        }),
+      );
     }
   });
   await new Promise((resolve, reject) => {
@@ -224,7 +313,15 @@ await withMerchandiseFixture(async (f) => {
       try {
         let data;
         if (action === "catalog") data = await catalog(payload);
-        else if (action === "inspect") {
+        else if (action === "variantCatalog") data = await variantCatalog();
+        else if (action === "sale") {
+          const product = await admin("GET", `/products/${payload.id}`);
+          data = await admin("POST", `/products/${product.id}/state`, {
+            expectedVersion: product.version,
+            publishState: product.publishState,
+            saleEnabled: payload.enabled,
+          });
+        } else if (action === "inspect") {
           const r = await f.http({
             method: "GET",
             url: "/api/v1/merchandise/events/PRIS-2026/cart",
@@ -234,6 +331,7 @@ await withMerchandiseFixture(async (f) => {
             cartReads,
             cartMutations,
             unitCount: r.json().data.unitCount,
+            cart: r.json().data,
           };
         } else if (action === "closeStore") {
           f.setNow("2026-10-14T06:00:00Z");

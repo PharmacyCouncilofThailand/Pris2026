@@ -222,6 +222,66 @@ test("selection resolution fills only the actual default/fixed options and never
     null,
   );
 });
+test("Bundle requests persist only selectable choices and replay an unknown reply without fixed BOM rows", async () => {
+  const s = storage();
+  const bundle = {
+    ...product,
+    kind: "bundle" as const,
+    components: [
+      {
+        id: ids.item,
+        productId: ids.product,
+        nameTh: "ชิ้นกำหนดไว้",
+        quantityPerBundle: 2,
+        optionMode: "fixed" as const,
+        fixedVariantId: ids.variant,
+        allowedVariants: product.variants,
+      },
+    ],
+  };
+  writePurchaseIntent(s, {
+    ...pending(),
+    selection: {
+      productId: product.id,
+      variantId: null,
+      bundleSelections: [{ componentId: ids.item, variantId: ids.variant }],
+    },
+  });
+  const bodies: string[] = [],
+    requestKeys: string[] = [];
+  let lost = true;
+  const api = createMerchandiseApi({
+    fetcher: async (url, init) => {
+      if (String(url).endsWith("/store")) return json(store);
+      if (String(url).includes("/products/")) return json(bundle);
+      if (String(url).endsWith("/cart")) return json(cart);
+      bodies.push(String(init?.body));
+      requestKeys.push(new Headers(init?.headers).get("idempotency-key")!);
+      if (lost) throw Error("Synthetic lost reply");
+      return json(cart);
+    },
+  });
+  const options = {
+    storage: s,
+    api,
+    eventCode: "PRIS-2026",
+    token: "test",
+    buyerId: 11,
+    isCurrent: () => true,
+  };
+  assert.equal((await resumePurchaseIntent(options)).kind, "error");
+  assert.deepEqual(
+    readPurchaseIntent(s, "PRIS-2026")!.selection.bundleSelections,
+    [],
+  );
+  lost = false;
+  assert.equal((await resumePurchaseIntent(options)).kind, "added");
+  assert.equal(bodies.length, 2);
+  assert.equal(bodies[0], bodies[1]);
+  assert.equal(requestKeys[0], requestKeys[1]);
+  assert.deepEqual(JSON.parse(bodies[0]).bundleSelections, []);
+});
+
 test("owner changes, stale session, closed store, missing selection and blocked storage cannot add", async () => {
   const cases = ["owner", "stale", "closed", "choice", "storage"] as const;
   for (const which of cases) {

@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: process.env.PRIS_MERCHANDISE_TEST_URL
     ? undefined
     : {
-        command: "npx next dev -p 3102 --hostname 127.0.0.1",
+        command: "npx next dev --webpack -p 3102 --hostname 127.0.0.1",
         url: "http://127.0.0.1:3102/th/about",
         reuseExistingServer: false,
         timeout: 120000,
