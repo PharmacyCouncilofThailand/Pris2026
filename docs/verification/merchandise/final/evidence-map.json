@@ -1,0 +1,257 @@
+{
+  "suite": "complete final 339-case production browser run",
+  "copies": [
+    {
+      "producerOutput": "docs/verification/merchandise/performance/p12-chromium.json",
+      "finalPath": "docs/verification/merchandise/final/performance/p12-chromium.json",
+      "sha256": "6539c6396e4008768403f922692c6cbd00c325328d5612c9003e3da3307e981d",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/performance/p12-firefox.json",
+      "finalPath": "docs/verification/merchandise/final/performance/p12-firefox.json",
+      "sha256": "5814977a12e85b64f83f2054f4c28d3ac2bc0c9a1fd7de17e693c588a8c955f4",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/performance/p12-webkit.json",
+      "finalPath": "docs/verification/merchandise/final/performance/p12-webkit.json",
+      "sha256": "7b9eb011e7862c894eb5f70ac1d2c7315a3c6911cf5db3db47e2301c61c1313d",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p05-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p05-desktop.png",
+      "sha256": "4fa86ec89e9cfb33788ae423c303d914425d94fe78c32fb56b43eedd8875e307",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p05-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p05-mobile.png",
+      "sha256": "4424f78cba23b2c7566ccbd7d93bd71d0082d2661cbbb11dbb3c9cdedc148efc",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p05-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p05-tablet.png",
+      "sha256": "edef14931136c0b556f4040b991fc19867bec3dbc5d1fd727737d6144810561b",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p06-bundle-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p06-bundle-mobile.png",
+      "sha256": "2561109197a5c163842787d254172f534f7faceb66a288b7440c918298a0effd",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p06-no-options-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p06-no-options-mobile.png",
+      "sha256": "f172fbc24c159bad49bff1e36a2f91a1fab333912e6aa387c98ae2b865153241",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p06-options-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p06-options-desktop.png",
+      "sha256": "edbf68f2b885caa0a11ab73296c8c98d28ca2d95b734459e39cb4d35f45ae047",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p06-options-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p06-options-mobile.png",
+      "sha256": "3f6151cee5cbedb92fadb0940f62500a5ba2c0cb78de5cfd48e238bf59d3b44c",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p06-options-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p06-options-tablet.png",
+      "sha256": "7daf318c6872a88a155f420511dd8d2c54c6c13cdb2da45e446281bcae45d558",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p07-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p07-desktop.png",
+      "sha256": "086ea8ae1d2c650357be27c5731701b9cb4c1dd98fb34272bb74bf4f2705057a",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p07-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p07-mobile.png",
+      "sha256": "58d345f7b91a3fc05c821c48417068642343b41c0f1d2b010046c2f48012d11d",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p07-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p07-tablet.png",
+      "sha256": "79706eab492d87bcafce197ae43b916f881928ccc4ec2906d81458fe90c8f66e",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p08-recipient-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p08-recipient-desktop.png",
+      "sha256": "3f38110261f0e6ff3e8236d312dfa11b4e5ce5e6ad04c429872ad9bcb5d1fcd4",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p08-recipient-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p08-recipient-mobile.png",
+      "sha256": "fb8ad9f31a2c034f2031a43ad91a85ae2bb64350551e8d30ba2468e1061a33a5",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p08-recipient-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p08-recipient-tablet.png",
+      "sha256": "f5bb8ac52e83b5e6e7cd8dad93d53d692b1e22680cdb919fe7c3f20edcab53f3",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p08-review-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p08-review-desktop.png",
+      "sha256": "bbd01c2e57a0959b0502d4dfe02b09dde7d86e95073b24e052caf10c82241cba",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p08-review-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p08-review-mobile.png",
+      "sha256": "119a21e2f60251203287eb213f729f20325e6bf13f443413c8209f6e5698c158",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p09-creating-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p09-creating-mobile.png",
+      "sha256": "6b82c169a1abee6385517b256e15d368f7549fac7206c4ffbd8955e970af5088",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p09-enabled-review-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p09-enabled-review-mobile.png",
+      "sha256": "2697535d4d63f183ba216618a30febbc19495956c202461e77835d5a209e190e",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p09-qr-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p09-qr-desktop.png",
+      "sha256": "fbc57b7472bc577ed1ce3f5901bf8b19d0dbaf6a13d98ff0d49522aedd96965f",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p09-qr-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p09-qr-mobile.png",
+      "sha256": "6ad0da8619cb598671657932f0897c8a719233196525a31b94d6120e8018fe43",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p09-qr-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p09-qr-tablet.png",
+      "sha256": "d17d78fe65ee1eae5d62a6825b0b5dbe486d0f174908933a7bbd364c13e7de4b",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-active-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-active-mobile.png",
+      "sha256": "54826375267eae0e4ad58f905e9d4702897f1d1f14a7fa952eb51e99a4910f5a",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-checking-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-checking-mobile.png",
+      "sha256": "489ff523aa1295b99c08d3a0227c2ba354f255a6f1f3eea804f493aded89b47d",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-closed-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-closed-mobile.png",
+      "sha256": "0bcaa3dbf3b8f1ee1dfb1e33862dcd08e63445b99a5bebc4ae0becd8433820a9",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-expired-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-expired-mobile.png",
+      "sha256": "09d7075b7656df2c275f019424c99ac193cf8649dae2a2b3d89bf12d215b9270",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-paid-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-paid-desktop.png",
+      "sha256": "ee2c8ca036393777da6c09845047cbcba6f4a77c9c92aa8ca0ae373bead3713e",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-paid-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-paid-mobile.png",
+      "sha256": "d1e38d0892f05f6f8fded902b4c1fcc834ab445d781f58e991f7521d987555c4",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-paid-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-paid-tablet.png",
+      "sha256": "39b1627cec1378d68bb683a1c3c03a00d2387dd0fd582c2dc428b295b7418004",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p10-unknown-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p10-unknown-mobile.png",
+      "sha256": "4c6d27577f426ad8924c747daceeae13538bad7ea4f553347ecea8cb2839d7ab",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-empty-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-empty-mobile.png",
+      "sha256": "7ea4eb1299c4c5cee95a03f15a1c5aa0e16e422b7a495cc9ec5dc512d11c9bea",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-history-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-history-desktop.png",
+      "sha256": "00fb7be6b29af8f41dc5476a99ced457f3b3c51a7de9cfdb671cda3c072c4377",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-history-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-history-mobile.png",
+      "sha256": "301b3893b5244fcd34f97c201558e3ad367e501ea9f1b35e1fa781af96650f17",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-history-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-history-tablet.png",
+      "sha256": "038c1e43f30e9b945a39d3025138fe7f32bcf412d519916d9a652f5d711802aa",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-shipped-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-shipped-desktop.png",
+      "sha256": "e805bd81aff42945620b7052ac41dd0e7d1756021b28caa25c14ba1c61d8e7de",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-shipped-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-shipped-mobile.png",
+      "sha256": "91fbc34d4ecb687f415fe10c91e1cccca1a1db094d592bbf9622801eda959707",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p11-shipped-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p11-shipped-tablet.png",
+      "sha256": "5d96a5f64459423171e34634ca807626af912b312809d2e25d74d228f68f7876",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p12-shipped-desktop.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p12-shipped-desktop.png",
+      "sha256": "e5237b03ebddaee2cbc0f06255461ef60cdd8aee571a0cb49f4c257eceae9c26",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p12-shipped-mobile.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p12-shipped-mobile.png",
+      "sha256": "bf3f71eadfa94fa774f19145050f25421f9cc4de15c330cedad82cd4b1effe63",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    },
+    {
+      "producerOutput": "docs/verification/merchandise/visual/p12-shipped-tablet.png",
+      "finalPath": "docs/verification/merchandise/final/visual/p12-shipped-tablet.png",
+      "sha256": "694fefe119c2c4bb48909531afaee997df2a4ef8442b6b4920c58639e89d98ac",
+      "historicalOutputRestoredFrom": "e972892fcc66edb3f38f8987aa4f6a0c59bc6bda"
+    }
+  ]
+}

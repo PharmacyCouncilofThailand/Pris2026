@@ -1,0 +1,341 @@
+Listing tests:
+  [chromium] › acceptance.spec.ts:130:5 › customer Bundle and single purchase flows through real Admin UI, record-only paid/shipped email and exact production snapshots
+  [chromium] › acceptance.spec.ts:224:5 › two actual customer checkouts bulk ship through Admin with distinct tracking and exactly one notification per event
+  [chromium] › acceptance.spec.ts:292:7 › full customer checkout keeps its fallback deadline, blocks unknown reissue, and reissues only while open
+  [chromium] › acceptance.spec.ts:292:7 › full customer checkout keeps its explicit deadline, blocks unknown reissue, and reissues only while open
+  [chromium] › acceptance.spec.ts:367:5 › a delayed duplicate synthetic Postback accepts verified pre-expiry payment after closing without duplicating order or mail
+  [chromium] › accessibility.spec.ts:14:5 › both locale headers and catalogue retain the approved columns and one row throughout the viewport matrix
+  [chromium] › accessibility.spec.ts:61:5 › menu keyboard containment, Escape and focus return preserve scrolling and bar clearance
+  [chromium] › accessibility.spec.ts:94:5 › shop controls have names, image alternatives, visible keyboard focus and 44 pixel targets
+  [chromium] › accessibility.spec.ts:126:5 › address errors have associated messages and keyboard focus, and remain clear at reflow and 200 percent text zoom
+  [chromium] › accessibility.spec.ts:169:5 › long saved shipment values wrap at narrow widths without losing the tracking copy action
+  [chromium] › accessibility.spec.ts:193:5 › reduced motion keeps manual banner controls, keyboard navigation and cancellation usable
+  [chromium] › accessibility.spec.ts:220:5 › computed primary action contrast meets large bold text requirements and secondary Add meets normal text requirements
+  [chromium] › accessibility.spec.ts:270:5 › product cart history and shipped detail reflow across the complete viewport matrix
+  [chromium] › cart-layout.spec.ts:5:5 › cart layout, fixed action clearance and keyboard focus follow the approved references
+  [chromium] › cart.spec.ts:36:5 › cart requires the existing account and returns to its empty state after login
+  [chromium] › cart.spec.ts:58:5 › real quantity edits, persistence and removal use server totals with shipping once
+  [chromium] › cart.spec.ts:101:5 › changing a variant merges identical server identities and keeps a single shipping charge
+  [chromium] › cart.spec.ts:135:5 › Bundle cart displays the BOM without charging or counting its components as extra lines
+  [chromium] › cart.spec.ts:150:5 › real revision conflict reloads the newer cart and requires another deliberate edit
+  [chromium] › cart.spec.ts:189:5 › lost quantity reply plus a failed verification blocks writes until the real cart is read
+  [chromium] › cart.spec.ts:250:5 › paused items remain visible and removable without substituting zero totals
+  [chromium] › cart.spec.ts:279:5 › focus refresh shows the actual changed price, and fresh checkout checks reject a closed store
+  [chromium] › cart.spec.ts:309:5 › a different account cannot see the previous buyer cart after reload
+  [chromium] › checkout-address.spec.ts:42:5 › account prefill, another recipient and optional fields produce a canonical quote without changing the account or creating an order
+  [chromium] › checkout-address.spec.ts:111:5 › required fields give linked errors and focus the first invalid field before any quote request
+  [chromium] › checkout-address.spec.ts:146:5 › actual price changes are explicitly reviewed at the new server amount
+  [chromium] › checkout-address.spec.ts:167:5 › real stale-cart 409 refreshes the quote while keeping the recipient for explicit review
+  [chromium] › checkout-address.spec.ts:194:5 › store closure preserves entered recipient fields but prevents a new quote/order
+  [chromium] › checkout-address.spec.ts:219:5 › a failed quote remains retryable without creating an order; reload discards entered address
+  [chromium] › checkout-address.spec.ts:265:5 › recipient and quote layouts preserve labels, fixed action clearance and mobile-first reflow
+  [chromium] › harness.spec.ts:2:5 › frontend review uses its dedicated port and preserves the incumbent public about route
+  [chromium] › legacy-regression.spec.ts:126:5 › incumbent homepage header, scroll, menu and locale remain outside the shop resource boundary
+  [chromium] › legacy-regression.spec.ts:161:5 › registration keeps its login and conference-web SSO boundary rather than using shop checkout
+  [chromium] › legacy-regression.spec.ts:190:7 › legacy free registration ticket and receipt semantics survive
+  [chromium] › legacy-regression.spec.ts:190:7 › legacy paid registration ticket and receipt semantics survive
+  [chromium] › legacy-regression.spec.ts:213:5 › Booth signup, invitation and presentation direct reloads retain their incumbent resource and route contracts
+  [chromium] › legacy-regression.spec.ts:246:5 › lucky-wheel login return and registration success toast remain independent from merchandise payment
+  [chromium] › legacy-regression.spec.ts:263:5 › legacy payment, receipt, signup and activity implementations remain byte-identical to the starting revision
+  [chromium] › order-confirmation.spec.ts:6:5 › denied confirmation storage blocks the POST instead of losing the recovery key
+  [chromium] › order-confirmation.spec.ts:28:5 › private QR blob is revoked when the order view is left
+  [chromium] › order-confirmation.spec.ts:60:5 › an actual pending provider call keeps confirmed data locked and creates no premature QR
+  [chromium] › order-confirmation.spec.ts:89:5 › non-PNG QR responses fail closed and image retry does not create another payment attempt
+  [chromium] › order-confirmation.spec.ts:119:5 › known attempt revision rejection allows a reviewed explicit retry with a fresh key
+  [chromium] › order-confirmation.spec.ts:220:5 › P08 dependency: reviewed address confirms once, creates one private QR and locks all buyer fields
+  [chromium] › order-confirmation.spec.ts:260:5 › lost confirmed-order reply recovers through R41 to the same order without another POST
+  [chromium] › order-confirmation.spec.ts:280:5 › reload during confirmation recovers the already-created order using key/event metadata only
+  [chromium] › order-confirmation.spec.ts:314:5 › unknown R41 not-found retains the original request and never creates a new order
+  [chromium] › order-confirmation.spec.ts:358:5 › lost payment-attempt reply reads the known QR and does not request a second provider creation
+  [chromium] › order-confirmation.spec.ts:381:5 › another account cannot read the confirmed order or its private PNG
+  [chromium] › order-confirmation.spec.ts:421:5 › known server quote failure returns to review instead of creating a stale order
+  [chromium] › order-confirmation.spec.ts:445:5 › confirmed order remains readonly while provider outcome is unknown; QR creation is not payment success
+  [chromium] › order-confirmation.spec.ts:461:5 › approved enabled review and private-QR layouts render at mobile and desktop widths
+  [chromium] › order-history.spec.ts:6:5 › empty owner history has the approved empty state and shop action
+  [chromium] › order-history.spec.ts:23:5 › history contains only the signed-in buyer and event, with payment and delivery shown separately and no N+1 detail reads
+  [chromium] › order-history.spec.ts:60:5 › history pagination persists through direct reload and locale switching
+  [chromium] › order-history.spec.ts:84:5 › anonymous login returns to the requested history page without guest access
+  [chromium] › order-history.spec.ts:109:5 › invalid history query does not make an owner history request
+  [chromium] › order-history.spec.ts:124:5 › transport failure is retryable and is never presented as an empty history
+  [chromium] › order-history.spec.ts:144:5 › foreign-event summary transport is rejected rather than displayed
+  [chromium] › order-history.spec.ts:162:5 › an expired owner read offers forced reauthentication with the history page intact
+  [chromium] › order-history.spec.ts:192:5 › account replacement never merges owner history or grants access to a foreign order
+  [chromium] › order-history.spec.ts:223:5 › historical snapshots and Bundle components remain stable after catalog changes; audited recipient amendments retain the original
+  [chromium] › order-history.spec.ts:266:7 › shipped details retain leading zeroes and confirm successful mocked clipboard writes
+  [chromium] › order-history.spec.ts:266:7 › shipped details retain leading zeroes and report denied mocked clipboard writes
+  [chromium] › order-history.spec.ts:312:5 › returning to an already-paid order refreshes a new shipment without another payment attempt
+  [chromium] › order-history.spec.ts:340:5 › approved empty, history and shipped layouts adapt across mobile tablet and desktop
+  [chromium] › payment-state.spec.ts:78:7 › persisted fallback deadline survives reload and locale without another attempt
+  [chromium] › payment-state.spec.ts:78:7 › persisted explicit deadline survives reload and locale without another attempt
+  [chromium] › payment-state.spec.ts:103:5 › verified expiry reissues a new reference and PNG for the same immutable order
+  [chromium] › payment-state.spec.ts:140:5 › an uncertain reissue retains its key when R11 still shows the previous expired attempt
+  [chromium] › payment-state.spec.ts:174:5 › an active pre-close QR stays payable after closing and accepts verified in-time payment
+  [chromium] › payment-state.spec.ts:198:5 › closed and expired only shows the exact closure message after verified-unpaid evidence
+  [chromium] › payment-state.spec.ts:229:5 › transport failure hides the old QR and offers checking only until a verified result
+  [chromium] › payment-state.spec.ts:257:5 › zero countdown removes QR, checks once, and never interprets the timer as paid or unpaid
+  [chromium] › payment-state.spec.ts:287:5 › disabled store expiry is unavailable rather than falsely described as preorder closed
+  [chromium] › payment-state.spec.ts:310:5 › store closure between the displayed reissue action and R12 blocks the new QR without duplicating the order
+  [chromium] › payment-state.spec.ts:334:5 › device wall-clock changes do not restart or shorten the server-anchored timer
+  [chromium] › payment-state.spec.ts:345:5 › delayed verification accepts the actual paid time before expiry and cannot create a new attempt
+  [chromium] › payment-state.spec.ts:362:5 › review-required evidence gives support without a paid claim or new QR
+  [chromium] › payment-state.spec.ts:383:5 › an older in-flight DB read cannot restore a QR after payment checking has been queued
+  [chromium] › payment-state.spec.ts:431:5 › hidden pages pause DB polling and simultaneous return events coalesce without provider fanout
+  [chromium] › payment-state.spec.ts:464:5 › approved unknown, expired and paid layouts remain readable across device classes
+  [chromium] › performance.spec.ts:5:5 › public and authenticated storefront scope requests without duplicate Header cart reads
+  [chromium] › performance.spec.ts:31:5 › banner and product assets reserve dimensions, use the approved origin and load only the first banner eagerly
+  [chromium] › performance.spec.ts:64:5 › measures local browser rendering and current route bytes without inventing a production SLA
+  [chromium] › performance.spec.ts:180:5 › published JavaScript contains no backend merchant credential identifiers or source maps
+  [chromium] › product-selection.spec.ts:11:5 › no-option product has no empty selectors, renders safe Thai copy and permits uncapped integer quantities
+  [chromium] › product-selection.spec.ts:53:5 › actual color-size pairs require explicit choices and update exact variant price before real Add
+  [chromium] › product-selection.spec.ts:88:5 › Bundle exposes fixed BOM and explicit choices, charges the set price and counts sets once
+  [chromium] › product-selection.spec.ts:117:5 › anonymous chosen variant returns through existing login with the same quantity and choice
+  [chromium] › product-selection.spec.ts:150:5 › paused product refreshes actual availability without substituting the selected variant
+  [chromium] › product-selection.spec.ts:173:5 › closed store preserves details with buying disabled and unknown products expose no Add
+  [chromium] › product-selection.spec.ts:193:5 › a real 409 between selection validation and Add reloads choices and preserves the selected SKU
+  [chromium] › product-selection.spec.ts:228:5 › fixed Bundle Add from the storefront sends no fixed choices and charges one set
+  [chromium] › product-selection.spec.ts:249:5 › unknown fixed-Bundle reply survives reload with one wire key and restores usable fixed selections
+  [chromium] › product-visual.spec.ts:5:5 › approved product layouts render with real synthetic API content across device widths
+  [chromium] › route-login.spec.ts:6:5 › public nav exposes the shop and auth locale/signup journeys retain the validated return
+  [chromium] › route-login.spec.ts:33:5 › unsafe shop return is not propagated into signup links
+  [chromium] › route-login.spec.ts:46:5 › mocked SSO authentication returns to the shop with locale and filters
+  [chromium] › storefront-accessibility.spec.ts:2:5 › responsive columns and one-row header cover the approved viewport matrix
+  [chromium] › storefront-accessibility.spec.ts:44:5 › last product and footer controls stay clear of the fixed bar; keyboard menu restores focus
+  [chromium] › storefront-reflow.spec.ts:3:5 › 200-percent-equivalent desktop reflow keeps search and the last action reachable
+  [chromium] › storefront-visual.spec.ts:3:5 › capture shared renderer integration at three representative viewports
+  [chromium] › storefront.spec.ts:2:5 › draft catalog is public without prices or a purchase action
+  [chromium] › storefront.spec.ts:19:5 › public catalog uses real local API filters, categories, bundles and manual banners
+  [chromium] › storefront.spec.ts:91:5 › P04 dependency: login before Add resumes the exact intent once and shares owner cart state
+  [chromium] › storefront.spec.ts:125:5 › unknown Add replays the real committed mutation without another unit, even after closing
+  [chromium] › storefront.spec.ts:169:5 › closed catalog remains readable with buying disabled and no invented schedule
+  [chromium] › storefront.spec.ts:187:5 › owner replacement hides the previous cart and non-shop pages make no owner reads
+  [chromium] › storefront.spec.ts:224:5 › catalog transport failure offers retry without claiming an empty catalog
+  [chromium] › storefront.spec.ts:259:5 › cart badge caps the visual number and keeps the full accessible quantity
+  [chromium] › storefront.spec.ts:296:7 › P04 rejected session recovery retains the original unknown Add key through reauthentication
+  [chromium] › storefront.spec.ts:296:7 › P04 expired session recovery retains the original unknown Add key through reauthentication
+  [firefox] › acceptance.spec.ts:130:5 › customer Bundle and single purchase flows through real Admin UI, record-only paid/shipped email and exact production snapshots
+  [firefox] › acceptance.spec.ts:224:5 › two actual customer checkouts bulk ship through Admin with distinct tracking and exactly one notification per event
+  [firefox] › acceptance.spec.ts:292:7 › full customer checkout keeps its fallback deadline, blocks unknown reissue, and reissues only while open
+  [firefox] › acceptance.spec.ts:292:7 › full customer checkout keeps its explicit deadline, blocks unknown reissue, and reissues only while open
+  [firefox] › acceptance.spec.ts:367:5 › a delayed duplicate synthetic Postback accepts verified pre-expiry payment after closing without duplicating order or mail
+  [firefox] › accessibility.spec.ts:14:5 › both locale headers and catalogue retain the approved columns and one row throughout the viewport matrix
+  [firefox] › accessibility.spec.ts:61:5 › menu keyboard containment, Escape and focus return preserve scrolling and bar clearance
+  [firefox] › accessibility.spec.ts:94:5 › shop controls have names, image alternatives, visible keyboard focus and 44 pixel targets
+  [firefox] › accessibility.spec.ts:126:5 › address errors have associated messages and keyboard focus, and remain clear at reflow and 200 percent text zoom
+  [firefox] › accessibility.spec.ts:169:5 › long saved shipment values wrap at narrow widths without losing the tracking copy action
+  [firefox] › accessibility.spec.ts:193:5 › reduced motion keeps manual banner controls, keyboard navigation and cancellation usable
+  [firefox] › accessibility.spec.ts:220:5 › computed primary action contrast meets large bold text requirements and secondary Add meets normal text requirements
+  [firefox] › accessibility.spec.ts:270:5 › product cart history and shipped detail reflow across the complete viewport matrix
+  [firefox] › cart-layout.spec.ts:5:5 › cart layout, fixed action clearance and keyboard focus follow the approved references
+  [firefox] › cart.spec.ts:36:5 › cart requires the existing account and returns to its empty state after login
+  [firefox] › cart.spec.ts:58:5 › real quantity edits, persistence and removal use server totals with shipping once
+  [firefox] › cart.spec.ts:101:5 › changing a variant merges identical server identities and keeps a single shipping charge
+  [firefox] › cart.spec.ts:135:5 › Bundle cart displays the BOM without charging or counting its components as extra lines
+  [firefox] › cart.spec.ts:150:5 › real revision conflict reloads the newer cart and requires another deliberate edit
+  [firefox] › cart.spec.ts:189:5 › lost quantity reply plus a failed verification blocks writes until the real cart is read
+  [firefox] › cart.spec.ts:250:5 › paused items remain visible and removable without substituting zero totals
+  [firefox] › cart.spec.ts:279:5 › focus refresh shows the actual changed price, and fresh checkout checks reject a closed store
+  [firefox] › cart.spec.ts:309:5 › a different account cannot see the previous buyer cart after reload
+  [firefox] › checkout-address.spec.ts:42:5 › account prefill, another recipient and optional fields produce a canonical quote without changing the account or creating an order
+  [firefox] › checkout-address.spec.ts:111:5 › required fields give linked errors and focus the first invalid field before any quote request
+  [firefox] › checkout-address.spec.ts:146:5 › actual price changes are explicitly reviewed at the new server amount
+  [firefox] › checkout-address.spec.ts:167:5 › real stale-cart 409 refreshes the quote while keeping the recipient for explicit review
+  [firefox] › checkout-address.spec.ts:194:5 › store closure preserves entered recipient fields but prevents a new quote/order
+  [firefox] › checkout-address.spec.ts:219:5 › a failed quote remains retryable without creating an order; reload discards entered address
+  [firefox] › checkout-address.spec.ts:265:5 › recipient and quote layouts preserve labels, fixed action clearance and mobile-first reflow
+  [firefox] › harness.spec.ts:2:5 › frontend review uses its dedicated port and preserves the incumbent public about route
+  [firefox] › legacy-regression.spec.ts:126:5 › incumbent homepage header, scroll, menu and locale remain outside the shop resource boundary
+  [firefox] › legacy-regression.spec.ts:161:5 › registration keeps its login and conference-web SSO boundary rather than using shop checkout
+  [firefox] › legacy-regression.spec.ts:190:7 › legacy free registration ticket and receipt semantics survive
+  [firefox] › legacy-regression.spec.ts:190:7 › legacy paid registration ticket and receipt semantics survive
+  [firefox] › legacy-regression.spec.ts:213:5 › Booth signup, invitation and presentation direct reloads retain their incumbent resource and route contracts
+  [firefox] › legacy-regression.spec.ts:246:5 › lucky-wheel login return and registration success toast remain independent from merchandise payment
+  [firefox] › legacy-regression.spec.ts:263:5 › legacy payment, receipt, signup and activity implementations remain byte-identical to the starting revision
+  [firefox] › order-confirmation.spec.ts:6:5 › denied confirmation storage blocks the POST instead of losing the recovery key
+  [firefox] › order-confirmation.spec.ts:28:5 › private QR blob is revoked when the order view is left
+  [firefox] › order-confirmation.spec.ts:60:5 › an actual pending provider call keeps confirmed data locked and creates no premature QR
+  [firefox] › order-confirmation.spec.ts:89:5 › non-PNG QR responses fail closed and image retry does not create another payment attempt
+  [firefox] › order-confirmation.spec.ts:119:5 › known attempt revision rejection allows a reviewed explicit retry with a fresh key
+  [firefox] › order-confirmation.spec.ts:220:5 › P08 dependency: reviewed address confirms once, creates one private QR and locks all buyer fields
+  [firefox] › order-confirmation.spec.ts:260:5 › lost confirmed-order reply recovers through R41 to the same order without another POST
+  [firefox] › order-confirmation.spec.ts:280:5 › reload during confirmation recovers the already-created order using key/event metadata only
+  [firefox] › order-confirmation.spec.ts:314:5 › unknown R41 not-found retains the original request and never creates a new order
+  [firefox] › order-confirmation.spec.ts:358:5 › lost payment-attempt reply reads the known QR and does not request a second provider creation
+  [firefox] › order-confirmation.spec.ts:381:5 › another account cannot read the confirmed order or its private PNG
+  [firefox] › order-confirmation.spec.ts:421:5 › known server quote failure returns to review instead of creating a stale order
+  [firefox] › order-confirmation.spec.ts:445:5 › confirmed order remains readonly while provider outcome is unknown; QR creation is not payment success
+  [firefox] › order-confirmation.spec.ts:461:5 › approved enabled review and private-QR layouts render at mobile and desktop widths
+  [firefox] › order-history.spec.ts:6:5 › empty owner history has the approved empty state and shop action
+  [firefox] › order-history.spec.ts:23:5 › history contains only the signed-in buyer and event, with payment and delivery shown separately and no N+1 detail reads
+  [firefox] › order-history.spec.ts:60:5 › history pagination persists through direct reload and locale switching
+  [firefox] › order-history.spec.ts:84:5 › anonymous login returns to the requested history page without guest access
+  [firefox] › order-history.spec.ts:109:5 › invalid history query does not make an owner history request
+  [firefox] › order-history.spec.ts:124:5 › transport failure is retryable and is never presented as an empty history
+  [firefox] › order-history.spec.ts:144:5 › foreign-event summary transport is rejected rather than displayed
+  [firefox] › order-history.spec.ts:162:5 › an expired owner read offers forced reauthentication with the history page intact
+  [firefox] › order-history.spec.ts:192:5 › account replacement never merges owner history or grants access to a foreign order
+  [firefox] › order-history.spec.ts:223:5 › historical snapshots and Bundle components remain stable after catalog changes; audited recipient amendments retain the original
+  [firefox] › order-history.spec.ts:266:7 › shipped details retain leading zeroes and confirm successful mocked clipboard writes
+  [firefox] › order-history.spec.ts:266:7 › shipped details retain leading zeroes and report denied mocked clipboard writes
+  [firefox] › order-history.spec.ts:312:5 › returning to an already-paid order refreshes a new shipment without another payment attempt
+  [firefox] › order-history.spec.ts:340:5 › approved empty, history and shipped layouts adapt across mobile tablet and desktop
+  [firefox] › payment-state.spec.ts:78:7 › persisted fallback deadline survives reload and locale without another attempt
+  [firefox] › payment-state.spec.ts:78:7 › persisted explicit deadline survives reload and locale without another attempt
+  [firefox] › payment-state.spec.ts:103:5 › verified expiry reissues a new reference and PNG for the same immutable order
+  [firefox] › payment-state.spec.ts:140:5 › an uncertain reissue retains its key when R11 still shows the previous expired attempt
+  [firefox] › payment-state.spec.ts:174:5 › an active pre-close QR stays payable after closing and accepts verified in-time payment
+  [firefox] › payment-state.spec.ts:198:5 › closed and expired only shows the exact closure message after verified-unpaid evidence
+  [firefox] › payment-state.spec.ts:229:5 › transport failure hides the old QR and offers checking only until a verified result
+  [firefox] › payment-state.spec.ts:257:5 › zero countdown removes QR, checks once, and never interprets the timer as paid or unpaid
+  [firefox] › payment-state.spec.ts:287:5 › disabled store expiry is unavailable rather than falsely described as preorder closed
+  [firefox] › payment-state.spec.ts:310:5 › store closure between the displayed reissue action and R12 blocks the new QR without duplicating the order
+  [firefox] › payment-state.spec.ts:334:5 › device wall-clock changes do not restart or shorten the server-anchored timer
+  [firefox] › payment-state.spec.ts:345:5 › delayed verification accepts the actual paid time before expiry and cannot create a new attempt
+  [firefox] › payment-state.spec.ts:362:5 › review-required evidence gives support without a paid claim or new QR
+  [firefox] › payment-state.spec.ts:383:5 › an older in-flight DB read cannot restore a QR after payment checking has been queued
+  [firefox] › payment-state.spec.ts:431:5 › hidden pages pause DB polling and simultaneous return events coalesce without provider fanout
+  [firefox] › payment-state.spec.ts:464:5 › approved unknown, expired and paid layouts remain readable across device classes
+  [firefox] › performance.spec.ts:5:5 › public and authenticated storefront scope requests without duplicate Header cart reads
+  [firefox] › performance.spec.ts:31:5 › banner and product assets reserve dimensions, use the approved origin and load only the first banner eagerly
+  [firefox] › performance.spec.ts:64:5 › measures local browser rendering and current route bytes without inventing a production SLA
+  [firefox] › performance.spec.ts:180:5 › published JavaScript contains no backend merchant credential identifiers or source maps
+  [firefox] › product-selection.spec.ts:11:5 › no-option product has no empty selectors, renders safe Thai copy and permits uncapped integer quantities
+  [firefox] › product-selection.spec.ts:53:5 › actual color-size pairs require explicit choices and update exact variant price before real Add
+  [firefox] › product-selection.spec.ts:88:5 › Bundle exposes fixed BOM and explicit choices, charges the set price and counts sets once
+  [firefox] › product-selection.spec.ts:117:5 › anonymous chosen variant returns through existing login with the same quantity and choice
+  [firefox] › product-selection.spec.ts:150:5 › paused product refreshes actual availability without substituting the selected variant
+  [firefox] › product-selection.spec.ts:173:5 › closed store preserves details with buying disabled and unknown products expose no Add
+  [firefox] › product-selection.spec.ts:193:5 › a real 409 between selection validation and Add reloads choices and preserves the selected SKU
+  [firefox] › product-selection.spec.ts:228:5 › fixed Bundle Add from the storefront sends no fixed choices and charges one set
+  [firefox] › product-selection.spec.ts:249:5 › unknown fixed-Bundle reply survives reload with one wire key and restores usable fixed selections
+  [firefox] › product-visual.spec.ts:5:5 › approved product layouts render with real synthetic API content across device widths
+  [firefox] › route-login.spec.ts:6:5 › public nav exposes the shop and auth locale/signup journeys retain the validated return
+  [firefox] › route-login.spec.ts:33:5 › unsafe shop return is not propagated into signup links
+  [firefox] › route-login.spec.ts:46:5 › mocked SSO authentication returns to the shop with locale and filters
+  [firefox] › storefront-accessibility.spec.ts:2:5 › responsive columns and one-row header cover the approved viewport matrix
+  [firefox] › storefront-accessibility.spec.ts:44:5 › last product and footer controls stay clear of the fixed bar; keyboard menu restores focus
+  [firefox] › storefront-reflow.spec.ts:3:5 › 200-percent-equivalent desktop reflow keeps search and the last action reachable
+  [firefox] › storefront-visual.spec.ts:3:5 › capture shared renderer integration at three representative viewports
+  [firefox] › storefront.spec.ts:2:5 › draft catalog is public without prices or a purchase action
+  [firefox] › storefront.spec.ts:19:5 › public catalog uses real local API filters, categories, bundles and manual banners
+  [firefox] › storefront.spec.ts:91:5 › P04 dependency: login before Add resumes the exact intent once and shares owner cart state
+  [firefox] › storefront.spec.ts:125:5 › unknown Add replays the real committed mutation without another unit, even after closing
+  [firefox] › storefront.spec.ts:169:5 › closed catalog remains readable with buying disabled and no invented schedule
+  [firefox] › storefront.spec.ts:187:5 › owner replacement hides the previous cart and non-shop pages make no owner reads
+  [firefox] › storefront.spec.ts:224:5 › catalog transport failure offers retry without claiming an empty catalog
+  [firefox] › storefront.spec.ts:259:5 › cart badge caps the visual number and keeps the full accessible quantity
+  [firefox] › storefront.spec.ts:296:7 › P04 rejected session recovery retains the original unknown Add key through reauthentication
+  [firefox] › storefront.spec.ts:296:7 › P04 expired session recovery retains the original unknown Add key through reauthentication
+  [webkit] › acceptance.spec.ts:130:5 › customer Bundle and single purchase flows through real Admin UI, record-only paid/shipped email and exact production snapshots
+  [webkit] › acceptance.spec.ts:224:5 › two actual customer checkouts bulk ship through Admin with distinct tracking and exactly one notification per event
+  [webkit] › acceptance.spec.ts:292:7 › full customer checkout keeps its fallback deadline, blocks unknown reissue, and reissues only while open
+  [webkit] › acceptance.spec.ts:292:7 › full customer checkout keeps its explicit deadline, blocks unknown reissue, and reissues only while open
+  [webkit] › acceptance.spec.ts:367:5 › a delayed duplicate synthetic Postback accepts verified pre-expiry payment after closing without duplicating order or mail
+  [webkit] › accessibility.spec.ts:14:5 › both locale headers and catalogue retain the approved columns and one row throughout the viewport matrix
+  [webkit] › accessibility.spec.ts:61:5 › menu keyboard containment, Escape and focus return preserve scrolling and bar clearance
+  [webkit] › accessibility.spec.ts:94:5 › shop controls have names, image alternatives, visible keyboard focus and 44 pixel targets
+  [webkit] › accessibility.spec.ts:126:5 › address errors have associated messages and keyboard focus, and remain clear at reflow and 200 percent text zoom
+  [webkit] › accessibility.spec.ts:169:5 › long saved shipment values wrap at narrow widths without losing the tracking copy action
+  [webkit] › accessibility.spec.ts:193:5 › reduced motion keeps manual banner controls, keyboard navigation and cancellation usable
+  [webkit] › accessibility.spec.ts:220:5 › computed primary action contrast meets large bold text requirements and secondary Add meets normal text requirements
+  [webkit] › accessibility.spec.ts:270:5 › product cart history and shipped detail reflow across the complete viewport matrix
+  [webkit] › cart-layout.spec.ts:5:5 › cart layout, fixed action clearance and keyboard focus follow the approved references
+  [webkit] › cart.spec.ts:36:5 › cart requires the existing account and returns to its empty state after login
+  [webkit] › cart.spec.ts:58:5 › real quantity edits, persistence and removal use server totals with shipping once
+  [webkit] › cart.spec.ts:101:5 › changing a variant merges identical server identities and keeps a single shipping charge
+  [webkit] › cart.spec.ts:135:5 › Bundle cart displays the BOM without charging or counting its components as extra lines
+  [webkit] › cart.spec.ts:150:5 › real revision conflict reloads the newer cart and requires another deliberate edit
+  [webkit] › cart.spec.ts:189:5 › lost quantity reply plus a failed verification blocks writes until the real cart is read
+  [webkit] › cart.spec.ts:250:5 › paused items remain visible and removable without substituting zero totals
+  [webkit] › cart.spec.ts:279:5 › focus refresh shows the actual changed price, and fresh checkout checks reject a closed store
+  [webkit] › cart.spec.ts:309:5 › a different account cannot see the previous buyer cart after reload
+  [webkit] › checkout-address.spec.ts:42:5 › account prefill, another recipient and optional fields produce a canonical quote without changing the account or creating an order
+  [webkit] › checkout-address.spec.ts:111:5 › required fields give linked errors and focus the first invalid field before any quote request
+  [webkit] › checkout-address.spec.ts:146:5 › actual price changes are explicitly reviewed at the new server amount
+  [webkit] › checkout-address.spec.ts:167:5 › real stale-cart 409 refreshes the quote while keeping the recipient for explicit review
+  [webkit] › checkout-address.spec.ts:194:5 › store closure preserves entered recipient fields but prevents a new quote/order
+  [webkit] › checkout-address.spec.ts:219:5 › a failed quote remains retryable without creating an order; reload discards entered address
+  [webkit] › checkout-address.spec.ts:265:5 › recipient and quote layouts preserve labels, fixed action clearance and mobile-first reflow
+  [webkit] › harness.spec.ts:2:5 › frontend review uses its dedicated port and preserves the incumbent public about route
+  [webkit] › legacy-regression.spec.ts:126:5 › incumbent homepage header, scroll, menu and locale remain outside the shop resource boundary
+  [webkit] › legacy-regression.spec.ts:161:5 › registration keeps its login and conference-web SSO boundary rather than using shop checkout
+  [webkit] › legacy-regression.spec.ts:190:7 › legacy free registration ticket and receipt semantics survive
+  [webkit] › legacy-regression.spec.ts:190:7 › legacy paid registration ticket and receipt semantics survive
+  [webkit] › legacy-regression.spec.ts:213:5 › Booth signup, invitation and presentation direct reloads retain their incumbent resource and route contracts
+  [webkit] › legacy-regression.spec.ts:246:5 › lucky-wheel login return and registration success toast remain independent from merchandise payment
+  [webkit] › legacy-regression.spec.ts:263:5 › legacy payment, receipt, signup and activity implementations remain byte-identical to the starting revision
+  [webkit] › order-confirmation.spec.ts:6:5 › denied confirmation storage blocks the POST instead of losing the recovery key
+  [webkit] › order-confirmation.spec.ts:28:5 › private QR blob is revoked when the order view is left
+  [webkit] › order-confirmation.spec.ts:60:5 › an actual pending provider call keeps confirmed data locked and creates no premature QR
+  [webkit] › order-confirmation.spec.ts:89:5 › non-PNG QR responses fail closed and image retry does not create another payment attempt
+  [webkit] › order-confirmation.spec.ts:119:5 › known attempt revision rejection allows a reviewed explicit retry with a fresh key
+  [webkit] › order-confirmation.spec.ts:220:5 › P08 dependency: reviewed address confirms once, creates one private QR and locks all buyer fields
+  [webkit] › order-confirmation.spec.ts:260:5 › lost confirmed-order reply recovers through R41 to the same order without another POST
+  [webkit] › order-confirmation.spec.ts:280:5 › reload during confirmation recovers the already-created order using key/event metadata only
+  [webkit] › order-confirmation.spec.ts:314:5 › unknown R41 not-found retains the original request and never creates a new order
+  [webkit] › order-confirmation.spec.ts:358:5 › lost payment-attempt reply reads the known QR and does not request a second provider creation
+  [webkit] › order-confirmation.spec.ts:381:5 › another account cannot read the confirmed order or its private PNG
+  [webkit] › order-confirmation.spec.ts:421:5 › known server quote failure returns to review instead of creating a stale order
+  [webkit] › order-confirmation.spec.ts:445:5 › confirmed order remains readonly while provider outcome is unknown; QR creation is not payment success
+  [webkit] › order-confirmation.spec.ts:461:5 › approved enabled review and private-QR layouts render at mobile and desktop widths
+  [webkit] › order-history.spec.ts:6:5 › empty owner history has the approved empty state and shop action
+  [webkit] › order-history.spec.ts:23:5 › history contains only the signed-in buyer and event, with payment and delivery shown separately and no N+1 detail reads
+  [webkit] › order-history.spec.ts:60:5 › history pagination persists through direct reload and locale switching
+  [webkit] › order-history.spec.ts:84:5 › anonymous login returns to the requested history page without guest access
+  [webkit] › order-history.spec.ts:109:5 › invalid history query does not make an owner history request
+  [webkit] › order-history.spec.ts:124:5 › transport failure is retryable and is never presented as an empty history
+  [webkit] › order-history.spec.ts:144:5 › foreign-event summary transport is rejected rather than displayed
+  [webkit] › order-history.spec.ts:162:5 › an expired owner read offers forced reauthentication with the history page intact
+  [webkit] › order-history.spec.ts:192:5 › account replacement never merges owner history or grants access to a foreign order
+  [webkit] › order-history.spec.ts:223:5 › historical snapshots and Bundle components remain stable after catalog changes; audited recipient amendments retain the original
+  [webkit] › order-history.spec.ts:266:7 › shipped details retain leading zeroes and confirm successful mocked clipboard writes
+  [webkit] › order-history.spec.ts:266:7 › shipped details retain leading zeroes and report denied mocked clipboard writes
+  [webkit] › order-history.spec.ts:312:5 › returning to an already-paid order refreshes a new shipment without another payment attempt
+  [webkit] › order-history.spec.ts:340:5 › approved empty, history and shipped layouts adapt across mobile tablet and desktop
+  [webkit] › payment-state.spec.ts:78:7 › persisted fallback deadline survives reload and locale without another attempt
+  [webkit] › payment-state.spec.ts:78:7 › persisted explicit deadline survives reload and locale without another attempt
+  [webkit] › payment-state.spec.ts:103:5 › verified expiry reissues a new reference and PNG for the same immutable order
+  [webkit] › payment-state.spec.ts:140:5 › an uncertain reissue retains its key when R11 still shows the previous expired attempt
+  [webkit] › payment-state.spec.ts:174:5 › an active pre-close QR stays payable after closing and accepts verified in-time payment
+  [webkit] › payment-state.spec.ts:198:5 › closed and expired only shows the exact closure message after verified-unpaid evidence
+  [webkit] › payment-state.spec.ts:229:5 › transport failure hides the old QR and offers checking only until a verified result
+  [webkit] › payment-state.spec.ts:257:5 › zero countdown removes QR, checks once, and never interprets the timer as paid or unpaid
+  [webkit] › payment-state.spec.ts:287:5 › disabled store expiry is unavailable rather than falsely described as preorder closed
+  [webkit] › payment-state.spec.ts:310:5 › store closure between the displayed reissue action and R12 blocks the new QR without duplicating the order
+  [webkit] › payment-state.spec.ts:334:5 › device wall-clock changes do not restart or shorten the server-anchored timer
+  [webkit] › payment-state.spec.ts:345:5 › delayed verification accepts the actual paid time before expiry and cannot create a new attempt
+  [webkit] › payment-state.spec.ts:362:5 › review-required evidence gives support without a paid claim or new QR
+  [webkit] › payment-state.spec.ts:383:5 › an older in-flight DB read cannot restore a QR after payment checking has been queued
+  [webkit] › payment-state.spec.ts:431:5 › hidden pages pause DB polling and simultaneous return events coalesce without provider fanout
+  [webkit] › payment-state.spec.ts:464:5 › approved unknown, expired and paid layouts remain readable across device classes
+  [webkit] › performance.spec.ts:5:5 › public and authenticated storefront scope requests without duplicate Header cart reads
+  [webkit] › performance.spec.ts:31:5 › banner and product assets reserve dimensions, use the approved origin and load only the first banner eagerly
+  [webkit] › performance.spec.ts:64:5 › measures local browser rendering and current route bytes without inventing a production SLA
+  [webkit] › performance.spec.ts:180:5 › published JavaScript contains no backend merchant credential identifiers or source maps
+  [webkit] › product-selection.spec.ts:11:5 › no-option product has no empty selectors, renders safe Thai copy and permits uncapped integer quantities
+  [webkit] › product-selection.spec.ts:53:5 › actual color-size pairs require explicit choices and update exact variant price before real Add
+  [webkit] › product-selection.spec.ts:88:5 › Bundle exposes fixed BOM and explicit choices, charges the set price and counts sets once
+  [webkit] › product-selection.spec.ts:117:5 › anonymous chosen variant returns through existing login with the same quantity and choice
+  [webkit] › product-selection.spec.ts:150:5 › paused product refreshes actual availability without substituting the selected variant
+  [webkit] › product-selection.spec.ts:173:5 › closed store preserves details with buying disabled and unknown products expose no Add
+  [webkit] › product-selection.spec.ts:193:5 › a real 409 between selection validation and Add reloads choices and preserves the selected SKU
+  [webkit] › product-selection.spec.ts:228:5 › fixed Bundle Add from the storefront sends no fixed choices and charges one set
+  [webkit] › product-selection.spec.ts:249:5 › unknown fixed-Bundle reply survives reload with one wire key and restores usable fixed selections
+  [webkit] › product-visual.spec.ts:5:5 › approved product layouts render with real synthetic API content across device widths
+  [webkit] › route-login.spec.ts:6:5 › public nav exposes the shop and auth locale/signup journeys retain the validated return
+  [webkit] › route-login.spec.ts:33:5 › unsafe shop return is not propagated into signup links
+  [webkit] › route-login.spec.ts:46:5 › mocked SSO authentication returns to the shop with locale and filters
+  [webkit] › storefront-accessibility.spec.ts:2:5 › responsive columns and one-row header cover the approved viewport matrix
+  [webkit] › storefront-accessibility.spec.ts:44:5 › last product and footer controls stay clear of the fixed bar; keyboard menu restores focus
+  [webkit] › storefront-reflow.spec.ts:3:5 › 200-percent-equivalent desktop reflow keeps search and the last action reachable
+  [webkit] › storefront-visual.spec.ts:3:5 › capture shared renderer integration at three representative viewports
+  [webkit] › storefront.spec.ts:2:5 › draft catalog is public without prices or a purchase action
+  [webkit] › storefront.spec.ts:19:5 › public catalog uses real local API filters, categories, bundles and manual banners
+  [webkit] › storefront.spec.ts:91:5 › P04 dependency: login before Add resumes the exact intent once and shares owner cart state
+  [webkit] › storefront.spec.ts:125:5 › unknown Add replays the real committed mutation without another unit, even after closing
+  [webkit] › storefront.spec.ts:169:5 › closed catalog remains readable with buying disabled and no invented schedule
+  [webkit] › storefront.spec.ts:187:5 › owner replacement hides the previous cart and non-shop pages make no owner reads
+  [webkit] › storefront.spec.ts:224:5 › catalog transport failure offers retry without claiming an empty catalog
+  [webkit] › storefront.spec.ts:259:5 › cart badge caps the visual number and keeps the full accessible quantity
+  [webkit] › storefront.spec.ts:296:7 › P04 rejected session recovery retains the original unknown Add key through reauthentication
+  [webkit] › storefront.spec.ts:296:7 › P04 expired session recovery retains the original unknown Add key through reauthentication
+Total: 339 tests in 18 files

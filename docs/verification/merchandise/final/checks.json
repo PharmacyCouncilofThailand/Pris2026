@@ -1,0 +1,27 @@
+{
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "log": "docs/verification/merchandise/final/build.log.txt"
+  },
+  "types": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0,
+    "log": "docs/verification/merchandise/final/types.log.txt"
+  },
+  "units": {
+    "command": "node node_modules/tsx/dist/cli.mjs --test src/**/*.test.ts",
+    "exitCode": 0,
+    "log": "docs/verification/merchandise/final/units.log.txt"
+  },
+  "gateUnits": {
+    "command": "node --test scripts/merchandise-frontend-gate.test.mjs",
+    "exitCode": 0,
+    "log": "docs/verification/merchandise/final/gateUnits.log.txt"
+  },
+  "lint": {
+    "command": "node scripts/merchandise-lint-baseline.mjs",
+    "exitCode": 0,
+    "log": "docs/verification/merchandise/final/lint.log.txt"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "method": "One batched final viewport inspection: home mobile, active simulated QR mobile, shipped desktop. Approved reference design unchanged; no P14 UI edit.",
+  "syntheticDataOnly": true,
+  "reviewed": [
+    {
+      "path": "docs/verification/merchandise/final/visual/p05-mobile.png",
+      "sha256": "4424f78cba23b2c7566ccbd7d93bd71d0082d2661cbbb11dbb3c9cdedc148efc"
+    },
+    {
+      "path": "docs/verification/merchandise/final/visual/p09-qr-mobile.png",
+      "sha256": "6ad0da8619cb598671657932f0897c8a719233196525a31b94d6120e8018fe43"
+    },
+    {
+      "path": "docs/verification/merchandise/final/visual/p11-shipped-desktop.png",
+      "sha256": "e805bd81aff42945620b7052ac41dd0e7d1756021b28caa25c14ba1c61d8e7de"
+    }
+  ]
+}
