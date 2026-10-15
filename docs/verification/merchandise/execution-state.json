@@ -824,7 +824,7 @@
     {
       "id": "P09",
       "status": "passed",
-      "commit": null,
+      "commit": "97d9d27afab60d08e7061f816438f8e9c36f7bc9",
       "tests": [
         {
           "command": "request recovery red before implementation",
@@ -946,19 +946,19 @@
         },
         {
           "path": "docs/verification/merchandise/visual/p09-creating-mobile.png",
-          "sha256": "6f6ef5a017717ec0597e1bedbf17b24bef8daaf7c5b13196c7c7dea61e3d73f2"
+          "sha256": "f1e0fab4b7894c3a44a0ce8a0fabc63938d64e595aeded5fc9657f666ebb901c"
         },
         {
           "path": "docs/verification/merchandise/visual/p09-qr-mobile.png",
-          "sha256": "ae736db4f492e5f5ca6c581f0ecdef72b7b3cce00aaef5a26ee59db71d71f3aa"
+          "sha256": "a3ecf2ac84200bd80880b59d4ceb32130d9eca455da3a895cc676b3397067559"
         },
         {
           "path": "docs/verification/merchandise/visual/p09-qr-tablet.png",
-          "sha256": "1d0888e2e24d012b2742d9bc43d6950f07a684622d936fbde36ec234708f6692"
+          "sha256": "8dd93eca55a1fc48a5fcf2bd9f47f81dd520ae0658eda6403acba5689dae496d"
         },
         {
           "path": "docs/verification/merchandise/visual/p09-qr-desktop.png",
-          "sha256": "92bd0bcfebeb0ef8b0416c1fae1a050a51be6646a5215f853f5226ca4138a9c5"
+          "sha256": "86627116be7e2854ea4a78a78135ddab360bd0c2795d0c69a1516ead60e37774"
         }
       ],
       "notes": [
@@ -967,14 +967,169 @@
         "The isolated run reached the committed cart before the pending intent replay completed; the test now waits for the second POST and the intent acknowledgement rather than treating an already-1 badge as replay completion. No production cart/auth behavior changed.",
         "P08-P09-CONFIRM resolved before P10. Confirmation and attempt metadata contain no recipient, token, QR or price.",
         "Synthetic provider only; actual provider, real email and physical bank/device tests remain deferred to User Test. Release not_ready and live sales disabled; one physical local database retained.",
-        "This task checkpoint is the commit containing this record; its exact hash is recorded by the next task."
+        "This task checkpoint is the commit containing this record; its exact hash is recorded by the next task.",
+        "P10 reran all 42 P09 browser cases across three engines while adding deadline/state handling. Current regenerated captures include the timer; original P09 captures remain in its checkpoint commit."
       ]
     },
     {
       "id": "P10",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "deadline/payment action unit red before implementation",
+          "status": "expected_failure_missing_module",
+          "proof": {
+            "path": ".merchandise-local/p10-unit-red.txt",
+            "sha256": "8260398828fb0cbb5179f9b2c7f7d0c85e74cc4e29bf44f160cde4dd7522aff4"
+          }
+        },
+        {
+          "command": "uncertain reissue stable-key regression red before correction",
+          "passed": 0,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p10-reissue-key-red.txt",
+            "sha256": "7291b122240dce5708b32324b3e4d87b2a4457b5cdd625ae4ec43f6fdc06f2be"
+          }
+        },
+        {
+          "command": "old in-flight read regression red before correction",
+          "passed": 0,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p10-old-read-red.txt",
+            "sha256": "ae2b69de36bfc4820845dc77aa6db972fed5f914345b0da263417cee88ee04dc"
+          }
+        },
+        {
+          "command": "old in-flight read regression after correction, Chromium",
+          "passed": 1,
+          "failed": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-old-read-green.txt",
+            "sha256": "3a4c46b5533e62211c6c048263a64db3d072256dcf2ea0d79a98bcbf64d5b6d9"
+          }
+        },
+        {
+          "command": "initial Chromium payment suite, support locator matched Footer too",
+          "passed": 11,
+          "failed": 1,
+          "proof": {
+            "path": ".merchandise-local/p10-browser-initial.txt",
+            "sha256": "8764295c6a38c0d163b8e32e6c12d923fdb8158dfc55aeb790df137d4ee0c1c8"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 152,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-all-tests-final.txt",
+            "sha256": "bdfed4f3b9ebba503d7a8c9c34bc8f82e6fa2d3b01358578b9b640fbe52728e2"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-types-final.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build, local fixture origin in process environment only",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-build-final.txt",
+            "sha256": "e4350315b2799e51f2345bd945f707bf5ae4c665ce7bcc99dc3f0bd1b12b2c7e"
+          }
+        },
+        {
+          "command": "baseline-aware lint",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-lint-final.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "initial impeccable detector, payment/paid components/styles",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "intermediate production payment suite plus P09 regression, Chromium, before old-read correction",
+          "passed": 29,
+          "failed": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-browser-chromium-final.txt",
+            "sha256": "27bd7b55c1e2ac67773c75d73b4aefc23e499a3fbca86800e995986aadbb7e66"
+          }
+        },
+        {
+          "command": "complete production payment suite plus full P09 regression, Chromium Firefox WebKit",
+          "passed": 90,
+          "failed": 0,
+          "skipped": 0,
+          "retries": 0,
+          "proof": {
+            "path": ".merchandise-local/p10-browser-all-final.txt",
+            "sha256": "c8b810b1fd70b00c5f6584d80538e1bd18ccb489d4d58a1db083890f1050fbd5"
+          }
+        }
+      ],
+      "proof": "payment-state-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p10-active-mobile.png",
+          "sha256": "6add68de67f16ba47c5771dfe6284193f590d3ae387591879cb75209f4c8f59b"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-checking-mobile.png",
+          "sha256": "4e182bf7108cbe85db44b454d0fd235a36609798a6b11a6c65660264c11691d0"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-unknown-mobile.png",
+          "sha256": "f89bb37c8f47807057677f24ae7b3f43a567e5a8c2e4e1a1cd770957696b13c6"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-expired-mobile.png",
+          "sha256": "c989f5e945955f03edae2dc4a4e8ab3ffe4c7a22e0c4c2a05b5c66de5baaba74"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-closed-mobile.png",
+          "sha256": "7351a3721f50fa4666a98a926a4488a9c4a388f445323c84d2b6895d34083c1b"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-paid-mobile.png",
+          "sha256": "029a8213f4e24b99316c17f8aed4dc235e30672801f4c8d51fa397245436aa82"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-paid-tablet.png",
+          "sha256": "7fa178614c7e522eb180c990336257dbf88373aca1f39b4aed4e7f9a5e8ed05a"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p10-paid-desktop.png",
+          "sha256": "69b5fa8b3307d3e25866448bedf02aa39517a9540368bdc93b5e9837e4c787b2"
+        }
+      ],
+      "notes": [
+        "Final 90 browser cases comprise 48 P10 cases and all 42 P09 regressions across three engines. One clean final command, zero retries; initial failed runs retained rather than overwritten as success.",
+        "Old pre-write R11 response regression reproduced and corrected: reads after R12/R13 abort the prior read and fetch fresh state; read-only return events still coalesce.",
+        "Initial six and confirmation eight viewport layouts inspected in bounded batches. The final request-sequencing regression rerun regenerates the same templates with new synthetic QR references; no further visual polish or layout changes. Only loader icons rotate; duplicate paid-item separator removed. P03 approval and confirmed business copy unchanged.",
+        "R11 DB polling uses the A21-tested 15-second journey spacing while visible; provider Inquiry is queued/coalesced by R13 and worker, never called per timer tick.",
+        "Real merchant/payment/physical-bank/saved-image/mail delivery deferred to User Test; release not_ready, live sales disabled, exactly one physical development DB retained.",
+        "The checkpoint is the commit containing this record; exact hash is recorded by the next task."
+      ]
     },
     {
       "id": "P11",
@@ -1001,5 +1156,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T15:39:03.977Z"
+  "updatedAt": "2026-10-15T16:13:07.413Z"
 }

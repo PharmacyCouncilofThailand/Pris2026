@@ -9,9 +9,11 @@ import {
   beginAttemptRequest,
   readAttemptRequest,
   acknowledgeAttemptRequest,
+  attemptResultKnown,
 } from "./merchandiseOrderRequest";
 import { createMerchandiseApi } from "./merchandiseApi";
 import { ids, now } from "../../tests/merchandise/data";
+import type { PaymentView } from "../types/merchandise";
 function storage(): Storage {
   const values = new Map<string, string>();
   return {
@@ -165,6 +167,7 @@ test("unknown attempt retains its original revision and key until a known result
   assert.deepEqual(readAttemptRequest(s, "PRIS-2026", 1, ids.order), {
     key: ids.attempt,
     expectedOrderRevision: 1,
+    previousAttemptId: null,
   });
   acknowledgeAttemptRequest(s, "PRIS-2026", 1, ids.order, ids.item);
   assert.ok(readAttemptRequest(s, "PRIS-2026", 1, ids.order));
@@ -236,4 +239,37 @@ test("concurrent recovery reads coalesce while each consumer still checks its ow
   });
   assert.equal(calls, 1);
   assert.ok(readOrderRequest(s, "PRIS-2026", 1));
+});
+
+test("an old expired attempt cannot acknowledge an uncertain reissue, including legacy metadata", () => {
+  const record = {
+    key: ids.item,
+    expectedOrderRevision: 1,
+    previousAttemptId: ids.attempt,
+  };
+  const old = {
+    state: "qr_expired_open",
+    attempt: { id: ids.attempt, creationStatus: "issued" },
+  } as PaymentView;
+  assert.equal(attemptResultKnown(record, old), false);
+  assert.equal(
+    attemptResultKnown({ key: ids.item, expectedOrderRevision: 1 }, old),
+    false,
+  );
+  assert.equal(
+    attemptResultKnown(record, {
+      ...old,
+      attempt: { ...old.attempt!, id: ids.order },
+    }),
+    true,
+  );
+  assert.equal(
+    attemptResultKnown(record, {
+      ...old,
+      state: "verification_unknown",
+      attempt: { ...old.attempt!, id: ids.order },
+    }),
+    false,
+  );
+  assert.equal(attemptResultKnown(record, { ...old, state: "paid" }), true);
 });

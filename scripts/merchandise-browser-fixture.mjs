@@ -4,6 +4,8 @@ import { createServer } from "node:http";
 import { createRequire } from "node:module";
 import assert from "node:assert/strict";
 import { withMerchandiseFixture } from "../../conference-api/src/modules/merchandise/test-support.ts";
+import { SIMULATOR_PROOF_VERSION } from "../../conference-api/src/modules/merchandise/payments/config.ts";
+import { runMerchandiseJobsOnce } from "../../conference-api/src/modules/merchandise/jobs.ts";
 import {
   seedMerchandiseCatalog,
   initialDraftProducts,
@@ -35,6 +37,7 @@ await withMerchandiseFixture(async (f) => {
     initialized = false,
     metadata = null;
   let releaseProvider = null;
+  let providerOptions = {};
   const issuedQr = async (input) => ({
     kind: "issued",
     referenceNo: input.referenceNo,
@@ -42,7 +45,9 @@ await withMerchandiseFixture(async (f) => {
     grossMinor: input.totalMinor,
     rawStatus: "success",
     rawCreatedAt: f.now().toISOString(),
-    rawExpiresAt: "",
+    rawExpiresAt: providerOptions.explicitExpiry
+      ? new Date(f.now().getTime() + 600000).toISOString()
+      : "",
     qrBytes: await QRCode.toBuffer(`SIMULATION ONLY ${input.referenceNo}`, {
       type: "png",
     }),
@@ -330,6 +335,7 @@ await withMerchandiseFixture(async (f) => {
         if (action === "catalog") data = await catalog(payload);
         else if (action === "variantCatalog") data = await variantCatalog();
         else if (action === "provider") {
+          providerOptions = payload ?? {};
           f.provider.createQr = async (input) => {
             f.provider.creations.push(structuredClone(input));
             if (payload?.hold)
@@ -337,6 +343,58 @@ await withMerchandiseFixture(async (f) => {
                 releaseProvider = resolve;
               });
             return issuedQr(input);
+          };
+          data = { simulated: true };
+        } else if (action === "clock") {
+          f.setNow(payload.now);
+          data = { now: f.now().toISOString() };
+        } else if (action === "disableStore") {
+          const settings = await admin("GET", "/store");
+          data = await admin("PATCH", "/store", {
+            expectedVersion: settings.version,
+            enabled: false,
+            preorderOpensAt: settings.preorderOpensAt,
+            preorderClosesAt: settings.preorderClosesAt,
+            productionInfoTh: settings.productionInfoTh,
+            shippingInfoTh: settings.shippingInfoTh,
+          });
+        } else if (action === "work") {
+          data = await runMerchandiseJobsOnce(f.deps);
+        } else if (action === "inquiry") {
+          f.provider.inquire = async (input) => {
+            f.provider.inquiries.push(structuredClone(input));
+            if (payload.kind === "unpaid")
+              return {
+                kind: "definitively_unpaid",
+                proofVersion: SIMULATOR_PROOF_VERSION,
+                checkedAt: f.now().toISOString(),
+              };
+            if (payload.kind === "review_required")
+              return {
+                kind: "review_required",
+                reason: "SYNTHETIC_REVIEW_REQUIRED",
+              };
+            if (payload.kind !== "paid")
+              return { kind: "unknown", reason: "SYNTHETIC_UNAVAILABLE" };
+            const [row] =
+              await f.sql`SELECT o.total_minor FROM merch_orders o JOIN merch_payment_attempts p ON p.order_id=o.id WHERE p.reference_no=${input.referenceNo}`;
+            return {
+              kind: "paid",
+              completeness: "complete",
+              evidences: [
+                {
+                  merchantIdentity: input.merchantIdentity,
+                  referenceNo: input.referenceNo,
+                  orderNo: input.orderNo,
+                  transactionId: `SIM-${input.referenceNo}`,
+                  paymentIdentity: `SIM-PAY-${input.referenceNo}`,
+                  grossMinor: String(row.total_minor),
+                  currency: "THB",
+                  rawStatus: "CP",
+                  paidAt: payload.paidAt ?? f.now().toISOString(),
+                },
+              ],
+            };
           };
           data = { simulated: true };
         } else if (action === "releaseProvider") {
@@ -374,6 +432,41 @@ await withMerchandiseFixture(async (f) => {
             `Synthetic cart setup ${result.statusCode}`,
           );
           data = result.json().data;
+        } else if (action === "confirm") {
+          const root = "/api/v1/merchandise/events/PRIS-2026",
+            buyerHeaders = { authorization: `Bearer ${f.buyerToken}` };
+          const current = (
+            await f.http({
+              method: "GET",
+              url: `${root}/cart`,
+              headers: buyerHeaders,
+            })
+          ).json().data;
+          const quote = await f.http({
+            method: "POST",
+            url: `${root}/checkout-quotes`,
+            headers: buyerHeaders,
+            payload: {
+              expectedCartRevision: current.revision,
+              recipient: f.recipient,
+            },
+          });
+          assert.equal(quote.statusCode, 200);
+          const result = await f.http({
+            method: "POST",
+            url: `${root}/orders`,
+            headers: {
+              ...buyerHeaders,
+              "idempotency-key": crypto.randomUUID(),
+            },
+            payload: {
+              expectedCartRevision: current.revision,
+              quoteToken: quote.json().data.quoteToken,
+              recipient: f.recipient,
+            },
+          });
+          assert.equal(result.statusCode, 201);
+          data = result.json().data.order;
         } else if (action === "price") {
           const product = await admin("GET", `/products/${payload.id}`);
           data = await admin("PATCH", `/products/${product.id}`, {
@@ -404,6 +497,7 @@ await withMerchandiseFixture(async (f) => {
               )[0].count,
             ),
             providerCreations: f.provider.creations.length,
+            providerInquiries: f.provider.inquiries.length,
             cart: r.json().data,
             orderCount: Number(
               (await f.sql`SELECT count(*) AS count FROM merch_orders`)[0]
