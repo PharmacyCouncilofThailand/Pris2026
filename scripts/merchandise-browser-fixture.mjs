@@ -321,6 +321,44 @@ await withMerchandiseFixture(async (f) => {
             publishState: product.publishState,
             saleEnabled: payload.enabled,
           });
+        } else if (action === "addCart") {
+          const buyerHeaders = { authorization: `Bearer ${f.buyerToken}` };
+          const current = await f.http({
+            method: "GET",
+            url: "/api/v1/merchandise/events/PRIS-2026/cart",
+            headers: buyerHeaders,
+          });
+          const result = await f.http({
+            method: "POST",
+            url: "/api/v1/merchandise/events/PRIS-2026/cart/items",
+            headers: {
+              ...buyerHeaders,
+              "idempotency-key": crypto.randomUUID(),
+            },
+            payload: {
+              ...payload,
+              expectedRevision: current.json().data.revision,
+            },
+          });
+          assert(
+            result.statusCode < 400,
+            `Synthetic cart setup ${result.statusCode}`,
+          );
+          data = result.json().data;
+        } else if (action === "price") {
+          const product = await admin("GET", `/products/${payload.id}`);
+          data = await admin("PATCH", `/products/${product.id}`, {
+            expectedVersion: product.version,
+            kind: product.kind,
+            nameTh: product.nameTh,
+            descriptionTh: product.descriptionTh,
+            sizeInfoTh: product.sizeInfoTh,
+            imageIds: product.images.map((i) => i.id),
+            categoryId: product.categoryId,
+            sortOrder: product.sortOrder,
+            optionMode: product.optionMode,
+            basePriceMinor: payload.price,
+          });
         } else if (action === "inspect") {
           const r = await f.http({
             method: "GET",

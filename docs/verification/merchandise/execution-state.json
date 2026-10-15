@@ -428,7 +428,7 @@
     {
       "id": "P06",
       "status": "passed",
-      "commit": null,
+      "commit": "23b52f81453754edbaf8e8cafd856421d43b4284",
       "tests": [
         {
           "command": "selection unit red before implementation",
@@ -571,9 +571,129 @@
     },
     {
       "id": "P07",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "cart unit red before implementation",
+          "status": "expected_failure_missing_module",
+          "proof": {
+            "path": ".merchandise-local/p07-unit-red.txt",
+            "sha256": "6828eb9d9dcbf495f6c6e815bedd52ca8036a6bd1eca0be1ba23d4c5efcb12e9"
+          }
+        },
+        {
+          "command": "npm test",
+          "passed": 135,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-all-tests-final.txt",
+            "sha256": "5f594d6b03355b345cf96d836e2246e68a43cff640face97331fc94a7bddb670"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-types-complete.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-build.txt",
+            "sha256": "ab9631823bb6c784eba3840c3a7d47c2651332d60b0a92528f36d9aca857e226"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-lint-final.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "impeccable detect P07 components/styles",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "cart functional/layout suite, all three engines",
+          "passed": 27,
+          "failed": 3,
+          "skipped": 0,
+          "status": "diagnostics_resolved_in_targeted_recheck",
+          "proof": {
+            "path": ".merchandise-local/p07-browser-final.txt",
+            "sha256": "d127b5b14c8d161b750dc6430be077cac4e297ea696b1204319c32727a697339"
+          }
+        },
+        {
+          "command": "cart auth redirect, actual-SKU merge and layout/focus development recheck",
+          "passed": 8,
+          "failed": 1,
+          "skipped": 0,
+          "status": "chromium_development_redirect_stall_not_reproduced_in_production_build",
+          "proof": {
+            "path": ".merchandise-local/p07-browser-recheck.txt",
+            "sha256": "d44a6bc70930ffabfec96c1214904d85f0a41f8ace96041e4fe8141d361307a0"
+          }
+        },
+        {
+          "command": "production-build cart auth redirect, actual-SKU merge and layout/focus, all three engines",
+          "passed": 9,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-browser-production-recheck.txt",
+            "sha256": "6e5acfac397cc9eb0af6127dd80aca9f44b250ee4ab7e74ce48ca6683086ffc1"
+          }
+        },
+        {
+          "command": "production-build cart auth, quantities, merge and unknown-result verification, Chromium",
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p07-production-browser.txt",
+            "sha256": "11729721cd09d65113306acb1f65217e0f45f532deedeceb70c8e6262eff05d1"
+          }
+        }
+      ],
+      "proof": "cart-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p07-mobile.png",
+          "sha256": "58d345f7b91a3fc05c821c48417068642343b41c0f1d2b010046c2f48012d11d"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p07-tablet.png",
+          "sha256": "79706eab492d87bcafce197ae43b916f881928ccc4ec2906d81458fe90c8f66e"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p07-desktop.png",
+          "sha256": "086ea8ae1d2c650357be27c5731701b9cb4c1dd98fb34272bb74bf4f2705057a"
+        }
+      ],
+      "notes": [
+        "All 30 unique cross-engine browser cases have passing executions. Development run 27/30, development recheck 8/9, then production-build recheck 9/9 across the three engines plus 4/4 Chromium production smoke. Chromium dev redirect stall remains recorded and was not reproduced on the actual production build; no production auth rule was weakened. This is not described as a single clean 30-case execution.",
+        "Synthetic frozen clock made cart row order depend on IDs. Merge test now locates the actual M SKU instead of assuming first row. Auth check waits for the redirect URL separately from login rendering; production smoke verifies it independently.",
+        "Resource accept is scoped to owner/token/event key and ignores late mutation callbacks. Unit token rotation, account replacement and logout tests pass with canonical valid DTOs.",
+        "Real API CAS conflict, option merge, lost committed PATCH reply and failed/successful status read tested. No relative mutation is automatically repeated. Header and cart use one confirmed resource.",
+        "Initial/final three-viewport captures visually inspected; no repeated design polish. Checkout recipient/quote is P08, not claimed by this task.",
+        "Single retained database, actual-provider User Test deferral and not_ready release gate remain unchanged. Exact P07 completion commit is recorded by the next task."
+      ]
     },
     {
       "id": "P08",
@@ -618,5 +738,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T14:09:41.899Z"
+  "updatedAt": "2026-10-15T14:36:19.645Z"
 }
