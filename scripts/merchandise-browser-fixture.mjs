@@ -7,6 +7,7 @@ import { withMerchandiseFixture } from "../../conference-api/src/modules/merchan
 import { SIMULATOR_PROOF_VERSION } from "../../conference-api/src/modules/merchandise/payments/config.ts";
 import { runMerchandiseJobsOnce } from "../../conference-api/src/modules/merchandise/jobs.ts";
 import { settleInquiryResult } from "../../conference-api/src/modules/merchandise/payments/settlement.ts";
+import { ingestMerchandisePostback } from "../../conference-api/src/modules/merchandise/payments/postback.ts";
 import {
   seedMerchandiseCatalog,
   initialDraftProducts,
@@ -26,6 +27,10 @@ await withMerchandiseFixture(async (f) => {
   );
   f.otherBuyerToken = f.app.jwt.sign(
     { id: 2, role: "general", email: "other@example.test" },
+    { expiresIn: "1h" },
+  );
+  f.adminToken = f.app.jwt.sign(
+    { id: 1, role: "admin", email: "admin@example.test" },
     { expiresIn: "1h" },
   );
   const put = f.media.putCatalog.bind(f.media);
@@ -301,7 +306,10 @@ await withMerchandiseFixture(async (f) => {
   }
   const server = createServer(async (req, res) => {
     const origin = req.headers.origin;
-    if (origin && !/^http:\/\/(127\.0\.0\.1|localhost):3102$/.test(origin)) {
+    if (
+      origin &&
+      !/^http:\/\/(127\.0\.0\.1|localhost):(3102|3105)$/.test(origin)
+    ) {
       res.writeHead(403).end();
       return;
     }
@@ -324,6 +332,36 @@ await withMerchandiseFixture(async (f) => {
     }
     try {
       const url = new URL(req.url, "http://127.0.0.1:3103");
+      if (req.method === "GET" && url.pathname === "/api/backoffice/events") {
+        const claims = f.app.jwt.verify(
+          req.headers.authorization?.replace(/^Bearer /, "") ?? "",
+        );
+        if (claims.role !== "admin") {
+          res.writeHead(403).end();
+          return;
+        }
+        const [admin] =
+          await f.sql`SELECT id FROM backoffice_users WHERE id=${claims.id} AND role='admin' AND is_active=true`;
+        if (!admin) {
+          res.writeHead(403).end();
+          return;
+        }
+        const events =
+          await f.sql`SELECT id,event_code AS "eventCode",event_name AS "eventName" FROM events ORDER BY id`;
+        res.setHeader("content-type", "application/json");
+        res.end(
+          JSON.stringify({
+            events,
+            pagination: {
+              page: 1,
+              limit: 100,
+              total: events.length,
+              totalPages: 1,
+            },
+          }),
+        );
+        return;
+      }
       if (req.method === "GET" && url.pathname.startsWith("/_fixture-media/")) {
         const [eventId, ...tail] = url.pathname
           .slice("/_fixture-media/".length)
@@ -373,6 +411,7 @@ await withMerchandiseFixture(async (f) => {
     origin: "http://127.0.0.1:3103",
     buyerToken: f.buyerToken,
     otherBuyerToken: f.otherBuyerToken,
+    adminToken: f.adminToken,
   });
   await new Promise((resolve) => {
     const close = () => {
@@ -681,6 +720,46 @@ await withMerchandiseFixture(async (f) => {
                 .count,
             ),
           };
+        } else if (action === "acceptanceAudit") {
+          data = {
+            emails: f.mail.messages,
+            production: await admin("GET", "/reports/production"),
+            outbox:
+              await f.sql`SELECT order_id,event_type,state FROM merch_email_outbox ORDER BY order_id,event_type`,
+            orders:
+              await f.sql`SELECT id,order_number,payment_status,total_minor,shipping_minor FROM merch_orders ORDER BY created_at,id`,
+            duplicateReferences: Number(
+              (
+                await f.sql`SELECT count(*)::int n FROM (SELECT reference_no FROM merch_payment_attempts GROUP BY reference_no HAVING count(*)>1) d`
+              )[0].n,
+            ),
+          };
+        } else if (action === "postback") {
+          const [attempt] =
+            await f.sql`SELECT reference_no FROM merch_payment_attempts WHERE order_id=${payload.id} ORDER BY creation_started_at DESC,id DESC LIMIT 1`;
+          assert(attempt);
+          // Explicit synthetic service ingress. Actual provider HTTP/source/ack rules remain User Test.
+          data = await ingestMerchandisePostback(
+            f.deps,
+            {
+              rules: {
+                version: "synthetic-pris-acceptance-v1",
+                method: "POST",
+                contentType: "application/x-www-form-urlencoded",
+                referenceField: "refno",
+                retainedFields: ["total"],
+                redactedFields: [],
+                source: { kind: "none" },
+                acknowledgement: {
+                  status: 202,
+                  contentType: "text/plain",
+                  body: "SYNTHETIC-ACK",
+                },
+                ingressPerMinute: 10000,
+              },
+            },
+            { refno: attempt.reference_no, total: "synthetic-untrusted-value" },
+          );
         } else if (action === "closeStore") {
           f.setNow("2026-10-14T06:00:00Z");
           data = { closed: true };
