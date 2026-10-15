@@ -57,13 +57,20 @@ export function useMerchandiseSessionCleanup(buyerId: number | null) {
     previous.current = buyerId;
   }, [buyerId]);
 }
-export function MerchandiseAuthBoundary({ children }: { children: ReactNode }) {
+export function MerchandiseAuthBoundary({
+  children,
+  returnPath,
+}: {
+  children: ReactNode;
+  returnPath?: string;
+}) {
   const { token } = useMerchandise(),
     pathname = usePathname(),
     router = useRouter();
+  const destination = merchandiseReturnPath(returnPath ?? pathname) ?? pathname;
   useEffect(() => {
-    if (!token) router.replace(merchandiseLoginPath(pathname));
-  }, [token, pathname, router]);
+    if (!token) router.replace(merchandiseLoginPath(destination));
+  }, [token, destination, router]);
   return token ? (
     children
   ) : (
@@ -71,7 +78,7 @@ export function MerchandiseAuthBoundary({ children }: { children: ReactNode }) {
       <p>กรุณาเข้าสู่ระบบเพื่อดูคำสั่งซื้อของคุณ</p>
       <Link
         className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-[#0055ff] px-5 font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-4"
-        href={merchandiseLoginPath(pathname)}
+        href={merchandiseLoginPath(destination)}
       >
         เข้าสู่ระบบ
       </Link>

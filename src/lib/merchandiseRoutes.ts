@@ -45,7 +45,9 @@ export function merchandiseReturnPath(
       ? ["q", "categoryId", "kind", "page", "intentId"]
       : path.startsWith(`${root}/products/`)
         ? ["intentId"]
-        : [];
+        : path === `${root}/orders`
+          ? ["page"]
+          : [];
   for (const key of query.keys())
     if (!allowed.includes(key) || query.getAll(key).length !== 1) return null;
   for (const key of allowed) {

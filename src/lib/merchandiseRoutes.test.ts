@@ -13,6 +13,34 @@ import {
 } from "./localizedRedirect";
 import { shouldRedirectReload } from "./refreshRedirect";
 const id = "10000000-0000-4000-8000-000000000001";
+
+test("owner history pagination survives login, refresh and locale without broadening its query allowlist", () => {
+  assert.equal(
+    merchandiseReturnPath("/th/souvenirs/orders?page=2"),
+    "/souvenirs/orders?page=2",
+  );
+  assert.equal(
+    normalizeLocalizedRedirectPath("/en/souvenirs/orders?page=2"),
+    "/souvenirs/orders?page=2",
+  );
+  assert.deepEqual(
+    eventReturnQuery(
+      "?redirect=" + encodeURIComponent("/souvenirs/orders?page=2"),
+    ),
+    { redirect: "/souvenirs/orders?page=2" },
+  );
+  for (const query of [
+    "page=0",
+    "page=-1",
+    "page=1&page=2",
+    "page=9007199254740992",
+    "email=private@example.test",
+    "q=anything",
+    "limit=100",
+    "page=2&intentId=" + id,
+  ])
+    assert.equal(merchandiseReturnPath("/souvenirs/orders?" + query), null);
+});
 test("forced login is restricted to a single validated merchandise return", () => {
   assert.equal(
     isMerchandiseReauthentication(

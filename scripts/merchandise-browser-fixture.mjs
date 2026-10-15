@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { withMerchandiseFixture } from "../../conference-api/src/modules/merchandise/test-support.ts";
 import { SIMULATOR_PROOF_VERSION } from "../../conference-api/src/modules/merchandise/payments/config.ts";
 import { runMerchandiseJobsOnce } from "../../conference-api/src/modules/merchandise/jobs.ts";
+import { settleInquiryResult } from "../../conference-api/src/modules/merchandise/payments/settlement.ts";
 import {
   seedMerchandiseCatalog,
   initialDraftProducts,
@@ -55,11 +56,65 @@ await withMerchandiseFixture(async (f) => {
   });
   const base = "/api/backoffice/events/1/merchandise",
     headers = { authorization: `Bearer ${f.adminToken}` };
-  const admin = async (method, url, payload) => {
-    const r = await f.http({ method, url: base + url, headers, payload });
+  const admin = async (method, url, payload, key) => {
+    const r = await f.http({
+      method,
+      url: base + url,
+      headers: key ? { ...headers, "idempotency-key": key } : headers,
+      payload,
+    });
     assert(r.statusCode < 400, `${method} ${url}: ${r.statusCode}`);
     return r.json().data;
   };
+  const buyerRequest = async (method, url, payload, token = f.buyerToken) => {
+    const r = await f.http({
+      method,
+      url,
+      headers: {
+        authorization: `Bearer ${token}`,
+        ...(method === "POST"
+          ? { "idempotency-key": crypto.randomUUID() }
+          : {}),
+      },
+      payload,
+    });
+    assert(r.statusCode < 400, `Synthetic buyer ${method}: ${r.statusCode}`);
+    return r.json().data;
+  };
+  async function historyOrder(product, token = f.buyerToken) {
+    const root = "/api/v1/merchandise/events/PRIS-2026";
+    const cart = await buyerRequest("GET", `${root}/cart`, undefined, token);
+    const added = await buyerRequest(
+      "POST",
+      `${root}/cart/items`,
+      {
+        productId: product.id,
+        variantId: product.kind === "bundle" ? null : product.variants[0].id,
+        bundleSelections: [],
+        quantity: 1,
+        expectedRevision: cart.revision,
+      },
+      token,
+    );
+    const quote = await buyerRequest(
+      "POST",
+      `${root}/checkout-quotes`,
+      { expectedCartRevision: added.revision, recipient: f.recipient },
+      token,
+    );
+    return (
+      await buyerRequest(
+        "POST",
+        `${root}/orders`,
+        {
+          expectedCartRevision: added.revision,
+          quoteToken: quote.quoteToken,
+          recipient: f.recipient,
+        },
+        token,
+      )
+    ).order;
+  }
   async function image(purpose, width, height, label) {
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect width="100%" height="100%" fill="#e3edfa"/><text x="50%" y="50%" font-family="sans-serif" font-size="${purpose === "banner" ? 34 : 14}" fill="#334c72" text-anchor="middle">${label}</text></svg>`;
     const pixels = await sharp(Buffer.from(svg)).png().toBuffer(),
@@ -333,7 +388,129 @@ await withMerchandiseFixture(async (f) => {
       try {
         let data;
         if (action === "catalog") data = await catalog(payload);
-        else if (action === "variantCatalog") data = await variantCatalog();
+        else if (action === "historySetup") {
+          const current = await catalog({ banners: 0 }),
+            count = payload?.count ?? 3;
+          assert(Number.isInteger(count) && count > 0 && count <= 25);
+          const orders = [];
+          for (let index = 0; index < count; index++) {
+            let order = await historyOrder(
+              index === 1
+                ? current.bundle
+                : current.products[index % current.products.length],
+            );
+            if (!payload?.pendingOnly && index < 2) {
+              f.provider.createQr = async (input) => {
+                f.provider.creations.push(structuredClone(input));
+                return issuedQr(input);
+              };
+              const result = await buyerRequest(
+                "POST",
+                `/api/v1/merchandise/orders/${order.id}/payment-attempts`,
+                { expectedOrderRevision: order.effectiveRevision },
+              );
+              f.setNow(new Date(f.now().getTime() + 2000).toISOString());
+              await settleInquiryResult(f.deps, result.payment.attempt.id, {
+                kind: "paid",
+                completeness: "complete",
+                evidences: [
+                  {
+                    merchantIdentity: f.deps.paymentConfig.merchantIdentity,
+                    referenceNo: result.payment.attempt.referenceNo,
+                    orderNo: result.payment.attempt.orderNo,
+                    transactionId: `SIM-HISTORY-${order.id}`,
+                    paymentIdentity: `SIM-HISTORY-PAY-${order.id}`,
+                    grossMinor: order.amounts.totalMinor,
+                    currency: "THB",
+                    rawStatus: "CP",
+                    paidAt: f.now().toISOString(),
+                  },
+                ],
+              });
+              order = await buyerRequest(
+                "GET",
+                `/api/v1/merchandise/orders/${order.id}`,
+              );
+              assert.equal(order.paymentStatus, "paid");
+              if (index === 1) {
+                await admin(
+                  "POST",
+                  `/orders/${order.id}/shipments`,
+                  {
+                    expectedVersion: order.fulfillment.version,
+                    carrier: "บริษัทขนส่งทดสอบ",
+                    trackingId: "0000123456789",
+                  },
+                  crypto.randomUUID(),
+                );
+                order = await buyerRequest(
+                  "GET",
+                  `/api/v1/merchandise/orders/${order.id}`,
+                );
+              }
+            }
+            orders.push(order);
+            f.setNow(new Date(f.now().getTime() + 2000).toISOString());
+          }
+          const other =
+            payload?.includeOther === false
+              ? null
+              : await historyOrder(current.products[0], f.otherBuyerToken);
+          data = { orders, other };
+        } else if (action === "amendRecipient") {
+          const order = await buyerRequest(
+              "GET",
+              `/api/v1/merchandise/orders/${payload.id}`,
+            ),
+            reason = "แก้ที่อยู่ตามคำขอผู้ซื้อในการทดสอบ";
+          const quote = await admin(
+            "POST",
+            `/orders/${order.id}/revision-quotes`,
+            {
+              expectedRevision: order.effectiveRevision,
+              reason,
+              recipient: {
+                ...order.effective.recipient,
+                fullName: "ผู้รับแก้ไขทดสอบ",
+                addressLine: "2 ที่อยู่แก้ไขทดสอบ",
+              },
+              lines: order.effective.items.map((item) => ({
+                sourceItemId: item.id,
+                quantity: item.quantity,
+              })),
+            },
+          );
+          assert.equal(quote.allowed, true);
+          await admin(
+            "POST",
+            `/orders/${order.id}/revisions`,
+            {
+              expectedRevision: order.effectiveRevision,
+              reason,
+              revisionToken: quote.revisionToken,
+            },
+            crypto.randomUUID(),
+          );
+          data = await buyerRequest(
+            "GET",
+            `/api/v1/merchandise/orders/${order.id}`,
+          );
+        } else if (action === "ship") {
+          const order = await buyerRequest(
+            "GET",
+            `/api/v1/merchandise/orders/${payload.id}`,
+          );
+          data = await admin(
+            "POST",
+            `/orders/${order.id}/shipments`,
+            {
+              expectedVersion: order.fulfillment.version,
+              carrier: payload.carrier,
+              trackingId: payload.trackingId,
+            },
+            crypto.randomUUID(),
+          );
+        } else if (action === "variantCatalog") data = await variantCatalog();
         else if (action === "provider") {
           providerOptions = payload ?? {};
           f.provider.createQr = async (input) => {
@@ -472,7 +649,7 @@ await withMerchandiseFixture(async (f) => {
           data = await admin("PATCH", `/products/${product.id}`, {
             expectedVersion: product.version,
             kind: product.kind,
-            nameTh: product.nameTh,
+            nameTh: payload.name ?? product.nameTh,
             descriptionTh: product.descriptionTh,
             sizeInfoTh: product.sizeInfoTh,
             imageIds: product.images.map((i) => i.id),

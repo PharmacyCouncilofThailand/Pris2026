@@ -1,6 +1,8 @@
 "use client";
 import type { RefObject } from "react";
-import { Check, ArrowRight } from "lucide-react";
+import { Check, ArrowRight, ArrowLeft } from "lucide-react";
+import { Link } from "@/i18n/routing";
+import { OrderDelivery, OrderOriginal, OrderTimes } from "./OrderRecord";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
 import type { OrderDetail } from "@/types/merchandise";
 export default function PaidOrder({
@@ -11,24 +13,39 @@ export default function PaidOrder({
   barRef: RefObject<HTMLDivElement | null>;
 }) {
   const recipient = order.effective.recipient;
+  const shipped = order.fulfillment.status === "shipped";
   return (
-    <main className="merch-cart merch-order merch-paid">
-      <h1>ชำระเงินสำเร็จ</h1>
-      <section className="merch-paid-thanks" role="status">
-        <span className="merch-paid-icon">
-          <Check size={32} aria-hidden="true" />
-        </span>
-        <h2>ขอบคุณสำหรับคำสั่งซื้อ</h2>
-        <p>
-          เลขคำสั่งซื้อ <strong>{order.orderNumber}</strong>
-        </p>
-        <span className="merch-paid-badge">ชำระเงินสำเร็จ</span>
-        <p>
-          ระบบจะส่งรายละเอียดไปที่
-          <br />
-          {order.buyer.email}
-        </p>
-      </section>
+    <main
+      className={`merch-cart merch-order merch-paid${shipped ? " merch-shipped" : ""}`}
+    >
+      {shipped && (
+        <Link className="merch-cart-back" href="/souvenirs/orders">
+          <ArrowLeft size={18} aria-hidden="true" />
+          กลับหน้าประวัติ
+        </Link>
+      )}
+      <h1>{shipped ? "รายละเอียดคำสั่งซื้อ" : "ชำระเงินสำเร็จ"}</h1>
+      {shipped ? (
+        <p className="merch-cart-muted">คำสั่งซื้อ {order.orderNumber}</p>
+      ) : (
+        <section className="merch-paid-thanks" role="status">
+          <span className="merch-paid-icon">
+            <Check size={32} aria-hidden="true" />
+          </span>
+          <h2>ขอบคุณสำหรับคำสั่งซื้อ</h2>
+          <p>
+            เลขคำสั่งซื้อ <strong>{order.orderNumber}</strong>
+          </p>
+          <span className="merch-paid-badge">ชำระเงินสำเร็จ</span>
+          <p>
+            ระบบจะส่งรายละเอียดไปที่
+            <br />
+            {order.buyer.email}
+          </p>
+        </section>
+      )}
+      <OrderDelivery order={order} />
+      <OrderOriginal order={order} />
       <div className="merch-cart-grid" id="order-details" tabIndex={-1}>
         <div>
           <section className="merch-review-section" aria-label="รายการสินค้า">
@@ -87,6 +104,12 @@ export default function PaidOrder({
               )}
             </address>
           </section>
+          <OrderTimes order={order} />
+          <p className="merch-order-unboxing">
+            กรุณาถ่ายวิดีโอขณะแกะพัสดุ เพื่อใช้เป็นหลักฐานหากพบสินค้าเสียหาย
+            หากพบปัญหา
+            กรุณาติดต่อเจ้าหน้าที่พร้อมเลขคำสั่งซื้อและหลักฐานที่เกี่ยวข้อง
+          </p>
           <p className="merch-order-support">
             หากต้องการแก้ไขคำสั่งซื้อ กรุณาติดต่อ{" "}
             <a
@@ -120,11 +143,13 @@ export default function PaidOrder({
           </p>
         </section>
       </div>
-      <div className="merch-cart-bar merch-order-bar" ref={barRef}>
-        <a href="#order-details">
-          ดูรายละเอียดคำสั่งซื้อ <ArrowRight size={22} aria-hidden="true" />
-        </a>
-      </div>
+      {!shipped && (
+        <div className="merch-cart-bar merch-order-bar" ref={barRef}>
+          <a href="#order-details">
+            ดูรายละเอียดคำสั่งซื้อ <ArrowRight size={22} aria-hidden="true" />
+          </a>
+        </div>
+      )}
     </main>
   );
 }
