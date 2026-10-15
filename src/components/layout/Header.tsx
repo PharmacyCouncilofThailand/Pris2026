@@ -30,6 +30,7 @@ import {
   merchandiseReturnPath,
 } from "@/lib/merchandiseRoutes";
 import { useMerchandiseSessionCleanup } from "@/components/merchandise/MerchandiseAuthBoundary";
+import { MerchandiseHeaderTools } from "@/components/merchandise/MerchandiseHeaderTools";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
@@ -37,6 +38,27 @@ export default function Header() {
   useMerchandiseSessionCleanup(isLoggedIn ? (user?.id ?? null) : null);
   const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
+  const isShop = isMerchandisePath(pathname);
+  const headerRef = React.useRef<HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  React.useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!isShop || !header) return;
+    const measure = () =>
+      document.documentElement.style.setProperty(
+        "--merch-host-header-height",
+        `${header.getBoundingClientRect().height}px`,
+      );
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty(
+        "--merch-host-header-height",
+      );
+    };
+  }, [isShop]);
   const isTicketPage = pathname === "/ticket";
   const locale = useLocale();
   const isThai = locale === "th";
@@ -96,7 +118,7 @@ export default function Header() {
     pathname.startsWith("/profile") ||
     pathname.startsWith("/abstracts/confirm") ||
     pathname.startsWith("/lucky-wheel");
-  const useDarkText = isLightPage && !isScrolled;
+  const useDarkText = isShop || (isLightPage && !isScrolled);
 
   if (
     pathname.includes("/login") ||
@@ -146,11 +168,14 @@ export default function Header() {
 
   return (
     <header
+      ref={headerRef}
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent py-3",
-        isScrolled
-          ? "bg-black/95 md:bg-black/90 md:backdrop-blur-md border-white/10 shadow-lg"
-          : "bg-transparent",
+        isShop
+          ? "merchandise-page-header"
+          : isScrolled
+            ? "bg-black/95 md:bg-black/90 md:backdrop-blur-md border-white/10 shadow-lg"
+            : "bg-transparent",
       )}
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
@@ -178,6 +203,7 @@ export default function Header() {
                 height={80}
                 className={cn(
                   "object-contain h-[40px] w-auto transition-all xl:h-[48px]",
+                  isShop && "merchandise-header-logo",
                   useDarkText && "brightness-0",
                 )}
                 priority
@@ -291,123 +317,145 @@ export default function Header() {
             </NavigationMenu>
           </div>
 
-          <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
-            <button
-              onClick={switchLocale}
-              disabled={isPending}
-              className={cn(
-                "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
-                useDarkText
-                  ? "text-slate-900 hover:bg-slate-100"
-                  : "text-white hover:bg-white/10",
-                isPending && "opacity-50 cursor-not-allowed",
-              )}
-            >
-              {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Globe className="w-4 h-4" />
-              )}
-              <span className="uppercase text-xs font-black tracking-wider">
-                {locale === "en" ? "TH" : "EN"}
-              </span>
-            </button>
+          {isShop && (
+            <MerchandiseHeaderTools
+              onLanguage={switchLocale}
+              onMenu={() => setMenuOpen(true)}
+            />
+          )}
+          {!isShop && (
+            <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
+              <button
+                onClick={switchLocale}
+                disabled={isPending}
+                className={cn(
+                  "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
+                  useDarkText
+                    ? "text-slate-900 hover:bg-slate-100"
+                    : "text-white hover:bg-white/10",
+                  isPending && "opacity-50 cursor-not-allowed",
+                )}
+              >
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Globe className="w-4 h-4" />
+                )}
+                <span className="uppercase text-xs font-black tracking-wider">
+                  {locale === "en" ? "TH" : "EN"}
+                </span>
+              </button>
 
-            {isLoggedIn ? (
-              <div
+              {isLoggedIn ? (
+                <div
+                  className={cn(
+                    "flex items-center gap-4 border-l pl-4",
+                    useDarkText ? "border-slate-200" : "border-white/20",
+                  )}
+                >
+                  <Link
+                    href="/profile"
+                    prefetch={true}
+                    className={cn(
+                      "inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
+                      authTracking,
+                      useDarkText
+                        ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
+                        : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
+                    )}
+                  >
+                    <User className="w-4 h-4" />
+                    {t("myProfile")}
+                  </Link>
+                </div>
+              ) : (
+                <div
+                  className={cn(
+                    "flex items-center gap-4 border-l pl-4",
+                    useDarkText ? "border-slate-200" : "border-white/20",
+                  )}
+                >
+                  <Link
+                    href="/login"
+                    prefetch={true}
+                    className={cn(
+                      "shrink-0 whitespace-nowrap text-[11px] font-black uppercase transition-colors hover:text-blue-600",
+                      authTracking,
+                      useDarkText ? "text-slate-900" : "text-white",
+                    )}
+                  >
+                    {t("login")}
+                  </Link>
+                  <Link
+                    href="/signup"
+                    prefetch={true}
+                    className={cn(
+                      "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
+                      authTracking,
+                      useDarkText
+                        ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
+                        : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
+                    )}
+                  >
+                    {t("signUp")}
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div
+            className={
+              isShop
+                ? "contents"
+                : "xl:hidden flex items-center justify-end gap-2 shrink-0"
+            }
+          >
+            {!isShop && (
+              <button
+                onClick={switchLocale}
+                disabled={isPending}
                 className={cn(
-                  "flex items-center gap-4 border-l pl-4",
-                  useDarkText ? "border-slate-200" : "border-white/20",
+                  "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
+                  useDarkText
+                    ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
+                    : "text-white hover:bg-white/20 border border-white/20",
+                  isPending && "opacity-50 cursor-not-allowed",
                 )}
               >
-                <Link
-                  href="/profile"
-                  prefetch={true}
-                  className={cn(
-                    "inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
-                    authTracking,
-                    useDarkText
-                      ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
-                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
-                  )}
-                >
-                  <User className="w-4 h-4" />
-                  {t("myProfile")}
-                </Link>
-              </div>
-            ) : (
-              <div
-                className={cn(
-                  "flex items-center gap-4 border-l pl-4",
-                  useDarkText ? "border-slate-200" : "border-white/20",
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Globe className="w-4 h-4" />
                 )}
-              >
-                <Link
-                  href="/login"
-                  prefetch={true}
-                  className={cn(
-                    "shrink-0 whitespace-nowrap text-[11px] font-black uppercase transition-colors hover:text-blue-600",
-                    authTracking,
-                    useDarkText ? "text-slate-900" : "text-white",
-                  )}
-                >
-                  {t("login")}
-                </Link>
-                <Link
-                  href="/signup"
-                  prefetch={true}
-                  className={cn(
-                    "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
-                    authTracking,
-                    useDarkText
-                      ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
-                      : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
-                  )}
-                >
-                  {t("signUp")}
-                </Link>
-              </div>
+                <span className="uppercase text-xs font-black tracking-wider">
+                  {locale === "en" ? "TH" : "EN"}
+                </span>
+              </button>
             )}
-          </div>
-
-          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
-            <button
-              onClick={switchLocale}
-              disabled={isPending}
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
-                useDarkText
-                  ? "text-slate-900 hover:bg-slate-100 border border-slate-200"
-                  : "text-white hover:bg-white/20 border border-white/20",
-                isPending && "opacity-50 cursor-not-allowed",
-              )}
-            >
-              {isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Globe className="w-4 h-4" />
-              )}
-              <span className="uppercase text-xs font-black tracking-wider">
-                {locale === "en" ? "TH" : "EN"}
-              </span>
-            </button>
 
             {!isTicketPage && (
-              <Sheet>
-                <SheetTrigger
-                  className={cn(
-                    "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
-                    useDarkText
-                      ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
-                      : "text-white border border-white/20 hover:bg-white/20",
-                  )}
-                >
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle mobile menu</span>
-                </SheetTrigger>
+              <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+                {!isShop && (
+                  <SheetTrigger
+                    className={cn(
+                      "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
+                      useDarkText
+                        ? "text-slate-900 border border-slate-200 hover:bg-slate-100"
+                        : "text-white border border-white/20 hover:bg-white/20",
+                    )}
+                  >
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle mobile menu</span>
+                  </SheetTrigger>
+                )}
                 <SheetContent
                   side="right"
                   className="bg-black/95 text-white border-l-gray-800 p-0 w-[300px]"
+                  onClick={(event) => {
+                    if (isShop && (event.target as HTMLElement).closest("a"))
+                      setMenuOpen(false);
+                  }}
                 >
                   <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>
                   <div className="p-6 h-full flex flex-col">

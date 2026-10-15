@@ -11,6 +11,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
+import { isMerchandiseReauthentication } from "@/lib/merchandiseRoutes";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
 
@@ -50,6 +51,7 @@ export default function LoginPage() {
   // Redirect to home (or ?redirect=) if already logged in
   useEffect(() => {
     if (isAuthenticated) {
+      if (isMerchandiseReauthentication(window.location.search)) return;
       const urlParams = new URLSearchParams(window.location.search);
       const redirect = normalizeLocalizedRedirectPath(
         urlParams.get("redirect"),

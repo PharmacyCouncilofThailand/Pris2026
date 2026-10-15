@@ -8,6 +8,7 @@ import GlobalRefreshRedirect from "@/components/layout/GlobalRefreshRedirect";
 import PaymentReturnToast from "@/components/layout/PaymentReturnToast";
 import { AuthProvider } from "@/context/AuthContext";
 import { Toaster } from "react-hot-toast";
+import { MerchandiseRouteScope } from "@/components/merchandise/MerchandiseProvider";
 
 type Locale = (typeof routing.locales)[number];
 
@@ -60,9 +61,11 @@ export default async function LocaleLayout({
               },
             }}
           />
-          <Header />
-          {children}
-          <Footer />
+          <MerchandiseRouteScope>
+            <Header />
+            {children}
+            <Footer />
+          </MerchandiseRouteScope>
         </div>
       </AuthProvider>
     </NextIntlClientProvider>

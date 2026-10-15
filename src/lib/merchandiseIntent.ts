@@ -1,5 +1,9 @@
 import type { CartDto, LineSelection, ProductDto } from "../types/merchandise";
-import { merchandiseFailure, type MerchandiseApi } from "./merchandiseApi";
+import {
+  MerchandiseApiError,
+  merchandiseFailure,
+  type MerchandiseApi,
+} from "./merchandiseApi";
 import { isMerchandiseId, merchandiseReturnPath } from "./merchandiseRoutes";
 const KEY = "pris_merchandise_intent";
 export interface PurchaseIntent {
@@ -235,6 +239,7 @@ async function run(
   intent: PurchaseIntent,
 ): Promise<IntentResult> {
   let observed = JSON.stringify(intent);
+  let posting = false;
   const current = () =>
     isCurrent() &&
     JSON.stringify(readPurchaseIntent(storage, eventCode)) === observed;
@@ -276,6 +281,7 @@ async function run(
     };
     persist(draft);
     // Persist before POST: a lost reply must replay this exact body and key.
+    posting = true;
     const added = await api.add(
       eventCode,
       token,
@@ -296,7 +302,14 @@ async function run(
     return {
       kind: "error",
       error: error instanceof Error ? error : merchandiseFailure(),
-      uncertain: object(error) && error.uncertain === true,
+      uncertain:
+        (object(error) && error.uncertain === true) ||
+        (intent.expectedRevision !== undefined &&
+          !(
+            posting &&
+            error instanceof MerchandiseApiError &&
+            [409, 422].includes(error.status)
+          )),
     };
   }
 }

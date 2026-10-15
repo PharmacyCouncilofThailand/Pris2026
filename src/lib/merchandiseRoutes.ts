@@ -73,10 +73,23 @@ export function merchandiseReturnPath(
   }
   return path + (result.size ? `?${result}` : "");
 }
-export function merchandiseLoginPath(returnPath: string): string {
+export function merchandiseLoginPath(
+  returnPath: string,
+  reauthenticate = false,
+): string {
   return (
     "/login?redirect=" +
-    encodeURIComponent(merchandiseReturnPath(returnPath) ?? root)
+    encodeURIComponent(merchandiseReturnPath(returnPath) ?? root) +
+    (reauthenticate ? "&reauth=merchandise" : "")
+  );
+}
+export function isMerchandiseReauthentication(search: string): boolean {
+  const query = new URLSearchParams(search);
+  return (
+    query.getAll("reauth").length === 1 &&
+    query.get("reauth") === "merchandise" &&
+    query.getAll("redirect").length === 1 &&
+    merchandiseReturnPath(query.get("redirect")) !== null
   );
 }
 // Detection only: encoded aliases must also reach the strict validator.

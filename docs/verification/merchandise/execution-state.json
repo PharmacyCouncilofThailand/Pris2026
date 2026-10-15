@@ -228,8 +228,8 @@
     },
     {
       "id": "P04",
-      "status": "pending_dependency",
-      "commit": null,
+      "status": "passed",
+      "commit": "3eafd0a9182f2e84e7358a9309d7240b52a359b9",
       "tests": [
         {
           "command": "npm run test",
@@ -286,6 +286,19 @@
             "path": ".merchandise-local/p04-detector.json",
             "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
           }
+        },
+        {
+          "command": "P04-P05 login/Add and session recovery integration in full browser suite",
+          "status": "passed",
+          "engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "proof": {
+            "path": ".merchandise-local/p05-browser-complete-final.txt",
+            "sha256": "b7e84a1daf0ac9b134abd6707ff8690c2bbeeb78ec00b1577f6fad18b405eaf5"
+          }
         }
       ],
       "proof": "routes-and-intent.md",
@@ -293,8 +306,9 @@
         {
           "id": "P04-P05-LOGIN-ADD",
           "requires": "P05",
-          "status": "pending",
-          "reason": "No storefront index exists before P05. Verify direct/reload/locale/anonymous Add/login/resume against the real local merchandise API, then return here before P06."
+          "status": "passed",
+          "reason": "No storefront index exists before P05. Verify direct/reload/locale/anonymous Add/login/resume against the real local merchandise API, then return here before P06.",
+          "resolution": "Real local API Add/login/resume, unknown result replay after close, rejected and expired session recovery, account replacement; Chromium/Firefox/WebKit. Exact key/body retained and no duplicate unit."
         }
       ],
       "notes": [
@@ -305,9 +319,111 @@
     },
     {
       "id": "P05",
-      "status": "not_started",
+      "status": "passed",
       "commit": null,
-      "tests": []
+      "tests": [
+        {
+          "command": "npm test",
+          "passed": 127,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p05-all-tests-final.txt",
+            "sha256": "762ca3754ea443a81d3f34bd728294f51425e02fcc858a01c43cad6b59134b6f"
+          }
+        },
+        {
+          "command": "npm run test:e2e:merchandise before test-harness corrections",
+          "passed": 48,
+          "failed": 3,
+          "skipped": 0,
+          "retries": 0,
+          "status": "superseded_failures_resolved_in_targeted_recheck",
+          "engines": [
+            "chromium",
+            "firefox",
+            "webkit"
+          ],
+          "proof": {
+            "path": ".merchandise-local/p05-browser-complete-final.txt",
+            "sha256": "b7e84a1daf0ac9b134abd6707ff8690c2bbeeb78ec00b1577f6fad18b405eaf5"
+          }
+        },
+        {
+          "command": "playwright owner replacement, catalog transport and 200%-equivalent reflow, all three engines",
+          "passed": 9,
+          "failed": 0,
+          "skipped": 0,
+          "proof": {
+            "path": ".merchandise-local/p05-browser-recheck.txt",
+            "sha256": "94d4f8b50ae5395f67ae30d65aad3fb714c76503c394b105fdb8283e9139b042"
+          }
+        },
+        {
+          "command": "npx tsc --noEmit",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p05-types-complete-final.txt",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "command": "npm run build",
+          "exitCode": 0,
+          "proof": {
+            "path": ".merchandise-local/p05-build.txt",
+            "sha256": "7aa9548043a3d2b1ea573a817b3d6a1d8910366c3c848d1f2a5110e657cf1926"
+          }
+        },
+        {
+          "command": "node scripts/merchandise-lint-baseline.mjs",
+          "status": "approved_baseline_exception",
+          "errors": 23,
+          "warnings": 6,
+          "unchangedFiles": 23,
+          "newFindings": 0,
+          "proof": {
+            "path": ".merchandise-local/p05-lint-final-record.txt",
+            "sha256": "587878ef76b7d0f75abcc8af6534af1c7eec0fb369eb560a2ab38a3a5f7a3a01"
+          }
+        },
+        {
+          "command": "impeccable detect on P05 source",
+          "findings": 0,
+          "proof": {
+            "path": ".merchandise-local/p05-detector.json",
+            "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+          }
+        },
+        {
+          "command": "P03 reference integrity with explicit approval",
+          "status": "passed",
+          "images": 25
+        }
+      ],
+      "proof": "storefront-verification.md",
+      "visuals": [
+        {
+          "path": "docs/verification/merchandise/visual/p05-mobile.png",
+          "sha256": "4424f78cba23b2c7566ccbd7d93bd71d0082d2661cbbb11dbb3c9cdedc148efc"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p05-tablet.png",
+          "sha256": "edef14931136c0b556f4040b991fc19867bec3dbc5d1fd727737d6144810561b"
+        },
+        {
+          "path": "docs/verification/merchandise/visual/p05-desktop.png",
+          "sha256": "4fa86ec89e9cfb33788ae423c303d914425d94fe78c32fb56b43eedd8875e307"
+        }
+      ],
+      "notes": [
+        "One shared renderer artifact; one cart resource for the existing Header and shop. No registration merchant or API/Backoffice source changes.",
+        "All 54 unique browser cases have passing executions: 48 initial passes plus targeted recheck of all 3 failed cases, 3 related engine counterparts and 3 new reflow cases. No automatic retries or unresolved failures. Full-run failure output is retained rather than described as a clean full run.",
+        "12 approved widths plus 640px desktop 200%-equivalent reflow verified; native browser UI zoom and real phones remain User Test. Three representative final PNGs visually inspected.",
+        "Diagnostic stale-server and WebKit logo-transition failures corrected; rejected-session RED then green; final complete suite supersedes an interrupted intermediate run while adding actual-expiry coverage.",
+        "P04 dependent integration returned to and passed before P06. P05 completion commit is the commit containing this record; exact hash recorded by the following task.",
+        "All catalog prices/images/options in fixtures are synthetic. Product, cart, address, payment and history application screens continue in P06–P11; actual provider User Test and release gate are unchanged."
+      ]
     },
     {
       "id": "P06",
@@ -364,5 +480,5 @@
       "tests": []
     }
   ],
-  "updatedAt": "2026-10-15T12:46:42.564Z"
+  "updatedAt": "2026-10-15T13:42:18.746Z"
 }

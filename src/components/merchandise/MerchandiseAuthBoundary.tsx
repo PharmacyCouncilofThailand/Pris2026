@@ -2,6 +2,7 @@
 import {
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -21,6 +22,7 @@ import {
 } from "@/lib/merchandiseRoutes";
 import type { CartDto } from "@/types/merchandise";
 import toast from "react-hot-toast";
+import { MerchandiseApiError } from "@/lib/merchandiseApi";
 
 // Header is already mounted for every auth journey, including its null view on
 // login. Observe ownership here without modifying the incumbent AuthContext.
@@ -28,13 +30,23 @@ export function useMerchandiseSessionCleanup(buyerId: number | null) {
   const previous = useRef<number | null | undefined>(undefined);
   useEffect(() => {
     try {
+      // Expiry at hydration has no previous owner; expiry during a mounted
+      // session still has a stored token. Keep the non-PII retry key in both
+      // cases. Explicit logout clears stored auth, and a different owner clears
+      // the intent before any cart write.
       if (
         previous.current !== undefined &&
         previous.current !== null &&
-        previous.current !== buyerId
+        previous.current !== buyerId &&
+        (buyerId !== null ||
+          !(
+            window.localStorage.getItem("pris_token") ||
+            window.sessionStorage.getItem("pris_token")
+          ))
       )
         clearPurchaseIntent(window.sessionStorage);
-      else clearForeignPurchaseIntent(window.sessionStorage, buyerId);
+      else if (buyerId !== null)
+        clearForeignPurchaseIntent(window.sessionStorage, buyerId);
     } catch {
       /* Storage denial cannot authorize any cart write. */
     }
@@ -66,15 +78,19 @@ export function MerchandiseAuthBoundary({ children }: { children: ReactNode }) {
 export function MerchandiseIntentResume({
   intentId,
   onAdded,
+  onResult,
+  onPending,
 }: {
   intentId: string | null;
   onAdded: (cart: CartDto) => void;
+  onResult?: (id: string, result: IntentResult) => void;
+  onPending?: (id: string) => void;
 }) {
   const { api, eventCode, token, ownerId } = useMerchandise(),
     pathname = usePathname(),
     router = useRouter();
   const [result, setResult] = useState<{
-    scope: string;
+    scope: object;
     value: IntentResult;
   } | null>(null);
   const [retry, setRetry] = useState(0);
@@ -83,7 +99,10 @@ export function MerchandiseIntentResume({
     ownerId: number | null;
     eventCode: string;
   } | null>(null);
-  const scope = `${eventCode}:${ownerId}:${intentId}`;
+  const scope = useMemo(
+    () => ({ eventCode, ownerId, intentId, token }),
+    [eventCode, ownerId, intentId, token],
+  );
   useLayoutEffect(() => {
     session.current = { token, ownerId, eventCode };
     return () => {
@@ -91,6 +110,10 @@ export function MerchandiseIntentResume({
     };
   }, [token, ownerId, eventCode]);
   useEffect(() => {
+    if (!token && intentId) {
+      router.replace(merchandiseLoginPath(pathname + window.location.search));
+      return;
+    }
     if (!token || !ownerId || !intentId) return;
     let active = true;
     const isCurrent = () =>
@@ -98,10 +121,16 @@ export function MerchandiseIntentResume({
       session.current.ownerId === ownerId &&
       session.current.eventCode === eventCode;
     const run = async () => {
+      await Promise.resolve();
+      if (!active || !isCurrent()) return;
+      onPending?.(intentId);
       let value: IntentResult;
       try {
         const intent = readPurchaseIntent(window.sessionStorage, eventCode);
-        if (!intent || intent.id !== intentId) return;
+        if (!intent || intent.id !== intentId) {
+          onResult?.(intentId, { kind: "none" });
+          return;
+        }
         value = await resumePurchaseIntent({
           storage: window.sessionStorage,
           api,
@@ -121,6 +150,7 @@ export function MerchandiseIntentResume({
       }
       if (!active || !isCurrent()) return;
       setResult({ scope, value });
+      onResult?.(intentId, value);
       if (value.kind === "added") {
         onAdded(value.cart);
         toast.success("เพิ่มลงตะกร้าแล้ว", {
@@ -150,6 +180,8 @@ export function MerchandiseIntentResume({
     ownerId,
     intentId,
     onAdded,
+    onResult,
+    onPending,
     pathname,
     router,
     retry,
@@ -177,13 +209,26 @@ export function MerchandiseIntentResume({
               ? "ยังยืนยันผลเพิ่มสินค้าลงตะกร้าไม่ได้ กรุณาตรวจสอบอีกครั้ง"
               : current.error.message}
           </p>
-          <button
-            type="button"
-            className="mt-3 min-h-11 rounded-xl border border-[#0055ff] bg-white px-4 font-semibold text-[#0055ff] focus-visible:outline-2 focus-visible:outline-offset-4"
-            onClick={() => setRetry((v) => v + 1)}
-          >
-            ตรวจสอบอีกครั้ง
-          </button>
+          {current.error instanceof MerchandiseApiError &&
+          current.error.status === 401 ? (
+            <Link
+              className="mt-3 inline-flex min-h-11 items-center rounded-xl border border-[#0055ff] bg-white px-4 font-semibold text-[#0055ff] focus-visible:outline-2 focus-visible:outline-offset-4"
+              href={merchandiseLoginPath(
+                pathname + window.location.search,
+                true,
+              )}
+            >
+              เข้าสู่ระบบอีกครั้ง
+            </Link>
+          ) : (
+            <button
+              type="button"
+              className="mt-3 min-h-11 rounded-xl border border-[#0055ff] bg-white px-4 font-semibold text-[#0055ff] focus-visible:outline-2 focus-visible:outline-offset-4"
+              onClick={() => setRetry((v) => v + 1)}
+            >
+              ตรวจสอบอีกครั้ง
+            </button>
+          )}
         </>
       )}
     </div>
