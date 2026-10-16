@@ -80,7 +80,7 @@ const universityCrests = [
   {
     id: 3,
     name: "มหาวิทยาลัยนเรศวร",
-    logo: "/assets/Img/University/มหาวิทยาลัย นเรศวร คณะ Pharmacy_Naresuan.png",
+    logo: "/assets/Img/University/naresuan-pharmaceutical-sciences.png",
     scaleClass: "scale-[0.92]",
   },
   {

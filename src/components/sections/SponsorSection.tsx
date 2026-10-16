@@ -88,7 +88,7 @@ const universitiesRow = [
   {
     id: 3,
     name: "มหาวิทยาลัยนเรศวร",
-    logo: "/assets/Img/University/มหาวิทยาลัย นเรศวร คณะ Pharmacy_Naresuan.png",
+    logo: "/assets/Img/University/naresuan-pharmaceutical-sciences.png",
     twClass: "scale-[0.92]",
   },
   {
