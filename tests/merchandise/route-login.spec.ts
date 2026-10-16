@@ -1,4 +1,6 @@
-import { test, expect } from "./fixtures";
+import { test, expect, login } from "./fixtures";
+import { ids, makeOrder, makeSingle } from "./data";
+import { FakeMerchApi } from "./fakeApi";
 import { randomBytes } from "node:crypto";
 
 const intentId = "10000000-0000-4000-8000-000000000004";
@@ -79,3 +81,97 @@ test("mocked SSO authentication returns to the shop with locale and filters", as
   );
   await expect(page).toHaveURL("/th" + target);
 });
+
+const shopPaths = [
+  "/souvenirs/cart",
+  "/souvenirs/checkout",
+  "/souvenirs/orders",
+  `/souvenirs/orders/${ids.order}`,
+];
+for (const path of shopPaths)
+  test(`opening ${path} directly while signed out goes to login and returns to the same path`, async ({
+    page,
+  }) => {
+    await page.goto("/th" + path);
+    await expect(page).toHaveURL(/\/th\/login\?/);
+    expect(new URL(page.url()).searchParams.get("redirect")).toBe(path);
+    await login(page);
+    await page.goto("/th" + path);
+    await expect(page).toHaveURL("/th" + path);
+    await expect(page.locator("main").first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "เข้าสู่ระบบ", exact: true }),
+    ).toHaveCount(0);
+    await expect(page).toHaveURL("/th" + path);
+  });
+
+test("unsafe redirects are not forwarded by the login page", async ({
+  page,
+}) => {
+  await page.goto("/th/login?redirect=" + encodeURIComponent("//evil.example"));
+  await expect(
+    page.getByRole("heading", { name: "เข้าสู่ระบบ", exact: true }),
+  ).toBeVisible();
+  const link = page.getByRole("link", { name: "ลงทะเบียน", exact: true });
+  await expect(link).toHaveAttribute("href", "/th/signup");
+  await page.goto(
+    "/th/login?redirect=" + encodeURIComponent("/souvenirs/cart?x=1"),
+  );
+  await expect(link).toHaveAttribute("href", "/th/signup");
+});
+
+const LINE = {
+  ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Line/14.0.0",
+  android:
+    "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36 Line/14.0.0",
+};
+for (const [name, userAgent] of Object.entries(LINE))
+  test(`LINE ${name} in-app browser opens a product, adds to cart after login and shows a long-pressable QR`, async ({
+    browser,
+    apiOrigin,
+    baseURL,
+  }) => {
+    const context = await browser.newContext({ userAgent, baseURL });
+    const fake = new FakeMerchApi();
+    await fake.install(context, apiOrigin);
+    const product = makeSingle();
+    fake.products = [product];
+    const page = await context.newPage();
+    await login(page);
+    await page.goto(`/th/souvenirs/products/${product.id}`);
+    expect(await page.evaluate(() => navigator.userAgent)).toContain(
+      "Line/14.0.0",
+    );
+    await page
+      .getByRole("button", { name: /เพิ่มลงตะกร้า/ })
+      .first()
+      .click();
+    await expect.poll(() => fake.cart.items.length).toBe(1);
+    // Let the add flow finish its own navigation before moving on.
+    await page.waitForLoadState("networkidle");
+    const order = makeOrder();
+    fake.orders.set(order.id, order);
+    // A late client-side navigation from the add flow may interrupt the first goto.
+    await expect(async () => {
+      await page.goto(`/th/souvenirs/orders/${order.id}`);
+    }).toPass();
+    const qr = page.locator(".merch-payment-panel img");
+    await expect(qr).toBeVisible();
+    await expect(qr).toHaveAttribute("alt", /QR/);
+    const styles = await qr.evaluate((e) => {
+      const chain: CSSStyleDeclaration[] = [];
+      for (let n: Element | null = e; n; n = n.parentElement)
+        chain.push(getComputedStyle(n));
+      return chain.map((s) => [
+        s.pointerEvents,
+        s.userSelect,
+        s.webkitUserSelect,
+      ]);
+    });
+    for (const [pointer, select, webkit] of styles) {
+      expect(pointer).not.toBe("none");
+      expect(select).not.toBe("none");
+      expect(webkit).not.toBe("none");
+    }
+    await context.close();
+  });

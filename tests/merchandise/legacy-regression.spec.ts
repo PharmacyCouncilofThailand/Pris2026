@@ -1,4 +1,4 @@
-import { test, expect } from "./live-fixture";
+import { test, expect, login } from "./fixtures";
 import type { Page, Route } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 
@@ -23,8 +23,8 @@ async function legacyTransport(page: Page, origin: string, paid = true) {
   );
   await page.route(origin + "/**", async (route: Route) => {
     const path = new URL(route.request().url()).pathname;
-    // Only the incumbent transport is mocked. Shop API remains a real isolated backend.
-    if (path.startsWith("/api/v1/merchandise")) return route.continue();
+    // Only the incumbent transport is mocked here; the shop API is the context-level fake.
+    if (path.startsWith("/api/v1/merchandise")) return route.fallback();
     let body: unknown = { success: true, data: [] };
     if (path === "/api/users/profile")
       body = {
@@ -125,7 +125,7 @@ async function legacyTransport(page: Page, origin: string, paid = true) {
 
 test("incumbent homepage header, scroll, menu and locale remain outside the shop resource boundary", async ({
   page,
-  merchandise,
+  fake,
 }) => {
   const shopCalls: string[] = [];
   page.on("request", (r) => {
@@ -154,19 +154,21 @@ test("incumbent homepage header, scroll, menu and locale remain outside the shop
   await expect(page).toHaveURL(/\/en$/);
   expect(shopCalls).toEqual([]);
   expect(
-    (await merchandise.command<{ cartReads: number }>("inspect")).cartReads,
-  ).toBe(0);
+    fake.calls.filter((c) => c.path.startsWith("/api/v1/merchandise")),
+  ).toEqual([]);
 });
 
 test("registration keeps its login and conference-web SSO boundary rather than using shop checkout", async ({
   page,
-  merchandise,
+  apiOrigin,
+  fake,
 }) => {
-  await legacyTransport(page, merchandise.origin);
+  void fake;
+  await legacyTransport(page, apiOrigin);
   await page.goto("/th/registration");
   await page.locator("button.registration-floating-cta-button").click();
   await expect(page).toHaveURL(/\/th\/login\?redirect=%2Fregistration/);
-  await merchandise.login(page);
+  await login(page);
   await page.goto("/th/registration");
   await page.route("https://conference-web.example.invalid/**", (r) =>
     r.fulfill({
@@ -189,10 +191,12 @@ test("registration keeps its login and conference-web SSO boundary rather than u
 for (const paid of [false, true])
   test(`legacy ${paid ? "paid" : "free"} registration ticket and receipt semantics survive`, async ({
     page,
-    merchandise,
+    apiOrigin,
+    fake,
   }) => {
-    await legacyTransport(page, merchandise.origin, paid);
-    await merchandise.login(page);
+    void fake;
+    await legacyTransport(page, apiOrigin, paid);
+    await login(page);
     await page.goto("/th/ticket");
     await expect(
       page.getByText(ticket.regCode, { exact: true }).first(),
@@ -212,9 +216,11 @@ for (const paid of [false, true])
 
 test("Booth signup, invitation and presentation direct reloads retain their incumbent resource and route contracts", async ({
   page,
-  merchandise,
+  apiOrigin,
+  fake,
 }) => {
-  await legacyTransport(page, merchandise.origin);
+  void fake;
+  await legacyTransport(page, apiOrigin);
   await page.goto("/th/signup/booth");
   const booth = page.locator("#boothId");
   await expect(booth).toBeEnabled();
@@ -231,7 +237,7 @@ test("Booth signup, invitation and presentation direct reloads retain their incu
   await expect(
     page.getByText("กิจกรรมเดิมสังเคราะห์", { exact: true }),
   ).toBeVisible();
-  await merchandise.login(page);
+  await login(page);
   await page.goto("/th/presentation-submission?abstractId=51");
   await expect(
     page.getByText("ผลงานเดิมสังเคราะห์", { exact: true }),
@@ -245,9 +251,9 @@ test("Booth signup, invitation and presentation direct reloads retain their incu
 
 test("lucky-wheel login return and registration success toast remain independent from merchandise payment", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.mockLogin(page);
+  void fake;
   await page.goto("/th/lucky-wheel");
   await expect(page).toHaveURL(/\/th\/login\?redirect=%2Flucky-wheel/);
   await page.goto(

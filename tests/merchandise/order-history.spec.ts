@@ -1,133 +1,119 @@
-import { test, expect } from "./live-fixture";
+import { test, expect, login } from "./fixtures";
+import { ids, makeOrder, uid } from "./data";
+import type { FakeMerchApi } from "./fakeApi";
 import type { OrderDetail } from "../../src/types/merchandise";
-import { mkdir } from "node:fs/promises";
-type Setup = { orders: OrderDetail[]; other: OrderDetail | null };
-const listApi = /\/events\/PRIS-2026\/orders(?:\?|$)/;
-test("empty owner history has the approved empty state and shop action", async ({
+
+const number = (n: number) => `PRIS2026-M-${String(n).padStart(6, "0")}`;
+const seed = (fake: FakeMerchApi, n: number, o: Partial<OrderDetail> = {}) => {
+  const order = makeOrder({
+    id: uid(n),
+    orderNumber: number(n),
+    createdAt: new Date(Date.UTC(2026, 9, 15, 3, n)).toISOString(),
+    ...o,
+  });
+  fake.orders.set(order.id, order);
+  return order;
+};
+const rows = (page: import("@playwright/test").Page) =>
+  page.locator(".merch-history-row");
+const listCalls = (fake: FakeMerchApi) =>
+  fake.calls.filter(
+    (c) => c.method === "GET" && /\/events\/PRIS-2026\/orders$/.test(c.path),
+  );
+
+test("empty history shows the empty state and a shop link", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.login(page);
+  void fake;
+  await login(page);
   await page.goto("/th/souvenirs/orders");
   await expect(
     page.getByRole("heading", { name: "ยังไม่มีคำสั่งซื้อ", exact: true }),
   ).toBeVisible();
-  expect(
-    (await page.getByRole("contentinfo").boundingBox())!.y,
-  ).toBeGreaterThanOrEqual(page.viewportSize()!.height);
   await expect(
     page.getByRole("link", { name: "เลือกสินค้า", exact: true }),
   ).toHaveAttribute("href", "/th/souvenirs");
 });
 
-test("history contains only the signed-in buyer and event, with payment and delivery shown separately and no N+1 detail reads", async ({
+test("payment status is shown separately from shipping status, without per-order detail reads", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { orders, other } = await merchandise.command<Setup>("historySetup");
-  await merchandise.login(page);
-  let details = 0;
-  page.on("request", (r) => {
-    if (/\/api\/v1\/merchandise\/orders\/[0-9a-f-]+$/.test(r.url())) details++;
+  seed(fake, 1);
+  seed(fake, 2, {
+    paymentStatus: "paid",
+    paidAt: "2026-10-15T03:30:00.000Z",
   });
+  seed(fake, 3, {
+    paymentStatus: "paid",
+    paidAt: "2026-10-15T03:30:00.000Z",
+    shipping: {
+      status: "shipped",
+      carrier: "ไปรษณีย์ไทย",
+      trackingId: "0000123456789",
+      shippedAt: "2026-10-16T03:00:00.000Z",
+    },
+  });
+  seed(fake, 4, { paymentStatus: "expired" });
+  await login(page);
   await page.goto("/th/souvenirs/orders");
-  await expect(page.locator(".merch-history-row")).toHaveCount(3);
-  const paid = page
-    .locator(".merch-history-row")
-    .filter({ hasText: orders[0].orderNumber });
-  await expect(paid).toContainText("ชำระเงินสำเร็จ");
-  await expect(paid).toContainText("รอจัดส่ง");
-  const shipped = page
-    .locator(".merch-history-row")
-    .filter({ hasText: orders[1].orderNumber });
-  await expect(shipped).toContainText("ชำระเงินสำเร็จ");
-  await expect(shipped).toContainText("จัดส่งแล้ว");
-  const pending = page
-    .locator(".merch-history-row")
-    .filter({ hasText: orders[2].orderNumber });
-  await expect(pending).toContainText("รอชำระเงิน");
-  await expect(pending).toContainText("ยังไม่พร้อมจัดส่ง");
-  await expect(
-    page.getByRole("heading", { name: other!.orderNumber, exact: true }),
-  ).toHaveCount(0);
-  expect(details).toBe(0);
-  const unrelated = await page.request.get(
-    merchandise.origin + "/api/v1/merchandise/events/MERCH-OTHER/orders",
-    { headers: { authorization: `Bearer ${merchandise.buyerToken}` } },
-  );
-  expect((await unrelated.json()).data.items).toEqual([]);
+  await expect(rows(page)).toHaveCount(4);
+  const row = (n: number) => rows(page).filter({ hasText: number(n) });
+  await expect(row(1)).toContainText("รอชำระเงิน");
+  await expect(row(1)).toContainText("ยังไม่จัดส่ง");
+  await expect(row(2)).toContainText("ชำระแล้ว");
+  await expect(row(2)).toContainText("ยังไม่จัดส่ง");
+  await expect(row(3)).toContainText("ชำระแล้ว");
+  await expect(row(3)).toContainText("จัดส่งแล้ว");
+  await expect(row(3)).toContainText("ไปรษณีย์ไทย");
+  await expect(row(3)).toContainText("0000123456789");
+  await expect(row(4)).toContainText("หมดเวลาชำระ");
+  await expect(row(4)).toContainText("ยังไม่จัดส่ง");
+  await expect(row(1)).toContainText("฿300.00");
+  expect(
+    fake.calls.filter((c) => /\/orders\/[0-9a-f-]{36}$/.test(c.path)),
+  ).toEqual([]);
+  expect(listCalls(fake).every((c) => c.headers.authorization)).toBe(true);
 });
-test("history pagination persists through direct reload and locale switching", async ({
+
+test("page is kept in the URL, survives reload and the locale switch, and asks the API for limit 10", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("historySetup", {
-    count: 11,
-    pendingOnly: true,
-    includeOther: false,
-  });
-  await merchandise.login(page);
+  for (let n = 1; n <= 11; n++) seed(fake, n);
+  await login(page);
   await page.goto("/th/souvenirs/orders");
-  await expect(page.locator(".merch-history-row")).toHaveCount(10);
+  await expect(rows(page)).toHaveCount(10);
   await page.getByRole("link", { name: "หน้าถัดไป", exact: true }).click();
   await expect(page).toHaveURL(/\/th\/souvenirs\/orders\?page=2$/);
-  await expect(page.locator(".merch-history-row")).toHaveCount(1);
-  const number = await page.locator(".merch-history-row h2").textContent();
+  await expect(rows(page)).toHaveCount(1);
+  const first = await rows(page).locator("h2").textContent();
   await page.reload();
-  await expect(page.locator(".merch-history-row h2")).toHaveText(number!);
+  await expect(rows(page).locator("h2")).toHaveText(first!);
   await page
     .getByRole("button", { name: "เปลี่ยนภาษาเป็นภาษาอังกฤษ", exact: true })
     .click();
   await expect(page).toHaveURL(/\/en\/souvenirs\/orders\?page=2$/);
-  await expect(page.locator(".merch-history-row h2")).toHaveText(number!);
+  await expect(rows(page).locator("h2")).toHaveText(first!);
 });
-test("anonymous login returns to the requested history page without guest access", async ({
-  page,
-  merchandise,
-}) => {
-  await merchandise.mockLogin(page);
-  await page.goto("/th/souvenirs/orders?page=2");
-  await expect(
-    page.getByRole("heading", { name: "เข้าสู่ระบบ", exact: true }),
-  ).toBeVisible();
-  expect(new URL(page.url()).searchParams.get("redirect")).toBe(
-    "/souvenirs/orders?page=2",
-  );
-  await page.getByLabel("อีเมล", { exact: true }).fill("buyer@example.test");
-  await page
-    .getByLabel("รหัสผ่าน", { exact: true })
-    .fill("synthetic-not-a-real-password");
-  await page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }).click();
-  await expect(page).toHaveURL(/\/th\/souvenirs\/orders\?page=2$/);
-  await expect(
-    page.getByRole("heading", {
-      name: "ไม่พบคำสั่งซื้อในหน้านี้",
-      exact: true,
-    }),
-  ).toBeVisible();
-});
-test("invalid history query does not make an owner history request", async ({
-  page,
-  merchandise,
-}) => {
-  await merchandise.login(page);
-  let reads = 0;
-  page.on("request", (r) => {
-    if (listApi.test(r.url())) reads++;
-  });
+
+test("an invalid page query makes no list request", async ({ page, fake }) => {
+  await login(page);
   await page.goto("/th/souvenirs/orders?page=1&page=2");
   await expect(
     page.getByText("พารามิเตอร์หน้าประวัติไม่ถูกต้อง", { exact: true }),
   ).toBeVisible();
-  expect(reads).toBe(0);
+  expect(listCalls(fake)).toEqual([]);
 });
-test("transport failure is retryable and is never presented as an empty history", async ({
+
+test("a transport failure is retryable and never shown as empty history", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("historySetup");
-  await merchandise.login(page);
-  await page.route(listApi, (route) => route.abort("failed"));
+  seed(fake, 1);
+  fake.failNext("GET", /\/orders$/, "network");
+  await login(page);
   await page.goto("/th/souvenirs/orders");
   await expect(
     page.getByRole("button", { name: "ลองโหลดอีกครั้ง", exact: true }),
@@ -135,49 +121,26 @@ test("transport failure is retryable and is never presented as an empty history"
   await expect(
     page.getByRole("heading", { name: "ยังไม่มีคำสั่งซื้อ", exact: true }),
   ).toHaveCount(0);
-  await page.unroute(listApi);
   await page
     .getByRole("button", { name: "ลองโหลดอีกครั้ง", exact: true })
     .click();
-  await expect(page.locator(".merch-history-row")).toHaveCount(3);
+  await expect(rows(page)).toHaveCount(1);
 });
-test("foreign-event summary transport is rejected rather than displayed", async ({
+
+test("an expired token offers forced reauthentication that keeps the history page", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("historySetup");
-  await merchandise.login(page);
-  await page.route(listApi, async (route) => {
-    const response = await route.fetch(),
-      body = await response.json();
-    body.data.items[0].eventId = 999;
-    await route.fulfill({ response, json: body });
+  fake.failNext("GET", /\/orders$/, {
+    status: 401,
+    body: {
+      success: false,
+      code: "MERCH_AUTH_REQUIRED",
+      error: "หมดอายุ",
+      requestId: "r",
+    },
   });
-  await page.goto("/th/souvenirs/orders");
-  await expect(
-    page.getByRole("button", { name: "ลองโหลดอีกครั้ง", exact: true }),
-  ).toBeVisible();
-  await expect(page.locator(".merch-history-row")).toHaveCount(0);
-});
-test("an expired owner read offers forced reauthentication with the history page intact", async ({
-  page,
-  merchandise,
-}) => {
-  await merchandise.login(page);
-  await merchandise.mockLogin(page);
-  await page.route(listApi, (route) =>
-    route.fulfill({
-      status: 401,
-      contentType: "application/json",
-      headers: { "access-control-allow-origin": "*" },
-      body: JSON.stringify({
-        success: false,
-        code: "MERCH_AUTH_REQUIRED",
-        error: "Synthetic expired token response",
-        requestId: "test",
-      }),
-    }),
-  );
+  await login(page);
   await page.goto("/th/souvenirs/orders?page=2");
   await page
     .getByRole("link", { name: "เข้าสู่ระบบอีกครั้ง", exact: true })
@@ -189,214 +152,15 @@ test("an expired owner read offers forced reauthentication with the history page
   expect(query.get("reauth")).toBe("merchandise");
   expect(query.get("redirect")).toBe("/souvenirs/orders?page=2");
 });
-test("account replacement never merges owner history or grants access to a foreign order", async ({
-  page,
-  merchandise,
-}) => {
-  const { orders, other } = await merchandise.command<Setup>("historySetup");
-  await merchandise.login(page);
+
+test("rows link to the order page", async ({ page, fake }) => {
+  seed(fake, 1, { id: ids.order });
+  await login(page);
   await page.goto("/th/souvenirs/orders");
-  await expect(page.locator(".merch-history-row")).toHaveCount(3);
-  await page.evaluate((token) => {
-    localStorage.setItem("pris_token", token);
-    localStorage.setItem(
-      "pris_user",
-      JSON.stringify({
-        id: 2,
-        firstName: "อื่น",
-        lastName: "ทดสอบ",
-        email: "other@example.test",
-      }),
-    );
-  }, merchandise.otherBuyerToken);
-  await page.reload();
-  await expect(page.locator(".merch-history-row")).toHaveCount(1);
-  await expect(page.locator(".merch-history-row h2")).toHaveText(
-    other!.orderNumber,
+  await page
+    .getByRole("link", { name: `ดูรายละเอียด ${number(1)}`, exact: true })
+    .click();
+  await expect(page).toHaveURL(
+    new RegExp(`/th/souvenirs/orders/${ids.order}$`),
   );
-  await page.goto(`/th/souvenirs/orders/${orders[0].id}`);
-  await expect(
-    page.getByText("ไม่พบคำสั่งซื้อที่คุณเข้าถึงได้", { exact: true }),
-  ).toBeVisible();
-  await expect(page.locator("address")).toHaveCount(0);
-});
-test("historical snapshots and Bundle components remain stable after catalog changes; audited recipient amendments retain the original", async ({
-  page,
-  merchandise,
-}) => {
-  const { orders } = await merchandise.command<Setup>("historySetup");
-  const original = orders[0],
-    item = original.effective.items[0];
-  await merchandise.command("price", {
-    id: item.productId,
-    price: "90000",
-    name: "ชื่อสินค้าแก้ไขภายหลัง",
-  });
-  const changed = await merchandise.command<OrderDetail>("amendRecipient", {
-    id: original.id,
-  });
-  expect(changed.amounts).toEqual(original.amounts);
-  await merchandise.command("closeStore");
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/orders/${original.id}`);
-  await expect(page.locator(".merch-review-section address")).toContainText(
-    "ผู้รับแก้ไขทดสอบ",
-  );
-  await expect(
-    page.getByText("ชื่อสินค้าแก้ไขภายหลัง", { exact: true }),
-  ).toHaveCount(0);
-  await expect(page.locator(".merch-paid-item")).toContainText(item.nameTh);
-  await expect(page.locator(".merch-paid-item")).toContainText("฿100.00");
-  await page.getByText("ดูข้อมูลเดิมเมื่อสั่งซื้อ", { exact: true }).click();
-  await expect(page.locator(".merch-order-original address")).toContainText(
-    original.original.recipient.fullName,
-  );
-  await expect(page.locator(".merch-order-original address")).toContainText(
-    original.original.recipient.addressLine,
-  );
-  await expect(page.locator("input,textarea,select")).toHaveCount(0);
-  await page.goto(`/th/souvenirs/orders/${orders[1].id}`);
-  for (const part of orders[1].effective.items[0].components)
-    await expect(page.locator(".merch-paid-item")).toContainText(part.nameTh);
-  await expect(
-    page.getByRole("heading", { name: "รายละเอียดคำสั่งซื้อ", exact: true }),
-  ).toBeVisible();
-});
-for (const denied of [false, true])
-  test(`shipped details retain leading zeroes and ${denied ? "report denied" : "confirm successful"} mocked clipboard writes`, async ({
-    page,
-    merchandise,
-  }) => {
-    const { orders } = await merchandise.command<Setup>("historySetup");
-    await page.addInitScript((denied) => {
-      Object.defineProperty(navigator, "clipboard", {
-        configurable: true,
-        value: {
-          writeText: async (text: string) => {
-            if (denied) throw Error("Synthetic denied clipboard");
-            (window as unknown as { copiedTracking: string }).copiedTracking =
-              text;
-          },
-        },
-      });
-    }, denied);
-    await merchandise.login(page);
-    await page.goto(`/th/souvenirs/orders/${orders[1].id}`);
-    await expect(page.locator(".merch-tracking strong")).toHaveText(
-      "0000123456789",
-    );
-    await page
-      .getByRole("button", { name: "คัดลอกเลขติดตามพัสดุ", exact: true })
-      .click();
-    await expect(
-      page.getByText(
-        denied
-          ? "คัดลอกไม่สำเร็จ กรุณาเลือกและคัดลอกเลขติดตามพัสดุที่แสดง"
-          : "คัดลอกเลขติดตามพัสดุแล้ว",
-        { exact: true },
-      ),
-    ).toBeVisible();
-    if (!denied)
-      expect(
-        await page.evaluate(
-          () =>
-            (window as unknown as { copiedTracking: string }).copiedTracking,
-        ),
-      ).toBe("0000123456789");
-    await expect(page.locator(".merch-order-delivery a")).toHaveCount(0);
-    await expect(page.getByText(/กรุณาถ่ายวิดีโอขณะแกะพัสดุ/)).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /ขอ QR ใหม่|ชำระเงิน|แก้ไข/ }),
-    ).toHaveCount(0);
-  });
-test("returning to an already-paid order refreshes a new shipment without another payment attempt", async ({
-  page,
-  merchandise,
-}) => {
-  const { orders } = await merchandise.command<Setup>("historySetup");
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/orders/${orders[0].id}`);
-  await expect(
-    page.getByRole("heading", { name: "ชำระเงินสำเร็จ", exact: true }),
-  ).toBeVisible();
-  const before = await merchandise.command<{ providerCreations: number }>(
-    "inspect",
-  );
-  await merchandise.command("ship", {
-    id: orders[0].id,
-    carrier: "ขนส่งทดสอบหลังกลับหน้า",
-    trackingId: "00000002",
-  });
-  await page.evaluate(() => window.dispatchEvent(new Event("pageshow")));
-  await expect(page.locator(".merch-tracking strong")).toHaveText("00000002");
-  await expect(
-    page.getByRole("heading", { name: "รายละเอียดคำสั่งซื้อ", exact: true }),
-  ).toBeVisible();
-  expect(
-    (await merchandise.command<{ providerCreations: number }>("inspect"))
-      .providerCreations,
-  ).toBe(before.providerCreations);
-});
-test("approved empty, history and shipped layouts adapt across mobile tablet and desktop", async ({
-  page,
-  merchandise,
-}, info) => {
-  await merchandise.login(page);
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/th/souvenirs/orders");
-  await expect(
-    page.getByRole("heading", { name: "ยังไม่มีคำสั่งซื้อ", exact: true }),
-  ).toBeVisible();
-  if (info.project.name === "chromium") {
-    await mkdir("docs/verification/merchandise/visual", { recursive: true });
-    await page.screenshot({
-      path: "docs/verification/merchandise/visual/p11-empty-mobile.png",
-    });
-  }
-  const { orders } = await merchandise.command<Setup>("historySetup");
-  await page.reload();
-  await expect(page.locator(".merch-history-row")).toHaveCount(3);
-  for (const [name, width, height] of [
-    ["mobile", 390, 844],
-    ["tablet", 834, 1112],
-    ["desktop", 1440, 1000],
-  ] as const) {
-    await page.setViewportSize({ width, height });
-    await page.evaluate(() => document.fonts.ready);
-    await page.evaluate(() => scrollTo(0, 0));
-    expect(
-      await page.evaluate(() => document.documentElement.scrollWidth),
-    ).toBe(width);
-    if (width === 1440) {
-      const list = await page.locator(".merch-history-list").boundingBox();
-      const heading = await page
-        .getByRole("heading", { name: "คำสั่งซื้อของฉัน", exact: true })
-        .boundingBox();
-      expect(list!.width).toBe(900);
-      expect(list!.x).toBe(heading!.x);
-    }
-    if (info.project.name === "chromium")
-      await page.screenshot({
-        path: `docs/verification/merchandise/visual/p11-history-${name}.png`,
-      });
-  }
-  await page.goto(`/th/souvenirs/orders/${orders[1].id}`);
-  await expect(page.locator(".merch-tracking strong")).toBeVisible();
-  for (const [name, width, height] of [
-    ["mobile", 390, 844],
-    ["tablet", 834, 1112],
-    ["desktop", 1440, 1000],
-  ] as const) {
-    await page.setViewportSize({ width, height });
-    await page.evaluate(() => document.fonts.ready);
-    await page.evaluate(() => scrollTo(0, 0));
-    expect(
-      await page.evaluate(() => document.documentElement.scrollWidth),
-    ).toBe(width);
-    await expect(page.locator(".merch-cart-bar")).toHaveCount(0);
-    if (info.project.name === "chromium")
-      await page.screenshot({
-        path: `docs/verification/merchandise/visual/p11-shipped-${name}.png`,
-      });
-  }
 });

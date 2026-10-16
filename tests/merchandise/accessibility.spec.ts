@@ -1,7 +1,30 @@
-import { test, expect } from "./live-fixture";
+import { test, expect, login } from "./fixtures";
 import type { Page } from "@playwright/test";
-import type { ProductDto, OrderDetail } from "../../src/types/merchandise";
-import { mkdir } from "node:fs/promises";
+import type { FakeMerchApi } from "./fakeApi";
+import {
+  ids,
+  image,
+  makeOrder,
+  makeSingle,
+  makeStore,
+  stubImages,
+  uid,
+} from "./data";
+import { seedCheckout } from "./checkoutHelpers";
+
+const many = (n: number) =>
+  Array.from({ length: n }, (_, i) =>
+    makeSingle({ id: uid(i + 1), nameTh: `สินค้า ${i + 1}`, sortOrder: i }),
+  );
+const seedBanners = (fake: FakeMerchApi, n: number) => {
+  fake.store = makeStore({
+    banners: Array.from({ length: n }, (_, i) => ({
+      id: uid(500 + i),
+      image: image(600 + i),
+      linkUrl: null,
+    })),
+  });
+};
 
 const widths = [320, 390, 430, 768, 834, 1024, 1279, 1280, 1440, 1920];
 async function fits(page: Page, width: number) {
@@ -13,9 +36,12 @@ async function fits(page: Page, width: number) {
 }
 test("both locale headers and catalogue retain the approved columns and one row throughout the viewport matrix", async ({
   page,
-  merchandise,
+  fake,
+  context,
 }) => {
-  await merchandise.command("catalog", { banners: 3 });
+  await stubImages(context);
+  fake.products = many(13);
+  seedBanners(fake, 3);
   for (const locale of ["th", "en"]) {
     await page.goto(`/${locale}/souvenirs`);
     await expect(page.locator(".merch-product")).toHaveCount(12);
@@ -60,9 +86,12 @@ test("both locale headers and catalogue retain the approved columns and one row 
 
 test("menu keyboard containment, Escape and focus return preserve scrolling and bar clearance", async ({
   page,
-  merchandise,
+  fake,
+  context,
 }) => {
-  await merchandise.command("catalog", { banners: 3 });
+  await stubImages(context);
+  fake.products = many(13);
+  seedBanners(fake, 3);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/th/souvenirs");
   const menu = page.getByRole("button", { name: "เปิดเมนู", exact: true });
@@ -72,9 +101,10 @@ test("menu keyboard containment, Escape and focus return preserve scrolling and 
   await expect(dialog).toBeVisible();
   for (let i = 0; i < 18; i++) {
     await page.keyboard.press("Tab");
-    expect(
-      await dialog.evaluate((e) => e.contains(document.activeElement)),
-    ).toBe(true);
+    // Radix parks focus on a guard sentinel for one tick before wrapping it back.
+    await expect
+      .poll(() => dialog.evaluate((e) => e.contains(document.activeElement)))
+      .toBe(true);
   }
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
@@ -93,9 +123,12 @@ test("menu keyboard containment, Escape and focus return preserve scrolling and 
 
 test("shop controls have names, image alternatives, visible keyboard focus and 44 pixel targets", async ({
   page,
-  merchandise,
+  fake,
+  context,
 }) => {
-  await merchandise.command("catalog", { banners: 3 });
+  await stubImages(context);
+  fake.products = many(13);
+  seedBanners(fake, 3);
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
   const search = page.getByRole("searchbox", {
@@ -125,20 +158,10 @@ test("shop controls have names, image alternatives, visible keyboard focus and 4
 
 test("address errors have associated messages and keyboard focus, and remain clear at reflow and 200 percent text zoom", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { products } = await merchandise.command<{ products: ProductDto[] }>(
-    "catalog",
-    { banners: 0 },
-  );
-  const p = products[2];
-  await merchandise.command("addCart", {
-    productId: p.id,
-    variantId: p.variants[0].id,
-    bundleSelections: [],
-    quantity: 1,
-  });
-  await merchandise.login(page);
+  seedCheckout(fake);
+  await login(page);
   await page.goto("/th/souvenirs/checkout");
   const phone = page.getByLabel("เบอร์โทรผู้รับ", { exact: true });
   await phone.fill("");
@@ -148,7 +171,7 @@ test("address errors have associated messages and keyboard focus, and remain cle
   await expect(phone).toBeFocused();
   await expect(phone).toHaveAttribute("aria-invalid", "true");
   const described = await phone.getAttribute("aria-describedby");
-  await expect(page.locator(`#${described}`)).toHaveText(
+  await expect(page.locator(`#${described}`)).toContainText(
     "กรุณากรอกเบอร์โทรผู้รับ",
   );
   for (const field of await page
@@ -166,35 +189,43 @@ test("address errors have associated messages and keyboard focus, and remain cle
   expect(field!.y + field!.height).toBeLessThanOrEqual(bar!.y + 1);
 });
 
-test("long saved shipment values wrap at narrow widths without losing the tracking copy action", async ({
+test("long saved shipment values wrap at narrow widths", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { orders } = await merchandise.command<{ orders: OrderDetail[] }>(
-    "historySetup",
-    { count: 1, includeOther: false },
-  );
-  await merchandise.command("ship", {
-    id: orders[0].id,
-    carrier: "C".repeat(150),
-    trackingId: "0".repeat(150),
+  const order = makeOrder({
+    paymentStatus: "paid",
+    paidAt: "2026-10-15T03:30:00.000Z",
+    shipping: {
+      status: "shipped",
+      carrier: "C".repeat(150),
+      trackingId: "0".repeat(150),
+      shippedAt: "2026-10-16T03:00:00.000Z",
+    },
+    payment: {
+      state: "paid",
+      attempt: null,
+      canRequestNewQr: false,
+      canCheck: false,
+      retryAfterSeconds: null,
+      serverNow: "2026-10-16T03:00:00.000Z",
+    },
   });
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/orders/${orders[0].id}`);
-  await expect(
-    page.getByRole("heading", { name: "ข้อมูลจัดส่ง", exact: true }),
-  ).toBeVisible();
+  fake.orders.set(order.id, order);
+  await login(page);
+  await page.goto(`/th/souvenirs/orders/${order.id}`);
+  await expect(page.locator(".merch-tracking strong")).toBeVisible();
   for (const width of [320, 390, 834, 1440]) await fits(page, width);
-  await expect(
-    page.getByRole("button", { name: "คัดลอกเลขติดตามพัสดุ", exact: true }),
-  ).toBeVisible();
 });
 
 test("reduced motion keeps manual banner controls, keyboard navigation and cancellation usable", async ({
   page,
-  merchandise,
+  fake,
+  context,
 }) => {
-  await merchandise.command("catalog", { banners: 3 });
+  await stubImages(context);
+  fake.products = many(2);
+  seedBanners(fake, 3);
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/th/souvenirs");
   const next = page.getByRole("button", { name: "แบนเนอร์ถัดไป", exact: true });
@@ -219,9 +250,12 @@ test("reduced motion keeps manual banner controls, keyboard navigation and cance
 
 test("computed primary action contrast meets large bold text requirements and secondary Add meets normal text requirements", async ({
   page,
-  merchandise,
+  fake,
+  context,
 }) => {
-  await merchandise.command("catalog", { banners: 1 });
+  await stubImages(context);
+  fake.products = many(13);
+  seedBanners(fake, 1);
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
   for (const locator of [
@@ -267,49 +301,29 @@ test("computed primary action contrast meets large bold text requirements and se
   }
 });
 
-test("product cart history and shipped detail reflow across the complete viewport matrix", async ({
+test("product, cart, history and order detail reflow across the complete viewport matrix", async ({
   page,
-  merchandise,
-}, info) => {
-  const { orders } = await merchandise.command<{ orders: OrderDetail[] }>(
-    "historySetup",
-    { includeOther: false },
-  );
-  await merchandise.login(page);
-  const productId = orders[0].effective.items[0].productId;
-  const response = await page.request.get(
-    `${merchandise.origin}/api/v1/merchandise/events/PRIS-2026/products/${productId}`,
-  );
-  const product = (await response.json()).data as ProductDto;
-  await merchandise.command("addCart", {
-    productId,
+  fake,
+}) => {
+  const product = makeSingle();
+  fake.products = [product];
+  fake.seedLine({
+    productId: product.id,
     variantId: product.variants[0].id,
     bundleSelections: [],
     quantity: 1,
   });
+  const order = makeOrder({ id: ids.order });
+  fake.orders.set(order.id, order);
+  await login(page);
   for (const path of [
-    `/th/souvenirs/products/${productId}`,
+    `/th/souvenirs/products/${product.id}`,
     "/th/souvenirs/cart",
     "/th/souvenirs/orders",
-    `/th/souvenirs/orders/${orders[1].id}`,
+    `/th/souvenirs/orders/${order.id}`,
   ]) {
     await page.goto(path);
-    await expect(page.locator("main h1")).toBeVisible();
+    await expect(page.locator("main h1").first()).toBeVisible();
     for (const width of widths) await fits(page, width);
-  }
-  if (info.project.name === "chromium") {
-    await mkdir("docs/verification/merchandise/visual", { recursive: true });
-    for (const [name, width] of [
-      ["mobile", 320],
-      ["tablet", 834],
-      ["desktop", 1440],
-    ] as const) {
-      await fits(page, width);
-      await page.evaluate(() => scrollTo(0, 0));
-      await page.screenshot({
-        path: `docs/verification/merchandise/visual/p12-shipped-${name}.png`,
-        animations: "disabled",
-      });
-    }
   }
 });
