@@ -117,7 +117,7 @@
   margin-top: 4px;
 }
 .merch-cart-row-option {
-  flex: 1 1 0;
+  flex: 1 1 8rem;
   min-width: 0;
   color: #526787;
   font-size: 14px;
@@ -262,7 +262,7 @@
   line-height: 1.4;
 }
 .merch-checkout-bar-total strong {
-  color: #0b1535;
+  color: #0055ff;
   font-size: 22px;
   font-weight: 800;
   font-family: var(--font-outfit), var(--font-noto-sans-thai), sans-serif;
@@ -280,7 +280,7 @@
   border-radius: 999px;
   color: white;
   background: #ff5800;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -301,7 +301,7 @@
     min-width: 0;
     padding: 10px 14px;
     gap: 6px;
-    font-size: 15px;
+    font-size: 19px;
   }
 }
 .merch-checkout-bar > button:disabled {

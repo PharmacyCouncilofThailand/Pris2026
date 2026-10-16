@@ -302,4 +302,21 @@ test("quantity stepper is three equal-height cells with the value centred", asyn
   expect(
     Math.abs(input.x + input.width / 2 - (box.x + box.width / 2)),
   ).toBeLessThan(1);
+  // Keyboard focus ring on the plus button must not be clipped by the wrapper.
+  await page.locator("#merch-product-quantity").focus();
+  await page.keyboard.press("Tab");
+  const plusButton = page.getByRole("button", { name: "เพิ่มจำนวน" });
+  await expect(plusButton).toBeFocused();
+  const ring = await plusButton.evaluate((e) => {
+    const s = getComputedStyle(e);
+    return {
+      style: s.outlineStyle,
+      width: parseFloat(s.outlineWidth),
+      offset: parseFloat(s.outlineOffset),
+      wrapperOverflow: getComputedStyle(e.parentElement!).overflow,
+    };
+  });
+  expect(ring.style).not.toBe("none");
+  expect(ring.width).toBeGreaterThan(0);
+  expect(ring.wrapperOverflow === "visible" || ring.offset < 0).toBe(true);
 });

@@ -85,7 +85,7 @@
   padding-block: 22px;
   border-bottom: 1px solid #d4def0;
 }
-.merch-review-item:first-child {
+.merch-review-item:first-of-type {
   padding-top: 0;
 }
 .merch-review-item img {

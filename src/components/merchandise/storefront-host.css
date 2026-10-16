@@ -2,9 +2,6 @@
 .merchandise-route-scope .merch-store {
   padding-top: var(--merch-host-header-height, 76px);
 }
-.merchandise-route-scope > footer {
-  padding-bottom: calc(var(--merch-host-bar-height, 0px) + 24px);
-}
 .merchandise-route-scope .merch-banner-art {
   touch-action: pan-y;
 }

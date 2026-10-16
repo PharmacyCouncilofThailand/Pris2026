@@ -1,5 +1,7 @@
+import type { Page } from "@playwright/test";
 import { test, expect, login } from "./fixtures";
-import { makeOptionsProduct, makeSingle, uid } from "./data";
+import { image, makeOptionsProduct, makeSingle, stubImages, uid } from "./data";
+import { confirmButton, reachReview } from "./checkoutHelpers";
 
 test("cart layout, fixed action clearance and keyboard focus", async ({
   page,
@@ -197,4 +199,104 @@ test("checkout bar keeps a four-digit total on one line beside the action at 320
   expect(
     Math.abs(total.y + total.height / 2 - (action.y + action.height / 2)),
   ).toBeLessThan(6);
+});
+
+test("option text keeps a usable width at 375px and the actions stay right-aligned", async ({
+  page,
+  fake,
+  context,
+}) => {
+  await stubImages(context);
+  const p = makeOptionsProduct({ images: [image(1)] });
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  await page.setViewportSize({ width: 375, height: 812 });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.locator(".merch-cart-image")).toBeVisible();
+  const option = page.locator(".merch-cart-row-option");
+  await expect(option).not.toBeEmpty();
+  const box = (await option.boundingBox())!;
+  const lineHeight = await option.evaluate((el) =>
+    parseFloat(getComputedStyle(el).lineHeight),
+  );
+  expect(box.width).toBeGreaterThanOrEqual(96);
+  expect(box.height).toBeLessThanOrEqual(2 * lineHeight + 2);
+  const detail = (await page.locator(".merch-cart-row-detail").boundingBox())!;
+  const stepper = (await page.locator(".merch-cart-stepper").boundingBox())!;
+  const trash = (await page
+    .getByRole("button", { name: `ลบ ${p.nameTh}` })
+    .boundingBox())!;
+  expect(
+    Math.abs(trash.x + trash.width - (detail.x + detail.width)),
+  ).toBeLessThanOrEqual(2);
+  expect(trash.x).toBeGreaterThanOrEqual(stepper.x + stepper.width - 1);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+    375,
+  );
+});
+
+/** Holds matching requests until the returned release function is called. */
+async function hold(page: Page, glob: string, method: string) {
+  let release!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  await page.route(glob, async (route) => {
+    if (route.request().method() === method) await gate;
+    await route.fallback();
+  });
+  return release;
+}
+async function expectBarFits(page: Page, label: string) {
+  const button = page.locator(".merch-checkout-bar > button");
+  await expect(button).toHaveText(label);
+  await expect(page.locator(".merch-checkout-bar-total strong")).toHaveText(
+    "฿1,050.00",
+  );
+  expect(await button.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
+    true,
+  );
+  expect(
+    await page
+      .locator(".merch-checkout-bar")
+      .evaluate((el) => el.scrollWidth === el.clientWidth),
+  ).toBe(true);
+}
+
+test("the longest bar labels fit beside a four-digit total at 320px", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 4,
+  });
+  await page.setViewportSize({ width: 320, height: 700 });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expectBarFits(page, "ดำเนินการสั่งซื้อ");
+  const releaseCart = await hold(page, "**/events/PRIS-2026/cart", "GET");
+  await page.locator(".merch-checkout-bar > button").click();
+  await expectBarFits(page, "กำลังตรวจสอบตะกร้า");
+  releaseCart();
+  await expect(page).toHaveURL(/\/th\/souvenirs\/checkout$/);
+  await expect(
+    page.getByRole("heading", { name: "ข้อมูลผู้รับ", exact: true }),
+  ).toBeVisible();
+  await expectBarFits(page, "ตรวจสอบคำสั่งซื้อ");
+  await reachReview(page);
+  await expectBarFits(page, "ยืนยันคำสั่งซื้อ");
+  const releaseOrder = await hold(page, "**/events/PRIS-2026/orders", "POST");
+  await confirmButton(page).click();
+  await expectBarFits(page, "กำลังยืนยันคำสั่งซื้อ");
+  releaseOrder();
+  await expect(page).toHaveURL(/\/th\/souvenirs\/orders\/[0-9a-f-]{36}$/);
 });

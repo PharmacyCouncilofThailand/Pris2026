@@ -1,5 +1,5 @@
 import { test, expect, login } from "./fixtures";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import type { FakeMerchApi } from "./fakeApi";
 import {
   ids,
@@ -256,7 +256,51 @@ test("reduced motion keeps manual banner controls, keyboard navigation and cance
   ).toHaveAttribute("aria-current", "true");
 });
 
-test("computed Add button contrast meets normal text requirements", async ({
+const luminance = (s: string) => {
+  const c = s
+    .match(/[\d.]+/g)!
+    .slice(0, 3)
+    .map(Number)
+    .map((v) => {
+      v /= 255;
+      return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    });
+  return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
+};
+/** Asserts computed contrast; `large` also requires WCAG large text (>=19px, bold). */
+async function expectContrast(locator: Locator, large = false) {
+  const style = await locator.evaluate((e) => {
+    const s = getComputedStyle(e);
+    return {
+      fg: s.color,
+      bg: s.backgroundColor,
+      image: s.backgroundImage,
+      size: parseFloat(s.fontSize),
+      weight: Number(s.fontWeight),
+    };
+  });
+  if (large) {
+    expect(style.size).toBeGreaterThanOrEqual(19);
+    expect(style.weight).toBeGreaterThanOrEqual(700);
+  }
+  const colors =
+    style.image === "none" ? [style.bg] : style.image.match(/rgb\([^)]+\)/g)!;
+  expect(colors?.length).toBeGreaterThan(0);
+  const foreground = luminance(style.fg),
+    threshold =
+      style.size >= 24 || (style.size >= 18.66 && style.weight >= 700)
+        ? 3
+        : 4.5;
+  for (const color of colors) {
+    const background = luminance(color);
+    expect(
+      (Math.max(foreground, background) + 0.05) /
+        (Math.min(foreground, background) + 0.05),
+    ).toBeGreaterThanOrEqual(threshold);
+  }
+}
+
+test("computed primary action contrast meets WCAG text requirements", async ({
   page,
   fake,
   context,
@@ -264,47 +308,38 @@ test("computed Add button contrast meets normal text requirements", async ({
   await stubImages(context);
   fake.products = many(13);
   seedBanners(fake, 1);
+  fake.seedLine({
+    productId: fake.products[0].id,
+    variantId: fake.products[0].variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  const order = makeOrder({ id: ids.order });
+  fake.orders.set(order.id, order);
+  await login(page);
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
-  for (const locator of [
+  await expectContrast(
     page.getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true }).first(),
-  ]) {
-    const style = await locator.evaluate((e) => {
-      const s = getComputedStyle(e);
-      return {
-        fg: s.color,
-        bg: s.backgroundColor,
-        image: s.backgroundImage,
-        size: parseFloat(s.fontSize),
-        weight: Number(s.fontWeight),
-      };
-    });
-    const luminance = (s: string) => {
-      const c = s
-        .match(/[\d.]+/g)!
-        .slice(0, 3)
-        .map(Number)
-        .map((v) => {
-          v /= 255;
-          return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
-        });
-      return c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
-    };
-    const colors =
-      style.image === "none" ? [style.bg] : style.image.match(/rgb\([^)]+\)/g)!;
-    expect(colors?.length).toBeGreaterThan(0);
-    const foreground = luminance(style.fg),
-      threshold =
-        style.size >= 24 || (style.size >= 18.66 && style.weight >= 700)
-          ? 3
-          : 4.5;
-    for (const color of colors) {
-      const background = luminance(color);
-      expect(
-        (Math.max(foreground, background) + 0.05) /
-          (Math.min(foreground, background) + 0.05),
-      ).toBeGreaterThanOrEqual(threshold);
-    }
+  );
+  await expectContrast(page.locator("header .merch-cart-badge:visible"));
+  await page.goto("/th/souvenirs/cart");
+  const barButton = page.locator(".merch-checkout-bar > button");
+  await expect(barButton).toBeEnabled();
+  for (const width of [320, 390, 479, 480, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expectContrast(barButton, true);
+  }
+  await page.clock.install();
+  await page.goto(`/th/souvenirs/orders/${order.id}`);
+  await expect(page.getByRole("img", { name: /^QR สำหรับ/ })).toBeVisible();
+  fake.setPayment(order.id, { state: "paid", canCheck: false, attempt: null });
+  await page.clock.runFor(10_000);
+  const justPaid = page.locator(".merch-just-paid-button");
+  await expect(justPaid).toBeVisible();
+  for (const width of [320, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expectContrast(justPaid, true);
   }
 });
 

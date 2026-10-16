@@ -208,6 +208,10 @@
 .merch-order .merch-review-section:first-child {
   padding-top: 0;
 }
+.merch-order address {
+  font-style: normal;
+  margin-top: 12px;
+}
 .merch-order .merch-review-section h2 {
   display: flex;
   align-items: center;
@@ -281,6 +285,6 @@
   border-radius: 999px;
   color: white;
   background: #ff5800;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 700;
 }
