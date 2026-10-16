@@ -108,19 +108,19 @@ const universityWide = [
     id: 7,
     name: "มหาวิทยาลัยบูรพา",
     logo: "/assets/Img/University/BUU RxBUU_0 (2) (1).png",
-    scaleClass: "scale-[0.92]",
+    scaleClass: "scale-[1.05]",
   },
   {
     id: 8,
     name: "มหาวิทยาลัยมหิดล",
-    logo: "/assets/Img/University/มหาวิทยาลัยมหิดล คณะเภสัชศาสตร์.jpg",
+    logo: "/assets/Img/University/มาวิทยาลัยมหิดล แก้ไข.jpg",
     scaleClass: "scale-[0.92]",
   },
   {
     id: 9,
     name: "มหาวิทยาลัยรังสิต",
     logo: "/assets/Img/University/รังสิต.jpg",
-    scaleClass: "scale-[0.88]",
+    scaleClass: "scale-[1.3]",
   },
 ];
 
@@ -357,6 +357,13 @@ const sponsorLogos = [
     id: 38,
     name: "บริษัท ห้าม้า โอสถ จำกัด",
     logo: "/assets/Img/sponsors/บจก.ห้าม้าโอสถ-พื้นเขียว_1_.jpg",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
+  },
+  {
+    id: 39,
+    name: "KAI",
+    logo: "/assets/Img/sponsors/โจ๊ก.jpg",
     scaleClass: "scale-[1.15]",
     unconstrained: true,
   },
