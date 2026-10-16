@@ -246,19 +246,16 @@
   color: #526787;
 }
 .merch-cart-edit-toggle {
-  position: relative;
-  display: inline;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 4px;
   line-height: inherit;
   color: #0055ff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-}
-.merch-cart-edit-toggle::after {
-  content: "";
-  position: absolute;
-  inset: -11px -6px;
+  vertical-align: middle;
 }
 .merch-cart-bar {
   position: fixed;

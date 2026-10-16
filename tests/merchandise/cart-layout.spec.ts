@@ -166,7 +166,11 @@ test("last cart row stays above the bar on a phone", async ({ page, fake }) => {
   await login(page);
   await page.goto("/th/souvenirs/cart");
   const trash = page.getByRole("button", { name: "ลบ สินค้า 3" });
+  // scrollIntoViewIfNeeded treats a row hidden under the fixed bar as visible,
+  // so scroll to the very end and check the clearance there.
   await trash.scrollIntoViewIfNeeded();
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
   const t = (await trash.boundingBox())!,
     bar = (await page.locator(".merch-checkout-bar").boundingBox())!;
   expect(t.y + t.height).toBeLessThanOrEqual(bar.y + 1);
