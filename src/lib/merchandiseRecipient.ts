@@ -74,3 +74,21 @@ export function validateRecipient(
     },
   };
 }
+
+/** One-line address for the review step; delivery note is shown separately. */
+export function formatRecipientLine(r: Recipient): string {
+  return [
+    r.fullName,
+    r.phone,
+    r.company,
+    r.addressLine,
+    r.subdistrict,
+    r.district,
+    r.province,
+    r.postalCode,
+    "ประเทศไทย",
+  ]
+    .map((part) => (part ?? "").trim())
+    .filter(Boolean)
+    .join(" ");
+}

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { emptyRecipient, normalizePhone, validateRecipient, type RecipientDraft } from "./merchandiseRecipient";
+import { emptyRecipient, formatRecipientLine, normalizePhone, validateRecipient, type RecipientDraft } from "./merchandiseRecipient";
+import type { Recipient } from "../types/merchandise";
 
 const ok: RecipientDraft = {
   fullName: " สมชาย ใจดี ", phone: "+66 81-234-5678", addressLine: "1 ถนน", subdistrict: "ก",
@@ -36,3 +37,17 @@ test("emptyRecipient uses buyer defaults", () => {
   assert.equal(d.fullName, "A");
   assert.equal(d.phone, "");
 });
+
+const base: Recipient = {
+  fullName: "ผู้รับ ทดสอบ", phone: "0812345678", addressLine: "99 ถนนสังเคราะห์", subdistrict: "ตำบลทดสอบ",
+  district: "อำเภอทดสอบ", province: "กรุงเทพมหานคร", postalCode: "10100", company: null, deliveryNote: null,
+};
+test("recipient line joins parts with single spaces and ends with ประเทศไทย", () =>
+  assert.equal(formatRecipientLine(base),
+    "ผู้รับ ทดสอบ 0812345678 99 ถนนสังเคราะห์ ตำบลทดสอบ อำเภอทดสอบ กรุงเทพมหานคร 10100 ประเทศไทย"));
+test("company is included after the phone when present", () =>
+  assert.equal(formatRecipientLine({ ...base, company: "บริษัท ก" }),
+    "ผู้รับ ทดสอบ 0812345678 บริษัท ก 99 ถนนสังเคราะห์ ตำบลทดสอบ อำเภอทดสอบ กรุงเทพมหานคร 10100 ประเทศไทย"));
+test("empty and whitespace-only company are omitted and the delivery note is excluded", () =>
+  assert.equal(formatRecipientLine({ ...base, company: "  ", deliveryNote: "โทรก่อน" }),
+    "ผู้รับ ทดสอบ 0812345678 99 ถนนสังเคราะห์ ตำบลทดสอบ อำเภอทดสอบ กรุงเทพมหานคร 10100 ประเทศไทย"));

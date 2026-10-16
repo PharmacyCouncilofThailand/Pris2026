@@ -1,5 +1,5 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
@@ -8,7 +8,10 @@ import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import { canCheckout, describeLine } from "@/lib/merchandiseSelection";
 import { formatBaht } from "@/lib/merchandiseFormat";
-import { validateRecipient } from "@/lib/merchandiseRecipient";
+import {
+  formatRecipientLine,
+  validateRecipient,
+} from "@/lib/merchandiseRecipient";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { CartDto, Recipient } from "@/types/merchandise";
 import { CheckoutBar } from "./CheckoutBar";
@@ -64,30 +67,13 @@ function CheckoutWorkspace() {
   const checkout = useMerchandiseCheckout();
   const { step, status, message, cart, loading } = checkout;
   const [returned, setReturned] = useState(false);
-  const bar = useRef<HTMLDivElement>(null),
-    heading = useRef<HTMLHeadingElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
   const review = step === "review";
   const storeData = store.data!;
   const eligible = cart ? canCheckout(cart, storeData) : false;
   const uncertain = status === "uncertain";
   const submitting = status === "submitting";
   const validated = validateRecipient(checkout.draft);
-  useLayoutEffect(() => {
-    const element = bar.current;
-    if (!element) return;
-    const measure = () =>
-      document.documentElement.style.setProperty(
-        "--merch-host-bar-height",
-        `${element.getBoundingClientRect().height}px`,
-      );
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty("--merch-host-bar-height");
-    };
-  }, [review]);
   useLayoutEffect(() => {
     if (review) {
       heading.current?.focus();
@@ -197,8 +183,6 @@ function CheckoutWorkspace() {
             <ReviewBody
               cart={cart}
               recipient={validated.ok ? validated.value : null}
-              productionInfoTh={storeData.productionInfoTh}
-              shippingInfoTh={storeData.shippingInfoTh}
             />
           )}
         </section>
@@ -215,7 +199,7 @@ function CheckoutWorkspace() {
           </button>
         </CheckoutBar>
       ) : (
-        <div className="merch-cart-bar" ref={bar}>
+        <CheckoutBar totalBaht={cart?.amounts?.totalBaht ?? null}>
           {uncertain ? (
             <button
               type="button"
@@ -243,7 +227,7 @@ function CheckoutWorkspace() {
               <ArrowRight size={22} aria-hidden="true" />
             </button>
           )}
-        </div>
+        </CheckoutBar>
       )}
     </main>
   );
@@ -251,17 +235,36 @@ function CheckoutWorkspace() {
 function ReviewBody({
   cart,
   recipient,
-  productionInfoTh,
-  shippingInfoTh,
 }: {
   cart: CartDto;
   recipient: Recipient | null;
-  productionInfoTh: string | null;
-  shippingInfoTh: string | null;
 }) {
+  const info = useId();
   return (
     <>
-      <section aria-label="รายการที่ตรวจสอบ">
+      <section
+        className="merch-review-section"
+        aria-labelledby={`${info}-address`}
+      >
+        <h2 id={`${info}-address`}>ที่อยู่จัดส่ง</h2>
+        {recipient && (
+          <>
+            <p className="merch-review-address">
+              {formatRecipientLine(recipient)}
+            </p>
+            {recipient.deliveryNote && (
+              <p className="merch-review-note">
+                หมายเหตุจัดส่ง: {recipient.deliveryNote}
+              </p>
+            )}
+          </>
+        )}
+      </section>
+      <section
+        className="merch-review-section"
+        aria-labelledby={`${info}-items`}
+      >
+        <h2 id={`${info}-items`}>รายการสินค้า</h2>
         {cart.items.map((line) => {
           const image = line.product?.images[0];
           const detail = describeLine(line);
@@ -272,77 +275,69 @@ function ReviewBody({
                   unoptimized
                   src={image.url}
                   alt=""
-                  width={80}
-                  height={92}
+                  width={64}
+                  height={72}
                 />
               )}
               <div>
-                <h2>{line.product?.nameTh ?? "สินค้านี้ไม่มีแล้ว"}</h2>
+                <h3>{line.product?.nameTh ?? "สินค้านี้ไม่มีแล้ว"}</h3>
                 {detail && <p className="merch-cart-muted">{detail}</p>}
-                {line.unitPriceBaht !== null && (
-                  <p className="merch-cart-unit-price">
-                    {formatBaht(line.unitPriceBaht)}
-                  </p>
-                )}
-                <p>
-                  {line.quantity}{" "}
-                  {line.product?.kind === "bundle" ? "ชุด" : "ชิ้น"}
-                  {line.lineTotalBaht !== null &&
-                    ` · รวม ${formatBaht(line.lineTotalBaht)}`}
+                <p className="merch-review-price">
+                  <span>
+                    {line.unitPriceBaht !== null
+                      ? formatBaht(line.unitPriceBaht)
+                      : ""}
+                  </span>
+                  <span className="merch-review-qty">x{line.quantity}</span>
                 </p>
               </div>
             </article>
           );
         })}
       </section>
-      <section className="merch-review-section">
-        <h2>ที่อยู่จัดส่ง</h2>
-        {recipient && (
-          <address>
-            <strong>{recipient.fullName}</strong>
-            <br />
-            {recipient.phone}
-            <br />
-            {recipient.company && (
-              <>
-                {recipient.company}
-                <br />
-              </>
-            )}
-            {recipient.addressLine}
-            <br />
-            {recipient.subdistrict} {recipient.district}
-            <br />
-            {recipient.province} {recipient.postalCode}
-            <br />
-            ประเทศไทย
-            {recipient.deliveryNote && (
-              <p>หมายเหตุจัดส่ง: {recipient.deliveryNote}</p>
-            )}
-          </address>
-        )}
+      <section
+        className="merch-review-section"
+        aria-labelledby={`${info}-method`}
+      >
+        <h2 id={`${info}-method`}>ช่องทางการชำระเงิน</h2>
+        <label className="merch-payment-option">
+          <Image
+            unoptimized
+            src="/assets/Img/payment/thai-qr.webp"
+            alt=""
+            width={32}
+            height={32}
+          />
+          QR พร้อมเพย์
+          <input type="radio" name="payment-method" checked readOnly />
+        </label>
       </section>
-      <section className="merch-review-section">
-        <h2>ชำระเงินด้วย</h2>
-        <p className="merch-payment-method">Thai QR PromptPay</p>
-        <p>ค่าสินค้าและค่าจัดส่งเท่านั้น ไม่มีค่าธรรมเนียมชำระเงินเพิ่ม</p>
+      <section
+        className="merch-review-section"
+        aria-labelledby={`${info}-payment`}
+      >
+        <h2 id={`${info}-payment`}>ข้อมูลการชำระเงิน</h2>
+        {cart.amounts && (
+          <dl className="merch-review-amounts">
+            <div>
+              <dt>รวมคำสั่งซื้อ</dt>
+              <dd>{formatBaht(cart.amounts.subtotalBaht)}</dd>
+            </div>
+            <div>
+              <dt>ค่าจัดส่ง</dt>
+              <dd>{formatBaht(cart.amounts.shippingBaht)}</dd>
+            </div>
+            <div className="merch-review-amounts-total">
+              <dt>ยอดชำระเงินทั้งหมด</dt>
+              <dd>{formatBaht(cart.amounts.totalBaht)}</dd>
+            </div>
+          </dl>
+        )}
       </section>
       <p className="merch-review-lock">
         เมื่อยืนยันคำสั่งซื้อแล้ว จะไม่สามารถแก้ไขรายการสินค้า จำนวน ตัวเลือก
         หรือข้อมูลผู้รับได้ด้วยตนเอง
       </p>
-      {productionInfoTh && (
-        <section className="merch-review-section">
-          <h2>การผลิต</h2>
-          <p>{productionInfoTh}</p>
-        </section>
-      )}
-      {shippingInfoTh && (
-        <section className="merch-review-section">
-          <h2>การจัดส่ง</h2>
-          <p>{shippingInfoTh}</p>
-        </section>
-      )}
     </>
   );
 }

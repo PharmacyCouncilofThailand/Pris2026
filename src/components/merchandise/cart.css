@@ -206,39 +206,6 @@
   font-size: 14px;
   font-weight: 600;
 }
-.merch-cart-summary {
-  padding: 24px;
-  background: #fff;
-  border-radius: 16px;
-  align-self: start;
-}
-.merch-cart-summary h2 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 16px;
-}
-.merch-cart-summary dl > div {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.merch-cart-summary dd {
-  font-weight: 700;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-.merch-cart-total {
-  border-top: 1px solid #d4def0;
-  padding-top: 20px;
-  margin-top: 20px;
-  align-items: center;
-}
-.merch-cart-total dd {
-  color: #0055ff;
-  font-size: 26px;
-  font-weight: 800;
-}
 .merch-cart-bar {
   position: fixed;
   z-index: 40;

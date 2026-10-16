@@ -119,7 +119,7 @@ test("review shows the amounts of a fresh GET cart and the POST is bound to that
   });
   await toReviewButton(page).click();
   await expect(page.getByText("ถุงผ้า Pris", { exact: true })).toBeVisible();
-  await expect(page.getByText("Thai QR PromptPay")).toBeVisible();
+  await expect(page.getByRole("radio", { name: "QR พร้อมเพย์" })).toBeChecked();
   await expect(confirmButton(page)).toContainText("฿400.00");
   const version = fake.cart.cartVersion;
   await confirmButton(page).click();

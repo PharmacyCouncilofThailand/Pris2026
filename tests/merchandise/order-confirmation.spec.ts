@@ -338,3 +338,25 @@ test("a 429 on a checkout retry keeps the uncertain state, then the retry replay
   await expect(page).toHaveURL(ORDER_URL);
   expect(fake.orders.size).toBe(1);
 });
+
+test("review shows one-line address, compact items, PromptPay radio and payment info", async ({ page, fake }) => {
+  seedCheckout(fake); await login(page); await openCheckout(page); await reachReview(page);
+  await expect(page.locator(".merch-review-address")).toHaveText(/^ผู้รับ คนละคน 0812345678 99 ถนนสังเคราะห์ ตำบลทดสอบ อำเภอทดสอบ กรุงเทพมหานคร 10100 ประเทศไทย$/);
+  await expect(page.locator(".merch-review-item .merch-review-qty")).toHaveText("x1");
+  const radio = page.getByRole("radio", { name: "QR พร้อมเพย์" });
+  await expect(radio).toBeChecked();
+  await expect(page.locator(".merch-payment-option img")).toHaveAttribute("src", /thai-qr\.webp/);
+  const info = page.getByRole("region", { name: "ข้อมูลการชำระเงิน" });
+  for (const row of ["รวมคำสั่งซื้อ", "ค่าจัดส่ง", "ยอดชำระเงินทั้งหมด"]) await expect(info).toContainText(row);
+  for (const gone of ["การผลิต", "การจัดส่ง", "ชำระเงินด้วย", "สรุปคำสั่งซื้อ"])
+    await expect(page.getByRole("heading", { name: gone, exact: true })).toHaveCount(0);
+  await expect(confirmButton(page)).toBeVisible();
+});
+test("review lock notice stays above the bar on a phone", async ({ page, fake }) => {
+  seedCheckout(fake); await page.setViewportSize({ width: 375, height: 812 });
+  await login(page); await openCheckout(page); await reachReview(page);
+  const lock = page.locator(".merch-review-lock");
+  await lock.scrollIntoViewIfNeeded();
+  const l = (await lock.boundingBox())!, bar = (await page.locator(".merch-checkout-bar").boundingBox())!;
+  expect(l.y + l.height).toBeLessThanOrEqual(bar.y + 1);
+});
