@@ -337,11 +337,11 @@ export class FakeMerchApi {
   private createOrder(headers: Record<string, string>, body: unknown): Reply {
     const key = headers["idempotency-key"];
     if (!key || !/^[A-Za-z0-9_-]{1,100}$/.test(key))
-      return this.failure(
-        422,
-        "MERCH_IDEMPOTENCY_KEY_REQUIRED",
-        "ต้องระบุ Idempotency-Key",
-      );
+      return this.failure(400, "VALIDATION_ERROR", "ข้อมูลไม่ถูกต้อง", {
+        fieldErrors: {
+          "Idempotency-Key": ["ต้องเป็นอักขระ A-Z a-z 0-9 _ - ยาว 1-100 ตัว"],
+        },
+      });
     const b = (body ?? {}) as { cartVersion?: string; recipient?: Recipient };
     const fingerprint = JSON.stringify(b);
     const prior = this.keys.get(key);
@@ -352,10 +352,13 @@ export class FakeMerchApi {
           "MERCH_IDEMPOTENCY_KEY_REUSED",
           "คีย์นี้ถูกใช้กับคำขอที่ต่างกัน",
         );
-      return this.ok({
-        order: this.orders.get(prior.orderId)!,
-        replayed: true,
-      });
+      return {
+        status: 201,
+        body: {
+          success: true,
+          data: { order: this.orders.get(prior.orderId)!, replayed: true },
+        },
+      };
     }
     if (this.store.state !== "open")
       return this.failure(
@@ -369,11 +372,22 @@ export class FakeMerchApi {
         "MERCH_CART_CHANGED",
         "ตะกร้ามีการเปลี่ยนแปลง กรุณาตรวจสอบอีกครั้ง",
       );
+    if (this.cart.items.length === 0)
+      return this.failure(422, "MERCH_CART_EMPTY", "ตะกร้าว่าง");
     if (!this.cart.amounts)
       return this.failure(
-        409,
+        422,
         "MERCH_CART_INVALID",
         "ตะกร้ามีรายการที่ใช้ไม่ได้",
+        {
+          items: this.cart.items
+            .filter((l) => !l.valid)
+            .map((l) => ({
+              id: l.id,
+              productId: l.productId,
+              issueCodes: l.issueCodes,
+            })),
+        },
       );
     const id = randomUUID();
     const order = makeOrder({
@@ -400,6 +414,9 @@ export class FakeMerchApi {
     this.orders.set(id, order);
     this.keys.set(key, { fingerprint, orderId: id });
     this.cart = { ...this.emptyCart(), buyerDefaults: this.cart.buyerDefaults };
-    return this.ok({ order, replayed: false });
+    return {
+      status: 201,
+      body: { success: true, data: { order, replayed: false } },
+    };
   }
 }
