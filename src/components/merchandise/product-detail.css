@@ -142,19 +142,30 @@
   margin-block: 30px 12px;
 }
 .merch-detail-quantity > div {
-  display: flex;
+  display: grid;
+  grid-template-columns: 44px 56px 44px;
+  align-items: center;
+  height: 46px;
+  overflow: hidden;
   border: 1px solid #b8c9e9;
   border-radius: 12px;
   background: white;
 }
 .merch-detail-quantity button {
   width: 44px;
-  min-height: 46px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
   font-size: 23px;
 }
 .merch-detail-quantity input {
-  width: 54px;
+  width: 56px;
+  height: 44px;
   min-width: 0;
+  padding: 0;
+  border: 0;
   text-align: center;
   font-weight: 700;
   background: transparent;

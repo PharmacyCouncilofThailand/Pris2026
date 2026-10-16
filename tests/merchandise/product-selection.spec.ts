@@ -264,3 +264,27 @@ test("a rejected add shows the API message, clears the intent and stays on the p
     page.locator("header .merch-header-cart:visible .merch-cart-badge"),
   ).toHaveText("1");
 });
+
+test("quantity stepper is three equal-height cells with the value centred", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  const minus = (await page
+    .getByRole("button", { name: "ลดจำนวน" })
+    .boundingBox())!;
+  const plus = (await page
+    .getByRole("button", { name: "เพิ่มจำนวน" })
+    .boundingBox())!;
+  const box = (await page
+    .locator(".merch-detail-quantity > div")
+    .boundingBox())!;
+  expect(minus.width).toBe(44);
+  expect(plus.width).toBe(44);
+  expect(minus.height).toBe(plus.height);
+  expect(
+    Math.abs(minus.x - box.x - (box.x + box.width - plus.x - plus.width)),
+  ).toBeLessThan(1);
+});
