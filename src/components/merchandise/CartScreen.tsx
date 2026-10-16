@@ -302,36 +302,40 @@ function CartWorkspace() {
           ยังดูตะกร้าและประวัติคำสั่งซื้อได้
         </p>
       )}
-      <div className="merch-cart-grid merch-cart-grid-single">
-        <section aria-label="รายการสินค้า">
-          {data.items.length ? (
-            data.items.map((line) => (
-              <CartRow
-                key={`${line.id}:${data.cartVersion}:${reset}`}
-                line={line}
-                storeState={settings.state}
-                busy={busy || blocked || unauthorized}
-                onUpdate={(patch) => update(line, patch)}
-                onRemove={() => remove(line)}
-                priceChange={priceChanges[line.id]}
-              />
-            ))
-          ) : (
-            <div className="merch-cart-empty">
-              <h2>ยังไม่มีสินค้าในตะกร้า</h2>
-              <Link className="merch-cart-secondary" href="/souvenirs">
-                เลือกสินค้า
-              </Link>
-            </div>
-          )}
-        </section>
+      <div className="merch-flow">
+        <div className="merch-flow-main">
+          <div className="merch-cart-grid merch-cart-grid-single">
+            <section aria-label="รายการสินค้า">
+              {data.items.length ? (
+                data.items.map((line) => (
+                  <CartRow
+                    key={`${line.id}:${data.cartVersion}:${reset}`}
+                    line={line}
+                    storeState={settings.state}
+                    busy={busy || blocked || unauthorized}
+                    onUpdate={(patch) => update(line, patch)}
+                    onRemove={() => remove(line)}
+                    priceChange={priceChanges[line.id]}
+                  />
+                ))
+              ) : (
+                <div className="merch-cart-empty">
+                  <h2>ยังไม่มีสินค้าในตะกร้า</h2>
+                  <Link className="merch-cart-secondary" href="/souvenirs">
+                    เลือกสินค้า
+                  </Link>
+                </div>
+              )}
+            </section>
+          </div>
+        </div>
+        <CheckoutBar totalBaht={data.amounts?.totalBaht ?? null}>
+          <button type="button" disabled={!allowed} onClick={proceed}>
+            {busy ? "กำลังตรวจสอบตะกร้า" : "ดำเนินการสั่งซื้อ"}
+            <ArrowRight size={22} aria-hidden="true" />
+          </button>
+        </CheckoutBar>
       </div>
-      <CheckoutBar totalBaht={data.amounts?.totalBaht ?? null}>
-        <button type="button" disabled={!allowed} onClick={proceed}>
-          {busy ? "กำลังตรวจสอบตะกร้า" : "ดำเนินการสั่งซื้อ"}
-          <ArrowRight size={22} aria-hidden="true" />
-        </button>
-      </CheckoutBar>
     </main>
   );
 }

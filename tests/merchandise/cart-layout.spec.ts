@@ -1,7 +1,13 @@
 import type { Page } from "@playwright/test";
 import { test, expect, login } from "./fixtures";
 import { image, makeOptionsProduct, makeSingle, stubImages, uid } from "./data";
-import { confirmButton, reachReview } from "./checkoutHelpers";
+import {
+  confirmButton,
+  fillAddress,
+  reachReview,
+  toReviewButton,
+} from "./checkoutHelpers";
+import type { FakeMerchApi } from "./fakeApi";
 
 test("cart layout, fixed action clearance and keyboard focus", async ({
   page,
@@ -36,7 +42,14 @@ test("cart layout, fixed action clearance and keyboard focus", async ({
     await last.scrollIntoViewIfNeeded();
     const action = await last.boundingBox();
     const bar = await page.locator(".merch-checkout-bar").boundingBox();
-    expect(action!.y + action!.height).toBeLessThanOrEqual(bar!.y);
+    if (width < 768) {
+      // Phone: the fixed bar overlays the page, so rows must clear it.
+      expect(action!.y + action!.height).toBeLessThanOrEqual(bar!.y);
+    } else {
+      // Tablet/desktop: the action panel sits beside the rows, not over them.
+      const main = (await page.locator(".merch-flow-main").boundingBox())!;
+      expect(bar!.x).toBeGreaterThanOrEqual(main.x + main.width);
+    }
     await page.evaluate(() => window.scrollTo(0, 0));
   }
   const plus = page.getByRole("button", {
@@ -99,6 +112,7 @@ test("cart row reads image+name / option+stepper+trash / price, and the bar show
     bundleSelections: [],
     quantity: 1,
   });
+  await page.setViewportSize({ width: 390, height: 844 });
   await login(page);
   await page.goto("/th/souvenirs/cart");
   const name = (await page
@@ -327,4 +341,97 @@ test("checkout steps are one compact component with connectors", async ({
         .evaluate((e) => getComputedStyle(e).fontSize),
     ),
   ).toBeGreaterThanOrEqual(14);
+});
+
+function seedOne(fake: FakeMerchApi) {
+  const p = makeSingle();
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+}
+const hostBarHeight = (page: Page) =>
+  page.evaluate(() =>
+    document.documentElement.style.getPropertyValue("--merch-host-bar-height"),
+  );
+
+test("the action is a sticky right panel at 1024 and a fixed bar at 390", async ({
+  page,
+  fake,
+}) => {
+  seedOne(fake);
+  await login(page);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto("/th/souvenirs/cart");
+  const bar = page.locator(".merch-checkout-bar");
+  await expect(bar).toHaveCSS("position", "sticky");
+  const main = (await page.locator(".merch-flow-main").boundingBox())!,
+    panel = (await bar.boundingBox())!;
+  expect(panel.x).toBeGreaterThanOrEqual(main.x + main.width);
+  expect(panel.width).toBeCloseTo(320, 0);
+  expect(await hostBarHeight(page)).toBe("");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(bar).toHaveCSS("position", "fixed");
+});
+
+test("bar height variable follows the layout on resize", async ({
+  page,
+  fake,
+}) => {
+  seedOne(fake);
+  await login(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/th/souvenirs/cart");
+  await expect.poll(() => hostBarHeight(page)).not.toBe("");
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect.poll(() => hostBarHeight(page)).toBe("");
+});
+
+test("no horizontal scroll beside the panel at 768", async ({
+  page,
+  fake,
+  context,
+}) => {
+  await stubImages(context);
+  const options = makeOptionsProduct({ images: [image(1)] });
+  const single = makeSingle({ id: uid(2), nameTh: "สินค้า 2" });
+  fake.products = [options, single];
+  for (const p of [options, single])
+    fake.seedLine({
+      productId: p.id,
+      variantId: p.variants[0].id,
+      bundleSelections: [],
+      quantity: 1,
+    });
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.locator(".merch-cart-row")).toHaveCount(2);
+  await page.evaluate(() => document.fonts.ready);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+    768,
+  );
+  const panel = (await page.locator(".merch-checkout-bar").boundingBox())!;
+  expect(Math.abs(panel.width - 280)).toBeLessThanOrEqual(1);
+  const proceed = page.locator(".merch-checkout-bar > button");
+  expect(await proceed.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
+    true,
+  );
+  await proceed.click();
+  await expect(page).toHaveURL(/\/th\/souvenirs\/checkout$/);
+  await expect(
+    page.getByRole("heading", { name: "ข้อมูลผู้รับ", exact: true }),
+  ).toBeVisible();
+  await fillAddress(page);
+  await toReviewButton(page).click();
+  await expect(
+    page.getByRole("heading", { name: "ตรวจสอบคำสั่งซื้อ", exact: true }),
+  ).toBeVisible();
+  await expect(confirmButton(page)).toBeEnabled();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
+    768,
+  );
 });

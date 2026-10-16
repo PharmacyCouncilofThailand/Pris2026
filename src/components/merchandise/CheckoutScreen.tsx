@@ -134,80 +134,88 @@ function CheckoutWorkspace() {
           <Link href="/souvenirs/cart">กลับไปตรวจสอบตะกร้า</Link>
         </p>
       )}
-      <div className="merch-cart-grid merch-cart-grid-single">
-        <section>
-          {!review ? (
-            <RecipientForm
-              value={checkout.draft}
-              onChange={checkout.setDraft}
-              onSubmit={checkout.toReview}
-              errors={checkout.errors}
-              busy={false}
-              buyerEmail={
-                user?.email ?? contextCart.data?.buyerDefaults.email ?? ""
-              }
-              focusName={returned}
-            />
-          ) : !cart ? (
-            loading ? (
-              <p role="status">กำลังตรวจสอบตะกร้า</p>
+      <div className="merch-flow">
+        <div className="merch-flow-main">
+          <div className="merch-cart-grid merch-cart-grid-single">
+            <section>
+              {!review ? (
+                <RecipientForm
+                  value={checkout.draft}
+                  onChange={checkout.setDraft}
+                  onSubmit={checkout.toReview}
+                  errors={checkout.errors}
+                  busy={false}
+                  buyerEmail={
+                    user?.email ?? contextCart.data?.buyerDefaults.email ?? ""
+                  }
+                  focusName={returned}
+                />
+              ) : !cart ? (
+                loading ? (
+                  <p role="status">กำลังตรวจสอบตะกร้า</p>
+                ) : (
+                  <button
+                    className="merch-cart-secondary"
+                    type="button"
+                    onClick={() => void checkout.reloadReview()}
+                  >
+                    ลองโหลดตะกร้าอีกครั้ง
+                  </button>
+                )
+              ) : (
+                <ReviewBody
+                  cart={cart}
+                  recipient={validated.ok ? validated.value : null}
+                />
+              )}
+            </section>
+          </div>
+        </div>
+        {!review ? (
+          <CheckoutBar totalBaht={contextCart.data?.amounts?.totalBaht ?? null}>
+            <button
+              type="submit"
+              form="merch-recipient-form"
+              disabled={!canCheckout(contextCart.data!, storeData)}
+            >
+              ตรวจสอบคำสั่งซื้อ
+              <ArrowRight size={22} aria-hidden="true" />
+            </button>
+          </CheckoutBar>
+        ) : (
+          <CheckoutBar
+            totalBaht={cart?.amounts?.totalBaht ?? null}
+            label="ยอดชำระเงินทั้งหมด"
+            details={cart ? <PaymentInfo cart={cart} /> : undefined}
+          >
+            {uncertain ? (
+              <button
+                type="button"
+                disabled={checkout.blocked}
+                onClick={() => void checkout.retry()}
+              >
+                ลองอีกครั้ง
+                <ArrowRight size={22} aria-hidden="true" />
+              </button>
             ) : (
               <button
-                className="merch-cart-secondary"
                 type="button"
-                onClick={() => void checkout.reloadReview()}
+                disabled={
+                  submitting ||
+                  loading ||
+                  !eligible ||
+                  checkout.closed ||
+                  checkout.blocked
+                }
+                onClick={() => void checkout.confirm()}
               >
-                ลองโหลดตะกร้าอีกครั้ง
+                {submitting ? "กำลังยืนยันคำสั่งซื้อ" : "ยืนยันคำสั่งซื้อ"}
+                <ArrowRight size={22} aria-hidden="true" />
               </button>
-            )
-          ) : (
-            <ReviewBody
-              cart={cart}
-              recipient={validated.ok ? validated.value : null}
-            />
-          )}
-        </section>
+            )}
+          </CheckoutBar>
+        )}
       </div>
-      {!review ? (
-        <CheckoutBar totalBaht={contextCart.data?.amounts?.totalBaht ?? null}>
-          <button
-            type="submit"
-            form="merch-recipient-form"
-            disabled={!canCheckout(contextCart.data!, storeData)}
-          >
-            ตรวจสอบคำสั่งซื้อ
-            <ArrowRight size={22} aria-hidden="true" />
-          </button>
-        </CheckoutBar>
-      ) : (
-        <CheckoutBar totalBaht={cart?.amounts?.totalBaht ?? null}>
-          {uncertain ? (
-            <button
-              type="button"
-              disabled={checkout.blocked}
-              onClick={() => void checkout.retry()}
-            >
-              ลองอีกครั้ง
-              <ArrowRight size={22} aria-hidden="true" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              disabled={
-                submitting ||
-                loading ||
-                !eligible ||
-                checkout.closed ||
-                checkout.blocked
-              }
-              onClick={() => void checkout.confirm()}
-            >
-              {submitting ? "กำลังยืนยันคำสั่งซื้อ" : "ยืนยันคำสั่งซื้อ"}
-              <ArrowRight size={22} aria-hidden="true" />
-            </button>
-          )}
-        </CheckoutBar>
-      )}
     </main>
   );
 }
@@ -291,11 +299,24 @@ function ReviewBody({
           <input type="radio" name="payment-method" checked readOnly />
         </label>
       </section>
+      <PaymentInfo cart={cart} inline />
+    </>
+  );
+}
+/** Payment amounts and lock notice: inline on phones, inside the panel from 768px. */
+function PaymentInfo({ cart, inline }: { cart: CartDto; inline?: boolean }) {
+  const id = useId();
+  return (
+    <>
       <section
-        className="merch-review-section"
-        aria-labelledby={`${info}-payment`}
+        className={
+          inline
+            ? "merch-review-section merch-review-amounts-inline"
+            : "merch-review-panel-section"
+        }
+        aria-labelledby={`${id}-payment`}
       >
-        <h2 id={`${info}-payment`}>ข้อมูลการชำระเงิน</h2>
+        <h2 id={`${id}-payment`}>ข้อมูลการชำระเงิน</h2>
         {cart.amounts && (
           <dl className="merch-review-amounts">
             <div>
@@ -313,7 +334,13 @@ function ReviewBody({
           </dl>
         )}
       </section>
-      <p className="merch-review-lock">
+      <p
+        className={
+          inline
+            ? "merch-review-lock merch-review-lock-inline"
+            : "merch-review-lock"
+        }
+      >
         เมื่อยืนยันคำสั่งซื้อแล้ว จะไม่สามารถแก้ไขรายการสินค้า จำนวน ตัวเลือก
         หรือข้อมูลผู้รับได้ด้วยตนเอง
       </p>

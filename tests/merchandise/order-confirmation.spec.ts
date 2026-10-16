@@ -358,8 +358,38 @@ test("review shows one-line address, compact items, PromptPay radio and payment 
 test("review lock notice stays above the bar on a phone", async ({ page, fake }) => {
   seedCheckout(fake); await page.setViewportSize({ width: 375, height: 812 });
   await login(page); await openCheckout(page); await reachReview(page);
-  const lock = page.locator(".merch-review-lock");
+  const lock = page.locator(".merch-flow-main .merch-review-lock");
   await lock.scrollIntoViewIfNeeded();
   const l = (await lock.boundingBox())!, bar = (await page.locator(".merch-checkout-bar").boundingBox())!;
   expect(l.y + l.height).toBeLessThanOrEqual(bar.y + 1);
+});
+
+test("review puts payment info and the lock notice in the panel at 1024, inline at 390", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await openCheckout(page);
+  await reachReview(page);
+  const panel = page.locator(".merch-checkout-bar");
+  await expect(
+    panel.getByRole("region", { name: "ข้อมูลการชำระเงิน" }),
+  ).toBeVisible();
+  await expect(panel.locator(".merch-review-lock")).toBeVisible();
+  await expect(
+    page
+      .locator(".merch-flow-main")
+      .getByRole("region", { name: "ข้อมูลการชำระเงิน" }),
+  ).toHaveCount(0);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(
+    page
+      .locator(".merch-flow-main")
+      .getByRole("region", { name: "ข้อมูลการชำระเงิน" }),
+  ).toBeVisible();
+  await expect(panel.locator(".merch-checkout-bar-total")).toContainText(
+    "ยอดชำระเงินทั้งหมด",
+  );
 });
