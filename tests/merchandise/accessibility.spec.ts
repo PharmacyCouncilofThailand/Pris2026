@@ -79,13 +79,7 @@ test("both locale headers and catalogue retain the approved columns and one row 
       if (width >= 1280) {
         expect(geometry.navigation).not.toBeNull();
         expect(geometry.navigation!.left).toBeGreaterThanOrEqual(geometry.logo);
-        // The site's own nav is wide: below 1920px it already crowds the
-        // right-hand group (known site header behaviour), so only assert
-        // clearance from the cart where the site layout provides it.
-        if (width >= 1920)
-          expect(geometry.navigation!.right).toBeLessThanOrEqual(
-            geometry.tools,
-          );
+        expect(geometry.navigation!.right).toBeLessThanOrEqual(geometry.tools);
       } else expect(geometry.navigation).toBeNull();
       expect(geometry.columns).toBe(width < 768 ? 2 : width < 1280 ? 3 : 4);
     }

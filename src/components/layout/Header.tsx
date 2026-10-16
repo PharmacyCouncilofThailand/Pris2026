@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import * as React from "react";
 import Image from "next/image";
@@ -212,7 +212,7 @@ export default function Header() {
 
           <div className="hidden xl:flex items-center justify-center xl:justify-self-center">
             <NavigationMenu>
-              <NavigationMenuList className="gap-2">
+              <NavigationMenuList className={cn("gap-2", isShop && "gap-0")}>
                 {visibleNav.map((item) => (
                   <NavigationMenuItem key={item.labelKey}>
                     {item.disabled ? (
@@ -220,6 +220,7 @@ export default function Header() {
                         className={cn(
                           navigationMenuTriggerStyle(),
                           "bg-transparent transition-colors font-black opacity-50 cursor-not-allowed",
+                          isShop && "px-1",
                           useDarkText ? "text-slate-900" : "text-white",
                         )}
                       >
@@ -235,6 +236,7 @@ export default function Header() {
                             className={cn(
                               navigationMenuTriggerStyle(),
                               "bg-transparent transition-colors font-black",
+                              isShop && "px-1",
                               useDarkText
                                 ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
                                 : "text-white hover:bg-white/10 hover:text-cyan-400",
@@ -263,6 +265,7 @@ export default function Header() {
                         <NavigationMenuTrigger
                           className={cn(
                             "bg-transparent transition-colors font-black",
+                            isShop && "px-1",
                             useDarkText
                               ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
                               : "text-white hover:bg-white/10 hover:text-cyan-400",
@@ -316,13 +319,19 @@ export default function Header() {
             </NavigationMenu>
           </div>
 
-          <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
+          <div
+            className={cn(
+              "hidden xl:flex items-center justify-end gap-3 xl:justify-self-end",
+              isShop && "gap-1",
+            )}
+          >
             {isShop && <MerchandiseCartButton />}
             <button
               onClick={switchLocale}
               disabled={isPending}
               className={cn(
                 "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
+                isShop && "px-2",
                 useDarkText
                   ? "text-slate-900 hover:bg-slate-100"
                   : "text-white hover:bg-white/10",
@@ -352,6 +361,7 @@ export default function Header() {
                   className={cn(
                     "inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
                     authTracking,
+                    isShop && "px-4",
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
@@ -385,6 +395,7 @@ export default function Header() {
                   className={cn(
                     "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
                     authTracking,
+                    isShop && "px-4",
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
