@@ -119,7 +119,6 @@ test("review shows the amounts of a fresh GET cart and the POST is bound to that
   });
   await toReviewButton(page).click();
   await expect(page.getByText("ถุงผ้า Pris", { exact: true })).toBeVisible();
-  await expect(page.locator(".merch-cart-total")).toContainText("฿400.00");
   await expect(page.getByText("Thai QR PromptPay")).toBeVisible();
   await expect(confirmButton(page)).toContainText("฿400.00");
   const version = fake.cart.cartVersion;
@@ -181,4 +180,38 @@ test("a bundle line is described in review", async ({ page, fake }) => {
   await reachReview(page);
   await expect(page.getByText("ชุดของที่ระลึก", { exact: true })).toBeVisible();
   await expect(page.getByText(/เสื้อยืด Pris × 1/)).toBeVisible();
+});
+
+test("required fields show a red asterisk without changing their names", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  for (const label of [
+    "ชื่อ–นามสกุลผู้รับ",
+    "เบอร์โทรผู้รับ",
+    "ที่อยู่",
+    "ตำบล/แขวง",
+    "อำเภอ/เขต",
+    "จังหวัด",
+    "รหัสไปรษณีย์",
+  ]) {
+    const field = page.getByLabel(label, { exact: true });
+    await expect(field).toHaveAttribute("required", "");
+    const star = page.locator(
+      `label[for="${await field.getAttribute("id")}"] .merch-required`,
+    );
+    await expect(star).toHaveText("*");
+    await expect(star).toHaveCSS("color", "rgb(220, 38, 38)");
+  }
+  await expect(page.locator(".merch-required")).toHaveCount(7);
+  await expect(
+    page.getByRole("complementary", { name: "สรุปคำสั่งซื้อ" }),
+  ).toHaveCount(0);
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "รวมยอดสินค้า",
+  );
+  await expect(toReviewButton(page)).toBeVisible();
 });

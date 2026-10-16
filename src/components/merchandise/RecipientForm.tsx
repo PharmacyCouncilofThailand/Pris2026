@@ -44,12 +44,20 @@ export default function RecipientForm({
   ) => (
     <div className={`merch-recipient-field merch-recipient-${name}`} key={name}>
       <label htmlFor={`recipient-${name}`}>
-        {label}
-        {optional && <span> (ไม่บังคับ)</span>}
+        <span id={`recipient-${name}-label`}>
+          {label}
+          {optional && <span className="merch-optional"> (ไม่บังคับ)</span>}
+        </span>
+        {!optional && (
+          <span className="merch-required" aria-hidden="true">
+            *
+          </span>
+        )}
       </label>
       {multiline ? (
         <textarea
           id={`recipient-${name}`}
+          aria-labelledby={`recipient-${name}-label`}
           name={name}
           value={value[name]}
           disabled={busy}
@@ -65,6 +73,7 @@ export default function RecipientForm({
       ) : (
         <input
           id={`recipient-${name}`}
+          aria-labelledby={`recipient-${name}-label`}
           name={name}
           value={value[name]}
           type={name === "phone" ? "tel" : "text"}

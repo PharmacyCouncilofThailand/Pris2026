@@ -38,10 +38,16 @@
   line-height: 1.7;
   margin-bottom: 8px;
 }
-.merch-recipient-field label span {
+.merch-recipient-field label .merch-optional {
   font-size: 12px;
   color: #526787;
   font-weight: 400;
+}
+.merch-recipient-field label .merch-required {
+  color: #dc2626;
+  margin-left: 2px;
+  font-size: inherit;
+  font-weight: 600;
 }
 .merch-recipient-field input,
 .merch-recipient-field textarea {

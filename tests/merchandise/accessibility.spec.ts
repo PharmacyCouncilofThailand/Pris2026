@@ -193,7 +193,7 @@ test("address errors have associated messages and keyboard focus, and remain cle
   await phone.focus();
   await phone.scrollIntoViewIfNeeded();
   const field = await phone.boundingBox(),
-    bar = await page.locator(".merch-cart-bar").boundingBox();
+    bar = await page.locator(".merch-checkout-bar").boundingBox();
   expect(field!.y + field!.height).toBeLessThanOrEqual(bar!.y + 1);
 });
 

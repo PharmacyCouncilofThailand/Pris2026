@@ -10,7 +10,8 @@ import { canCheckout, describeLine } from "@/lib/merchandiseSelection";
 import { formatBaht } from "@/lib/merchandiseFormat";
 import { validateRecipient } from "@/lib/merchandiseRecipient";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
-import type { Amounts, CartDto, Recipient } from "@/types/merchandise";
+import type { CartDto, Recipient } from "@/types/merchandise";
+import { CheckoutBar } from "./CheckoutBar";
 import RecipientForm from "./RecipientForm";
 import { useMerchandiseCheckout } from "./useMerchandiseCheckout";
 
@@ -86,7 +87,7 @@ function CheckoutWorkspace() {
       observer.disconnect();
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
-  }, []);
+  }, [review]);
   useLayoutEffect(() => {
     if (review) {
       heading.current?.focus();
@@ -166,7 +167,7 @@ function CheckoutWorkspace() {
           <Link href="/souvenirs/cart">กลับไปตรวจสอบตะกร้า</Link>
         </p>
       )}
-      <div className="merch-cart-grid">
+      <div className="merch-cart-grid merch-cart-grid-single">
         <section>
           {!review ? (
             <RecipientForm
@@ -201,12 +202,9 @@ function CheckoutWorkspace() {
             />
           )}
         </section>
-        <CheckoutSummary
-          amounts={(review ? cart : contextCart.data)?.amounts ?? null}
-        />
       </div>
-      <div className="merch-cart-bar" ref={bar}>
-        {!review ? (
+      {!review ? (
+        <CheckoutBar totalBaht={contextCart.data?.amounts?.totalBaht ?? null}>
           <button
             type="submit"
             form="merch-recipient-form"
@@ -215,34 +213,38 @@ function CheckoutWorkspace() {
             ตรวจสอบคำสั่งซื้อ
             <ArrowRight size={22} aria-hidden="true" />
           </button>
-        ) : uncertain ? (
-          <button
-            type="button"
-            disabled={checkout.blocked}
-            onClick={() => void checkout.retry()}
-          >
-            ลองอีกครั้ง
-            <ArrowRight size={22} aria-hidden="true" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            disabled={
-              submitting ||
-              loading ||
-              !eligible ||
-              checkout.closed ||
-              checkout.blocked
-            }
-            onClick={() => void checkout.confirm()}
-          >
-            {submitting
-              ? "กำลังยืนยันคำสั่งซื้อ"
-              : `ยืนยันคำสั่งซื้อ${cart?.amounts ? " · " + formatBaht(cart.amounts.totalBaht) : ""}`}
-            <ArrowRight size={22} aria-hidden="true" />
-          </button>
-        )}
-      </div>
+        </CheckoutBar>
+      ) : (
+        <div className="merch-cart-bar" ref={bar}>
+          {uncertain ? (
+            <button
+              type="button"
+              disabled={checkout.blocked}
+              onClick={() => void checkout.retry()}
+            >
+              ลองอีกครั้ง
+              <ArrowRight size={22} aria-hidden="true" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={
+                submitting ||
+                loading ||
+                !eligible ||
+                checkout.closed ||
+                checkout.blocked
+              }
+              onClick={() => void checkout.confirm()}
+            >
+              {submitting
+                ? "กำลังยืนยันคำสั่งซื้อ"
+                : `ยืนยันคำสั่งซื้อ${cart?.amounts ? " · " + formatBaht(cart.amounts.totalBaht) : ""}`}
+              <ArrowRight size={22} aria-hidden="true" />
+            </button>
+          )}
+        </div>
+      )}
     </main>
   );
 }
@@ -342,37 +344,5 @@ function ReviewBody({
         </section>
       )}
     </>
-  );
-}
-function CheckoutSummary({ amounts }: { amounts: Amounts | null }) {
-  return (
-    <aside className="merch-cart-summary" aria-label="สรุปคำสั่งซื้อ">
-      <h2>สรุปคำสั่งซื้อ</h2>
-      {amounts ? (
-        <dl>
-          <div>
-            <dt>ค่าสินค้า</dt>
-            <dd>{formatBaht(amounts.subtotalBaht)}</dd>
-          </div>
-          <div>
-            <dt>ค่าจัดส่ง</dt>
-            <dd>{formatBaht(amounts.shippingBaht)}</dd>
-          </div>
-          <div className="merch-cart-total">
-            <dt>ยอดชำระรวม</dt>
-            <dd>{formatBaht(amounts.totalBaht)}</dd>
-          </div>
-        </dl>
-      ) : (
-        <p>ยังสรุปยอดไม่ได้ กรุณาตรวจสอบตะกร้า</p>
-      )}
-      <p className="merch-cart-muted">
-        สินค้าพรีออเดอร์ · จัดส่งภายในประเทศไทย
-        <br />
-        จัดส่งพร้อมกันเมื่อสินค้าพร้อมครบ ใช้ที่อยู่เดียวต่อออเดอร์
-        <br />
-        ค่าจัดส่ง 50 บาทต่อออเดอร์
-      </p>
-    </aside>
   );
 }
