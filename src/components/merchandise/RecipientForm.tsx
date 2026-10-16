@@ -1,7 +1,9 @@
 "use client";
 import { useLayoutEffect, useRef } from "react";
-import type { Recipient } from "@/types/merchandise";
-import type { RecipientErrors } from "@/lib/merchandiseRecipient";
+import type {
+  RecipientDraft,
+  RecipientErrors,
+} from "@/lib/merchandiseRecipient";
 export default function RecipientForm({
   value,
   onChange,
@@ -11,8 +13,8 @@ export default function RecipientForm({
   buyerEmail,
   focusName,
 }: {
-  value: Recipient;
-  onChange(value: Recipient): void;
+  value: RecipientDraft;
+  onChange(value: RecipientDraft): void;
   onSubmit(): void;
   errors: RecipientErrors;
   busy: boolean;
@@ -33,7 +35,7 @@ export default function RecipientForm({
         ?.focus();
   }, [errors]);
   const field = (
-    name: Exclude<keyof Recipient, "country">,
+    name: keyof RecipientDraft,
     label: string,
     autoComplete?: string,
     multiline = false,
@@ -49,7 +51,7 @@ export default function RecipientForm({
         <textarea
           id={`recipient-${name}`}
           name={name}
-          value={value[name] ?? ""}
+          value={value[name]}
           disabled={busy}
           maxLength={maxLength}
           autoComplete={autoComplete}
@@ -64,7 +66,7 @@ export default function RecipientForm({
         <input
           id={`recipient-${name}`}
           name={name}
-          value={value[name] ?? ""}
+          value={value[name]}
           type={name === "phone" ? "tel" : "text"}
           inputMode={
             name === "postalCode"
@@ -110,19 +112,18 @@ export default function RecipientForm({
       {Object.keys(errors).length > 0 && (
         <div className="merch-cart-notice" role="alert">
           กรุณาตรวจสอบข้อมูลผู้รับ ยังไม่ได้สร้างคำสั่งซื้อ
-          {errors.country && <p>{errors.country}</p>}
         </div>
       )}
       <div className="merch-recipient-fields">
         {field("fullName", "ชื่อ–นามสกุลผู้รับ", "name", false, false, 200)}
         {field("phone", "เบอร์โทรผู้รับ", "tel", false, false, 30)}
-        {field("addressLine", "ที่อยู่", "street-address", true, false, 1000)}
-        {field("subdistrict", "ตำบล/แขวง", "address-level3")}
-        {field("district", "อำเภอ/เขต", "address-level2")}
-        {field("province", "จังหวัด", "address-level1")}
+        {field("addressLine", "ที่อยู่", "street-address", true, false, 500)}
+        {field("subdistrict", "ตำบล/แขวง", "address-level3", false, false, 100)}
+        {field("district", "อำเภอ/เขต", "address-level2", false, false, 100)}
+        {field("province", "จังหวัด", "address-level1", false, false, 100)}
         {field("postalCode", "รหัสไปรษณีย์", "postal-code", false, false, 5)}
-        {field("company", "ชื่อบริษัท", "organization", false, true, 300)}
-        {field("deliveryNote", "หมายเหตุจัดส่ง", "off", true, true, 1000)}
+        {field("company", "ชื่อบริษัท", "organization", false, true, 200)}
+        {field("deliveryNote", "หมายเหตุจัดส่ง", "off", true, true, 500)}
       </div>
       <p className="merch-cart-muted">
         ประเทศ: ไทย · จัดส่งภายในประเทศเท่านั้น

@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useMemo } from "react";
 import { merchandiseFailure } from "@/lib/merchandiseApi";
+import type { OrderDetail } from "@/types/merchandise";
 import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseResource } from "./useMerchandiseResource";
 export function useMerchandiseOrder(orderId: string) {
@@ -29,4 +30,17 @@ export function useMerchandiseOrder(orderId: string) {
     [api, token, eventId, ownerId, orderId],
   );
   return useMerchandiseResource(scope, load);
+}
+
+// A just-created order handed from checkout to the order page so it need not
+// reload immediately. Read once, then gone (the qrPayload never reaches storage).
+const primed = new Map<string, OrderDetail>();
+export function primeOrder(order: OrderDetail): void {
+  primed.set(order.id.toLowerCase(), order);
+}
+export function takePrimedOrder(orderId: string): OrderDetail | null {
+  const key = orderId.toLowerCase();
+  const order = primed.get(key) ?? null;
+  primed.delete(key);
+  return order;
 }
