@@ -3,7 +3,6 @@ import { useCallback } from "react";
 import { Link } from "@/i18n/routing";
 import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseResource } from "./useMerchandiseResource";
-import { merchandiseFailure } from "@/lib/merchandiseApi";
 import ProductDetail from "./ProductDetail";
 export default function ProductDetailClient({
   productId,
@@ -17,12 +16,7 @@ export default function ProductDetailClient({
   );
   const resource = useMerchandiseResource(`${eventCode}:${productId}`, load);
   const product = resource.data;
-  const error =
-    resource.error ??
-    store.error ??
-    (product && store.data && product.eventId !== store.data.eventId
-      ? merchandiseFailure(0, "MERCH_BAD_RESPONSE")
-      : null);
+  const error = resource.error ?? store.error;
   if (error || !product || !store.data)
     return (
       <main className="merchandise-host-message">

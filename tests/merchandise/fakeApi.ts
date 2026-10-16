@@ -85,6 +85,24 @@ export class FakeMerchApi {
     };
   }
 
+  /** Test seam: put a line in the cart exactly as POST /cart/items would. */
+  seedLine(input: CartItemInput): CartLine {
+    const reply = this.addItem(input);
+    if (reply.status !== 200)
+      throw new Error(`FakeMerchApi.seedLine: ${JSON.stringify(reply.body)}`);
+    return this.cart.items.find(
+      (l) => l.productId === input.productId && l.variantId === input.variantId,
+    )!;
+  }
+
+  /** Test seam: the line's product vanished (API returns product: null). */
+  orphanLine(lineId: string) {
+    const line = this.cart.items.find((l) => l.id === lineId);
+    if (!line) throw new Error(`FakeMerchApi: unknown line ${lineId}`);
+    this.reprice({ ...line, product: null }, line);
+    this.touchCart();
+  }
+
   failNext(method: string, pathPattern: string | RegExp, response: Failure) {
     this.pending.push({
       method: method.toUpperCase(),
@@ -228,7 +246,9 @@ export class FakeMerchApi {
       return this.ok(this.paged(all, url, 20));
     }
     g = m(
-      new RegExp(`^${BASE}/orders/([^/]+)(?:/(payment-checks|payment-attempts))?$`),
+      new RegExp(
+        `^${BASE}/orders/([^/]+)(?:/(payment-checks|payment-attempts))?$`,
+      ),
     );
     if (g) {
       const o = this.orders.get(g[1]);
@@ -316,7 +336,7 @@ export class FakeMerchApi {
     return this.ok(this.cart);
   }
 
-  private reprice(line: CartLine) {
+  private reprice(line: CartLine, target: CartLine = line) {
     const p = line.product;
     let unit: number | null = null;
     if (p) {
@@ -324,14 +344,23 @@ export class FakeMerchApi {
       else {
         const v =
           p.variants.find((x) => x.id === line.variantId) ??
-          (p.variants.length === 1 && !p.hasOptions ? p.variants[0] : undefined);
+          (p.variants.length === 1 && !p.hasOptions
+            ? p.variants[0]
+            : undefined);
         unit = v && v.saleEnabled ? v.priceMinor : null;
       }
     }
-    line.unitPriceMinor = unit;
-    line.lineTotalMinor = unit === null ? null : unit * line.quantity;
-    line.valid = unit !== null && !!p?.purchasable;
-    line.issueCodes = line.valid ? [] : ["MERCH_ITEM_UNAVAILABLE"];
+    target.product = p;
+    target.unitPriceMinor = unit;
+    target.lineTotalMinor = unit === null ? null : unit * line.quantity;
+    target.valid = unit !== null && !!p?.purchasable;
+    target.issueCodes = target.valid
+      ? []
+      : !p
+        ? ["PRODUCT_MISSING"]
+        : p.unavailableCodes.length
+          ? [...p.unavailableCodes]
+          : ["VARIANT_DISABLED"];
   }
 
   private createOrder(headers: Record<string, string>, body: unknown): Reply {
@@ -361,11 +390,7 @@ export class FakeMerchApi {
       };
     }
     if (this.store.state !== "open")
-      return this.failure(
-        409,
-        "MERCH_PREORDER_CLOSED",
-        "ปิดรับพรีออเดอร์แล้ว",
-      );
+      return this.failure(409, "MERCH_PREORDER_CLOSED", "ปิดรับพรีออเดอร์แล้ว");
     if (b.cartVersion !== this.cart.cartVersion)
       return this.failure(
         409,

@@ -204,3 +204,26 @@ export function makeOrder(o: Partial<OrderDetail> = {}): OrderDetail {
     ...o,
   };
 }
+
+/** Deterministic valid UUIDs for bulk fixtures. */
+export const uid = (n: number) =>
+  `20000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+
+const PIXEL = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+  "base64",
+);
+/** Serve a 1x1 PNG for the synthetic image host used by banner fixtures. */
+export async function stubImages(
+  context: import("@playwright/test").BrowserContext,
+) {
+  await context.route("https://img.example.test/**", (route) =>
+    route.fulfill({ status: 200, contentType: "image/png", body: PIXEL }),
+  );
+}
+export const image = (n: number) => ({
+  id: uid(n),
+  url: `https://img.example.test/${n}.png`,
+  width: 640,
+  height: 360,
+});

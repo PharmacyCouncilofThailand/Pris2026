@@ -1,9 +1,16 @@
-import { test, expect } from "./live-fixture";
-test("responsive columns and one-row header cover the approved viewport matrix", async ({
+import { test, expect } from "./fixtures";
+import { makeSingle, uid } from "./data";
+
+const many = (n: number) =>
+  Array.from({ length: n }, (_, i) =>
+    makeSingle({ id: uid(i + 1), nameTh: `สินค้า ${i + 1}`, sortOrder: i }),
+  );
+
+test("responsive columns and a one-row header cover the viewport matrix", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("catalog", { banners: 1 });
+  fake.products = many(13);
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
   for (const width of [
@@ -22,11 +29,11 @@ test("responsive columns and one-row header cover the approved viewport matrix",
       .toBe(width < 768 ? 2 : width < 1280 ? 3 : 4);
     const layout = await page.evaluate(() => {
       const logo = document
-          .querySelector("header img")!
-          .getBoundingClientRect(),
-        tools = document
-          .querySelector(".merch-header-tools")!
-          .getBoundingClientRect();
+        .querySelector("header img")!
+        .getBoundingClientRect();
+      const tools = document
+        .querySelector(".merch-header-tools")!
+        .getBoundingClientRect();
       return {
         width: document.documentElement.scrollWidth,
         logoRight: logo.right,
@@ -41,11 +48,12 @@ test("responsive columns and one-row header cover the approved viewport matrix",
     expect(layout.delta).toBeLessThan(3);
   }
 });
+
 test("last product and footer controls stay clear of the fixed bar; keyboard menu restores focus", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("catalog", { banners: 3 });
+  fake.products = many(13);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
@@ -53,8 +61,8 @@ test("last product and footer controls stay clear of the fixed bar; keyboard men
     .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
     .last();
   await last.scrollIntoViewIfNeeded();
-  const buttonBox = await last.boundingBox(),
-    barBox = await page.locator(".merch-bottom-bar").boundingBox();
+  const buttonBox = await last.boundingBox();
+  const barBox = await page.locator(".merch-bottom-bar").boundingBox();
   expect(buttonBox!.y + buttonBox!.height).toBeLessThanOrEqual(barBox!.y);
   const primary = page.getByRole("button", {
     name: "เข้าสู่ระบบเพื่อสั่งซื้อ",
@@ -71,7 +79,7 @@ test("last product and footer controls stay clear of the fixed bar; keyboard men
   });
   expect(parseFloat(styles.font)).toBeGreaterThanOrEqual(19);
   expect(Number(styles.weight)).toBeGreaterThanOrEqual(700);
-  expect(styles.height).toBeGreaterThanOrEqual(52); // Frozen home renderer; P03 secondary buttons have a separate 56px spec.
+  expect(styles.height).toBeGreaterThanOrEqual(52);
   const menu = page.getByRole("button", { name: "เปิดเมนู", exact: true });
   await menu.focus();
   await page.keyboard.press("Enter");
@@ -82,7 +90,31 @@ test("last product and footer controls stay clear of the fixed bar; keyboard men
   const footerLink = page.locator("footer a").last();
   await footerLink.focus();
   await footerLink.scrollIntoViewIfNeeded();
-  const f = await footerLink.boundingBox(),
-    bar = await page.locator(".merch-bottom-bar").boundingBox();
+  const f = await footerLink.boundingBox();
+  const bar = await page.locator(".merch-bottom-bar").boundingBox();
   expect(f!.y + f!.height).toBeLessThanOrEqual(bar!.y);
+});
+
+test("storefront controls have accessible names and 44px targets", async ({
+  page,
+  fake,
+}) => {
+  fake.products = many(2);
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(2);
+  await expect(
+    page.getByRole("searchbox", { name: "ค้นหาสินค้า" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "หมวดสินค้า" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "ดูรายละเอียด สินค้า 1", exact: true }),
+  ).toBeVisible();
+  for (const b of await page
+    .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
+    .all()) {
+    const box = await b.boundingBox();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+  }
 });

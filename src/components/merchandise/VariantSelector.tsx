@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import type { Variant } from "@/types/merchandise";
+import type { VariantDto } from "@/types/merchandise";
 export default function VariantSelector({
   variants,
   selectedId,
@@ -8,7 +8,7 @@ export default function VariantSelector({
   label = "ตัวเลือกสินค้า",
   disabled = false,
 }: {
-  variants: Variant[];
+  variants: VariantDto[];
   selectedId: string | null;
   onChange(id: string | null): void;
   label?: string;

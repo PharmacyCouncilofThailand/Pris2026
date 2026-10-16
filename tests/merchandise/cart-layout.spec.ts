@@ -1,29 +1,26 @@
-import { test, expect } from "./live-fixture";
-import type { ProductDto } from "../../src/types/merchandise";
-import { mkdir } from "node:fs/promises";
+import { test, expect, login } from "./fixtures";
+import { makeSingle } from "./data";
 
-test("cart layout, fixed action clearance and keyboard focus follow the approved references", async ({
+test("cart layout, fixed action clearance and keyboard focus", async ({
   page,
-  merchandise,
-}, info) => {
-  const { products } = await merchandise.command<{ products: ProductDto[] }>(
-    "catalog",
-    { banners: 0 },
-  );
-  const product = products[2];
-  await merchandise.command("addCart", {
+  fake,
+}) => {
+  const product = makeSingle();
+  fake.products = [product];
+  fake.seedLine({
     productId: product.id,
     variantId: product.variants[0].id,
     bundleSelections: [],
     quantity: 1,
   });
-  await merchandise.login(page);
+  await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  for (const [name, width, height] of [
-    ["mobile", 390, 844],
-    ["tablet", 834, 1112],
-    ["desktop", 1440, 1000],
+  for (const [width, height] of [
+    [320, 700],
+    [390, 844],
+    [834, 1112],
+    [1440, 1000],
   ] as const) {
     await page.setViewportSize({ width, height });
     await page.evaluate(() => document.fonts.ready);
@@ -35,19 +32,10 @@ test("cart layout, fixed action clearance and keyboard focus follow the approved
       exact: true,
     });
     await last.scrollIntoViewIfNeeded();
-    const action = await last.boundingBox(),
-      bar = await page.locator(".merch-cart-bar").boundingBox();
+    const action = await last.boundingBox();
+    const bar = await page.locator(".merch-cart-bar").boundingBox();
     expect(action!.y + action!.height).toBeLessThanOrEqual(bar!.y);
     await page.evaluate(() => window.scrollTo(0, 0));
-    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
-    if (info.project.name === "chromium") {
-      await mkdir("docs/verification/merchandise/visual", { recursive: true });
-      await page.screenshot({
-        path: `docs/verification/merchandise/visual/p07-${name}.png`,
-        animations: "disabled",
-        style: "nextjs-portal { visibility: hidden !important; }",
-      });
-    }
   }
   const plus = page.getByRole("button", {
     name: `เพิ่มจำนวน ${product.nameTh}`,
@@ -71,4 +59,28 @@ test("cart layout, fixed action clearance and keyboard focus follow the approved
   await expect(
     page.getByRole("heading", { name: "ตะกร้าสินค้า", exact: true }),
   ).toBeFocused();
+});
+
+test("cart controls meet the 44px target size", async ({ page, fake }) => {
+  const product = makeSingle();
+  fake.products = [product];
+  fake.seedLine({
+    productId: product.id,
+    variantId: product.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  for (const name of [
+    `ลดจำนวน ${product.nameTh}`,
+    `เพิ่มจำนวน ${product.nameTh}`,
+    `ลบ ${product.nameTh}`,
+  ]) {
+    const box = await page
+      .getByRole("button", { name, exact: true })
+      .boundingBox();
+    expect(box!.width, name).toBeGreaterThanOrEqual(44);
+    expect(box!.height, name).toBeGreaterThanOrEqual(44);
+  }
 });

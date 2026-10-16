@@ -1,7 +1,9 @@
 "use client";
-import type { LineSelection, ProductDto } from "@/types/merchandise";
-import { variantLabel } from "@/lib/merchandiseSelection";
+import type { ProductDto } from "@/types/merchandise";
+import { variantLabel, type Selection } from "@/lib/merchandiseSelection";
 import VariantSelector from "./VariantSelector";
+
+/** Shows every component; only `selectable` ones take a choice (and are sent). */
 export default function BundleSelector({
   product,
   selection,
@@ -9,8 +11,8 @@ export default function BundleSelector({
   disabled,
 }: {
   product: ProductDto;
-  selection: LineSelection;
-  onChange(selection: LineSelection): void;
+  selection: Selection;
+  onChange(selection: Selection): void;
   disabled: boolean;
 }) {
   return (
@@ -20,17 +22,17 @@ export default function BundleSelector({
         const chosen =
           selection.bundleSelections.find((s) => s.componentId === component.id)
             ?.variantId ?? null;
-        const fixed = component.allowedVariants.find(
-          (v) => v.id === component.fixedVariantId,
-        );
         return (
           <div className="merch-bundle-component" key={component.id}>
             <h3>
               {component.nameTh} × {component.quantityPerBundle}
             </h3>
-            {component.optionMode === "fixed" ? (
+            {component.mode === "fixed" ? (
               <p>
-                {fixed ? variantLabel(fixed) : "ตัวเลือกที่กำหนดไว้ในชุด"} ·
+                {component.fixedVariant &&
+                variantLabel(component.fixedVariant) ? (
+                  <>{variantLabel(component.fixedVariant)} · </>
+                ) : null}
                 กำหนดไว้ในชุด
               </p>
             ) : (

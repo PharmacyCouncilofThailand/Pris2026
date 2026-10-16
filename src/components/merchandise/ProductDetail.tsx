@@ -10,26 +10,27 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
-import type { LineSelection, ProductDto, StoreDto } from "@/types/merchandise";
+import type { ProductDto, StoreDto } from "@/types/merchandise";
 import {
-  initialSelection,
+  defaultSelection,
   parseQuantity,
-  selectedPriceMinor,
-  selectionReady,
+  selectionComplete,
+  selectionPriceMinor,
+  unavailableMessage,
+  type Selection,
 } from "@/lib/merchandiseSelection";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
 import { isMerchandiseId, merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import {
-  purchaseIntentReturnPath,
   readPurchaseIntent,
-  writePurchaseIntent,
-  type IntentResult,
+  savePurchaseIntent,
 } from "@/lib/merchandiseIntent";
-import { MerchandiseApiError } from "@/lib/merchandiseApi";
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
 import VariantSelector from "./VariantSelector";
 import BundleSelector from "./BundleSelector";
+
+const MAX_QUANTITY = 9999;
 
 export default function ProductDetail({
   product: original,
@@ -38,24 +39,19 @@ export default function ProductDetail({
   product: ProductDto;
   store: StoreDto;
 }) {
-  const { api, eventCode, token, ownerId, cart } = useMerchandise();
+  const { api, eventCode, token } = useMerchandise();
   const search = useSearchParams(),
     router = useRouter();
   const rawIntent = search.get("intentId"),
     intentId = isMerchandiseId(rawIntent) ? rawIntent : null;
   const [product, setProduct] = useState(original),
     [store, setStore] = useState(originalStore);
-  const [selection, setSelection] = useState<LineSelection>(() =>
-    initialSelection(original),
+  const [selection, setSelection] = useState<Selection>(() =>
+    defaultSelection(original),
   );
   const [quantity, setQuantity] = useState("1"),
     [restored, setRestored] = useState(false);
-  const [resolution, setResolution] = useState<{
-    id: string;
-    busy: boolean;
-  } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
   const started = useRef(false),
     active = useRef(true),
     barRef = useRef<HTMLDivElement>(null);
@@ -65,30 +61,15 @@ export default function ProductDetail({
       active.current = false;
     };
   }, []);
+  // Coming back from login: show the choice the buyer made before leaving.
   useEffect(() => {
     let current = true;
-    Promise.resolve().then(() => {
+    void Promise.resolve().then(() => {
       if (!current) return;
       if (intentId) {
-        const intent = readPurchaseIntent(window.sessionStorage, eventCode);
-        if (
-          intent?.id === intentId &&
-          intent.selection.productId === original.id &&
-          (intent.buyerId === undefined || intent.buyerId === ownerId)
-        ) {
-          const fixed = initialSelection(original).bundleSelections;
-          setSelection({
-            ...intent.selection,
-            bundleSelections: [
-              ...fixed.filter(
-                (c) =>
-                  !intent.selection.bundleSelections.some(
-                    (s) => s.componentId === c.componentId,
-                  ),
-              ),
-              ...intent.selection.bundleSelections,
-            ],
-          });
+        const intent = readPurchaseIntent(window.sessionStorage, intentId);
+        if (intent?.productId === original.id) {
+          setSelection(intent.selection);
           setQuantity(String(intent.quantity));
         }
       }
@@ -97,7 +78,7 @@ export default function ProductDetail({
     return () => {
       current = false;
     };
-  }, [intentId, eventCode, original, ownerId]);
+  }, [intentId, original.id]);
   useLayoutEffect(() => {
     const bar = barRef.current;
     if (!bar) return;
@@ -114,86 +95,85 @@ export default function ProductDetail({
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
   }, []);
-  const pending = useCallback(
-    (id: string) => setResolution({ id, busy: true }),
-    [],
-  );
-  const { reload } = cart;
-  const added = useCallback(() => reload(), [reload]);
-  const result = useCallback(
-    (id: string, value: IntentResult) => {
-      const busy = value.kind === "error" && value.uncertain;
-      setResolution({ id, busy });
-      if (!busy) started.current = false;
-      if (
-        value.kind === "needs_selection" ||
-        (value.kind === "error" &&
-          value.error instanceof MerchandiseApiError &&
-          value.error.status === 409)
-      ) {
-        setNotice(
-          "ข้อมูลสินค้ามีการเปลี่ยนแปลง กรุณาตรวจสอบตัวเลือกและราคาอีกครั้ง",
+  const refresh = useCallback(() => {
+    setNotice(
+      "ข้อมูลสินค้ามีการเปลี่ยนแปลง กรุณาตรวจสอบตัวเลือกและราคาอีกครั้ง",
+    );
+    void Promise.all([
+      api.product(eventCode, original.id),
+      api.store(eventCode),
+    ])
+      .then(([fresh, freshStore]) => {
+        if (!active.current) return;
+        setProduct(fresh);
+        setStore(freshStore);
+        // Keep the buyer's choice only where it is still on offer.
+        setSelection((current) =>
+          selectionComplete(fresh, current) ? current : defaultSelection(fresh),
         );
-        setRefreshing(true);
-        void Promise.all([
-          api.product(eventCode, original.id),
-          api.store(eventCode),
-        ])
-          .then(([fresh, freshStore]) => {
-            if (
-              !active.current ||
-              fresh.eventId !== original.eventId ||
-              freshStore.eventId !== original.eventId
-            )
-              return;
-            setProduct(fresh);
-            setStore(freshStore);
-            setRefreshing(false);
-          })
-          .catch(() => {
-            if (active.current)
-              setNotice(
-                "โหลดข้อมูลล่าสุดไม่สำเร็จ กรุณาลองโหลดหน้าอีกครั้งก่อนเพิ่มสินค้า",
-              );
-          });
-      }
-    },
-    [api, eventCode, original.id, original.eventId],
-  );
-  const busy = Boolean(
-    token && intentId && (resolution?.id !== intentId || resolution.busy),
-  );
+      })
+      .catch(() => {
+        if (active.current)
+          setNotice(
+            "โหลดข้อมูลล่าสุดไม่สำเร็จ กรุณาลองโหลดหน้าอีกครั้งก่อนเพิ่มสินค้า",
+          );
+      });
+  }, [api, eventCode, original.id]);
+  const busy = Boolean(token && intentId);
   const count = parseQuantity(quantity),
-    price = selectedPriceMinor(product, selection);
+    countOk = count !== null && count <= MAX_QUANTITY,
+    complete = selectionComplete(product, selection),
+    price = selectionPriceMinor(product, selection);
   const allowed =
     store.state === "open" &&
-    selectionReady(product, selection) &&
+    product.purchasable &&
+    complete &&
     price !== null &&
-    count !== null &&
+    countOk &&
     !busy &&
-    !refreshing &&
     restored;
   const add = () => {
-    if (!allowed || started.current || count === null) return;
+    if (!allowed || started.current || !countOk) return;
     started.current = true;
     try {
-      const intent = {
-        id: crypto.randomUUID(),
+      const id = crypto.randomUUID();
+      const returnPath = `/souvenirs/products/${product.id}?intentId=${id}`;
+      savePurchaseIntent(window.sessionStorage, {
+        id,
         eventCode,
-        returnPath: `/souvenirs/products/${product.id}`,
+        returnPath,
+        productId: product.id,
         selection,
         quantity: count,
-      };
-      writePurchaseIntent(window.sessionStorage, intent);
-      const path = purchaseIntentReturnPath(intent);
-      router.push(token ? path : merchandiseLoginPath(path), { scroll: false });
+      });
+      router.push(token ? returnPath : merchandiseLoginPath(returnPath), {
+        scroll: false,
+      });
     } catch {
-      started.current = false;
       setNotice(
         "ไม่สามารถเก็บรายการที่เลือกได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์",
       );
     }
   };
+  // The page stays mounted when logged in; re-arm once the intent is spent.
+  useEffect(() => {
+    if (!intentId) started.current = false;
+  }, [intentId]);
+  const unit = product.kind === "bundle" ? "ชุด" : "ชิ้น";
+  const unavailable = [
+    ...new Set(
+      product.unavailableCodes.map((code) =>
+        unavailableMessage(code, store.state),
+      ),
+    ),
+  ];
+  if (
+    store.state !== "open" &&
+    !product.unavailableCodes.includes("STORE_NOT_OPEN")
+  )
+    unavailable.unshift(unavailableMessage("STORE_NOT_OPEN", store.state));
+  if (!product.purchasable && unavailable.length === 0)
+    unavailable.push("สินค้านี้ไม่พร้อมขาย");
   return (
     <main className="merch-detail">
       <Link className="merch-detail-back" href="/souvenirs">
@@ -207,7 +187,7 @@ export default function ProductDetail({
               <Image
                 unoptimized
                 src={image.url}
-                alt={image.altTh}
+                alt={product.nameTh}
                 width={image.width}
                 height={image.height}
                 loading={index ? "lazy" : "eager"}
@@ -221,13 +201,20 @@ export default function ProductDetail({
             <span className="merch-detail-tag">ชุดสินค้า</span>
           )}
           <p className="merch-detail-price" aria-live="polite">
-            {price !== null
-              ? formatMinorBaht(price)
-              : product.optionMode !== "none" || product.kind === "bundle"
-                ? "กรุณาเลือกตัวเลือกสินค้า"
-                : "ยังไม่เปิดขาย"}
-            {price !== null && (
-              <small> / {product.kind === "bundle" ? "ชุด" : "ชิ้น"}</small>
+            {price !== null ? (
+              <>
+                {formatMinorBaht(price)}
+                <small> / {unit}</small>
+              </>
+            ) : product.price?.kind === "from" ? (
+              `เริ่มต้น ${formatMinorBaht(product.price.amountMinor)}`
+            ) : product.price ? (
+              <>
+                {formatMinorBaht(product.price.amountMinor)}
+                <small> / {unit}</small>
+              </>
+            ) : (
+              "ยังไม่กำหนดราคา"
             )}
           </p>
           {product.descriptionTh && (
@@ -240,16 +227,16 @@ export default function ProductDetail({
           )}
           {product.kind === "bundle" ? (
             <BundleSelector
-              key={`${product.id}:${product.version}:${restored}`}
+              key={`${product.id}:${restored}`}
               product={product}
               selection={selection}
               disabled={busy}
               onChange={setSelection}
             />
           ) : (
-            product.optionMode !== "none" && (
+            product.hasOptions && (
               <VariantSelector
-                key={`${product.id}:${product.version}:${restored}`}
+                key={`${product.id}:${restored}`}
                 variants={product.variants}
                 selectedId={selection.variantId}
                 disabled={busy}
@@ -259,10 +246,10 @@ export default function ProductDetail({
               />
             )
           )}
-          {product.sizeInfoTh && (
+          {product.sizeChartTh && (
             <section className="merch-detail-description">
               <h2>ข้อมูลขนาด</h2>
-              <p>{product.sizeInfoTh}</p>
+              <p>{product.sizeChartTh}</p>
             </section>
           )}
           <div className="merch-detail-quantity">
@@ -273,7 +260,7 @@ export default function ProductDetail({
               <button
                 type="button"
                 aria-label="ลดจำนวน"
-                disabled={busy || count === null || count <= 1}
+                disabled={busy || !countOk || count <= 1}
                 onClick={() => setQuantity(String(count! - 1))}
               >
                 <Minus size={18} aria-hidden="true" />
@@ -284,23 +271,21 @@ export default function ProductDetail({
                 type="text"
                 value={quantity}
                 disabled={busy}
-                aria-invalid={count === null}
+                aria-invalid={!countOk}
                 onChange={(e) => setQuantity(e.target.value)}
               />
               <button
                 type="button"
                 aria-label="เพิ่มจำนวน"
-                disabled={
-                  busy || count === null || count === Number.MAX_SAFE_INTEGER
-                }
+                disabled={busy || !countOk || count >= MAX_QUANTITY}
                 onClick={() => setQuantity(String(count! + 1))}
               >
                 <Plus size={18} aria-hidden="true" />
               </button>
             </div>
           </div>
-          {count === null && (
-            <p role="alert">กรุณาระบุจำนวนเต็มตั้งแต่ 1 ขึ้นไป</p>
+          {!countOk && (
+            <p role="alert">กรุณาระบุจำนวนเต็มระหว่าง 1 ถึง {MAX_QUANTITY}</p>
           )}
           <p className="merch-detail-hint">
             สินค้าพรีออเดอร์ · จัดส่งภายในประเทศไทย
@@ -319,21 +304,12 @@ export default function ProductDetail({
               <p className="merch-detail-description">{store.shippingInfoTh}</p>
             </section>
           )}
-          {(store.state !== "open" || !product.purchasable) && (
-            <p role="status">
-              {store.state === "closed"
-                ? "ปิดรับพรีออเดอร์แล้ว"
-                : store.state === "not_open"
-                  ? "ยังไม่ถึงเวลาเปิดรับพรีออเดอร์"
-                  : "สินค้านี้ยังไม่เปิดขาย"}
+          {unavailable.map((message) => (
+            <p role="status" key={message}>
+              {message}
             </p>
-          )}
-          <MerchandiseIntentResume
-            intentId={intentId}
-            onAdded={added}
-            onPending={pending}
-            onResult={result}
-          />
+          ))}
+          <MerchandiseIntentResume intentId={intentId} onFailed={refresh} />
         </div>
       </div>
       <div className="merch-detail-bar" ref={barRef}>
