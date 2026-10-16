@@ -91,11 +91,20 @@ test("page is kept in the URL, survives reload and the locale switch, and asks t
   const first = await rows(page).locator("h2").textContent();
   await page.reload();
   await expect(rows(page).locator("h2")).toHaveText(first!);
-  await page
-    .getByRole("button", { name: "เปลี่ยนภาษาเป็นภาษาอังกฤษ", exact: true })
-    .click();
+  const toEnglish = page
+    .getByRole("button", { name: /เปลี่ยนภาษาเป็นภาษาอังกฤษ/ })
+    .filter({ visible: true });
+  await expect(toEnglish).toHaveAccessibleName(
+    "EN เปลี่ยนภาษาเป็นภาษาอังกฤษ",
+  );
+  await toEnglish.click();
   await expect(page).toHaveURL(/\/en\/souvenirs\/orders\?page=2$/);
   await expect(rows(page).locator("h2")).toHaveText(first!);
+  await expect(
+    page
+      .getByRole("button", { name: /เปลี่ยนภาษาเป็นภาษาไทย/ })
+      .filter({ visible: true }),
+  ).toHaveAccessibleName("TH เปลี่ยนภาษาเป็นภาษาไทย");
 });
 
 test("an invalid page query makes no list request", async ({ page, fake }) => {

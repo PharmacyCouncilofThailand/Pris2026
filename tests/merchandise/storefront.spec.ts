@@ -173,6 +173,8 @@ test("storefront has no bottom bar; my orders link sits top right only when logg
   await expect(
     page.getByRole("link", { name: "คำสั่งซื้อของฉัน" }),
   ).toHaveCount(0);
+  // Logged out there is nothing to show, so no empty toolbar row either.
+  await expect(page.locator(".merch-shop-toolbar")).toHaveCount(0);
   await login(page);
   await page.goto("/th/souvenirs");
   const link = page.getByRole("link", { name: "คำสั่งซื้อของฉัน" });

@@ -51,3 +51,6 @@ test("company is included after the phone when present", () =>
 test("empty and whitespace-only company are omitted and the delivery note is excluded", () =>
   assert.equal(formatRecipientLine({ ...base, company: "  ", deliveryNote: "โทรก่อน" }),
     "ผู้รับ ทดสอบ 0812345678 99 ถนนสังเคราะห์ ตำบลทดสอบ อำเภอทดสอบ กรุงเทพมหานคร 10100 ประเทศไทย"));
+test("newlines and runs of whitespace inside a part collapse to single spaces", () =>
+  assert.equal(formatRecipientLine({ ...base, fullName: "ผู้รับ\t\tทดสอบ", addressLine: "99 หมู่ 1\r\nถนนสังเคราะห์\n  ซอย 2 " }),
+    "ผู้รับ ทดสอบ 0812345678 99 หมู่ 1 ถนนสังเคราะห์ ซอย 2 ตำบลทดสอบ อำเภอทดสอบ กรุงเทพมหานคร 10100 ประเทศไทย"));

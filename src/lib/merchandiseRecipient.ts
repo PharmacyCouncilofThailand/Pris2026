@@ -88,7 +88,7 @@ export function formatRecipientLine(r: Recipient): string {
     r.postalCode,
     "ประเทศไทย",
   ]
-    .map((part) => (part ?? "").trim())
+    .map((part) => (part ?? "").replace(/\s+/g, " ").trim())
     .filter(Boolean)
     .join(" ");
 }

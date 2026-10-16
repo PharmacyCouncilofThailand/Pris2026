@@ -49,7 +49,7 @@ test("responsive columns and a one-row header cover the viewport matrix", async 
   }
 });
 
-test("last product and footer controls stay reachable; keyboard menu restores focus", async ({
+test("the last product stays reachable and the keyboard menu restores focus", async ({
   page,
   fake,
 }) => {

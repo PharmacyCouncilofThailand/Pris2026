@@ -339,7 +339,7 @@ try {
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   );
-  await blocked.getByRole("button", { name: "EN", exact: true }).click();
+  await blocked.getByRole("button", { name: "EN เปลี่ยนภาษาเป็นภาษาอังกฤษ", exact: true }).click();
   await blocked.waitForURL("**/en/lucky-wheel");
   await blocked
     .getByRole("heading", { name: messages.en.wheelHeading, exact: true })

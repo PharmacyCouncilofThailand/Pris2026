@@ -154,7 +154,7 @@ test("incumbent homepage header, scroll, menu and locale remain outside the shop
       .getByRole("link", { name: "ของที่ระลึก", exact: true }),
   ).toHaveAttribute("href", "/th/souvenirs");
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "EN", exact: true }).click();
+  await page.getByRole("button", { name: "EN เปลี่ยนภาษาเป็นภาษาอังกฤษ", exact: true }).click();
   await expect(page).toHaveURL(/\/en$/);
   expect(shopCalls).toEqual([]);
   expect(
