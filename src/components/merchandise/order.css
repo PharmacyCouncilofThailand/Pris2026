@@ -253,3 +253,17 @@
     animation: none;
   }
 }
+.merch-order-amounts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 6px;
+}
+.merch-payment-notice {
+  margin-top: 16px;
+  color: #8f3400;
+}
+.merch-payment-panel > button {
+  display: block;
+  margin-inline: auto;
+}
