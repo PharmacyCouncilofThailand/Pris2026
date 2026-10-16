@@ -1,5 +1,5 @@
-export const isMinor = (value: unknown): value is string =>
-  typeof value === "string" && /^(0|[1-9][0-9]{0,29})$/.test(value);
+export const isMinor = (value: unknown): value is number =>
+  typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
 export function isIsoUtc(value: unknown): value is string {
   if (
     typeof value !== "string" ||
@@ -15,13 +15,13 @@ export function isIsoUtc(value: unknown): value is string {
   );
   return new Date(milliseconds).toISOString() === normalized;
 }
-export function formatMinorBaht(value: string): string {
-  if (!isMinor(value)) throw new Error("Invalid minor amount");
-  const amount = BigInt(value),
-    whole = (amount / BigInt(100))
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  return `฿${whole}.${(amount % BigInt(100)).toString().padStart(2, "0")}`;
+const baht = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+export function formatMinorBaht(minor: number): string {
+  if (!isMinor(minor)) throw new Error("Invalid minor amount");
+  return `฿${baht.format(minor / 100)}`;
 }
 export function formatMerchandiseTime(value: string | null): string {
   if (value === null) return "—";
