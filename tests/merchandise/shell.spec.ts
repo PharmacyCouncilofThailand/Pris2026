@@ -1,5 +1,5 @@
 import { test, expect, login } from "./fixtures";
-import { makeSingle } from "./data";
+import { makeSingle, makeOrder, uid } from "./data";
 import { seedCheckout, openCheckout, reachReview } from "./checkoutHelpers";
 
 test("short shop pages never show the dark site background", async ({ page, fake }) => {
@@ -99,7 +99,7 @@ test("no shop text is smaller than 13px", async ({ page, fake }) => {
   const small = () =>
     page.evaluate(() => {
       const bad: string[] = [];
-      for (const el of Array.from(document.querySelectorAll("main *"))) {
+      for (const el of Array.from(document.querySelectorAll("main *, header .merch-header-cart .merch-cart-badge"))) {
         const hasText = Array.from(el.childNodes).some(
           (n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim() !== "",
         );
@@ -125,5 +125,13 @@ test("no shop text is smaller than 13px", async ({ page, fake }) => {
   await openCheckout(page);
   expect(await small()).toEqual([]);
   await reachReview(page);
+  expect(await small()).toEqual([]);
+  const order = makeOrder({ id: uid(1), orderNumber: "PRIS2026-M-000001" });
+  fake.orders.set(order.id, order);
+  await page.goto("/th/souvenirs/orders");
+  await expect(page.locator(".merch-history-row")).toHaveCount(1);
+  expect(await small()).toEqual([]);
+  await page.goto(`/th/souvenirs/orders/${order.id}`);
+  await expect(page.locator(".merch-payment-qr")).toBeVisible();
   expect(await small()).toEqual([]);
 });

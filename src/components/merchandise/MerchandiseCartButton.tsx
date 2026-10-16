@@ -28,7 +28,7 @@ export function MerchandiseCartButton({ className }: { className?: string }) {
     >
       <Icon name="cart" className="h-[22px] w-[22px]" />
       <span
-        className="merch-cart-badge absolute -right-0.5 -top-0.5 grid h-[19px] min-w-[19px] place-items-center rounded-full bg-[#ff5800] px-1 text-[11px] font-extrabold leading-none text-[#10203d]"
+        className="merch-cart-badge absolute -right-1.5 -top-1.5 grid h-[22px] min-w-[22px] place-items-center rounded-full bg-[#ff5800] px-1.5 text-[13px] font-extrabold leading-none text-[#10203d]"
         aria-hidden="true"
       >
         {badge}
