@@ -55,5 +55,4 @@ next-env.d.ts
 /artifacts/agenda-screen/
 
 # Local merchandise development evidence and browser sessions
-/.merchandise-local/
 /playwright/.auth/
