@@ -26,36 +26,73 @@
   font-size: 14px;
   line-height: 1.8;
 }
-.merch-checkout-steps {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-block: 28px 30px;
-  padding: 0;
-  list-style: none;
-  font-size: 12px;
-  color: #526787;
-}
-.merch-checkout-steps li {
+.merch-steps,
+.merch-cart > .merch-steps:not(.merch-cart-bar):not(.merch-checkout-bar) {
   display: flex;
   align-items: center;
-  gap: 6px;
+  width: 100%;
+  max-width: 640px;
+  margin: 24px 0 26px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #526787;
 }
-.merch-checkout-steps span {
+.merch-steps li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.merch-steps li + li {
+  flex: 1 1 0;
+}
+.merch-steps li + li::before {
+  content: "";
+  flex: 1 1 8px;
+  min-width: 8px;
+  height: 2px;
+  margin-inline: 8px;
+  background: #d4def0;
+}
+.merch-steps li[data-completed="true"]::before,
+.merch-steps li[aria-current="step"]::before {
+  background: #0055ff;
+}
+.merch-steps-dot {
   display: grid;
+  flex: 0 0 24px;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #526787;
   background: #e3eaf5;
   border-radius: 50%;
 }
-.merch-checkout-steps [aria-current] {
-  color: #0055ff;
-  font-weight: 700;
-}
-.merch-checkout-steps [aria-current] span {
+.merch-steps li[data-completed="true"] .merch-steps-dot,
+.merch-steps li[aria-current="step"] .merch-steps-dot {
   color: #fff;
   background: #0055ff;
+}
+.merch-steps li[aria-current="step"] {
+  color: #0b1535;
+  font-weight: 700;
+}
+@media (max-width: 480px) {
+  .merch-steps li:not([aria-current="step"]) .merch-steps-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 .merch-cart-grid {
   display: grid;
@@ -355,8 +392,10 @@
   .merch-cart-row-option {
     flex-basis: 100%;
   }
-  .merch-checkout-steps {
-    gap: 4px;
-    font-size: 11px;
+  .merch-steps {
+    margin-block: 20px 22px;
+  }
+  .merch-steps li {
+    gap: 6px;
   }
 }

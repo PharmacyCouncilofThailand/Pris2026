@@ -218,3 +218,18 @@ test("required fields show a red asterisk without changing their names", async (
   );
   await expect(toReviewButton(page)).toBeVisible();
 });
+
+test("the review step marks two completed steps and the current one", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await reachReview(page);
+  const steps = page.getByRole("list", { name: "ขั้นตอนสั่งซื้อ" });
+  await expect(steps.locator('[data-completed="true"]')).toHaveCount(2);
+  await expect(steps.locator('[aria-current="step"]')).toContainText(
+    "ตรวจสอบ",
+  );
+});

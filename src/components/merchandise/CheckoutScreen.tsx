@@ -1,7 +1,7 @@
 "use client";
 import { useId, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { useMerchandise } from "./MerchandiseProvider";
@@ -15,6 +15,7 @@ import {
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { CartDto, Recipient } from "@/types/merchandise";
 import { CheckoutBar } from "./CheckoutBar";
+import { CheckoutSteps } from "./CheckoutSteps";
 import RecipientForm from "./RecipientForm";
 import { useMerchandiseCheckout } from "./useMerchandiseCheckout";
 
@@ -112,27 +113,7 @@ function CheckoutWorkspace() {
       <h1 ref={heading} tabIndex={-1}>
         {review ? "ตรวจสอบคำสั่งซื้อ" : "ข้อมูลผู้รับ"}
       </h1>
-      <ol className="merch-checkout-steps" aria-label="ขั้นตอนสั่งซื้อ">
-        {["ตะกร้า", "ที่อยู่", "ตรวจสอบ", "ชำระเงิน"].map((label, index) => {
-          const current = review ? 2 : 1;
-          return (
-            <li
-              key={label}
-              aria-current={index === current ? "step" : undefined}
-              data-completed={index < current}
-            >
-              <span>
-                {index < current ? (
-                  <Check size={14} aria-hidden="true" />
-                ) : (
-                  index + 1
-                )}
-              </span>
-              {label}
-            </li>
-          );
-        })}
-      </ol>
+      <CheckoutSteps current={review ? 2 : 1} />
       {message && (
         <div
           className="merch-cart-notice"

@@ -300,3 +300,31 @@ test("the longest bar labels fit beside a four-digit total at 320px", async ({
   releaseOrder();
   await expect(page).toHaveURL(/\/th\/souvenirs\/orders\/[0-9a-f-]{36}$/);
 });
+
+test("checkout steps are one compact component with connectors", async ({
+  page,
+  fake,
+}) => {
+  const product = makeSingle();
+  fake.products = [product];
+  fake.seedLine({
+    productId: product.id,
+    variantId: product.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  const steps = page.getByRole("list", { name: "ขั้นตอนสั่งซื้อ" });
+  await expect(steps).toHaveClass(/merch-steps/);
+  expect((await steps.boundingBox())!.width).toBeLessThanOrEqual(640);
+  await expect(steps.locator('[aria-current="step"]')).toContainText("ตะกร้า");
+  expect(
+    parseFloat(
+      await steps
+        .locator("li")
+        .nth(1)
+        .evaluate((e) => getComputedStyle(e).fontSize),
+    ),
+  ).toBeGreaterThanOrEqual(14);
+});

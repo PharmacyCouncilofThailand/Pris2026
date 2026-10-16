@@ -21,6 +21,7 @@ import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import CartRow from "./CartRow";
 import { CheckoutBar } from "./CheckoutBar";
+import { CheckoutSteps } from "./CheckoutSteps";
 import { ShopToolbar } from "./ShopToolbar";
 
 export default function CartScreen() {
@@ -267,14 +268,7 @@ function CartWorkspace() {
         ตะกร้าสินค้า
       </h1>
       <p className="merch-cart-muted">{data.items.length} รายการ</p>
-      <ol className="merch-checkout-steps" aria-label="ขั้นตอนสั่งซื้อ">
-        {["ตะกร้า", "ที่อยู่", "ตรวจสอบ", "ชำระเงิน"].map((label, index) => (
-          <li key={label} aria-current={index === 0 ? "step" : undefined}>
-            <span>{index + 1}</span>
-            {label}
-          </li>
-        ))}
-      </ol>
+      <CheckoutSteps current={0} />
       {notice && (
         <div className="merch-cart-notice" role="status">
           <p>{notice}</p>

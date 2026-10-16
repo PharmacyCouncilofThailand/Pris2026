@@ -2,15 +2,8 @@
   scroll-padding-top: calc(var(--merch-host-header-height, 76px) + 16px);
   scroll-padding-bottom: calc(var(--merch-host-bar-height, 90px) + 24px);
 }
-.merch-checkout .merch-checkout-steps [data-completed="true"] {
-  color: #0055ff;
-}
 .merch-checkout > button.merch-cart-back {
   width: 100%;
-}
-.merch-checkout .merch-checkout-steps [data-completed="true"] span {
-  background: #0055ff;
-  color: white;
 }
 .merch-recipient-intro {
   line-height: 1.8;
