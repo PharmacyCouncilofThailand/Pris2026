@@ -116,10 +116,16 @@ test("menu keyboard containment, Escape and focus return preserve scrolling and 
   ]) {
     await target.focus();
     await target.scrollIntoViewIfNeeded();
-    const a = await target.boundingBox();
-    expect(a!.y + a!.height).toBeLessThanOrEqual(
-      page.viewportSize()!.height + 1,
-    );
+    expect(
+      await target.evaluate((e) => {
+        const r = e.getBoundingClientRect(),
+          top = document.elementFromPoint(
+            r.left + r.width / 2,
+            r.top + r.height / 2,
+          );
+        return !!top && e.contains(top);
+      }),
+    ).toBe(true);
   }
 });
 

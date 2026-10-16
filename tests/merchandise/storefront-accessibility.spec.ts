@@ -49,7 +49,7 @@ test("responsive columns and a one-row header cover the viewport matrix", async 
   }
 });
 
-test("last product and footer controls stay clear of the fixed bar; keyboard menu restores focus", async ({
+test("last product and footer controls stay reachable; keyboard menu restores focus", async ({
   page,
   fake,
 }) => {
@@ -61,10 +61,16 @@ test("last product and footer controls stay clear of the fixed bar; keyboard men
     .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
     .last();
   await last.scrollIntoViewIfNeeded();
-  const buttonBox = await last.boundingBox();
-  expect(buttonBox!.y + buttonBox!.height).toBeLessThanOrEqual(
-    page.viewportSize()!.height,
-  );
+  expect(
+    await last.evaluate((e) => {
+      const r = e.getBoundingClientRect(),
+        top = document.elementFromPoint(
+          r.left + r.width / 2,
+          r.top + r.height / 2,
+        );
+      return !!top && e.contains(top);
+    }),
+  ).toBe(true);
   const menu = page.getByRole("button", { name: "Toggle mobile menu" });
   await menu.focus();
   await page.keyboard.press("Enter");

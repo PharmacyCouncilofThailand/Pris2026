@@ -129,6 +129,8 @@ test("category and bundle filters live in the URL and survive reload", async ({
   await page
     .getByRole("button", { name: "เครื่องแต่งกาย", exact: true })
     .click();
+  await expect(page).toHaveURL(new RegExp(`categoryId=${cat}`));
+  await expect(page.locator(".merch-product")).toHaveCount(1);
   await expect(pressed).toHaveCount(1);
   await page.getByRole("button", { name: "ชุดสินค้า", exact: true }).click();
   await expect(page.locator(".merch-product")).toHaveCount(1);

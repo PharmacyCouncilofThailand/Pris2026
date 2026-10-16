@@ -25,8 +25,14 @@ test("200-percent-equivalent desktop reflow keeps search and the last action rea
   await last.focus();
   await last.scrollIntoViewIfNeeded();
   await expect(last).toBeFocused();
-  const action = await last.boundingBox();
-  expect(action!.y + action!.height).toBeLessThanOrEqual(
-    page.viewportSize()!.height,
-  );
+  expect(
+    await last.evaluate((e) => {
+      const r = e.getBoundingClientRect(),
+        top = document.elementFromPoint(
+          r.left + r.width / 2,
+          r.top + r.height / 2,
+        );
+      return !!top && e.contains(top);
+    }),
+  ).toBe(true);
 });
