@@ -525,3 +525,62 @@ test("option, stepper and trash share one line at 430px, and rows indent under t
   const text = (await page.locator(".merch-cart-row-option").boundingBox())!;
   expect(text.x).toBeGreaterThanOrEqual(cell.x + cell.width);
 });
+
+test("checkout steps line up with the heading at desktop widths on the cart and address step", async ({
+  page,
+  fake,
+}) => {
+  seedOne(fake);
+  await login(page);
+  const steps = page.getByRole("list", { name: "ขั้นตอนสั่งซื้อ" });
+  const heading = page.getByRole("heading", { level: 1 });
+  const check = async (where: string) => {
+    for (const width of [1440, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      const s = (await steps.boundingBox())!,
+        h = (await heading.boundingBox())!;
+      expect(Math.abs(s.x - h.x), `${where} at ${width}`).toBeLessThanOrEqual(
+        1,
+      );
+    }
+  };
+  await page.goto("/th/souvenirs/cart");
+  await expect(
+    page.getByRole("heading", { name: "ตะกร้าสินค้า", exact: true }),
+  ).toBeVisible();
+  await check("cart");
+  await page.goto("/th/souvenirs/checkout");
+  await expect(
+    page.getByRole("heading", { name: "ข้อมูลผู้รับ", exact: true }),
+  ).toBeVisible();
+  await check("address step");
+});
+
+test("the panel stops being sticky on short windows but stays beside the content", async ({
+  page,
+  fake,
+}) => {
+  seedOne(fake);
+  await login(page);
+  await page.setViewportSize({ width: 1024, height: 560 });
+  await page.goto("/th/souvenirs/cart");
+  const bar = page.locator(".merch-checkout-bar");
+  await expect(bar).toHaveCSS("position", "static");
+  const main = (await page.locator(".merch-flow-main").boundingBox())!,
+    panel = (await bar.boundingBox())!;
+  expect(panel.x).toBeGreaterThanOrEqual(main.x + main.width);
+});
+
+test("the panel top lines up with the cart card at 1024", async ({
+  page,
+  fake,
+}) => {
+  seedOne(fake);
+  await login(page);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.locator(".merch-cart-row")).toHaveCount(1);
+  const card = (await page.locator(".merch-cart-list").boundingBox())!,
+    panel = (await page.locator(".merch-checkout-bar").boundingBox())!;
+  expect(Math.abs(panel.y - card.y)).toBeLessThanOrEqual(2);
+});

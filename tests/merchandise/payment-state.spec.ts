@@ -567,6 +567,35 @@ test("the order page lists bundle components, server amounts, recipient and shop
   await expect(page.getByText("จัดส่งภายใน 30 วัน")).toBeVisible();
 });
 
+test("order detail cards keep their top padding and multi-line shop info", async ({
+  page,
+  fake,
+}) => {
+  seed(fake, {
+    paymentStatus: "paid",
+    paidAt: now,
+    payment: view({ state: "paid", attempt: null, ...noButtons }),
+    shippingInfoTh: "บรรทัดหนึ่ง\nบรรทัดสอง",
+  });
+  await open(page);
+  await expect(heading(page, `คำสั่งซื้อ ${NUMBER}`)).toBeVisible();
+  await expect(
+    page.locator(".merch-order .merch-review-section").first(),
+  ).toHaveCSS("padding-top", "20px");
+  const info = page.locator(".merch-order .merch-review-section p", {
+    hasText: "บรรทัดหนึ่ง",
+  });
+  await expect(info).toBeVisible();
+  const { height, lineHeight } = await info.evaluate((el) => {
+    const s = getComputedStyle(el);
+    return {
+      height: el.getBoundingClientRect().height,
+      lineHeight: parseFloat(s.lineHeight) || parseFloat(s.fontSize) * 1.5,
+    };
+  });
+  expect(height).toBeGreaterThanOrEqual(2 * lineHeight - 2);
+});
+
 test("qr_active with a null payload shows a notice and a check button, not a broken page", async ({
   page,
   fake,

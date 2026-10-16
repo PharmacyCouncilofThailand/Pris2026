@@ -4,7 +4,8 @@
   padding: calc(var(--merch-host-header-height, 76px) + 20px) 20px
     calc(var(--merch-host-bar-height, 90px) + 32px);
 }
-.merch-cart > *:not(.merch-cart-bar):not(.merch-checkout-bar) {
+/* Specificity stays 0,3,0; the steps are left out so their own margin rule applies. */
+.merch-cart > *:not(.merch-cart-bar, .merch-checkout-bar):not(.merch-steps) {
   max-width: 1160px;
   margin-inline: auto;
 }
@@ -26,13 +27,13 @@
   font-size: 14px;
   line-height: 1.8;
 }
-.merch-steps,
-.merch-cart > .merch-steps:not(.merch-cart-bar):not(.merch-checkout-bar) {
+.merch-steps {
   display: flex;
   align-items: center;
   width: 100%;
   max-width: 640px;
-  margin: 24px 0 26px;
+  /* Left edge of the centred 1160px column the h1 and content share. */
+  margin: 24px 0 26px max(0px, calc((100% - 1160px) / 2));
   padding: 0;
   list-style: none;
   font-size: 14px;
@@ -373,13 +374,15 @@
     gap: 24px;
     align-items: start;
   }
-  .merch-cart {
+  /* The panel's top lines up with the first card beside it. */
+  .merch-flow-main > :first-child {
+    margin-top: 0;
+  }
+  .merch-cart:has(.merch-flow) {
     padding-bottom: 48px;
   }
   .merch-checkout-bar {
-    position: sticky;
-    z-index: 1;
-    top: calc(var(--merch-host-header-height, 76px) + 24px);
+    position: static;
     bottom: auto;
     inset-inline: auto;
     flex-direction: column;
@@ -417,9 +420,24 @@
   .merch-review-panel-section + .merch-review-lock {
     margin-top: 16px;
   }
+  .merch-checkout-bar-details .merch-review-lock {
+    padding: 0;
+    color: #526787;
+    background: none;
+    border-radius: 0;
+    font-size: 13px;
+  }
   .merch-review-amounts-inline,
   .merch-review-lock-inline {
     display: none;
+  }
+}
+/* Sticky only when the window is tall enough to keep the whole panel in view. */
+@media (min-width: 768px) and (min-height: 600px) {
+  .merch-checkout-bar {
+    position: sticky;
+    z-index: 1;
+    top: calc(var(--merch-host-header-height, 76px) + 24px);
   }
 }
 @media (min-width: 1024px) {

@@ -498,7 +498,7 @@ export default function Header() {
                                   "text-lg font-medium hover:text-cyan-400 block",
                                   isShop &&
                                     item.href === "/souvenirs" &&
-                                    "text-[#0055ff]",
+                                    "text-cyan-400",
                                 )}
                               >
                                 {t(item.labelKey as TranslationKey)}

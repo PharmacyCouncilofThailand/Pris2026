@@ -205,6 +205,15 @@
   font-size: 14px;
   line-height: 1.8;
 }
+@media (min-width: 768px) {
+  /* No fixed bar from 768px, so only a small bottom gap is needed. */
+  :root:has(.merch-checkout) {
+    scroll-padding-bottom: 24px;
+  }
+  .merch-review-lock {
+    scroll-margin-bottom: 24px;
+  }
+}
 @media (min-width: 1024px) {
   .merch-recipient-fields {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

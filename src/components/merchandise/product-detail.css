@@ -3,7 +3,6 @@
   background: #f5f8fe;
   padding: calc(var(--merch-host-header-height, 76px) + 20px) 20px
     calc(var(--merch-host-bar-height, 90px) + 32px);
-  min-height: 65vh;
 }
 .merch-detail-back,
 .merch-detail-grid {

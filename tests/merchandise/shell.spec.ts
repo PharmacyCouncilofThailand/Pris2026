@@ -92,6 +92,35 @@ test("the souvenir nav item is marked current on shop pages", async ({ page, fak
   await expect(item).toHaveCSS("color", "rgb(0, 85, 255)");
 });
 
+test("the current souvenir item in the phone menu has readable contrast on black", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/th/souvenirs");
+  await page.getByRole("button", { name: "Toggle mobile menu" }).click();
+  const item = page
+    .getByRole("dialog")
+    .getByRole("link", { name: "ของที่ระลึก" });
+  await expect(item).toBeVisible();
+  await expect(item).toHaveAttribute("aria-current", "page");
+  const ratio = await item.evaluate((el) => {
+    // Resolve any CSS colour (rgb, oklch, ...) to sRGB through a canvas.
+    const ctx = document.createElement("canvas").getContext("2d")!;
+    ctx.fillStyle = getComputedStyle(el).color;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b] = Array.from(ctx.getImageData(0, 0, 1, 1).data);
+    const channel = (v: number) => {
+      const c = v / 255;
+      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    const lum = 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+    return (lum + 0.05) / 0.05; // against rgb(0, 0, 0)
+  });
+  expect(ratio).toBeGreaterThanOrEqual(4.5);
+});
+
 test("no shop text is smaller than 13px", async ({ page, fake }) => {
   const p = seedCheckout(fake);
   await login(page);

@@ -200,12 +200,14 @@
   font-size: 13px;
   line-height: 1.8;
 }
-.merch-order .merch-review-section:first-child {
-  padding-top: 0;
-}
 .merch-order address {
   font-style: normal;
   margin-top: 12px;
+}
+/* Shop info and the delivery note keep the line breaks staff typed. */
+.merch-order .merch-review-section p,
+.merch-order address {
+  white-space: pre-wrap;
 }
 .merch-order .merch-review-section h2 {
   display: flex;
