@@ -123,11 +123,8 @@ test("changing the option of a line patches variantId and shows the new option",
   await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(page.getByText("ไซซ์ M / สีขาว", { exact: true })).toBeVisible();
-  await page.locator(".merch-cart-edit summary").click();
-  await page
-    .locator(".merch-cart-edit")
-    .getByRole("button", { name: "L", exact: true })
-    .click();
+  await page.getByRole("button", { name: "แก้ไขตัวเลือก", exact: true }).click();
+  await page.getByRole("button", { name: "L", exact: true }).click();
   await page
     .getByRole("button", { name: "บันทึกตัวเลือก", exact: true })
     .click();
@@ -264,4 +261,40 @@ test("a rejected edit shows the API message and reloads the cart", async ({
   await expect(
     page.getByLabel(`จำนวน ${p.nameTh}`, { exact: true }),
   ).toHaveValue("1");
+});
+
+test("removing an item shows a success toast, not a notice box", async ({
+  page,
+  fake,
+}) => {
+  const a = makeSingle({ id: uid(1), nameTh: "แก้วน้ำ Pris" }),
+    b = makeSingle({ id: uid(2), nameTh: "ถุงผ้า Pris" });
+  fake.products = [a, b];
+  seed(fake, a);
+  seed(fake, b);
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await page
+    .getByRole("button", { name: "ลบ ถุงผ้า Pris", exact: true })
+    .click();
+  await expect(
+    page.getByRole("status").filter({ hasText: "นำสินค้าออกจากตะกร้าแล้ว" }),
+  ).toBeVisible();
+  await expect(page.locator(".merch-cart-notice")).toHaveCount(0);
+});
+
+test("quantity above one shows the line total", async ({ page, fake }) => {
+  const p = makeSingle({ nameTh: "แก้วน้ำ Pris" });
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 3,
+  });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.locator(".merch-cart-unit-price")).toHaveText(
+    "฿250.00 / ชิ้น · รวม ฿750.00",
+  );
 });

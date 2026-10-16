@@ -7,6 +7,7 @@ import {
   useState,
 } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import toast from "react-hot-toast";
 import { Link, useRouter } from "@/i18n/routing";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
@@ -223,7 +224,8 @@ function CartWorkspace() {
       if (!active.current) return;
       setCart(value);
       setReset((v) => v + 1);
-      setNotice(done);
+      setNotice(null);
+      toast.success(done, { id: `merchandise-cart:${done}` });
     });
   const update = (line: CartLine, patch: CartItemPatch) =>
     write(
@@ -307,17 +309,19 @@ function CartWorkspace() {
           <div className="merch-cart-grid merch-cart-grid-single">
             <section aria-label="รายการสินค้า">
               {data.items.length ? (
-                data.items.map((line) => (
-                  <CartRow
-                    key={`${line.id}:${data.cartVersion}:${reset}`}
-                    line={line}
-                    storeState={settings.state}
-                    busy={busy || blocked || unauthorized}
-                    onUpdate={(patch) => update(line, patch)}
-                    onRemove={() => remove(line)}
-                    priceChange={priceChanges[line.id]}
-                  />
-                ))
+                <div className="merch-cart-list">
+                  {data.items.map((line) => (
+                    <CartRow
+                      key={`${line.id}:${data.cartVersion}:${reset}`}
+                      line={line}
+                      storeState={settings.state}
+                      busy={busy || blocked || unauthorized}
+                      onUpdate={(patch) => update(line, patch)}
+                      onRemove={() => remove(line)}
+                      priceChange={priceChanges[line.id]}
+                    />
+                  ))}
+                </div>
               ) : (
                 <div className="merch-cart-empty">
                   <h2>ยังไม่มีสินค้าในตะกร้า</h2>

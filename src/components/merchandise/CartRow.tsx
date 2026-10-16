@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 import type {
   CartItemPatch,
   CartLine,
@@ -42,6 +43,8 @@ export default function CartRow({
     image = product?.images[0];
   const name = product?.nameTh ?? "สินค้าที่ไม่พร้อมแสดง";
   const [quantity, setQuantity] = useState(String(line.quantity));
+  const [imageFailed, setImageFailed] = useState(false),
+    [editing, setEditing] = useState(false);
   const [selection, setSelection] = useState<Selection>(() => ({
     variantId: line.variantId,
     bundleSelections: line.bundleSelections,
@@ -79,23 +82,30 @@ export default function CartRow({
       : product?.kind === "bundle"
         ? `ชุด ${product.components.length} รายการ`
         : "";
-  const formId = `cart-form-${line.id}`;
+  const formId = `cart-form-${line.id}`,
+    editId = `cart-edit-${line.id}`;
+  const unitWord = product?.kind === "bundle" ? "ชุด" : "ชิ้น";
   return (
     <article
       className={`merch-cart-row${line.valid ? "" : " merch-cart-row-invalid"}`}
       aria-label={name}
     >
       <div className="merch-cart-row-main">
-        {image && (
-          <Image
-            className="merch-cart-image"
-            unoptimized
-            src={image.url}
-            alt={name}
-            width={80}
-            height={92}
-          />
-        )}
+        <div className="merch-cart-image-cell">
+          {image && !imageFailed ? (
+            <Image
+              className="merch-cart-image"
+              unoptimized
+              src={image.url}
+              alt={name}
+              width={80}
+              height={80}
+              onError={() => setImageFailed(true)}
+            />
+          ) : (
+            <ProductImagePlaceholder failed={imageFailed} />
+          )}
+        </div>
         <div className="merch-cart-row-detail">
           <h2>
             {product ? (
@@ -163,9 +173,25 @@ export default function CartRow({
               </button>
             </form>
           </div>
+          {editOptions && (
+            <button
+              className="merch-cart-edit-toggle"
+              type="button"
+              aria-expanded={editing}
+              aria-controls={editId}
+              onClick={() => setEditing((v) => !v)}
+            >
+              แก้ไขตัวเลือก
+            </button>
+          )}
           <p className="merch-cart-unit-price">
             {line.unitPriceBaht === null ? "—" : formatBaht(line.unitPriceBaht)}
-            <small> / {product?.kind === "bundle" ? "ชุด" : "ชิ้น"}</small>
+            <small>
+              {` / ${unitWord}`}
+              {line.quantity > 1 &&
+                line.lineTotalBaht !== null &&
+                ` · รวม ${formatBaht(line.lineTotalBaht)}`}
+            </small>
           </p>
           {priceChange && (
             <p className="merch-cart-notice">
@@ -218,8 +244,7 @@ export default function CartRow({
             </p>
           ))}
           {editOptions && (
-            <details className="merch-cart-edit">
-              <summary>เปลี่ยนตัวเลือก</summary>
+            <div className="merch-cart-edit" id={editId} hidden={!editing}>
               {product.kind === "bundle" ? (
                 <BundleSelector
                   product={product}
@@ -245,7 +270,7 @@ export default function CartRow({
               >
                 บันทึกตัวเลือก
               </button>
-            </details>
+            </div>
           )}
           {!line.valid && product && (
             <Link

@@ -99,29 +99,37 @@
   gap: 28px;
   margin-block: 20px 30px;
 }
+.merch-cart-list {
+  background: #fff;
+  border-radius: 16px;
+  padding: 8px 20px;
+}
 .merch-cart-row {
-  padding-block: 22px;
+  padding-block: 20px;
   border-bottom: 1px solid #d4def0;
 }
-.merch-cart-row:first-child {
-  padding-top: 0;
+.merch-cart-row:last-child {
+  border-bottom: 0;
 }
 .merch-cart-row-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: 80px minmax(0, 1fr);
   gap: 14px;
   align-items: start;
 }
-.merch-cart-row-main:has(> .merch-cart-image) {
-  grid-template-columns: 80px minmax(0, 1fr);
+.merch-cart-image-cell {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #e9eff8;
 }
 .merch-cart-image {
-  width: 80px;
-  height: 92px;
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  background: #e9eef6;
-  border-radius: 12px;
-  flex-shrink: 0;
 }
 .merch-cart-row-detail {
   flex: 1;
@@ -141,7 +149,7 @@
   overflow-wrap: anywhere;
 }
 .merch-cart-unit-price small {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
 }
 .merch-cart-row-controls {
@@ -234,13 +242,15 @@
   list-style: disc;
   color: #526787;
 }
-.merch-cart-edit summary {
-  cursor: pointer;
-  color: #0055ff;
+.merch-cart-edit-toggle {
+  display: inline-flex;
+  align-items: center;
   min-height: 44px;
-  padding-block: 12px;
+  padding-inline: 0;
+  color: #0055ff;
   font-size: 14px;
   font-weight: 600;
+  cursor: pointer;
 }
 .merch-cart-bar {
   position: fixed;
@@ -443,9 +453,9 @@
   .merch-cart {
     padding-inline: 14px;
   }
-  .merch-cart-image {
+  .merch-cart-image-cell {
     width: 64px;
-    height: 78px;
+    height: 64px;
   }
   .merch-cart-stepper {
     grid-template-columns: 44px 42px 44px;
@@ -453,8 +463,11 @@
   .merch-cart-row-main {
     gap: 10px;
   }
-  .merch-cart-row-main:has(> .merch-cart-image) {
+  .merch-cart-row-main {
     grid-template-columns: 64px minmax(0, 1fr);
+  }
+  .merch-cart-list {
+    padding-inline: 14px;
   }
   .merch-cart-row-option {
     flex-basis: 100%;

@@ -125,9 +125,9 @@ test("cart row reads image+name / option+stepper+trash / price, and the bar show
     .boundingBox())!;
   const price = (await page.locator(".merch-cart-unit-price").boundingBox())!;
   expect(option.y).toBeGreaterThan(name.y);
-  expect(
-    Math.abs(option.y + option.height / 2 - (stepper.y + stepper.height / 2)),
-  ).toBeLessThan(12);
+  // The 80px image column is always present now, so at 390 the option text
+  // takes its own line above the stepper instead of sharing the row.
+  expect(option.y + option.height).toBeLessThanOrEqual(stepper.y + 1);
   expect(trash.x).toBeGreaterThan(stepper.x + stepper.width - 1);
   expect(price.y).toBeGreaterThanOrEqual(stepper.y + stepper.height - 1);
   await expect(
@@ -166,7 +166,9 @@ test("last cart row stays above the bar on a phone", async ({ page, fake }) => {
   await login(page);
   await page.goto("/th/souvenirs/cart");
   const trash = page.getByRole("button", { name: "ลบ สินค้า 3" });
-  await trash.scrollIntoViewIfNeeded();
+  // scrollIntoViewIfNeeded treats a row hidden under the fixed bar as visible,
+  // so scroll to the very end and check the clearance there.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   const t = (await trash.boundingBox())!,
     bar = (await page.locator(".merch-checkout-bar").boundingBox())!;
   expect(t.y + t.height).toBeLessThanOrEqual(bar.y + 1);
@@ -434,4 +436,63 @@ test("no horizontal scroll beside the panel at 768", async ({
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(
     768,
   );
+});
+
+test("rows sit in one white card with an image column even without images", async ({
+  page,
+  fake,
+}) => {
+  const ps = [1, 2].map((i) => makeSingle({ id: uid(i), nameTh: `สินค้า ${i}` }));
+  fake.products = ps;
+  for (const p of ps)
+    fake.seedLine({
+      productId: p.id,
+      variantId: p.variants[0].id,
+      bundleSelections: [],
+      quantity: 1,
+    });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.locator(".merch-cart-row")).toHaveCount(2);
+  await expect(page.locator(".merch-cart-list")).toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+  for (let i = 0; i < 2; i++) {
+    const box = (await page
+      .locator(".merch-cart-row")
+      .nth(i)
+      .locator(".merch-image-placeholder")
+      .boundingBox())!;
+    expect(Math.abs(box.width - 80)).toBeLessThanOrEqual(1);
+  }
+});
+
+test("change-options is a button that toggles the selector", async ({
+  page,
+  fake,
+}) => {
+  const p = makeOptionsProduct();
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  const edit = page.getByRole("button", { name: "แก้ไขตัวเลือก", exact: true });
+  await expect(edit).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page.getByRole("button", { name: "บันทึกตัวเลือก", exact: true }),
+  ).toHaveCount(0);
+  await edit.click();
+  await expect(edit).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    page.getByRole("button", { name: "L", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "บันทึกตัวเลือก", exact: true }),
+  ).toBeVisible();
 });
