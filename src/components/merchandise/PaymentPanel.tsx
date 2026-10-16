@@ -77,7 +77,11 @@ export default function PaymentPanel({
         </div>
       )}
       {model.showQr && payload && (
-        <PaymentQr payload={payload} orderNumber={order.orderNumber}>
+        <PaymentQr
+          payload={payload}
+          orderNumber={order.orderNumber}
+          message={busy ? null : model.message}
+        >
           {remainingMs !== null && (
             <p className="merch-payment-time" role="timer" aria-live="off">
               ชำระภายใน {formatPaymentRemaining(remainingMs)}
@@ -87,7 +91,7 @@ export default function PaymentPanel({
           )}
         </PaymentQr>
       )}
-      {!busy && model.message && (
+      {!(model.showQr && payload) && !busy && model.message && (
         <p className="merch-payment-message" role="status">
           {model.message}
         </p>

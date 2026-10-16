@@ -94,9 +94,7 @@ test("page is kept in the URL, survives reload and the locale switch, and asks t
   const toEnglish = page
     .getByRole("button", { name: /เปลี่ยนภาษาเป็นภาษาอังกฤษ/ })
     .filter({ visible: true });
-  await expect(toEnglish).toHaveAccessibleName(
-    "EN เปลี่ยนภาษาเป็นภาษาอังกฤษ",
-  );
+  await expect(toEnglish).toHaveAccessibleName("EN เปลี่ยนภาษาเป็นภาษาอังกฤษ");
   await toEnglish.click();
   await expect(page).toHaveURL(/\/en\/souvenirs\/orders\?page=2$/);
   await expect(rows(page).locator("h2")).toHaveText(first!);
@@ -168,23 +166,34 @@ test("pending orders offer a pay button and one page hides pagination", async ({
 }) => {
   seed(fake, 1);
   seed(fake, 2, { paymentStatus: "paid", paidAt: "2026-10-15T03:30:00.000Z" });
+  seed(fake, 3);
   await login(page);
   await page.goto("/th/souvenirs/orders");
-  await expect(rows(page)).toHaveCount(2);
+  await expect(rows(page)).toHaveCount(3);
+  for (const n of [1, 3])
+    await expect(
+      rows(page)
+        .filter({ hasText: number(n) })
+        .getByRole("link", { name: new RegExp(`ชำระเงิน.*${number(n)}`) }),
+    ).toHaveCount(1);
   const pay = rows(page)
     .filter({ hasText: number(1) })
     .getByRole("link", { name: "ชำระเงิน" });
   await expect(pay).toHaveAttribute("href", `/th/souvenirs/orders/${uid(1)}`);
   await expect(pay).toHaveCSS("background-color", "rgb(255, 88, 0)");
   await expect(
-    rows(page).filter({ hasText: number(1) }).getByRole("link", {
-      name: "ดูรายละเอียด",
-    }),
+    rows(page)
+      .filter({ hasText: number(1) })
+      .getByRole("link", {
+        name: "ดูรายละเอียด",
+      }),
   ).toHaveCount(0);
   await expect(
-    rows(page).filter({ hasText: number(2) }).getByRole("link", {
-      name: "ดูรายละเอียด",
-    }),
+    rows(page)
+      .filter({ hasText: number(2) })
+      .getByRole("link", {
+        name: "ดูรายละเอียด",
+      }),
   ).toBeVisible();
   await expect(
     page.getByRole("navigation", { name: "หน้าประวัติคำสั่งซื้อ" }),

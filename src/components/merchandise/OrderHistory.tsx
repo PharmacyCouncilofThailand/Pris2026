@@ -140,6 +140,7 @@ function HistoryLoader({ page }: { page: number }) {
                     <Link
                       className="merch-history-pay"
                       href={`/souvenirs/orders/${order.id}`}
+                      aria-label={`ชำระเงิน ${order.orderNumber}`}
                     >
                       ชำระเงิน
                     </Link>

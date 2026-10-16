@@ -226,9 +226,7 @@ test("the QR image decodes to the original payload and nothing leaks to storage 
   });
   expect(decoded).toBe(syntheticQrPayload);
   await expect(
-    page.getByText(
-      "กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร",
-    ),
+    page.getByText("กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร"),
   ).toBeVisible();
   const stored = await page.evaluate(() =>
     JSON.stringify([
@@ -611,6 +609,27 @@ test("unpaid order shows only the QR card with the PRIS logo", async ({
   ).toBeVisible();
 });
 
+test("when the QR image cannot be drawn the time line stays and the auto-check note is replaced", async ({
+  page,
+  fake,
+}) => {
+  seed(fake);
+  await page.addInitScript(() => {
+    HTMLCanvasElement.prototype.toDataURL = () => "";
+  });
+  await open(page);
+  await expect(page.locator(".merch-payment-time")).toHaveText(
+    /^ชำระภายใน \d{2}:\d{2} · หมดอายุ \d{2}:\d{2} น\.$/,
+  );
+  await expect(
+    page.getByText("แสดง QR ไม่สำเร็จ กรุณากดตรวจสอบหรือโหลดหน้าใหม่"),
+  ).toBeVisible();
+  await expect(page.getByText("โอนแล้วระบบจะยืนยันให้อัตโนมัติ")).toHaveCount(
+    0,
+  );
+  await expect(page.getByRole("img", { name: /^QR สำหรับ/ })).toHaveCount(0);
+});
+
 test("the pay card is a narrow slip with one instruction and one time line", async ({
   page,
   fake,
@@ -683,7 +702,9 @@ test("an order already paid on load shows details and never redirects", async ({
   });
   await page.clock.install();
   await open(page);
-  await expect(page.getByRole("link", { name: "กลับหน้าประวัติ" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "กลับหน้าประวัติ" }),
+  ).toBeVisible();
   await expect(heading(page, "ยังไม่จัดส่ง")).toBeVisible();
   expect(
     await page.locator(".merch-order address").evaluate((e) => {

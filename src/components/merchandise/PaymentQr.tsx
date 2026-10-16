@@ -9,21 +9,35 @@ export default function PaymentQr({
   payload,
   orderNumber,
   children,
+  message,
 }: {
   payload: string;
   orderNumber: string;
   // Rendered between the QR image and the hint (the time line).
   children?: ReactNode;
+  // Shown after the hint only when the image rendered; a fallback otherwise.
+  message?: string | null;
 }) {
   const canvasHost = useRef<HTMLDivElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const [failed, setFailed] = useState(false);
   useEffect(() => {
     const canvas = canvasHost.current?.querySelector("canvas");
     // Deferred so the state change is not synchronous inside the effect.
-    void Promise.resolve().then(() =>
-      setDataUrl(canvas ? canvas.toDataURL("image/png") : null),
-    );
-    return () => setDataUrl(null);
+    void Promise.resolve().then(() => {
+      let url: string | null = null;
+      try {
+        url = canvas ? canvas.toDataURL("image/png") : null;
+      } catch {
+        url = null;
+      }
+      setDataUrl(url || null);
+      setFailed(!url);
+    });
+    return () => {
+      setDataUrl(null);
+      setFailed(false);
+    };
   }, [payload]);
   return (
     <>
@@ -49,6 +63,21 @@ export default function PaymentQr({
           <p className="merch-cart-muted">
             กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร
           </p>
+          {message && (
+            <p className="merch-payment-message" role="status">
+              {message}
+            </p>
+          )}
+        </>
+      )}
+      {!dataUrl && (
+        <>
+          {children}
+          {failed && (
+            <p className="merch-payment-message" role="status">
+              แสดง QR ไม่สำเร็จ กรุณากดตรวจสอบหรือโหลดหน้าใหม่
+            </p>
+          )}
         </>
       )}
     </>
