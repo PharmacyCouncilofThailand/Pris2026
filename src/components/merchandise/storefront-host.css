@@ -1,4 +1,8 @@
 /* Host integration only. Product/banner/card styling stays in the shared artifact. */
+.merchandise-route-scope {
+  background: #f4f8fc;
+  min-height: 100svh;
+}
 .merchandise-route-scope .merch-store {
   padding-top: var(--merch-host-header-height, 76px);
 }

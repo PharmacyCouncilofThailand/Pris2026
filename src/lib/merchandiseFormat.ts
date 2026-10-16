@@ -23,6 +23,9 @@ export function formatBaht(amount: number): string {
   if (!isBaht(amount)) throw new Error("Invalid baht amount");
   return `฿${baht.format(amount)}`;
 }
+export function shippingFeeLabel(baht: number): string {
+  return baht === 0 ? "จัดส่งฟรี" : `ค่าจัดส่ง ${formatBaht(baht)} ต่อออเดอร์`;
+}
 export function formatMerchandiseTime(value: string | null): string {
   if (value === null) return "—";
   if (!isIsoUtc(value)) throw new Error("Invalid UTC instant");

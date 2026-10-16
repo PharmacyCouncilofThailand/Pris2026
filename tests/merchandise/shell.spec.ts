@@ -1,6 +1,34 @@
 import { test, expect, login } from "./fixtures";
 import { makeSingle } from "./data";
 
+test("short shop pages never show the dark site background", async ({ page, fake }) => {
+  const p = makeSingle(); fake.products = [p];
+  await login(page);
+  for (const size of [{ width: 1440, height: 1000 }, { width: 440, height: 956 }])
+  for (const path of [`/th/souvenirs/products/${p.id}`, "/th/souvenirs/cart"]) {
+    await page.setViewportSize(size);
+    await page.goto(path);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    const color = await page.evaluate(() => {
+      const y = window.innerHeight - 4;
+      const el = document.elementFromPoint(window.innerWidth / 2, y)!;
+      let n: Element | null = el;
+      while (n && getComputedStyle(n).backgroundColor === "rgba(0, 0, 0, 0)") n = n.parentElement;
+      return n ? getComputedStyle(n).backgroundColor : "none";
+    });
+    // The route scope itself must paint the light page colour over the whole viewport,
+    // so whatever sits below or behind a short page (or a fixed bar) is never the dark body.
+    const scope = await page.evaluate(() => {
+      const el = document.querySelector(".merchandise-route-scope")!;
+      return { bg: getComputedStyle(el).backgroundColor, bottom: el.getBoundingClientRect().bottom, height: window.innerHeight };
+    });
+    expect(scope.bg).toBe("rgb(244, 248, 252)");
+    expect(scope.bottom).toBeGreaterThanOrEqual(scope.height);
+    expect(color).not.toBe("rgb(0, 0, 0)");
+    expect(color).not.toMatch(/^rgb\((1[0-9]|[0-9]), /); // no near-black
+  }
+});
+
 test("souvenir pages use the site header and show no footer", async ({
   page,
   fake,

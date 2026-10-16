@@ -11,7 +11,7 @@ export interface StoreDto {
   state: "disabled" | "not_open" | "open" | "closed";
   opensAt: string | null; closesAt: string | null;
   productionInfoTh: string | null; shippingInfoTh: string | null;
-  shippingBaht: 50; currency: "THB"; serverNow: string;
+  shippingBaht: number; currency: "THB"; serverNow: string;
   categories: { id: string; nameTh: string; sortOrder: number }[];
   banners: { id: string; image: ImageAsset; linkUrl: string | null }[];
 }
@@ -39,7 +39,7 @@ export interface CartLine {
   unitPriceBaht: Baht | null; lineTotalBaht: Baht | null;
   valid: boolean; issueCodes: string[];
 }
-export interface Amounts { subtotalBaht: Baht; shippingBaht: 50; totalBaht: Baht; currency: "THB" }
+export interface Amounts { subtotalBaht: Baht; shippingBaht: number; totalBaht: Baht; currency: "THB" }
 export interface CartDto {
   cartVersion: string; items: CartLine[]; amounts: Amounts | null;
   buyerDefaults: { fullName: string; phone: string | null; email: string };

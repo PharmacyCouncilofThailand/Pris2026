@@ -29,6 +29,7 @@ const positive: Check = (v) => integer(v) && (v as number) > 0;
 export const uuid: Check = (v) =>
   typeof v === "string" &&
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+const shippingFee: Check = (v) => natural(v) && (v as number) <= 1000;
 const one =
   (...values: unknown[]): Check =>
   (v) =>
@@ -43,14 +44,33 @@ const list =
     Array.isArray(v) && v.every(check);
 // Canonical keys are compile-checked against each DTO. Fields the API adds
 // later are accepted; missing or malformed known fields are rejected.
+const invalidPath: string[] = [];
+export function consumeInvalidPath(): string | null {
+  const path = invalidPath.length > 0 ? invalidPath.join(".") : null;
+  invalidPath.length = 0;
+  return path;
+}
+let depth = 0;
 function shape<T>(fields: { [K in keyof T]-?: Check }): Check {
-  return (value) =>
-    record(value) &&
-    Object.entries(fields).every(
-      ([key, check]) =>
-        Object.prototype.hasOwnProperty.call(value, key) &&
-        (check as Check)(value[key]),
-    );
+  return (value) => {
+    // The outermost check starts a fresh path; nested checks add to it.
+    if (depth === 0) invalidPath.length = 0;
+    depth += 1;
+    try {
+      return (
+        record(value) &&
+        Object.entries(fields).every(([key, check]) => {
+          const valid =
+            Object.prototype.hasOwnProperty.call(value, key) &&
+            (check as Check)(value[key]);
+          if (!valid) invalidPath.unshift(key);
+          return valid;
+        })
+      );
+    } finally {
+      depth -= 1;
+    }
+  };
 }
 const url: Check = (v) => {
   if (
@@ -85,7 +105,7 @@ export const storeResponse = shape<StoreDto>({
   closesAt: nullable(isIsoUtc),
   productionInfoTh: nullable(text),
   shippingInfoTh: nullable(text),
-  shippingBaht: one(50),
+  shippingBaht: shippingFee,
   currency: one("THB"),
   serverNow: isIsoUtc,
   categories: list(
@@ -142,7 +162,7 @@ export const productResponse = shape<ProductDto>({
 });
 const amounts = shape<Amounts>({
   subtotalBaht: isBaht,
-  shippingBaht: one(50),
+  shippingBaht: shippingFee,
   totalBaht: isBaht,
   currency: one("THB"),
 });

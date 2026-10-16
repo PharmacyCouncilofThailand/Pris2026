@@ -3,7 +3,6 @@
   color: #0b1535;
   padding: calc(var(--merch-host-header-height, 76px) + 20px) 20px
     calc(var(--merch-host-bar-height, 90px) + 32px);
-  min-height: 65vh;
 }
 .merch-cart > *:not(.merch-cart-bar):not(.merch-checkout-bar) {
   max-width: 1160px;

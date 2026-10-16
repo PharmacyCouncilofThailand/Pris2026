@@ -5,6 +5,7 @@ import {
   formatMerchandiseTime,
   isBaht,
   isIsoUtc,
+  shippingFeeLabel,
 } from "./merchandiseFormat";
 test("whole baht are formatted with two decimals and invalid amounts are rejected", () => {
   assert.equal(formatBaht(6), "฿6.00");
@@ -28,4 +29,9 @@ test("only explicit valid UTC instants are formatted in Thai time", () => {
     assert.equal(isIsoUtc(value), false);
   assert.match(formatMerchandiseTime("2026-10-14T17:00:00.000Z"), /15/);
   assert.equal(formatMerchandiseTime(null), "—");
+});
+test("shipping fee label", () => {
+  assert.equal(shippingFeeLabel(0), "จัดส่งฟรี");
+  assert.equal(shippingFeeLabel(50), "ค่าจัดส่ง ฿50.00 ต่อออเดอร์");
+  assert.equal(shippingFeeLabel(120), "ค่าจัดส่ง ฿120.00 ต่อออเดอร์");
 });

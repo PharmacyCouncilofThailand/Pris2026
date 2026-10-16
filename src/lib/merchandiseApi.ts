@@ -16,6 +16,7 @@ import {
   record,
   uuid,
   type Check,
+  consumeInvalidPath,
   storeResponse,
   productResponse,
   pageResponse,
@@ -197,8 +198,16 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
     const response = await request(path, config);
     if (!response.ok) throw await errorFor(response);
     const body: unknown = await response.json().catch(() => null);
-    if (!record(body) || body.success !== true || !check(body.data))
+    consumeInvalidPath();
+    if (!record(body) || body.success !== true || !check(body.data)) {
+      const failed = consumeInvalidPath();
+      if (process.env.NODE_ENV !== "production")
+        console.warn(
+          `[merchandise] invalid response from ${path}`,
+          failed ?? "(shape)",
+        );
       throw merchandiseFailure(response.status, "MERCH_BAD_RESPONSE");
+    }
     return body.data as T;
   }
   const owned = (token: string, signal?: AbortSignal) => ({

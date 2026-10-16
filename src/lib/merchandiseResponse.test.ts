@@ -9,6 +9,7 @@ import {
   orderResponse,
   createOrderResponse,
   paymentResponse,
+  consumeInvalidPath,
 } from "./merchandiseResponse";
 
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
@@ -138,7 +139,6 @@ test("product and page", () => {
 test("cart", () => {
   assert.equal(cartResponse(cart), true);
   assert.equal(cartResponse({ ...cart, amounts: null }), true);
-  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 100 } }), false);
   // A satang value under the new key must not pass as 5,000 baht shipping.
   assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 5000 } }), false);
   // The old satang API shape must be rejected, not silently read as baht.
@@ -180,4 +180,17 @@ test("order and payment", () => {
   assert.equal(createOrderResponse({ order }), false);
   assert.equal(paymentResponse({ payment }), true);
   assert.equal(paymentResponse({ payment: { ...payment, state: "refunded" } }), false);
+});
+test("shipping fee is whole baht between 0 and 1000", () => {
+  for (const ok of [0, 50, 100, 1000]) assert.equal(storeResponse({ ...validStore, shippingBaht: ok }), true);
+  for (const bad of [-1, 1.5, 1001, 5000, "50"]) assert.equal(storeResponse({ ...validStore, shippingBaht: bad }), false);
+  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 0 } }), true);
+  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 5000 } }), false); // satang guard kept
+});
+test("a failed check reports its field path once", () => {
+  storeResponse({ ...validStore, shippingBaht: -1 });
+  assert.equal(consumeInvalidPath(), "shippingBaht");
+  assert.equal(consumeInvalidPath(), null);
+  cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: -1 } });
+  assert.equal(consumeInvalidPath(), "amounts.shippingBaht");
 });
