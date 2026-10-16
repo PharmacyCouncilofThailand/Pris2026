@@ -155,3 +155,46 @@ test("last cart row stays above the bar on a phone", async ({ page, fake }) => {
     bar = (await page.locator(".merch-checkout-bar").boundingBox())!;
   expect(t.y + t.height).toBeLessThanOrEqual(bar.y + 1);
 });
+
+test("checkout bar keeps a four-digit total on one line beside the action at 320px", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 4,
+  });
+  await page.setViewportSize({ width: 320, height: 700 });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  const amount = page.locator(".merch-checkout-bar-total strong");
+  await expect(amount).toHaveText("฿1,050.00");
+  const box = (await amount.boundingBox())!;
+  const lineHeight = await amount.evaluate((el) => {
+    const style = getComputedStyle(el);
+    return {
+      fontSize: style.fontSize,
+      lineHeight:
+        parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5,
+    };
+  });
+  expect(lineHeight.fontSize).toBe("18px");
+  expect(box.height).toBeLessThanOrEqual(lineHeight.lineHeight + 1);
+  const bar = page.locator(".merch-checkout-bar");
+  expect(await bar.evaluate((el) => el.scrollWidth === el.clientWidth)).toBe(
+    true,
+  );
+  const total = (await page
+    .locator(".merch-checkout-bar-total")
+    .boundingBox())!;
+  const action = (await page
+    .getByRole("button", { name: /^ดำเนินการสั่งซื้อ/ })
+    .boundingBox())!;
+  expect(
+    Math.abs(total.y + total.height / 2 - (action.y + action.height / 2)),
+  ).toBeLessThan(6);
+});

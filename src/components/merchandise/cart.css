@@ -317,6 +317,26 @@
   font-weight: 700;
   white-space: nowrap;
 }
+@media (max-width: 479px) {
+  .merch-checkout-bar {
+    gap: 8px;
+    padding-inline: 14px;
+  }
+  .merch-checkout-bar-total {
+    flex-shrink: 0;
+  }
+  .merch-checkout-bar-total strong {
+    font-size: 18px;
+    white-space: nowrap;
+  }
+  .merch-checkout-bar > button {
+    flex-shrink: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    gap: 6px;
+    font-size: 15px;
+  }
+}
 .merch-checkout-bar > button:disabled {
   background: #dfe5ee;
   color: #526787;
