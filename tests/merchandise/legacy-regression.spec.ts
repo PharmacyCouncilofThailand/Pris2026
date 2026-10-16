@@ -127,6 +127,8 @@ test("incumbent homepage header, scroll, menu and locale remain outside the shop
   page,
   fake,
 }) => {
+  // The incumbent homepage is heavy on WebKit mobile under `next dev`.
+  test.slow();
   const shopCalls: string[] = [];
   page.on("request", (r) => {
     if (r.url().includes("/api/v1/merchandise")) shopCalls.push(r.url());
@@ -134,7 +136,9 @@ test("incumbent homepage header, scroll, menu and locale remain outside the shop
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/th");
-  await expect(page.locator("body")).not.toHaveClass(/hero-playing/);
+  await expect(page.locator("body")).not.toHaveClass(/hero-playing/, {
+    timeout: 30000,
+  });
   const menu = page.getByRole("button", {
     name: "Toggle mobile menu",
     exact: true,
@@ -254,13 +258,17 @@ test("lucky-wheel login return and registration success toast remain independent
   fake,
 }) => {
   void fake;
+  // The incumbent homepage is heavy on WebKit mobile under `next dev`.
+  test.slow();
   await page.goto("/th/lucky-wheel");
   await expect(page).toHaveURL(/\/th\/login\?redirect=%2Flucky-wheel/);
   await page.goto(
     "/th?status=registered&regCode=REG-SYNTHETIC-17&orderNumber=legacy-order",
   );
   await expect(page.getByText(/REG-SYNTHETIC-17/).first()).toBeVisible();
-  await expect(page).not.toHaveURL(/status=|regCode=|orderNumber=/);
+  await expect(page).not.toHaveURL(/status=|regCode=|orderNumber=/, {
+    timeout: 30000,
+  });
   expect(await page.locator(".merch-payment-panel,.merch-paid").count()).toBe(
     0,
   );

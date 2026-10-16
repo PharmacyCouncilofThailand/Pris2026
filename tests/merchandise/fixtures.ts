@@ -6,10 +6,10 @@ const API_ORIGIN =
 
 export const test = base.extend<{ apiOrigin: string; fake: FakeMerchApi }>({
   apiOrigin: [API_ORIGIN, { option: true }],
-  fake: async ({ context, apiOrigin }, use) => {
+  fake: async ({ context, apiOrigin }, provide) => {
     const fake = new FakeMerchApi();
     await fake.install(context, apiOrigin);
-    await use(fake);
+    await provide(fake);
   },
 });
 export { expect };
