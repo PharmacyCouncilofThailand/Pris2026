@@ -30,3 +30,24 @@ export function filterCatalog(
     total,
   };
 }
+
+export type CatalogSelection = {
+  categoryId: string | null;
+  kind: "bundle" | null;
+};
+
+/** Single-select storefront filter: one pill active at a time; pressing it again returns to all. */
+export function nextCatalogFilter(
+  current: CatalogSelection,
+  pressed: "all" | "bundle" | { categoryId: string },
+): CatalogSelection {
+  const all: CatalogSelection = { categoryId: null, kind: null };
+  if (pressed === "all") return all;
+  if (pressed === "bundle")
+    return current.kind === "bundle"
+      ? all
+      : { categoryId: null, kind: "bundle" };
+  return current.kind !== "bundle" && current.categoryId === pressed.categoryId
+    ? all
+    : { categoryId: pressed.categoryId, kind: null };
+}

@@ -4,12 +4,11 @@
   --merch-orange: #ff5a00;
   --merch-ink: #111827;
   --merch-muted: #536074;
-  --merch-bar-height: calc(84px + env(safe-area-inset-bottom));
   color: var(--merch-ink);
   background: #f4f8fc;
   font-family: var(--font-noto-sans-thai), var(--font-outfit), sans-serif;
   line-height: 1.5;
-  padding-bottom: calc(var(--merch-bar-height) + 24px);
+  padding-bottom: 24px;
   min-height: 100dvh;
   min-width: 0;
   box-sizing: border-box;
@@ -374,70 +373,25 @@
   margin: 0;
   font-size: 14px;
 }
-.merch-bottom-bar {
-  position: fixed;
-  z-index: 40;
-  inset-inline: 0;
-  bottom: 0;
-  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-  background: white;
-  box-shadow: 0 -4px 20px #10203d09;
-}
-.merch-primary {
+.merch-shop-toolbar {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 680px;
-  margin-inline: auto;
-  min-height: 52px;
-  padding: 10px 16px;
-  border: 0;
-  border-radius: 999px;
-  background: #ff5a00;
-  color: white;
-  font-size: 19px;
-  font-weight: 700;
-  line-height: 1.4;
+  min-height: 44px;
+  margin-bottom: 8px;
 }
-.merch-primary > span:not(.merch-primary-arrow) {
-  min-width: 0;
-  flex: 1;
-  text-align: center;
-  overflow-wrap: anywhere;
-}
-.merch-primary-arrow {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: white;
-  color: #ff5a00;
-}
-.merch-primary > svg {
-  width: 22px;
-  height: 22px;
-}
-.merch-primary:disabled {
-  opacity: 1;
-}
-.merch-primary:hover:not(:disabled) {
-  background: #e74900;
+.merch-my-orders {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-left: auto;
+  color: #0055ff;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 @media (max-width: 359px) {
   .merch-add svg {
     display: none;
-  }
-  .merch-primary {
-    gap: 8px;
-    padding-inline: 12px;
-  }
-  .merch-primary-arrow {
-    width: 30px;
-    height: 30px;
   }
 }
 @media (min-width: 768px) {

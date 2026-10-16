@@ -116,9 +116,10 @@ test("menu keyboard containment, Escape and focus return preserve scrolling and 
   ]) {
     await target.focus();
     await target.scrollIntoViewIfNeeded();
-    const a = await target.boundingBox(),
-      b = await page.locator(".merch-bottom-bar").boundingBox();
-    expect(a!.y + a!.height).toBeLessThanOrEqual(b!.y + 1);
+    const a = await target.boundingBox();
+    expect(a!.y + a!.height).toBeLessThanOrEqual(
+      page.viewportSize()!.height + 1,
+    );
   }
 });
 
@@ -146,7 +147,7 @@ test("shop controls have names, image alternatives, visible keyboard focus and 4
   expect(await page.locator("main img:not([alt])").count()).toBe(0);
   for (const element of await page
     .locator(
-      "header .merch-header-cart:visible, .merch-product button, .merch-primary, .merch-categories button",
+      "header .merch-header-cart:visible, .merch-product button, .merch-categories button",
     )
     .all()) {
     await expect(element).toHaveAccessibleName(/\S/);
@@ -249,7 +250,7 @@ test("reduced motion keeps manual banner controls, keyboard navigation and cance
   ).toHaveAttribute("aria-current", "true");
 });
 
-test("computed primary action contrast meets large bold text requirements and secondary Add meets normal text requirements", async ({
+test("computed Add button contrast meets normal text requirements", async ({
   page,
   fake,
   context,
@@ -260,7 +261,6 @@ test("computed primary action contrast meets large bold text requirements and se
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
   for (const locator of [
-    page.locator(".merch-primary"),
     page.getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true }).first(),
   ]) {
     const style = await locator.evaluate((e) => {

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { filterCatalog } from "./merchandiseCatalog";
+import { filterCatalog, nextCatalogFilter } from "./merchandiseCatalog";
 import type { ProductDto } from "../types/merchandise";
 
 const mk = (i: number, o: Partial<ProductDto> = {}): ProductDto => ({
@@ -37,3 +37,14 @@ test("empty result still has one page", () => {
   const r = filterCatalog(all, { q: "zzz" });
   assert.deepEqual([r.items.length, r.page, r.totalPages, r.total], [0, 1, 1, 0]);
 });
+
+test("picking a category clears bundle", () =>
+  assert.deepEqual(nextCatalogFilter({ categoryId: null, kind: "bundle" }, { categoryId: "c1" }), { categoryId: "c1", kind: null }));
+test("picking bundle clears the category", () =>
+  assert.deepEqual(nextCatalogFilter({ categoryId: "c1", kind: null }, "bundle"), { categoryId: null, kind: "bundle" }));
+test("pressing the active pill returns to all", () => {
+  assert.deepEqual(nextCatalogFilter({ categoryId: "c1", kind: null }, { categoryId: "c1" }), { categoryId: null, kind: null });
+  assert.deepEqual(nextCatalogFilter({ categoryId: null, kind: "bundle" }, "bundle"), { categoryId: null, kind: null });
+});
+test("all clears both", () =>
+  assert.deepEqual(nextCatalogFilter({ categoryId: "c1", kind: null }, "all"), { categoryId: null, kind: null }));

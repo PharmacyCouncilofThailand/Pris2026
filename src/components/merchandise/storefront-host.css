@@ -22,22 +22,6 @@
   padding: 16px 24px 0;
   color: #334155;
 }
-.merchandise-history-link {
-  display: flex;
-  justify-content: flex-end;
-  max-width: 1600px;
-  margin: auto;
-  padding: 8px 24px;
-  background: #f4f8fc;
-}
-.merchandise-history-link a {
-  color: #0055ff;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
 .merchandise-route-scope :focus-visible {
   outline: 3px solid #0055ff;
   outline-offset: 3px;

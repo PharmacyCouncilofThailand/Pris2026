@@ -52,7 +52,6 @@ for (const [state, text] of states)
     await expect(page.locator(".merch-product")).toHaveCount(1);
     await expect(page.locator(".merchandise-store-status")).toContainText(text);
     await expect(addButtons(page)).toHaveCount(0);
-    await expect(page.locator(".merch-primary")).toBeDisabled();
   });
 
 test("not_open store shows the opening time when the API gives one", async ({
@@ -122,13 +121,63 @@ test("category and bundle filters live in the URL and survive reload", async ({
     .click();
   await expect(page.locator(".merch-product")).toHaveCount(1);
   await expect(page).toHaveURL(new RegExp(`categoryId=${cat}`));
+  const pressed = page.locator('.merch-categories [aria-pressed="true"]');
+  await expect(pressed).toHaveCount(1);
   await page.getByRole("button", { name: "ทั้งหมด", exact: true }).click();
   await expect(page.locator(".merch-product")).toHaveCount(3);
+  await expect(pressed).toHaveCount(1);
+  await page
+    .getByRole("button", { name: "เครื่องแต่งกาย", exact: true })
+    .click();
+  await expect(pressed).toHaveCount(1);
   await page.getByRole("button", { name: "ชุดสินค้า", exact: true }).click();
   await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(page).toHaveURL(/kind=bundle/);
+  await expect(page).not.toHaveURL(/categoryId=/);
+  await expect(pressed).toHaveCount(1);
   await page.reload();
   await expect(page).toHaveURL(/kind=bundle/);
   await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(pressed).toHaveCount(1);
+});
+
+test("legacy URL with category and bundle keeps bundle only", async ({
+  page,
+  fake,
+}) => {
+  const cat = uid(900);
+  fake.store = makeStore({
+    categories: [{ id: cat, nameTh: "เครื่องแต่งกาย", sortOrder: 1 }],
+  });
+  fake.products = [
+    makeSingle({ id: uid(1), categoryId: cat }),
+    makeBundle({ id: uid(3) }),
+  ];
+  await page.goto(`/th/souvenirs?categoryId=${cat}&kind=bundle`);
+  await expect(page).not.toHaveURL(/categoryId=/);
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(
+    page.locator('.merch-categories [aria-pressed="true"]'),
+  ).toHaveText("ชุดสินค้า");
+});
+
+test("storefront has no bottom bar; my orders link sits top right only when logged in", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-bottom-bar")).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "คำสั่งซื้อของฉัน" }),
+  ).toHaveCount(0);
+  await login(page);
+  await page.goto("/th/souvenirs");
+  const link = page.getByRole("link", { name: "คำสั่งซื้อของฉัน" });
+  const box = (await link.boundingBox())!,
+    banner = (await page.locator(".merch-search").boundingBox())!;
+  expect(box.y + box.height).toBeLessThanOrEqual(banner.y);
+  expect(box.x + box.width).toBeGreaterThan(page.viewportSize()!.width / 2);
 });
 
 test("loads limit=100, follows pagination.totalPages, then pages client-side by 12", async ({

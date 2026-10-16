@@ -2,7 +2,6 @@
 import {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -10,12 +9,12 @@ import {
 } from "react";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
-import { Link, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseResource } from "./useMerchandiseResource";
 import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
 import { StorefrontView } from "./StorefrontView";
-import { filterCatalog } from "@/lib/merchandiseCatalog";
+import { filterCatalog, nextCatalogFilter } from "@/lib/merchandiseCatalog";
 import { formatMerchandiseTime } from "@/lib/merchandiseFormat";
 import {
   savePurchaseIntent,
@@ -47,10 +46,13 @@ export default function StorefrontClient() {
   const filters = useMemo(() => {
     const q = new URL(canonical ?? "/souvenirs", "https://internal.invalid")
       .searchParams;
+    const kind = q.get("kind") as "single" | "bundle" | null;
     return {
       query: q.get("q") ?? "",
-      categoryId: q.get("categoryId") ?? undefined,
-      kind: q.get("kind") as "single" | "bundle" | null,
+      // Filters are single-select: a legacy URL with both keeps the bundle.
+      categoryId:
+        kind === "bundle" ? undefined : (q.get("categoryId") ?? undefined),
+      kind,
       page: Number(q.get("page") ?? 1),
       intentId: q.get("intentId"),
     };
@@ -84,6 +86,12 @@ export default function StorefrontClient() {
   useEffect(() => {
     if (!canonical) router.replace("/souvenirs", { scroll: false });
   }, [canonical, router]);
+  useEffect(() => {
+    if (!canonical) return;
+    const q = new URL(canonical, "https://internal.invalid").searchParams;
+    if (q.has("categoryId") && q.get("kind") === "bundle")
+      change({ categoryId: null });
+  }, [canonical, change]);
   useEffect(() => {
     if (query === filters.query) return;
     const timer = setTimeout(() => change({ q: query }), 200);
@@ -130,27 +138,8 @@ export default function StorefrontClient() {
     if (!filters.intentId) addStarted.current = false;
   }, [filters.intentId]);
   const purchaseBusy = Boolean(token && filters.intentId);
-  const canBuy =
-    store.data?.state === "open" &&
-    Boolean(catalog.data?.some((product) => product.purchasable));
   const viewRoot = useRef<HTMLDivElement>(null),
     swipe = useRef<{ x: number; y: number } | null>(null);
-  useLayoutEffect(() => {
-    const bar = viewRoot.current?.querySelector(".merch-bottom-bar");
-    if (!bar) return;
-    const measure = () =>
-      document.documentElement.style.setProperty(
-        "--merch-host-bar-height",
-        `${bar.getBoundingClientRect().height}px`,
-      );
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(bar);
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty("--merch-host-bar-height");
-    };
-  }, [store.status, catalog.status]);
   const startSwipe = (e: PointerEvent<HTMLDivElement>) => {
     if (
       e.pointerType === "touch" &&
@@ -284,47 +273,25 @@ export default function StorefrontClient() {
               }
             : null
         }
-        primaryLabel={
-          canBuy
-            ? token
-              ? "ดูตะกร้า"
-              : "เข้าสู่ระบบเพื่อสั่งซื้อ"
-            : state !== "open"
-              ? unavailableMessage("STORE_NOT_OPEN", state)
-              : "ยังไม่มีสินค้าที่เปิดขาย"
-        }
-        primaryDisabled={!canBuy}
         onQuery={(value) => {
           setDraft({ source: search, value: value.slice(0, 200) });
           if (!value) change({ q: null });
         }}
-        onCategory={(value) =>
-          withDraft(
-            value === "all"
-              ? { categoryId: null, kind: null }
-              : { categoryId: value },
-          )
-        }
-        onKind={(value) =>
-          withDraft({ kind: value === "all" ? null : "bundle" })
-        }
+        onFilter={(pressed) => {
+          const next = nextCatalogFilter(
+            {
+              categoryId: filters.categoryId ?? null,
+              kind: filters.kind === "bundle" ? "bundle" : null,
+            },
+            pressed,
+          );
+          withDraft({ categoryId: next.categoryId, kind: next.kind });
+        }}
         onPage={(page) => withDraft({ page: String(page) })}
         onProduct={(id) => router.push(`/souvenirs/products/${id}`)}
         onAdd={add}
-        onPrimary={() =>
-          router.push(
-            token
-              ? "/souvenirs/cart"
-              : merchandiseLoginPath(canonical ?? "/souvenirs"),
-          )
-        }
         onRetry={catalog.reload}
       />
-      {token && (
-        <div className="merchandise-history-link">
-          <Link href="/souvenirs/orders">คำสั่งซื้อของฉัน</Link>
-        </div>
-      )}
     </div>
   );
 }

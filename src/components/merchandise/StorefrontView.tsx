@@ -1,10 +1,11 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Portable React renderer has no Next.js dependency; media dimensions come from the API. */
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import type { ProductDto, StoreDto } from "@/types/merchandise";
 import { formatBaht } from "@/lib/merchandiseFormat";
 import { Icon } from "./storefront-icons";
+import { ShopToolbar } from "./ShopToolbar";
 export interface StorefrontViewProps {
   store: StoreDto;
   products: ProductDto[];
@@ -21,15 +22,11 @@ export interface StorefrontViewProps {
     total: number;
     totalPages: number;
   } | null;
-  primaryLabel: string;
-  primaryDisabled: boolean;
   onQuery(value: string): void;
-  onCategory(value: string): void;
-  onKind(value: "all" | "bundle"): void;
+  onFilter(pressed: "all" | "bundle" | { categoryId: string }): void;
   onPage(value: number): void;
   onProduct(productId: string): void;
   onAdd(productId: string): void;
-  onPrimary(): void;
   onRetry(): void;
 }
 function BannerCarousel({ store }: { store: StoreDto }) {
@@ -181,30 +178,15 @@ function ProductCard({
   );
 }
 export function StorefrontView(props: StorefrontViewProps) {
-  const root = useRef<HTMLDivElement>(null),
-    bar = useRef<HTMLDivElement>(null),
-    searchId = useId();
-  useEffect(() => {
-    const target = bar.current,
-      wrapper = root.current;
-    if (!target || !wrapper) return;
-    const measure = () =>
-      wrapper.style.setProperty(
-        "--merch-bar-height",
-        `${target.getBoundingClientRect().height}px`,
-      );
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(target, { box: "border-box" });
-    return () => observer.disconnect();
-  }, []);
+  const searchId = useId();
   const products = props.products,
     storeOpen = props.store.state === "open";
   return (
-    <div className="merch-store" ref={root}>
+    <div className="merch-store">
       {props.headerSlot}
       <h1 className="merch-sr-only">ร้านของที่ระลึก</h1>
       <main className="merch-store-content">
+        <ShopToolbar />
         <BannerCarousel store={props.store} />
         <div className="merch-search">
           <Icon name="search" />
@@ -227,7 +209,7 @@ export function StorefrontView(props: StorefrontViewProps) {
             aria-pressed={
               props.activeCategory === "all" && props.activeKind === "all"
             }
-            onClick={() => props.onCategory("all")}
+            onClick={() => props.onFilter("all")}
           >
             <Icon name="grid" />
             ทั้งหมด
@@ -239,8 +221,10 @@ export function StorefrontView(props: StorefrontViewProps) {
                 type="button"
                 key={c.id}
                 className="merch-pill"
-                aria-pressed={props.activeCategory === c.id}
-                onClick={() => props.onCategory(c.id)}
+                aria-pressed={
+                  props.activeKind !== "bundle" && props.activeCategory === c.id
+                }
+                onClick={() => props.onFilter({ categoryId: c.id })}
               >
                 <Icon name="tag" />
                 {c.nameTh}
@@ -250,9 +234,7 @@ export function StorefrontView(props: StorefrontViewProps) {
             type="button"
             className="merch-pill"
             aria-pressed={props.activeKind === "bundle"}
-            onClick={() =>
-              props.onKind(props.activeKind === "bundle" ? "all" : "bundle")
-            }
+            onClick={() => props.onFilter("bundle")}
           >
             <Icon name="gift" />
             ชุดสินค้า
@@ -298,8 +280,7 @@ export function StorefrontView(props: StorefrontViewProps) {
                   className="merch-secondary"
                   onClick={() => {
                     props.onQuery("");
-                    props.onCategory("all");
-                    props.onKind("all");
+                    props.onFilter("all");
                   }}
                 >
                   ดูสินค้าทั้งหมด
@@ -348,20 +329,6 @@ export function StorefrontView(props: StorefrontViewProps) {
           </nav>
         )}
       </main>
-      <div className="merch-bottom-bar" ref={bar}>
-        <button
-          type="button"
-          className="merch-primary"
-          disabled={props.busy || props.primaryDisabled}
-          onClick={props.onPrimary}
-        >
-          <Icon name="lock" />
-          <span>{props.primaryLabel}</span>
-          <span className="merch-primary-arrow">
-            <Icon name="right" />
-          </span>
-        </button>
-      </div>
     </div>
   );
 }
