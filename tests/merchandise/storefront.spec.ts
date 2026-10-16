@@ -230,10 +230,12 @@ test("header cart badge caps at 99+ and keeps the full accessible count", async 
   });
   await login(page);
   await page.goto("/th/souvenirs");
-  await expect(page.locator(".merch-cart-badge")).toHaveText("99+");
   await expect(
-    page.getByRole("button", { name: "ตะกร้า 100 รายการ", exact: true }),
-  ).toBeVisible();
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("99+");
+  await expect(
+    page.locator("header .merch-header-cart:visible"),
+  ).toHaveAccessibleName("ตะกร้า 100 รายการ");
   expect(
     fake.calls.filter((c) => c.method === "GET" && c.path.endsWith("/cart")),
   ).toHaveLength(1);
@@ -248,7 +250,9 @@ test("logged-in quick add of a no-option product posts the cart item once", asyn
   await login(page);
   await page.goto("/th/souvenirs");
   await addButtons(page).click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("1");
   const posts = fake.calls.filter(
     (c) => c.method === "POST" && c.path.endsWith("/cart/items"),
   );
@@ -292,7 +296,9 @@ test("anonymous quick add goes to login with the intent, then adds exactly once 
   expect(fake.calls.filter((c) => c.method === "POST")).toHaveLength(0);
   await login(page);
   await page.goto("/th" + redirect);
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("1");
   await expect(
     page.getByText("เพิ่มลงตะกร้าแล้ว", { exact: true }),
   ).toBeVisible();

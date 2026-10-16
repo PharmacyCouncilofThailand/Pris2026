@@ -73,7 +73,9 @@ test("a product with options needs a complete choice, then posts the exact varia
   );
   await page.getByLabel("จำนวน", { exact: true }).fill("2");
   await addButton(page).click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("2");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("2");
   expect(posts(fake)).toHaveLength(1);
   expect(posts(fake)[0].body).toEqual({
     productId: p.id,
@@ -116,7 +118,9 @@ test("a bundle lists every component and posts bundleSelections for selectable o
   await expect(addButton(page)).toBeEnabled();
   await page.getByLabel("จำนวนชุด", { exact: true }).fill("2");
   await addButton(page).click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("2");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("2");
   expect(posts(fake)[0].body).toEqual({
     productId: b.id,
     variantId: null,
@@ -203,7 +207,9 @@ test("anonymous add goes to login with the intent, then resumes exactly one POST
   // through the stored session and follow the redirect target.
   await login(page);
   await page.goto("/th" + redirect);
-  await expect(page.locator(".merch-cart-badge")).toHaveText("3");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("3");
   await expect(
     page.getByText("เพิ่มลงตะกร้าแล้ว", { exact: true }),
   ).toBeVisible();
@@ -250,7 +256,11 @@ test("a rejected add shows the API message, clears the intent and stays on the p
       sessionStorage.getItem("pris_merchandise_intent"),
     ),
   ).toBeNull();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("0");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("0");
   await addButton(page).click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
+  await expect(
+    page.locator("header .merch-header-cart:visible .merch-cart-badge"),
+  ).toHaveText("1");
 });

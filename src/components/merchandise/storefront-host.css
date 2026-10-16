@@ -1,28 +1,4 @@
 /* Host integration only. Product/banner/card styling stays in the shared artifact. */
-.merchandise-page-header {
-  background: #fff;
-  border-bottom-color: #e2e8f0;
-  color: #111827;
-}
-.merchandise-page-header > div > div {
-  display: flex;
-  gap: 12px;
-}
-.merchandise-page-header .merchandise-header-logo {
-  transition: none;
-  width: clamp(112px, 38vw, 180px);
-  height: auto;
-  max-width: 180px;
-}
-.merchandise-page-header [data-slot="navigation-menu-list"] {
-  gap: 0;
-}
-.merchandise-page-header [data-slot="navigation-menu-trigger"],
-.merchandise-page-header [data-slot="navigation-menu-link"] {
-  font-size: 13px;
-  padding-inline: 8px;
-  min-height: 44px;
-}
 .merchandise-route-scope .merch-store {
   padding-top: var(--merch-host-header-height, 76px);
 }
@@ -65,19 +41,6 @@
 .merchandise-route-scope :focus-visible {
   outline: 3px solid #0055ff;
   outline-offset: 3px;
-}
-@media (max-width: 359px) {
-  .merchandise-page-header > div {
-    padding-inline: 12px;
-  }
-  .merchandise-page-header > div > div {
-    gap: 6px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .merchandise-page-header {
-    transition: none;
-  }
 }
 .merchandise-store-note {
   max-width: 1600px;

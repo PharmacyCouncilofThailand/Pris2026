@@ -14,8 +14,7 @@
   min-width: 0;
   box-sizing: border-box;
 }
-.merch-store *,
-.merch-header-tools * {
+.merch-store * {
   box-sizing: border-box;
 }
 .merch-store ::selection {
@@ -23,29 +22,24 @@
   color: #102456;
 }
 .merch-store button,
-.merch-store input,
-.merch-header-tools button {
+.merch-store input {
   font-family: inherit;
   letter-spacing: normal;
 }
-.merch-store button,
-.merch-header-tools button {
+.merch-store button {
   cursor: pointer;
 }
-.merch-store button:disabled,
-.merch-header-tools button:disabled {
+.merch-store button:disabled {
   cursor: not-allowed;
 }
-.merch-store :focus-visible,
-.merch-header-tools :focus-visible {
+.merch-store :focus-visible {
   outline: 3px solid #0055ff;
   outline-offset: 3px;
 }
 .merch-store input {
   caret-color: #0055ff;
 }
-.merch-store svg,
-.merch-header-tools svg {
+.merch-store svg {
   flex: none;
 }
 .merch-sr-only {
@@ -433,59 +427,6 @@
 .merch-primary:hover:not(:disabled) {
   background: #e74900;
 }
-.merch-header-tools {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  flex-shrink: 0;
-  color: #101d3a;
-  font-family: var(--font-noto-sans-thai), var(--font-outfit), sans-serif;
-}
-.merch-header-tools button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 4px 6px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  font-size: 15px;
-  font-weight: 700;
-}
-.merch-header-tools button:hover {
-  background: #edf3ff;
-}
-.merch-header-tools svg {
-  width: 23px;
-  height: 23px;
-}
-.merch-tool-divider {
-  height: 26px;
-  width: 1px;
-  background: #d6deeb;
-  flex: none;
-}
-.merch-cart-badge {
-  position: absolute;
-  top: -3px;
-  right: -1px;
-  display: grid;
-  place-items: center;
-  min-width: 19px;
-  height: 19px;
-  padding: 1px 4px;
-  border-radius: 999px;
-  background: #ff5a00;
-  color: #10203d;
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 800;
-}
 @media (max-width: 359px) {
   .merch-add svg {
     display: none;
@@ -497,12 +438,6 @@
   .merch-primary-arrow {
     width: 30px;
     height: 30px;
-  }
-  .merch-header-tools {
-    gap: 2px;
-  }
-  .merch-header-tools button {
-    padding-inline: 4px;
   }
 }
 @media (min-width: 768px) {

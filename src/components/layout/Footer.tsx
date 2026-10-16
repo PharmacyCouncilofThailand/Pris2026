@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link, usePathname } from "@/i18n/routing";
 import { Mail, Phone, Globe, MapPin } from "lucide-react";
+import { isMerchandisePath } from "@/lib/merchandiseRoutes";
 import { galleryImages } from "@/data/galleryData";
 
 const quickLinks = [
@@ -28,7 +29,8 @@ export default function Footer() {
     pathname === "/ticket" ||
     pathname.startsWith("/lucky-wheel") ||
     pathname.includes("/login") ||
-    pathname.includes("/signup")
+    pathname.includes("/signup") ||
+    isMerchandisePath(pathname)
   ) {
     return null;
   }
