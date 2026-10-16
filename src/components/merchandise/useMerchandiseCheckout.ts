@@ -4,7 +4,7 @@ import { useRouter } from "@/i18n/routing";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
 import {
   clearCheckout,
-  ensureCheckoutKey,
+  beginCheckoutRequest,
   readCheckout,
   saveRecipientDraft,
 } from "@/lib/merchandiseCheckoutKey";
@@ -87,11 +87,11 @@ export function useMerchandiseCheckout() {
     const storage = storageOrNull();
     return storage && ownerId !== null
       ? readCheckout(storage, eventCode, ownerId)
-      : { key: null, draft: null };
+      : { key: null, draft: null, body: null };
   });
   // A leftover key + draft means a confirmation never finished (login detour,
   // refresh, lost response): resume it with the same key instead of a new one.
-  const resumed = boot.key !== null && boot.draft !== null;
+  const resumed = boot.key !== null && boot.body !== null;
   const [step, setStep] = useState<CheckoutStep>(
     resumed ? "review" : "recipient",
   );
@@ -118,8 +118,9 @@ export function useMerchandiseCheckout() {
     inflight = useRef(false),
     loadSeq = useRef(0),
     lastBody = useRef<{ cartVersion: string; recipient: Recipient } | null>(
-      null,
+      boot.body,
     ),
+    resumedRef = useRef(resumed),
     mounted = useRef(false),
     timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -156,12 +157,14 @@ export function useMerchandiseCheckout() {
         goLogin();
         return;
       }
-      setStatus((s) => (s === "uncertain" ? s : "error"));
-      setMessage(
-        error instanceof MerchandiseApiError
-          ? error.message
-          : merchandiseFailure().message,
-      );
+      if (!resumedRef.current || lastBody.current === null) {
+        setStatus((s) => (s === "uncertain" ? s : "error"));
+        setMessage(
+          error instanceof MerchandiseApiError
+            ? error.message
+            : merchandiseFailure().message,
+        );
+      }
     } finally {
       if (mounted.current && seq === loadSeq.current) setLoading(false);
     }
@@ -209,17 +212,18 @@ export function useMerchandiseCheckout() {
   const submit = useCallback(
     async (reuseBody: boolean) => {
       const review = reviewRef.current;
+      // A retry replays the persisted request as-is: the order may already
+      // exist, so cart/store eligibility (now empty or closed) must not gate it.
+      const replay = reuseBody && lastBody.current !== null;
+      if (inflight.current || !token) return;
       if (
-        inflight.current ||
-        !token ||
-        !review ||
-        !store.data ||
-        !canCheckout(review, store.data)
+        !replay &&
+        (!review || !store.data || !canCheckout(review, store.data))
       )
         return;
       inflight.current = true;
       try {
-        let body = reuseBody ? lastBody.current : null;
+        let body = replay ? lastBody.current : null;
         if (!body) {
           const result = validateRecipient(draftRef.current);
           if (!result.ok) {
@@ -228,7 +232,7 @@ export function useMerchandiseCheckout() {
             setStatus("idle");
             return;
           }
-          body = { cartVersion: review.cartVersion, recipient: result.value };
+          body = { cartVersion: review!.cartVersion, recipient: result.value };
         }
         const storage = storageOrNull();
         let key: string;
@@ -236,8 +240,8 @@ export function useMerchandiseCheckout() {
           if (!storage || ownerId === null)
             throw merchandiseFailure(0, "MERCH_STORAGE_UNAVAILABLE");
           saveRecipientDraft(storage, eventCode, ownerId, draftRef.current);
-          // The key must be durable before the request can possibly be sent.
-          key = ensureCheckoutKey(storage, eventCode, ownerId);
+          // Key and exact body must be durable before the request can be sent.
+          key = beginCheckoutRequest(storage, eventCode, ownerId, body);
         } catch {
           setStatus("error");
           setMessage(STORAGE_MESSAGE);

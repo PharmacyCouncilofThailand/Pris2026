@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   clearCheckout,
   clearForeignCheckouts,
+  beginCheckoutRequest,
   ensureCheckoutKey,
   readCheckout,
   saveRecipientDraft,
@@ -51,15 +52,19 @@ test("storage that cannot write throws MERCH_STORAGE_UNAVAILABLE", () => {
 test("corrupt JSON reads as empty", () => {
   const s = mem();
   s.setItem("pris_merchandise_checkout:7:E", "{bad");
-  assert.deepEqual(readCheckout(s, "E", 7), { key: null, draft: null });
+  assert.deepEqual(readCheckout(s, "E", 7), {
+    key: null,
+    draft: null,
+    body: null,
+  });
 });
 test("draft save/read and keepDraft clear", () => {
   const s = mem();
   const k = ensureCheckoutKey(s, "E", 7);
   saveRecipientDraft(s, "E", 7, draft);
-  assert.deepEqual(readCheckout(s, "E", 7), { key: k, draft });
+  assert.deepEqual(readCheckout(s, "E", 7), { key: k, draft, body: null });
   clearCheckout(s, "E", 7, { keepDraft: true });
-  assert.deepEqual(readCheckout(s, "E", 7), { key: null, draft });
+  assert.deepEqual(readCheckout(s, "E", 7), { key: null, draft, body: null });
   clearCheckout(s, "E", 7);
   assert.equal(s.getItem("pris_merchandise_checkout:7:E"), null);
 });
@@ -72,4 +77,48 @@ test("clearForeignCheckouts removes other buyers only", () => {
   assert.ok(s.getItem("pris_merchandise_checkout:7:E"));
   assert.equal(s.getItem("pris_merchandise_checkout:8:E"), null);
   assert.equal(s.getItem("other"), "x");
+});
+
+const body = {
+  cartVersion: "v1",
+  recipient: {
+    fullName: "A",
+    phone: "0812345678",
+    addressLine: "x",
+    subdistrict: "x",
+    district: "x",
+    province: "x",
+    postalCode: "10100",
+    company: null,
+    deliveryNote: null,
+  },
+};
+test("request body is persisted with the key, read back, and cleared with it", () => {
+  const s = mem();
+  const k = beginCheckoutRequest(s, "E", 7, body);
+  assert.equal(beginCheckoutRequest(s, "E", 7, body), k);
+  assert.deepEqual(readCheckout(s, "E", 7), { key: k, draft: null, body });
+  saveRecipientDraft(s, "E", 7, draft);
+  clearCheckout(s, "E", 7, { keepDraft: true });
+  assert.deepEqual(readCheckout(s, "E", 7), { key: null, draft, body: null });
+});
+test("an unwritable store throws before any request body is trusted", () => {
+  const s = mem();
+  s.setItem = () => {};
+  assert.throws(
+    () => beginCheckoutRequest(s, "E", 7, body),
+    code("MERCH_STORAGE_UNAVAILABLE"),
+  );
+});
+test("a corrupt body means no pending request", () => {
+  const s = mem();
+  s.setItem(
+    "pris_merchandise_checkout:7:E",
+    JSON.stringify({ key: "abc", body: { cartVersion: 1, recipient: {} } }),
+  );
+  assert.deepEqual(readCheckout(s, "E", 7), {
+    key: null,
+    draft: null,
+    body: null,
+  });
 });
