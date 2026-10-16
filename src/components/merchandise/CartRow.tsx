@@ -73,7 +73,13 @@ export default function CartRow({
           ).map((code) => unavailableMessage(code, storeState)),
         ),
       ];
-  const options = product?.kind === "single" ? describeLine(line) : "";
+  const options =
+    product?.kind === "single"
+      ? describeLine(line)
+      : product?.kind === "bundle"
+        ? `ชุด ${product.components.length} รายการ`
+        : "";
+  const formId = `cart-form-${line.id}`;
   return (
     <article
       className={`merch-cart-row${line.valid ? "" : " merch-cart-row-invalid"}`}
@@ -98,11 +104,67 @@ export default function CartRow({
               name
             )}
           </h2>
-          {options && <p className="merch-cart-muted">{options}</p>}
+          <div className="merch-cart-row-controls">
+            <p className="merch-cart-row-option">{options}</p>
+            <form
+              id={formId}
+              className="merch-cart-row-actions"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (count !== null && line.valid) onUpdate({ quantity: count });
+              }}
+            >
+              <div className="merch-cart-stepper">
+                <button
+                  type="button"
+                  aria-label={`ลดจำนวน ${name}`}
+                  disabled={busy || !line.valid || count === null || count <= 1}
+                  onClick={() => onUpdate({ quantity: count! - 1 })}
+                >
+                  <Minus size={18} aria-hidden="true" />
+                </button>
+                <label
+                  className="merch-sr-only"
+                  htmlFor={`quantity-${line.id}`}
+                >
+                  จำนวน {name}
+                </label>
+                <input
+                  id={`quantity-${line.id}`}
+                  type="text"
+                  inputMode="numeric"
+                  value={quantity}
+                  aria-invalid={count === null}
+                  disabled={busy || !line.valid}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+                <button
+                  type="button"
+                  aria-label={`เพิ่มจำนวน ${name}`}
+                  disabled={
+                    busy ||
+                    !line.valid ||
+                    count === null ||
+                    count >= MAX_QUANTITY
+                  }
+                  onClick={() => onUpdate({ quantity: count! + 1 })}
+                >
+                  <Plus size={18} aria-hidden="true" />
+                </button>
+              </div>
+              <button
+                className="merch-cart-delete"
+                type="button"
+                disabled={busy}
+                aria-label={`ลบ ${name}`}
+                onClick={onRemove}
+              >
+                <Trash2 size={20} aria-hidden="true" />
+              </button>
+            </form>
+          </div>
           <p className="merch-cart-unit-price">
-            {line.unitPriceBaht === null
-              ? "—"
-              : formatBaht(line.unitPriceBaht)}
+            {line.unitPriceBaht === null ? "—" : formatBaht(line.unitPriceBaht)}
             <small> / {product?.kind === "bundle" ? "ชุด" : "ชิ้น"}</small>
           </p>
           {priceChange && (
@@ -137,73 +199,19 @@ export default function CartRow({
               })}
             </ul>
           )}
-          <form
-            className="merch-cart-row-actions"
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (count !== null && line.valid) onUpdate({ quantity: count });
-            }}
-          >
-            <div className="merch-cart-stepper">
-              <button
-                type="button"
-                aria-label={`ลดจำนวน ${name}`}
-                disabled={busy || !line.valid || count === null || count <= 1}
-                onClick={() => onUpdate({ quantity: count! - 1 })}
-              >
-                <Minus size={18} aria-hidden="true" />
-              </button>
-              <label className="merch-sr-only" htmlFor={`quantity-${line.id}`}>
-                จำนวน {name}
-              </label>
-              <input
-                id={`quantity-${line.id}`}
-                type="text"
-                inputMode="numeric"
-                value={quantity}
-                aria-invalid={count === null}
-                disabled={busy || !line.valid}
-                onChange={(e) => setQuantity(e.target.value)}
-              />
-              <button
-                type="button"
-                aria-label={`เพิ่มจำนวน ${name}`}
-                disabled={
-                  busy || !line.valid || count === null || count >= MAX_QUANTITY
-                }
-                onClick={() => onUpdate({ quantity: count! + 1 })}
-              >
-                <Plus size={18} aria-hidden="true" />
-              </button>
-            </div>
-            <button
-              className="merch-cart-delete"
-              type="button"
-              disabled={busy}
-              aria-label={`ลบ ${name}`}
-              onClick={onRemove}
-            >
-              <Trash2 size={20} aria-hidden="true" />
-            </button>
-            {quantity !== String(line.quantity) && (
-              <button
-                className="merch-cart-secondary"
-                type="submit"
-                disabled={busy || count === null || !line.valid}
-              >
-                บันทึกจำนวน
-              </button>
-            )}
-          </form>
           {count === null && (
             <p role="alert">กรุณาระบุจำนวนเต็มระหว่าง 1 ถึง {MAX_QUANTITY}</p>
           )}
-          <p className="merch-cart-line-total">
-            รวมรายการ:{" "}
-            {line.lineTotalBaht === null
-              ? "ยังสรุปยอดไม่ได้"
-              : formatBaht(line.lineTotalBaht)}
-          </p>
+          {quantity !== String(line.quantity) && (
+            <button
+              className="merch-cart-secondary"
+              type="submit"
+              form={formId}
+              disabled={busy || count === null || !line.valid}
+            >
+              บันทึกจำนวน
+            </button>
+          )}
           {issues.map((message) => (
             <p className="merch-cart-issue" key={message}>
               {message}

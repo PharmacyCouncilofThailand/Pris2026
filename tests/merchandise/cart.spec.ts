@@ -66,8 +66,9 @@ test("editing quantity shows exactly the amounts the server returned, then remov
   const second = seed(fake, b);
   await login(page);
   await page.goto("/th/souvenirs/cart");
-  const summary = page.getByRole("complementary", { name: "สรุปคำสั่งซื้อ" });
-  await expect(summary).toContainText("฿400.00"); // 250 + 100 + 50 shipping
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿400.00",
+  ); // 250 + 100 + 50 shipping
   await page
     .getByRole("button", { name: "เพิ่มจำนวน แก้วน้ำ Pris", exact: true })
     .click();
@@ -76,9 +77,9 @@ test("editing quantity shows exactly the amounts the server returned, then remov
   ).toHaveValue("2");
   const amounts = fake.cart.amounts!;
   expect(amounts.totalBaht).toBe(2 * 250 + 100 + 50);
-  await expect(page.locator(".merch-cart-total")).toContainText("฿650.00");
-  await expect(summary).toContainText("฿600.00"); // subtotal
-  await expect(summary).toContainText("฿50.00"); // shipping, once
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿650.00",
+  );
   expect(calls(fake, "PATCH")).toHaveLength(1);
   expect(calls(fake, "PATCH")[0].body).toEqual({ quantity: 2 });
   await page.reload();
@@ -89,7 +90,9 @@ test("editing quantity shows exactly the amounts the server returned, then remov
     .getByRole("button", { name: "ลบ ถุงผ้า Pris", exact: true })
     .click();
   await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  await expect(page.locator(".merch-cart-total")).toContainText("฿550.00");
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿550.00",
+  );
   expect(calls(fake, "DELETE")[0].path).toMatch(new RegExp(second.id + "$"));
 });
 
@@ -104,7 +107,9 @@ test("typing a quantity and saving sends a PATCH with that quantity", async ({
   await page.goto("/th/souvenirs/cart");
   await page.getByLabel(`จำนวน ${p.nameTh}`, { exact: true }).fill("4");
   await page.getByRole("button", { name: "บันทึกจำนวน", exact: true }).click();
-  await expect(page.locator(".merch-cart-total")).toContainText("฿1,050.00");
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿1,050.00",
+  );
   expect(calls(fake, "PATCH")[0].body).toEqual({ quantity: 4 });
 });
 
@@ -146,7 +151,7 @@ test("a line with valid:false explains itself and blocks proceeding", async ({
     page.getByText("ตัวเลือกนี้ปิดการขาย", { exact: true }),
   ).toBeVisible();
   await expect(proceed(page)).toBeDisabled();
-  await expect(page.getByText(/ยังสรุปยอดไม่ได้/).first()).toBeVisible();
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText("—");
 });
 
 test("a line whose product is gone says so and can still be removed", async ({

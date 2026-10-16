@@ -9,7 +9,6 @@ import {
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
-import { formatBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import { canCheckout, unavailableMessage } from "@/lib/merchandiseSelection";
 import type {
@@ -21,6 +20,8 @@ import type {
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import CartRow from "./CartRow";
+import { CheckoutBar } from "./CheckoutBar";
+import { ShopToolbar } from "./ShopToolbar";
 
 export default function CartScreen() {
   return (
@@ -82,8 +83,7 @@ function CartWorkspace() {
   const pending = useRef(false),
     active = useRef(false),
     epoch = useRef(0),
-    latest = useRef(data),
-    bar = useRef<HTMLDivElement>(null);
+    latest = useRef(data);
   const focusAfterWrite = useRef<{
     id: string;
     label: string | null;
@@ -119,22 +119,6 @@ function CartWorkspace() {
     active.current = true;
     return () => {
       active.current = false;
-    };
-  }, []);
-  useLayoutEffect(() => {
-    const element = bar.current;
-    if (!element) return;
-    const measure = () =>
-      document.documentElement.style.setProperty(
-        "--merch-host-bar-height",
-        `${element.getBoundingClientRect().height}px`,
-      );
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => {
-      observer.disconnect();
-      document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
   }, []);
   // Re-read cart and store. A write that starts meanwhile wins (epoch).
@@ -271,10 +255,14 @@ function CartWorkspace() {
     canCheckout(data, settings) && !busy && !blocked && !unauthorized;
   return (
     <main className="merch-cart">
-      <Link href="/souvenirs" className="merch-cart-back">
-        <ArrowLeft size={18} aria-hidden="true" />
-        กลับ
-      </Link>
+      <ShopToolbar
+        start={
+          <Link href="/souvenirs" className="merch-cart-back">
+            <ArrowLeft size={18} aria-hidden="true" />
+            กลับ
+          </Link>
+        }
+      />
       <h1 id="merch-cart-title" tabIndex={-1}>
         ตะกร้าสินค้า
       </h1>
@@ -320,7 +308,7 @@ function CartWorkspace() {
           ยังดูตะกร้าและประวัติคำสั่งซื้อได้
         </p>
       )}
-      <div className="merch-cart-grid">
+      <div className="merch-cart-grid merch-cart-grid-single">
         <section aria-label="รายการสินค้า">
           {data.items.length ? (
             data.items.map((line) => (
@@ -343,52 +331,13 @@ function CartWorkspace() {
             </div>
           )}
         </section>
-        <aside className="merch-cart-summary" aria-label="สรุปคำสั่งซื้อ">
-          <h2>สรุปคำสั่งซื้อ</h2>
-          {data.amounts ? (
-            <dl>
-              <div>
-                <dt>ค่าสินค้า</dt>
-                <dd>{formatBaht(data.amounts.subtotalBaht)}</dd>
-              </div>
-              <div>
-                <dt>ค่าจัดส่ง</dt>
-                <dd>{formatBaht(data.amounts.shippingBaht)}</dd>
-              </div>
-              <div className="merch-cart-total">
-                <dt>ยอดชำระรวม</dt>
-                <dd>{formatBaht(data.amounts.totalBaht)}</dd>
-              </div>
-            </dl>
-          ) : (
-            <p>
-              ยังสรุปยอดไม่ได้
-              {data.items.length
-                ? " กรุณาตรวจสอบรายการที่ไม่พร้อมขาย"
-                : " กรุณาเลือกสินค้าก่อน"}
-            </p>
-          )}
-          <p className="merch-cart-muted">
-            จัดส่งภายในประเทศไทย
-            <br />
-            รวมสินค้าทุกรายการในออเดอร์เดียวกัน
-            <br />
-            จัดส่งพร้อมกันเมื่อสินค้าพร้อมครบ
-            <br />
-            ค่าจัดส่ง 50 บาทต่อออเดอร์
-          </p>
-        </aside>
       </div>
-      <Link className="merch-cart-secondary" href="/souvenirs/orders">
-        คำสั่งซื้อของฉัน
-      </Link>
-      <div className="merch-cart-bar" ref={bar}>
+      <CheckoutBar totalBaht={data.amounts?.totalBaht ?? null}>
         <button type="button" disabled={!allowed} onClick={proceed}>
           {busy ? "กำลังตรวจสอบตะกร้า" : "ดำเนินการสั่งซื้อ"}
-          {data.amounts && <> · {formatBaht(data.amounts.totalBaht)}</>}
           <ArrowRight size={22} aria-hidden="true" />
         </button>
-      </div>
+      </CheckoutBar>
     </main>
   );
 }
