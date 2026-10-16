@@ -74,6 +74,9 @@ export default function ProductDetail({
   const [quantity, setQuantity] = useState("1"),
     [restored, setRestored] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [failedImages, setFailedImages] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const [backHref, setBackHref] = useState("/souvenirs"),
     [justAdded, setJustAdded] = useState(false),
     [hasAdded, setHasAdded] = useState(false);
@@ -211,6 +214,9 @@ export default function ProductDetail({
     if (!intentId) started.current = false;
   }, [intentId]);
   const unit = product.kind === "bundle" ? "ชุด" : "ชิ้น";
+  const shownImages = product.images.filter(
+    (image) => !failedImages.has(image.id),
+  );
   const unavailable = [
     ...new Set(
       product.unavailableCodes.map((code) =>
@@ -232,7 +238,7 @@ export default function ProductDetail({
       </Link>
       <div className="merch-detail-grid">
         <div className="merch-detail-gallery">
-          {product.images.map((image, index) => (
+          {shownImages.map((image, index) => (
             <figure key={image.id}>
               <Image
                 unoptimized
@@ -241,13 +247,16 @@ export default function ProductDetail({
                 width={image.width}
                 height={image.height}
                 loading={index ? "lazy" : "eager"}
+                onError={() =>
+                  setFailedImages((failed) => new Set(failed).add(image.id))
+                }
               />
               {index === 0 && <figcaption>พรีออเดอร์</figcaption>}
             </figure>
           ))}
-          {product.images.length === 0 && (
+          {shownImages.length === 0 && (
             <div className="merch-detail-placeholder">
-              <ProductImagePlaceholder />
+              <ProductImagePlaceholder failed={product.images.length > 0} />
             </div>
           )}
         </div>

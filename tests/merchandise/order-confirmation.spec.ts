@@ -413,6 +413,26 @@ test("review quantity sits at the row's right edge with or without an image", as
     expect(row.width).toBeGreaterThanOrEqual(300);
   }
 });
+test("a review image that fails to load shows the placeholder instead", async ({ page, fake, context }) => {
+  await context.route("https://img.example.test/**", (r) => r.fulfill({ status: 404 }));
+  const p = makeSingle({ images: [image(1)] });
+  fake.store = makeStore();
+  fake.products = [p];
+  fake.seedLine({ productId: p.id, variantId: p.variants[0].id, bundleSelections: [], quantity: 1 });
+  await login(page); await openCheckout(page); await reachReview(page);
+  const cell = page.locator(".merch-review-item .merch-review-image");
+  await expect(cell.locator(".merch-image-placeholder")).toBeVisible();
+  await expect(cell.locator("> img")).toHaveCount(0);
+});
+test("the lock notice in the panel is plain muted text", async ({ page, fake }) => {
+  seedCheckout(fake);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await login(page); await openCheckout(page); await reachReview(page);
+  const lock = page.locator(".merch-checkout-bar-details .merch-review-lock");
+  await expect(lock).toBeVisible();
+  expect(await lock.evaluate((el) => { const c = getComputedStyle(el); return [c.fontSize, c.color, c.backgroundColor, c.paddingTop, c.paddingLeft]; }))
+    .toEqual(["13px", "rgb(82, 103, 135)", "rgba(0, 0, 0, 0)", "0px", "0px"]);
+});
 test("review sections are separate white cards without doubled dividers", async ({ page, fake }) => {
   seedCheckout(fake); await login(page); await openCheckout(page); await reachReview(page);
   const sections = page.locator(".merch-review-section");

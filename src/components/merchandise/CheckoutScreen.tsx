@@ -187,7 +187,7 @@ function CheckoutWorkspace() {
           <CheckoutBar
             totalBaht={cart?.amounts?.totalBaht ?? null}
             label="ยอดชำระเงินทั้งหมด"
-            details={cart ? <PaymentInfo cart={cart} /> : undefined}
+            details={cart?.amounts ? <PaymentInfo cart={cart} /> : undefined}
           >
             {uncertain ? (
               <button
@@ -258,19 +258,7 @@ function ReviewBody({
           const detail = describeLine(line);
           return (
             <article className="merch-review-item" key={line.id}>
-              <div className="merch-review-image">
-                {image ? (
-                  <Image
-                    unoptimized
-                    src={image.url}
-                    alt=""
-                    width={80}
-                    height={80}
-                  />
-                ) : (
-                  <ProductImagePlaceholder />
-                )}
-              </div>
+              <ReviewImage key={image?.url} url={image?.url} />
               <div className="merch-review-item-text">
                 <h3>{line.product?.nameTh ?? "สินค้านี้ไม่มีแล้ว"}</h3>
                 {detail && <p className="merch-cart-muted">{detail}</p>}
@@ -306,6 +294,25 @@ function ReviewBody({
       </section>
       <PaymentInfo cart={cart} inline />
     </>
+  );
+}
+function ReviewImage({ url }: { url?: string }) {
+  const [imageFailed, setImageFailed] = useState(false);
+  return (
+    <div className="merch-review-image">
+      {url && !imageFailed ? (
+        <Image
+          unoptimized
+          src={url}
+          alt=""
+          width={80}
+          height={80}
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        <ProductImagePlaceholder failed={imageFailed} />
+      )}
+    </div>
   );
 }
 /** Payment amounts and lock notice: inline on phones, inside the panel from 768px. */

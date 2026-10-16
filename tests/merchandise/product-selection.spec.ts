@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import { test, expect, login } from "./fixtures";
 import {
   ids,
+  image,
   makeBundle,
   makeOptionsProduct,
   makeSingle,
@@ -346,6 +347,23 @@ test("at 1024 the title, price and add button sit in the info column", async ({
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator(".merch-detail-bar")).toBeVisible();
+});
+test("a gallery image that fails to load leaves the placeholder", async ({
+  page,
+  fake,
+  context,
+}) => {
+  await context.route("https://img.example.test/**", (r) =>
+    r.fulfill({ status: 404 }),
+  );
+  const p = makeSingle({ images: [image(1)] });
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  const gallery = page.locator(".merch-detail-gallery");
+  await expect(gallery.locator(".merch-image-placeholder")).toBeVisible();
+  await expect(gallery.locator("figure img")).toHaveCount(0);
+  const box = (await gallery.locator(".merch-detail-placeholder").boundingBox())!;
+  expect(Math.abs(box.width - box.height)).toBeLessThanOrEqual(1);
 });
 test("production and shipping info are closed disclosures", async ({
   page,
