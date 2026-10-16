@@ -25,6 +25,7 @@ import {
 } from "@/data/presentationTemplates";
 import styles from "./templates.module.css";
 import TemplatePreviewDialog from "./TemplatePreviewDialog";
+import { PRESENTATION_LIMITS } from "@/lib/presentationLimits";
 
 export default function PresentationTemplatesPage() {
   const t = useTranslations("presentationTemplates");
@@ -165,7 +166,13 @@ export default function PresentationTemplatesPage() {
                       ).map(({ Icon, key }) => (
                         <li key={key}>
                           <Icon size={19} aria-hidden="true" />
-                          <span>{t(key)}</span>
+                          <span>
+                            {t(key, {
+                              maxMB:
+                                PRESENTATION_LIMITS[isOral ? "oral" : "poster"]
+                                  .mb,
+                            })}
+                          </span>
                         </li>
                       ))}
                     </ul>

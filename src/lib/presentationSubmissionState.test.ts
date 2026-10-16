@@ -9,7 +9,7 @@ import type { OwnerPresentationDto } from "../types/presentations";
 import { PRESENTATION_LIMITS } from "./presentationLimits";
 
 test("central limits preserve byte ceilings and MB labels", () => {
-  assert.deepEqual(PRESENTATION_LIMITS.oral, { mb: 50, bytes: 52_428_800 });
+  assert.deepEqual(PRESENTATION_LIMITS.oral, { mb: 100, bytes: 104_857_600 });
   assert.deepEqual(PRESENTATION_LIMITS.poster, { mb: 30, bytes: 31_457_280 });
 });
 
@@ -85,8 +85,8 @@ test("Highlighted Poster accepts PNG while Oral remains PDF-only", () => {
   assert.equal(fileProblem(file, "oral"), "PRESENTATION_FILE_TYPE");
 });
 
-test("Oral accepts exactly 50 MB while both Poster types retain 30 MB", () => {
-  const bytes = new Uint8Array(52_428_801);
+test("Oral accepts exactly 100 MB while both Poster types retain 30 MB", () => {
+  const bytes = new Uint8Array(104_857_601);
   assert.equal(
     fileProblem(new File([bytes.subarray(1)], "slides.pdf"), "oral"),
     null,

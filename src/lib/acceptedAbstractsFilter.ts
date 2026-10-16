@@ -2,6 +2,7 @@ export type AcceptedPresentationType = "oral" | "highlighted-poster" | "poster";
 
 export interface AcceptedAbstract {
   id: number;
+  participantGroup?: "general" | "student";
   sequence?: number;
   trackingId: string | null;
   title: string;
@@ -19,6 +20,7 @@ export interface DistinctCategory {
 }
 
 export interface AcceptedAbstractFilterOptions {
+  participantGroup?: "all" | "general" | "student";
   search?: string;
   presentationType?: "all" | AcceptedPresentationType;
   categoryId?: number | "all" | string;
@@ -49,6 +51,14 @@ export function filterAcceptedAbstracts(
       : Number(options.round);
 
   return abstracts.filter((item) => {
+    if (
+      options.participantGroup &&
+      options.participantGroup !== "all" &&
+      (item.participantGroup ?? "general") !== options.participantGroup
+    ) {
+      return false;
+    }
+
     // 1. Presentation Type filter
     if (targetType !== "all") {
       if (item.presentationType.toLowerCase() !== targetType) {

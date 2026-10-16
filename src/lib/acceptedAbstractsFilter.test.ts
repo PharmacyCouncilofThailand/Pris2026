@@ -62,6 +62,53 @@ test("filterAcceptedAbstracts: returns all items when options are default/empty"
   );
 });
 
+test("participant group keeps students separate from general works without changing Oral classification", () => {
+  const rows: AcceptedAbstract[] = [
+    ...sampleAbstracts,
+    {
+      ...sampleAbstracts[3],
+      id: 5,
+      trackingId: "SYNTHETIC-P111",
+      participantGroup: "student",
+    },
+    { ...sampleAbstracts[2], id: 6, participantGroup: "general" },
+  ];
+  assert.equal(filterAcceptedAbstracts(rows).length, 6);
+  assert.deepEqual(
+    filterAcceptedAbstracts(rows, { participantGroup: "student" }).map(
+      (x) => x.id,
+    ),
+    [5],
+  );
+  assert.deepEqual(
+    filterAcceptedAbstracts(rows, { participantGroup: "general" }).map(
+      (x) => x.id,
+    ),
+    [1, 2, 3, 4, 6],
+  );
+  assert.deepEqual(
+    filterAcceptedAbstracts(rows, {
+      participantGroup: "student",
+      round: 2,
+      presentationType: "oral",
+      categoryId: 30,
+      search: "Herbal",
+    }).map((x) => x.id),
+    [5],
+  );
+  assert.deepEqual(
+    filterAcceptedAbstracts(rows, {
+      participantGroup: "student",
+      presentationType: "poster",
+    }),
+    [],
+  );
+  assert.deepEqual(
+    filterAcceptedAbstracts(rows, { participantGroup: "student", round: 1 }),
+    [],
+  );
+});
+
 test("filterAcceptedAbstracts: filters case-insensitively across search targets", () => {
   // 1. Match trackingId
   const byTracking = filterAcceptedAbstracts(sampleAbstracts, {
