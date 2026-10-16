@@ -325,3 +325,26 @@ test("missing token is a 401 before fetching", async () => {
   assert.equal(e.status, 401);
   assert.equal(calls.length, 0);
 });
+
+test("ngrok warning header is sent only when NEXT_PUBLIC_API_NGROK=1", async () => {
+  const saved = process.env.NEXT_PUBLIC_API_NGROK;
+  try {
+    process.env.NEXT_PUBLIC_API_NGROK = "1";
+    const on = client(() => ok(validStore));
+    await on.api.store("PRIS-2026");
+    assert.equal(
+      new Headers(on.calls[0].init.headers).get("ngrok-skip-browser-warning"),
+      "true",
+    );
+    delete process.env.NEXT_PUBLIC_API_NGROK;
+    const off = client(() => ok(validStore));
+    await off.api.store("PRIS-2026");
+    assert.equal(
+      new Headers(off.calls[0].init.headers).has("ngrok-skip-browser-warning"),
+      false,
+    );
+  } finally {
+    if (saved === undefined) delete process.env.NEXT_PUBLIC_API_NGROK;
+    else process.env.NEXT_PUBLIC_API_NGROK = saved;
+  }
+});

@@ -73,6 +73,7 @@ export default function PaymentPanel({
             size={30}
             aria-hidden="true"
           />
+          <span className="sr-only">{model.title}</span>
         </div>
       )}
       {!busy && model.message && (

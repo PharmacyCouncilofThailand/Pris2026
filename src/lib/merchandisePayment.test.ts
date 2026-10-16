@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   anchorFrom,
+  cappedRemainingMs,
   CHECK_COOLDOWN_MS,
   deadlineRemainingMs,
   formatPaymentRemaining,
@@ -159,5 +160,52 @@ test("local expiry and busy states", () => {
   assert.deepEqual(
     [p.state, p.title, p.primary],
     ["checking", "กำลังตรวจสอบ", null],
+  );
+});
+
+test("qr_active without a payload hides the QR and offers a check", () => {
+  const p = panelModel(
+    view("qr_active", {
+      attempt: { ...attempt, qrPayload: null },
+      canCheck: true,
+    }),
+    none,
+    "N1",
+  );
+  assert.equal(p.showQr, false);
+  assert.equal(p.message, "ไม่สามารถแสดง QR ได้ กรุณากดตรวจสอบการชำระเงิน");
+  assert.equal(p.primary, "check");
+});
+test("cappedRemainingMs follows the wall clock when the monotonic clock paused", () => {
+  const anchor = { ...anchorFrom(view("qr_active"), 1000, 5_000_000) };
+  // Monotonic clock advanced 1s only (device slept), wall clock advanced 400s.
+  assert.equal(
+    cappedRemainingMs(attempt.expiresAt, anchor, 2000, 5_400_000),
+    200_000,
+  );
+  // Normal case: both agree.
+  assert.equal(
+    cappedRemainingMs(attempt.expiresAt, anchor, 11_000, 5_010_000),
+    590_000,
+  );
+  // Past expiry by wall clock.
+  assert.equal(
+    cappedRemainingMs(attempt.expiresAt, anchor, 2000, 5_700_000),
+    0,
+  );
+  // A backwards wall clock cannot extend the monotonic estimate.
+  assert.equal(
+    cappedRemainingMs(attempt.expiresAt, anchor, 11_000, 4_000_000),
+    590_000,
+  );
+  // Without a wall anchor it is the monotonic value.
+  assert.equal(
+    cappedRemainingMs(
+      attempt.expiresAt,
+      anchorFrom(view("qr_active"), 1000),
+      11_000,
+      9e12,
+    ),
+    590_000,
   );
 });

@@ -568,3 +568,24 @@ test("the order page lists bundle components, server amounts, recipient and shop
   await expect(page.getByText("ผลิตหลังปิดรับพรีออเดอร์")).toBeVisible();
   await expect(page.getByText("จัดส่งภายใน 30 วัน")).toBeVisible();
 });
+
+test("qr_active with a null payload shows a notice and a check button, not a broken page", async ({
+  page,
+  fake,
+}) => {
+  const base = qrActive();
+  seed(fake, {
+    payment: view({
+      attempt: { ...base.attempt!, qrPayload: null },
+      canCheck: true,
+    }),
+  });
+  await open(page);
+  await expect(
+    message(page, "ไม่สามารถแสดง QR ได้ กรุณากดตรวจสอบการชำระเงิน"),
+  ).toBeVisible();
+  await expect(page.getByRole("img", { name: /^QR สำหรับ/ })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "ตรวจสอบการชำระเงิน", exact: true }),
+  ).toBeEnabled();
+});

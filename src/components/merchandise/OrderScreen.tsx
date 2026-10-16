@@ -22,14 +22,21 @@ export default function OrderScreen({ orderId }: { orderId: string }) {
 function OrderLoader({ orderId }: { orderId: string }) {
   // Checkout hands over the order it just created; otherwise load it.
   const [primed] = useState(() => {
-    const order = takePrimedOrder(orderId);
-    return order && order.id.toLowerCase() === orderId.toLowerCase()
-      ? order
+    const taken = takePrimedOrder(orderId);
+    return taken && taken.order.id.toLowerCase() === orderId.toLowerCase()
+      ? taken
       : null;
   });
   const resource = useMerchandiseOrder(orderId, primed === null);
-  const order = primed ?? resource.data;
-  if (order) return <OrderWorkspace orderId={orderId} initial={order} />;
+  const order = primed?.order ?? resource.data;
+  if (order)
+    return (
+      <OrderWorkspace
+        orderId={orderId}
+        initial={order}
+        receivedAt={primed?.receivedAt}
+      />
+    );
   const error = resource.error;
   return (
     <main className="merch-cart merch-order">
@@ -70,11 +77,13 @@ function OrderLoader({ orderId }: { orderId: string }) {
 function OrderWorkspace({
   orderId,
   initial,
+  receivedAt,
 }: {
   orderId: string;
   initial: OrderDetail;
+  receivedAt?: { monotonicMs: number; wallMs: number };
 }) {
-  const polling = usePaymentPolling(orderId, initial);
+  const polling = usePaymentPolling(orderId, initial, receivedAt);
   const { order } = polling;
   const paid = order.paymentStatus === "paid" || order.payment.state === "paid";
   const { recipient, amounts } = order;

@@ -22,11 +22,18 @@ export function useMerchandiseOrder(orderId: string, enabled = true) {
 
 // A just-created order handed from checkout to the order page so it need not
 // reload immediately. Read once, then gone (the qrPayload never reaches storage).
-const primed = new Map<string, OrderDetail>();
+export type PrimedOrder = {
+  order: OrderDetail;
+  receivedAt: { monotonicMs: number; wallMs: number };
+};
+const primed = new Map<string, PrimedOrder>();
 export function primeOrder(order: OrderDetail): void {
-  primed.set(order.id.toLowerCase(), order);
+  primed.set(order.id.toLowerCase(), {
+    order,
+    receivedAt: { monotonicMs: performance.now(), wallMs: Date.now() },
+  });
 }
-export function takePrimedOrder(orderId: string): OrderDetail | null {
+export function takePrimedOrder(orderId: string): PrimedOrder | null {
   const key = orderId.toLowerCase();
   const order = primed.get(key) ?? null;
   primed.delete(key);

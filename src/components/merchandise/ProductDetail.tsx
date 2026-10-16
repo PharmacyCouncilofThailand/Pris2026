@@ -150,6 +150,7 @@ export default function ProductDetail({
         scroll: false,
       });
     } catch {
+      started.current = false;
       setNotice(
         "ไม่สามารถเก็บรายการที่เลือกได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์",
       );
