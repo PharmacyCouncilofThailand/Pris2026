@@ -6,7 +6,6 @@ import { Link } from "@/i18n/routing";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseResource } from "./useMerchandiseResource";
-import { merchandiseFailure } from "@/lib/merchandiseApi";
 import {
   merchandiseReturnPath,
   merchandiseLoginPath,
@@ -41,31 +40,19 @@ export default function OrderHistory() {
   );
 }
 function HistoryLoader({ page }: { page: number }) {
-  const { api, eventCode, token, ownerIdentity, store } = useMerchandise(),
-    eventId = store.data?.eventId;
+  const { api, eventCode, token, ownerIdentity } = useMerchandise();
   const scope = useMemo(
-    () =>
-      token && eventId
-        ? { token, eventCode, ownerIdentity, eventId, page }
-        : null,
-    [token, eventCode, ownerIdentity, eventId, page],
+    () => (token ? { token, eventCode, ownerIdentity, page } : null),
+    [token, eventCode, ownerIdentity, page],
   );
   const load = useCallback(
     async (signal: AbortSignal) => {
-      const result = await api.orders(
-        eventCode,
-        token!,
-        { page, limit: 10 },
-        signal,
-      );
-      if (result.items.some((item) => item.eventId !== eventId))
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-      return result;
+      return api.orders(eventCode, token!, { page, limit: 10 }, signal);
     },
-    [api, eventCode, token, page, eventId],
+    [api, eventCode, token, page],
   );
   const resource = useMerchandiseResource(scope, load),
-    error = resource.error ?? store.error;
+    error = resource.error;
   const bar = useRef<HTMLDivElement>(null),
     empty = !error && resource.data?.items.length === 0 && page === 1;
   useLayoutEffect(() => {
@@ -113,7 +100,6 @@ function HistoryLoader({ page }: { page: number }) {
               className="merch-cart-secondary"
               onClick={() => {
                 resource.reload();
-                if (store.error) store.reload();
               }}
             >
               ลองโหลดอีกครั้ง

@@ -195,3 +195,10 @@
     padding-block: 28px;
   }
 }
+.merch-history-tracking {
+  color: #3b4b66;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
