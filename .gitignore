@@ -56,3 +56,6 @@ next-env.d.ts
 
 # Local merchandise development evidence and browser sessions
 /playwright/.auth/
+
+# local git worktrees
+.claude/worktrees/
