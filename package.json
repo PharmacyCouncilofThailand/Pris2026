@@ -9,7 +9,6 @@
     "test": "tsx --test src/**/*.test.ts",
     "test:merchandise": "tsx --test src/lib/merchandise*.test.ts",
     "test:e2e:merchandise": "playwright test -c playwright.merchandise.config.ts",
-    "check:merchandise-start": "node scripts/merchandise-start-gate.mjs --check",
     "lint": "eslint",
     "format": "prettier . --write",
     "format:check": "prettier . --check"

@@ -1,1 +1,0 @@
-{"status":"baseline_only","errors":23,"warnings":6,"files":23,"newFindings":0,"approval":"docs/verification/merchandise/lint-baseline-exception.json","digest":"93cc8af3ef8fb80fa3c9e7cd0f7367fdca529a850c72a91e35ea17d27e4df603"}
