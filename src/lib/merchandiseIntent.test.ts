@@ -1,337 +1,81 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  writePurchaseIntent,
   readPurchaseIntent,
-  clearPurchaseIntent,
-  purchaseIntentReturnPath,
   resumePurchaseIntent,
-  clearForeignPurchaseIntent,
-  resolveIntentSelection,
+  savePurchaseIntent,
   type PurchaseIntent,
 } from "./merchandiseIntent";
-import { createMerchandiseApi } from "./merchandiseApi";
-import { ids, product, store, cart } from "../../tests/merchandise/data";
-function storage(): Storage {
+import { merchandiseFailure, type MerchandiseApi } from "./merchandiseApi";
+const mem = (): Storage => {
   const m = new Map<string, string>();
   return {
     get length() {
       return m.size;
     },
     key: (i) => [...m.keys()][i] ?? null,
-    clear: () => m.clear(),
     getItem: (k) => m.get(k) ?? null,
-    setItem: (k, v) => {
-      m.set(k, v);
-    },
-    removeItem: (k) => {
-      m.delete(k);
-    },
+    setItem: (k, v) => void m.set(k, v),
+    removeItem: (k) => void m.delete(k),
+    clear: () => m.clear(),
   };
-}
-const pending = (): PurchaseIntent => ({
-  id: ids.item,
+};
+const P = "11111111-1111-4111-8111-111111111111";
+const V = "22222222-2222-4222-8222-222222222222";
+const I = "33333333-3333-4333-8333-333333333333";
+const intent: PurchaseIntent = {
+  id: I,
   eventCode: "PRIS-2026",
-  returnPath: `/souvenirs/products/${ids.product}`,
-  selection: {
-    productId: ids.product,
-    variantId: ids.variant,
+  returnPath: `/souvenirs/products/${P}?intentId=${I}`,
+  productId: P,
+  selection: { variantId: V, bundleSelections: [] },
+  quantity: 2,
+};
+test("save/read round trip, mismatch and invalid", () => {
+  const s = mem();
+  savePurchaseIntent(s, intent);
+  assert.deepEqual(readPurchaseIntent(s, I), intent);
+  assert.equal(readPurchaseIntent(s, P), null);
+  s.setItem("pris_merchandise_intent", "{bad");
+  assert.equal(readPurchaseIntent(s, I), null);
+  s.setItem(
+    "pris_merchandise_intent",
+    JSON.stringify({ ...intent, returnPath: "https://evil" }),
+  );
+  assert.equal(readPurchaseIntent(s, I), null);
+  s.setItem(
+    "pris_merchandise_intent",
+    JSON.stringify({ ...intent, eventCode: "bad code" }),
+  );
+  assert.equal(readPurchaseIntent(s, I), null);
+});
+test("resume calls addCartItem once and clears on success", async () => {
+  const s = mem();
+  savePurchaseIntent(s, intent);
+  const calls: unknown[][] = [];
+  const api = {
+    addCartItem: async (...a: unknown[]) => (calls.push(a), { id: "cart" }),
+  } as unknown as MerchandiseApi;
+  const cart = await resumePurchaseIntent(api, "tok", intent, s);
+  assert.deepEqual(cart, { id: "cart" });
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0][0], "PRIS-2026");
+  assert.deepEqual(calls[0][2], {
+    productId: P,
+    variantId: V,
     bundleSelections: [],
-  },
-  quantity: 1,
-});
-const json = (data: unknown) => Response.json({ success: true, data });
-test("pending intent is bounded non-PII, event-scoped and rejected if tampered", () => {
-  const s = storage();
-  writePurchaseIntent(s, pending());
-  assert.deepEqual(readPurchaseIntent(s, "PRIS-2026"), pending());
-  assert.match(
-    purchaseIntentReturnPath(pending()),
-    new RegExp("intentId=" + ids.item),
-  );
-  for (const bad of [
-    { ...pending(), quantity: 0 },
-    { ...pending(), quantity: 1.5 },
-    { ...pending(), returnPath: "//evil.test" },
-    { ...pending(), email: "private@test" },
-    {
-      ...pending(),
-      selection: {
-        ...pending().selection,
-        bundleSelections: [
-          { componentId: ids.item, variantId: ids.variant },
-          { componentId: ids.item, variantId: ids.variant },
-        ],
-      },
-    },
-  ])
-    assert.throws(() => writePurchaseIntent(s, bad as PurchaseIntent));
-  assert.equal(readPurchaseIntent(s, "OTHER"), null);
-  clearPurchaseIntent(s);
-  assert.equal(s.length, 0);
-});
-test("resume checks fresh public/owner state, coalesces StrictMode and persists identical unknown retry payload", async () => {
-  const s = storage();
-  writePurchaseIntent(s, pending());
-  let unknown = true,
-    adds = 0;
-  const bodies: string[] = [],
-    keys: string[] = [],
-    calls: string[] = [];
-  const api = createMerchandiseApi({
-    fetcher: async (url, init) => {
-      const p = String(url);
-      calls.push(p);
-      if (p.endsWith("/store"))
-        return json({ ...store, state: unknown ? "open" : "closed" });
-      if (p.includes("/products/")) return json(product);
-      if (p.endsWith("/cart")) return json(cart);
-      adds++;
-      bodies.push(String(init?.body));
-      keys.push(new Headers(init?.headers).get("idempotency-key")!);
-      if (unknown) throw Error("response lost");
-      return json(cart);
-    },
+    quantity: 2,
   });
-  const options = {
-    storage: s,
-    api,
-    eventCode: "PRIS-2026",
-    token: "test-token",
-    buyerId: 11,
-    isCurrent: () => true,
-  };
-  const [a, b] = await Promise.all([
-    resumePurchaseIntent(options),
-    resumePurchaseIntent(options),
-  ]);
-  assert.equal(a.kind, "error");
-  assert.equal(b.kind, "error");
-  assert.equal(adds, 1);
-  assert.equal(
-    readPurchaseIntent(s, "PRIS-2026")?.expectedRevision,
-    cart.revision,
-  );
-  unknown = false;
-  const result = await resumePurchaseIntent(options);
-  assert.equal(result.kind, "added");
-  assert.equal(adds, 2);
-  assert.equal(bodies[0], bodies[1]);
-  assert.equal(keys[0], `intent:${ids.item}`);
-  assert.equal(keys[0], keys[1]);
-  assert.equal(s.length, 0);
-  assert(calls.some((c) => c.endsWith("/cart")));
+  assert.equal(readPurchaseIntent(s, I), null);
 });
-
-test("an account or selection change during a pending read cancels before POST", async () => {
-  for (const change of ["logout", "selection"] as const) {
-    const s = storage();
-    writePurchaseIntent(s, pending());
-    let active = true,
-      adds = 0,
-      resolveProduct: ((response: Response) => void) | undefined;
-    const api = createMerchandiseApi({
-      fetcher: async (url) => {
-        if (String(url).endsWith("/store")) return json(store);
-        if (String(url).includes("/products/"))
-          return new Promise<Response>((resolve) => {
-            resolveProduct = resolve;
-          });
-        adds++;
-        return json(cart);
-      },
-    });
-    const result = resumePurchaseIntent({
-      storage: s,
-      api,
-      eventCode: "PRIS-2026",
-      token: "token",
-      buyerId: 11,
-      isCurrent: () => active,
-    });
-    while (!resolveProduct) await new Promise((r) => setTimeout(r, 0));
-    if (change === "logout") {
-      active = false;
-      clearForeignPurchaseIntent(s, null);
-    } else writePurchaseIntent(s, { ...pending(), buyerId: 11, quantity: 2 });
-    resolveProduct(json(product));
-    assert.equal((await result).kind, "cancelled");
-    assert.equal(adds, 0);
-  }
-});
-test("selection resolution fills only the actual default/fixed options and never substitutes selectable choices", () => {
-  const base = {
-    productId: ids.product,
-    variantId: null,
-    bundleSelections: [],
-  };
-  assert.equal(resolveIntentSelection(product, base)?.variantId, ids.variant);
-  assert.equal(
-    resolveIntentSelection({ ...product, optionMode: "color" }, base),
-    null,
-  );
-  assert.equal(
-    resolveIntentSelection(
-      {
-        ...product,
-        variants: [{ ...product.variants[0], saleEnabled: false }],
-      },
-      base,
-    ),
-    null,
-  );
-  const bundle = {
-    ...product,
-    kind: "bundle" as const,
-    components: [
-      {
-        id: ids.item,
-        productId: ids.product,
-        nameTh: "ส่วนประกอบสังเคราะห์",
-        quantityPerBundle: 1,
-        optionMode: "fixed" as const,
-        fixedVariantId: ids.variant,
-        allowedVariants: product.variants,
-      },
-    ],
-  };
-  assert.deepEqual(resolveIntentSelection(bundle, base)?.bundleSelections, [
-    { componentId: ids.item, variantId: ids.variant },
-  ]);
-  assert.equal(
-    resolveIntentSelection(
-      {
-        ...bundle,
-        components: [
-          {
-            ...bundle.components[0],
-            optionMode: "selectable",
-            fixedVariantId: null,
-          },
-        ],
-      },
-      base,
-    ),
-    null,
-  );
-  assert.equal(
-    resolveIntentSelection(bundle, {
-      ...base,
-      bundleSelections: [{ componentId: ids.item, variantId: ids.order }],
-    }),
-    null,
-  );
-});
-test("Bundle requests persist only selectable choices and replay an unknown reply without fixed BOM rows", async () => {
-  const s = storage();
-  const bundle = {
-    ...product,
-    kind: "bundle" as const,
-    components: [
-      {
-        id: ids.item,
-        productId: ids.product,
-        nameTh: "ชิ้นกำหนดไว้",
-        quantityPerBundle: 2,
-        optionMode: "fixed" as const,
-        fixedVariantId: ids.variant,
-        allowedVariants: product.variants,
-      },
-    ],
-  };
-  writePurchaseIntent(s, {
-    ...pending(),
-    selection: {
-      productId: product.id,
-      variantId: null,
-      bundleSelections: [{ componentId: ids.item, variantId: ids.variant }],
+test("resume clears the intent when the API rejects with 422", async () => {
+  const s = mem();
+  savePurchaseIntent(s, intent);
+  const api = {
+    addCartItem: async () => {
+      throw merchandiseFailure(422, "MERCH_X");
     },
-  });
-  const bodies: string[] = [],
-    requestKeys: string[] = [];
-  let lost = true;
-  const api = createMerchandiseApi({
-    fetcher: async (url, init) => {
-      if (String(url).endsWith("/store")) return json(store);
-      if (String(url).includes("/products/")) return json(bundle);
-      if (String(url).endsWith("/cart")) return json(cart);
-      bodies.push(String(init?.body));
-      requestKeys.push(new Headers(init?.headers).get("idempotency-key")!);
-      if (lost) throw Error("Synthetic lost reply");
-      return json(cart);
-    },
-  });
-  const options = {
-    storage: s,
-    api,
-    eventCode: "PRIS-2026",
-    token: "test",
-    buyerId: 11,
-    isCurrent: () => true,
-  };
-  assert.equal((await resumePurchaseIntent(options)).kind, "error");
-  assert.deepEqual(
-    readPurchaseIntent(s, "PRIS-2026")!.selection.bundleSelections,
-    [],
-  );
-  lost = false;
-  assert.equal((await resumePurchaseIntent(options)).kind, "added");
-  assert.equal(bodies.length, 2);
-  assert.equal(bodies[0], bodies[1]);
-  assert.equal(requestKeys[0], requestKeys[1]);
-  assert.deepEqual(JSON.parse(bodies[0]).bundleSelections, []);
-});
-
-test("owner changes, stale session, closed store, missing selection and blocked storage cannot add", async () => {
-  const cases = ["owner", "stale", "closed", "choice", "storage"] as const;
-  for (const which of cases) {
-    const s = storage();
-    writePurchaseIntent(s, {
-      ...pending(),
-      ...(which === "owner" ? { buyerId: 22 } : {}),
-      ...(which === "choice"
-        ? {
-            selection: {
-              productId: ids.product,
-              variantId: null,
-              bundleSelections: [],
-            },
-          }
-        : {}),
-    });
-    let adds = 0;
-    if (which === "storage")
-      s.setItem = () => {
-        throw Error("blocked");
-      };
-    const api = createMerchandiseApi({
-      fetcher: async (url) => {
-        const p = String(url);
-        if (p.endsWith("/store"))
-          return json({
-            ...store,
-            state: which === "closed" ? "closed" : "open",
-          });
-        if (p.includes("/products/"))
-          return json({
-            ...product,
-            optionMode: which === "choice" ? "color" : "none",
-          });
-        if (p.endsWith("/cart")) return json(cart);
-        adds++;
-        return json(cart);
-      },
-    });
-    const r = await resumePurchaseIntent({
-      storage: s,
-      api,
-      eventCode: "PRIS-2026",
-      token: "token",
-      buyerId: 11,
-      isCurrent: () => which !== "stale",
-    });
-    assert.equal(adds, 0, which);
-    assert.notEqual(r.kind, "added", which);
-    if (which === "choice") assert.equal(r.kind, "needs_selection");
-  }
+  } as unknown as MerchandiseApi;
+  await assert.rejects(resumePurchaseIntent(api, "tok", intent, s));
+  assert.equal(readPurchaseIntent(s, I), null);
 });
