@@ -287,4 +287,19 @@ test("quantity stepper is three equal-height cells with the value centred", asyn
   expect(
     Math.abs(minus.x - box.x - (box.x + box.width - plus.x - plus.width)),
   ).toBeLessThan(1);
+  for (const name of ["ลดจำนวน", "เพิ่มจำนวน"]) {
+    const button = page.getByRole("button", { name });
+    const b = (await button.boundingBox())!;
+    const icon = (await button.locator("svg").boundingBox())!;
+    expect(
+      Math.abs(icon.x + icon.width / 2 - (b.x + b.width / 2)),
+    ).toBeLessThan(0.5);
+    expect(
+      Math.abs(icon.y + icon.height / 2 - (b.y + b.height / 2)),
+    ).toBeLessThan(0.5);
+  }
+  const input = (await page.locator("#merch-product-quantity").boundingBox())!;
+  expect(
+    Math.abs(input.x + input.width / 2 - (box.x + box.width / 2)),
+  ).toBeLessThan(1);
 });
