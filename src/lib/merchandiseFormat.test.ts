@@ -6,15 +6,16 @@ import {
   isMinor,
   isIsoUtc,
 } from "./merchandiseFormat";
-test("money remains exact beyond safe integers and never treats missing prices as zero", () => {
-  assert.equal(
-    formatMinorBaht("900719925474099301"),
-    "฿9,007,199,254,740,993.01",
-  );
-  assert.equal(formatMinorBaht("0"), "฿0.00");
-  for (const value of ["", "01", "-1", "1.5", "1e3", "9".repeat(31)])
+test("integer satang are formatted as baht and invalid amounts are rejected", () => {
+  assert.equal(formatMinorBaht(125000), "฿1,250.00");
+  assert.equal(formatMinorBaht(5), "฿0.05");
+  assert.equal(formatMinorBaht(0), "฿0.00");
+  assert.equal(isMinor(0), true);
+  assert.equal(isMinor(5000), true);
+  for (const value of [1.5, -1, "5000", NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, null])
     assert.equal(isMinor(value), false);
-  assert.throws(() => formatMinorBaht(""));
+  assert.throws(() => formatMinorBaht(-1));
+  assert.throws(() => formatMinorBaht(1.5));
 });
 test("only explicit valid UTC instants are formatted in Thai time", () => {
   assert.equal(isIsoUtc("2026-10-14T17:00:00.000Z"), true);
