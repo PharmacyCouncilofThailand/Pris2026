@@ -6,6 +6,7 @@ import {
   makeOptionsProduct,
   makeSingle,
   makeStore,
+  uid,
 } from "./data";
 
 const addButton = (page: Page) =>
@@ -319,4 +320,99 @@ test("quantity stepper is three equal-height cells with the value centred", asyn
   expect(ring.style).not.toBe("none");
   expect(ring.width).toBeGreaterThan(0);
   expect(ring.wrapperOverflow === "visible" || ring.offset < 0).toBe(true);
+});
+
+test("at 1024 the title, price and add button sit in the info column", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle({ nameTh: "แก้วน้ำ Pris" });
+  fake.products = [p];
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  const info = (await page.locator(".merch-detail-info").boundingBox())!;
+  const title = (await page
+    .getByRole("heading", { level: 1, name: "แก้วน้ำ Pris" })
+    .boundingBox())!;
+  expect(title.x).toBeGreaterThanOrEqual(info.x - 1);
+  await expect(
+    page
+      .locator(".merch-detail-info")
+      .getByRole("button", { name: /^เพิ่มลงตะกร้า/ }),
+  ).toBeVisible();
+  await expect(page.locator(".merch-detail-bar")).toBeHidden();
+  await expect(
+    page.locator(".merch-detail-gallery .merch-image-placeholder"),
+  ).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator(".merch-detail-bar")).toBeVisible();
+});
+test("production and shipping info are closed disclosures", async ({
+  page,
+  fake,
+}) => {
+  fake.store = makeStore({
+    productionInfoTh: "ผลิตหลังปิดรับ",
+    shippingInfoTh: "รับที่หน้างาน",
+  });
+  const p = makeSingle();
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  for (const name of ["การผลิต", "การจัดส่ง"]) {
+    const d = page.locator("details", {
+      has: page.getByText(name, { exact: true }),
+    });
+    await expect(d).not.toHaveAttribute("open", "");
+  }
+});
+test("a logged-in add shows the added state and a cart link", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  await login(page);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await page
+    .locator(".merch-detail-info")
+    .getByRole("button", { name: /^เพิ่มลงตะกร้า/ })
+    .click();
+  await expect(page.getByRole("button", { name: "เพิ่มแล้ว ✓" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "ดูตะกร้า" })).toHaveAttribute(
+    "href",
+    "/th/souvenirs/cart",
+  );
+});
+test("back returns to the filtered storefront", async ({ page, fake }) => {
+  const cat = uid(900);
+  fake.store = makeStore({
+    categories: [{ id: cat, nameTh: "เครื่องแต่งกาย", sortOrder: 1 }],
+  });
+  const p = makeSingle({ id: uid(1), categoryId: cat });
+  fake.products = [p];
+  await page.goto(`/th/souvenirs?categoryId=${cat}`);
+  await page.getByRole("button", { name: `ดูรายละเอียด ${p.nameTh}` }).click();
+  await page.getByRole("link", { name: "กลับ" }).click();
+  await expect(page).toHaveURL(
+    new RegExp(`/th/souvenirs\\?categoryId=${cat}$`),
+  );
+});
+test("back link ignores an unsafe saved storefront URL", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  for (const bad of ["//evil.test/x", "/profile", "https://evil.test"]) {
+    await page.addInitScript(
+      (v) => sessionStorage.setItem("pris_merch_storefront_url", v),
+      bad,
+    );
+    await page.goto(`/th/souvenirs/products/${p.id}`);
+    await expect(page.getByRole("link", { name: "กลับ" })).toHaveAttribute(
+      "href",
+      "/th/souvenirs",
+    );
+  }
 });

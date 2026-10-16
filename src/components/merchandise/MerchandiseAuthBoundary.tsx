@@ -82,8 +82,11 @@ type Failure = { message: string; reauthenticate: boolean };
 export function MerchandiseIntentResume({
   intentId,
   onFailed,
+  onAdded,
 }: {
   intentId: string | null;
+  /** The item was added to the cart (fired once per intent). */
+  onAdded?: () => void;
   /** The API refused the add (not a session or network problem): refresh the page data. */
   onFailed?: () => void;
 }) {
@@ -95,8 +98,10 @@ export function MerchandiseIntentResume({
   const reload = useRef(cart.reload);
   const accept = useRef(setCart);
   const failed = useRef(onFailed);
+  const added = useRef(onAdded);
   useEffect(() => {
     failed.current = onFailed;
+    added.current = onAdded;
     where.current = { pathname, router };
     reload.current = cart.reload;
     accept.current = setCart;
@@ -139,6 +144,7 @@ export function MerchandiseIntentResume({
         toast.success("เพิ่มลงตะกร้าแล้ว", {
           id: `merchandise-intent:${intentId}`,
         });
+        added.current?.();
       } catch (error) {
         const e = error instanceof MerchandiseApiError ? error : null;
         if (e?.uncertain) reload.current();

@@ -19,18 +19,40 @@ import {
   unavailableMessage,
   type Selection,
 } from "@/lib/merchandiseSelection";
-import { formatBaht } from "@/lib/merchandiseFormat";
-import { isMerchandiseId, merchandiseLoginPath } from "@/lib/merchandiseRoutes";
+import { formatBaht, shippingFeeLabel } from "@/lib/merchandiseFormat";
+import {
+  isMerchandiseId,
+  merchandiseLoginPath,
+  merchandiseReturnPath,
+} from "@/lib/merchandiseRoutes";
 import {
   readPurchaseIntent,
   savePurchaseIntent,
 } from "@/lib/merchandiseIntent";
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
+import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 import VariantSelector from "./VariantSelector";
 import BundleSelector from "./BundleSelector";
 
 const MAX_QUANTITY = 9999;
+const STOREFRONT_URL_KEY = "pris_merch_storefront_url";
+
+function savedStorefrontPath(): string {
+  try {
+    const raw = window.sessionStorage.getItem(STOREFRONT_URL_KEY);
+    const path = raw ? merchandiseReturnPath(raw) : null;
+    if (
+      path &&
+      /^\/souvenirs(?:[?#]|$)/.test(path) &&
+      !path.includes("/products/")
+    )
+      return path;
+  } catch {
+    /* storage unavailable */
+  }
+  return "/souvenirs";
+}
 
 export default function ProductDetail({
   product: original,
@@ -52,6 +74,9 @@ export default function ProductDetail({
   const [quantity, setQuantity] = useState("1"),
     [restored, setRestored] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [backHref, setBackHref] = useState("/souvenirs"),
+    [justAdded, setJustAdded] = useState(false),
+    [hasAdded, setHasAdded] = useState(false);
   const started = useRef(false),
     active = useRef(true),
     barRef = useRef<HTMLDivElement>(null);
@@ -82,18 +107,43 @@ export default function ProductDetail({
   useLayoutEffect(() => {
     const bar = barRef.current;
     if (!bar) return;
-    const measure = () =>
-      document.documentElement.style.setProperty(
-        "--merch-host-bar-height",
-        `${bar.getBoundingClientRect().height}px`,
-      );
+    const root = document.documentElement;
+    // Only the fixed phone bar needs bottom clearance; it is hidden from 768px.
+    const measure = () => {
+      if (getComputedStyle(bar).display !== "none")
+        root.style.setProperty(
+          "--merch-host-bar-height",
+          `${bar.getBoundingClientRect().height}px`,
+        );
+      else root.style.removeProperty("--merch-host-bar-height");
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(bar);
+    window.addEventListener("resize", measure);
     return () => {
       observer.disconnect();
+      window.removeEventListener("resize", measure);
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
+  }, []);
+  useEffect(() => {
+    let current = true;
+    void Promise.resolve().then(() => {
+      if (current) setBackHref(savedStorefrontPath());
+    });
+    return () => {
+      current = false;
+    };
+  }, []);
+  useEffect(() => {
+    if (!justAdded) return;
+    const timer = window.setTimeout(() => setJustAdded(false), 2000);
+    return () => window.clearTimeout(timer);
+  }, [justAdded]);
+  const handleAdded = useCallback(() => {
+    setHasAdded(true);
+    setJustAdded(true);
   }, []);
   const refresh = useCallback(() => {
     setNotice(
@@ -177,10 +227,9 @@ export default function ProductDetail({
     unavailable.push("สินค้านี้ไม่พร้อมขาย");
   return (
     <main className="merch-detail">
-      <Link className="merch-detail-back" href="/souvenirs">
+      <Link className="merch-detail-back" href={backHref}>
         <ArrowLeft size={18} aria-hidden="true" /> กลับ
       </Link>
-      <h1>{product.nameTh}</h1>
       <div className="merch-detail-grid">
         <div className="merch-detail-gallery">
           {product.images.map((image, index) => (
@@ -196,8 +245,14 @@ export default function ProductDetail({
               {index === 0 && <figcaption>พรีออเดอร์</figcaption>}
             </figure>
           ))}
+          {product.images.length === 0 && (
+            <div className="merch-detail-placeholder">
+              <ProductImagePlaceholder />
+            </div>
+          )}
         </div>
         <div className="merch-detail-info">
+          <h1>{product.nameTh}</h1>
           {product.kind === "bundle" && (
             <span className="merch-detail-tag">ชุดสินค้า</span>
           )}
@@ -288,29 +343,61 @@ export default function ProductDetail({
           {!countOk && (
             <p role="alert">กรุณาระบุจำนวนเต็มระหว่าง 1 ถึง {MAX_QUANTITY}</p>
           )}
+          <div className="merch-detail-add">
+            <button
+              type="button"
+              className="merch-detail-add-button"
+              disabled={!allowed && !justAdded}
+              onClick={justAdded ? undefined : add}
+            >
+              {justAdded ? (
+                "เพิ่มแล้ว ✓"
+              ) : (
+                <>
+                  {busy ? "กำลังตรวจสอบรายการ" : "เพิ่มลงตะกร้า"}
+                  {price !== null && <> · {formatBaht(price)}</>}
+                </>
+              )}
+            </button>
+            {hasAdded && (
+              <Link className="merch-detail-cart-link" href="/souvenirs/cart">
+                ดูตะกร้า
+              </Link>
+            )}
+          </div>
           <p className="merch-detail-hint">
-            สินค้าพรีออเดอร์ · จัดส่งภายในประเทศไทย
+            สินค้าพรีออเดอร์ · {shippingFeeLabel(store.shippingBaht)}
           </p>
-          {store.productionInfoTh && (
-            <section>
-              <h2>การผลิต</h2>
-              <p className="merch-detail-description">
-                {store.productionInfoTh}
-              </p>
-            </section>
-          )}
-          {store.shippingInfoTh && (
-            <section>
-              <h2>การจัดส่ง</h2>
-              <p className="merch-detail-description">{store.shippingInfoTh}</p>
-            </section>
+          {(store.productionInfoTh || store.shippingInfoTh) && (
+            <div className="merch-detail-disclosures">
+              {store.productionInfoTh && (
+                <details>
+                  <summary>การผลิต</summary>
+                  <p className="merch-detail-description">
+                    {store.productionInfoTh}
+                  </p>
+                </details>
+              )}
+              {store.shippingInfoTh && (
+                <details>
+                  <summary>การจัดส่ง</summary>
+                  <p className="merch-detail-description">
+                    {store.shippingInfoTh}
+                  </p>
+                </details>
+              )}
+            </div>
           )}
           {unavailable.map((message) => (
             <p role="status" key={message}>
               {message}
             </p>
           ))}
-          <MerchandiseIntentResume intentId={intentId} onFailed={refresh} />
+          <MerchandiseIntentResume
+            intentId={intentId}
+            onFailed={refresh}
+            onAdded={handleAdded}
+          />
         </div>
       </div>
       <div className="merch-detail-bar" ref={barRef}>
