@@ -22,7 +22,11 @@ const needsLogin = (error: unknown) =>
  * being verified, checks payment on return to the tab and on local expiry, and
  * turns payment API failures into a PaymentView or a notice (spec 7.3, 7.4, 9).
  */
-export function usePaymentPolling(orderId: string, initial: OrderDetail) {
+export function usePaymentPolling(
+  orderId: string,
+  initial: OrderDetail,
+  receivedAt?: { monotonicMs: number; wallMs: number },
+) {
   const { api, token } = useMerchandise();
   const [order, setOrder] = useState(initial);
   const [busy, setBusy] = useState<PaymentBusy>(null);
@@ -184,7 +188,10 @@ export function usePaymentPolling(orderId: string, initial: OrderDetail) {
   }, [check]);
 
   // Local deadline: hide the QR at once, then ask the server exactly once.
-  const remainingMs = usePaymentDeadline(order.payment);
+  const remainingMs = usePaymentDeadline(
+    order.payment,
+    order.payment === initial.payment ? receivedAt : undefined,
+  );
   const expiredLocally =
     order.payment.state === "qr_active" && remainingMs === 0;
   const attempt = order.payment.attempt;

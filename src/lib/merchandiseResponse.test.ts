@@ -148,13 +148,17 @@ test("order and payment", () => {
       ...order,
       payment: { ...payment, attempt: { ...payment.attempt, qrPayload: null } },
     }),
-    false,
+    true,
   );
   assert.equal(
     orderResponse({
       ...order,
       payment: { ...payment, attempt: { ...payment.attempt, qrPayload: "" } },
     }),
+    true,
+  );
+  assert.equal(
+    orderResponse({ ...order, payment: { ...payment, attempt: null } }),
     false,
   );
   assert.equal(orderResponse({ ...order, payment: { ...payment, state: "refunded" } }), false);

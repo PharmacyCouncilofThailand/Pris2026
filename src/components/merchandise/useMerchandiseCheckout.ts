@@ -262,7 +262,7 @@ export function useMerchandiseCheckout() {
           // Back navigation to /souvenirs/cart cannot show or reuse it.
           cartResource.reload();
         } catch (error) {
-          await fail(error, storage!, ownerId!);
+          await fail(error, storage!, ownerId!, replay);
         }
       } finally {
         inflight.current = false;
@@ -281,7 +281,12 @@ export function useMerchandiseCheckout() {
     ],
   );
 
-  async function fail(error: unknown, storage: Storage, buyerId: number) {
+  async function fail(
+    error: unknown,
+    storage: Storage,
+    buyerId: number,
+    replay = false,
+  ) {
     if (!mounted.current) return;
     const e =
       error instanceof MerchandiseApiError
@@ -304,8 +309,13 @@ export function useMerchandiseCheckout() {
       return;
     }
     if (action === "rate_limited") {
-      setStatus("error");
-      setMessage("ทำรายการถี่เกินไป กรุณารอสักครู่");
+      // A throttled replay still leaves the original order's fate unknown.
+      setStatus(replay ? "uncertain" : "error");
+      setMessage(
+        replay
+          ? `${UNCERTAIN_MESSAGE} (ทำรายการถี่เกินไป กรุณารอสักครู่)`
+          : "ทำรายการถี่เกินไป กรุณารอสักครู่",
+      );
       setBlocked(true);
       timer.current = setTimeout(() => setBlocked(false), RATE_LIMIT_MS);
       return;

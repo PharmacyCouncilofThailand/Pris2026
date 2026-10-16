@@ -142,6 +142,9 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
     )
       throw merchandiseFailure(401, "MERCH_AUTH_REQUIRED");
     const headers = new Headers({ Accept: "application/json" });
+    // Free ngrok API domains interpose a browser warning unless this is sent.
+    if (process.env.NEXT_PUBLIC_API_NGROK === "1")
+      headers.set("ngrok-skip-browser-warning", "true");
     if (config.private) headers.set("Authorization", `Bearer ${token}`);
     if (config.key !== undefined)
       headers.set("Idempotency-Key", intentKey(config.key));

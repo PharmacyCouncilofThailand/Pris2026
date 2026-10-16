@@ -308,3 +308,33 @@ test("after the order is created, Back shows an empty cart without any error", a
     page.getByRole("button", { name: /^ดำเนินการสั่งซื้อ/ }),
   ).toBeDisabled();
 });
+
+test("a 429 on a checkout retry keeps the uncertain state, then the retry replays", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await page.clock.install();
+  await openCheckout(page);
+  await reachReview(page);
+  fake.failNext("POST", /orders$/, "lost");
+  await confirmButton(page).click();
+  await expect(page.getByText("ยังไม่ทราบผลการยืนยัน")).toBeVisible();
+  fake.failNext(
+    "POST",
+    /orders$/,
+    failure(429, "RATE_LIMITED", "ทำรายการถี่เกินไป"),
+  );
+  await retryButton(page).click();
+  await expect(page.getByText("ยังไม่ทราบผลการยืนยัน")).toBeVisible();
+  await expect(retryButton(page)).toBeDisabled();
+  await expect(
+    page.getByRole("button", { name: "กลับไปแก้ข้อมูลผู้รับ" }),
+  ).toHaveCount(0);
+  await page.clock.runFor(10_100);
+  await expect(retryButton(page)).toBeEnabled();
+  await retryButton(page).click();
+  await expect(page).toHaveURL(ORDER_URL);
+  expect(fake.orders.size).toBe(1);
+});

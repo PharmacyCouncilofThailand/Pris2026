@@ -6,7 +6,7 @@
 
 - มือถือต้องเข้าถึงได้ทั้ง Pris และ API ผ่าน URL สาธารณะ (เช่น ngrok ทั้งสองฝั่ง) โดย `NEXT_PUBLIC_API_URL` ของ Pris ชี้ไปที่ URL สาธารณะของ API
 - ตั้ง `CORS_ORIGIN` ของ API ให้เป็น URL สาธารณะของ Pris
-- ถ้า API อยู่หลังโดเมนฟรีของ ngrok เบราว์เซอร์อาจเจอหน้าเตือนของ ngrok เพราะ Pris ไม่ส่งเฮดเดอร์ `ngrok-skip-browser-warning` ให้ใช้โดเมนแบบเสียเงิน/โดเมนคงที่ หรือใช้ tunnel อื่นแทน
+- ถ้า API อยู่หลังโดเมนฟรีของ ngrok ให้ตั้ง `NEXT_PUBLIC_API_NGROK=1` ใน env ของ Pris (CORS ของ API อนุญาตเฮดเดอร์ `ngrok-skip-browser-warning` อยู่แล้ว) แล้ว Pris จะส่งเฮดเดอร์นี้ในทุกคำขอ merchandise API ทั้งนี้ครอบคลุมเฉพาะคำขอ merchandise เท่านั้น หน้าอื่นของ Pris เช่น login อาจยังเจอหน้าเตือน ดังนั้นการใช้ tunnel แบบไม่ใช่โดเมนฟรีปลอดภัยกว่า
 - ต้องรัน migration 0043, seed และเปิดร้านบน API ก่อน (runbook §1, §4)
 
 ## อุปกรณ์

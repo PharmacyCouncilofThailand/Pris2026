@@ -229,13 +229,9 @@ const payment: Check = (v) => {
   });
   if (!base(v)) return false;
   const data = v as PaymentView;
-  // qr_active must carry a usable QR payload; other states are not rendered.
-  return (
-    data.state !== "qr_active" ||
-    (data.attempt !== null &&
-      typeof data.attempt.qrPayload === "string" &&
-      data.attempt.qrPayload.length > 0)
-  );
+  // qr_active needs an attempt, but its payload may be null/empty when the
+  // server could not decrypt it; the panel then offers a status check instead.
+  return data.state !== "qr_active" || data.attempt !== null;
 };
 export const paymentResponse = shape<PaymentResult>({ payment });
 const summaryFields: { [K in keyof OrderSummary]: Check } = {

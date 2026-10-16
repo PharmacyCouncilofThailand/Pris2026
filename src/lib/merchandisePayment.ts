@@ -2,6 +2,7 @@ import type { PaymentState, PaymentView } from "../types/merchandise";
 export interface DeadlineAnchor {
   serverEpochMs: number;
   receivedMonotonicMs: number;
+  receivedWallMs?: number;
 }
 export function deadlineRemainingMs(
   expiresAt: string,
@@ -25,6 +26,30 @@ export function deadlineRemainingMs(
       Math.max(0, monotonicNowMs - anchor.receivedMonotonicMs),
   );
 }
+/**
+ * Remaining time never exceeds the wall-clock estimate: performance.now() can
+ * pause while a device sleeps, Date.now() keeps running.
+ */
+export function cappedRemainingMs(
+  expiresAt: string,
+  anchor: DeadlineAnchor,
+  monotonicNowMs: number,
+  wallNowMs: number,
+): number {
+  const monotonic = deadlineRemainingMs(expiresAt, anchor, monotonicNowMs);
+  if (
+    anchor.receivedWallMs === undefined ||
+    !Number.isFinite(anchor.receivedWallMs) ||
+    !Number.isFinite(wallNowMs)
+  )
+    return monotonic;
+  const wall = deadlineRemainingMs(
+    expiresAt,
+    { serverEpochMs: anchor.serverEpochMs, receivedMonotonicMs: 0 },
+    Math.max(0, wallNowMs - anchor.receivedWallMs),
+  );
+  return Math.min(monotonic, wall);
+}
 export function formatPaymentRemaining(ms: number): string {
   if (!Number.isFinite(ms) || ms < 0) throw new Error("Invalid remaining time");
   const seconds = Math.ceil(ms / 1000);
@@ -39,11 +64,12 @@ export const CHECK_COOLDOWN_MS = 5_000;
 export function anchorFrom(
   view: PaymentView,
   monotonicNow: number,
+  receivedWallMs?: number,
 ): DeadlineAnchor {
   const serverEpochMs = Date.parse(view.serverNow);
   if (!Number.isFinite(serverEpochMs) || !Number.isFinite(monotonicNow))
     throw new Error("เวลาจากเซิร์ฟเวอร์ไม่ถูกต้อง");
-  return { serverEpochMs, receivedMonotonicMs: monotonicNow };
+  return { serverEpochMs, receivedMonotonicMs: monotonicNow, receivedWallMs };
 }
 
 export type PanelModel = {
@@ -94,7 +120,9 @@ export function panelModel(
       return {
         ...base,
         title: "รอชำระเงิน",
-        message: "ใช้แอปธนาคารสแกน หรือบันทึกภาพ QR แล้วเลือกรูปในแอปธนาคาร",
+        message: view.attempt?.qrPayload
+          ? "ใช้แอปธนาคารสแกน หรือบันทึกภาพ QR แล้วเลือกรูปในแอปธนาคาร"
+          : "ไม่สามารถแสดง QR ได้ กรุณากดตรวจสอบการชำระเงิน",
         showQr: !!view.attempt?.qrPayload,
         primary: check,
       };
