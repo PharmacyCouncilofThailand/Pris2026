@@ -169,7 +169,7 @@ uncertain state "ลองอีกครั้ง").
 
 | Condition | View |
 |---|---|
-| Not paid | **Pay view**: no back link, no order heading, no items/recipient/amount sections. A centred card: PRIS 2026 logo (`/assets/Img/logo/Logo-Final .png`, dark, ~48 px tall), then the existing `PaymentPanel` (title e.g. "รอชำระเงิน", amount, QR, countdown, expiry, check/request button, notices). |
+| Not paid | **Pay view**: no back link, no visible order heading (a visually hidden `<h1>` "คำสั่งซื้อ {orderNumber}" stays for screen readers), no items/recipient/amount sections. A centred card: PRIS 2026 logo (`/assets/Img/logo/Logo-Final .png`, dark, ~48 px tall), then the existing `PaymentPanel` (title e.g. "รอชำระเงิน", amount, QR, countdown, expiry, check/request button, notices). |
 | Became paid while this page was open (first seen unpaid, polling then reports paid) | **Just-paid view**: same card, success icon + "ชำระเงินสำเร็จ", a primary button "ไปหน้ารายการคำสั่งซื้อ" linking to `/souvenirs/orders`, and the text "จะพาไปหน้ารายการคำสั่งซื้อใน {n} วินาที". A 10 s countdown then calls `router.replace("/souvenirs/orders")`. |
 | Already paid when the page loaded (e.g. opened from history) | **Detail view**: today's layout unchanged — back link "กลับหน้าประวัติ", items, amounts, recipient, `PaidOrder` (delivery/tracking). |
 
@@ -182,7 +182,7 @@ Details:
   number lives in an `aria-live="polite"` region updated only at 10, 5 and 0
   to avoid announcing every second.
 - `PaymentQr`: remove the "บันทึกภาพ QR" download link; keep a shorter hint
-  "กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร".
+  "กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร". The `qr_active` panel message in `merchandisePayment.ts` drops its "บันทึกภาพ QR" wording: "ใช้แอปธนาคารสแกน QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร".
 - The "กลับหน้าประวัติ" link is removed from the pay and just-paid views only.
 
 ## H. Shared `CheckoutBar` component
