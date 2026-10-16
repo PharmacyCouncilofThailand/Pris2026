@@ -233,3 +233,28 @@ test("the review step marks two completed steps and the current one", async ({
     "ตรวจสอบ",
   );
 });
+
+test("paired address fields share a row at 1024", async ({ page, fake }) => {
+  seedCheckout(fake);
+  await login(page);
+  const pos = async (label: string) =>
+    (await page.getByLabel(label, { exact: true }).boundingBox())!;
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await openCheckout(page);
+  for (const [a, b] of [
+    ["ตำบล/แขวง", "อำเภอ/เขต"],
+    ["จังหวัด", "รหัสไปรษณีย์"],
+  ]) {
+    const [pa, pb] = [await pos(a), await pos(b)];
+    expect(Math.abs(pa.y - pb.y)).toBeLessThanOrEqual(2);
+    expect(Math.abs(pa.x - pb.x)).toBeGreaterThan(20);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const [a, b] of [
+    ["ตำบล/แขวง", "อำเภอ/เขต"],
+    ["จังหวัด", "รหัสไปรษณีย์"],
+  ]) {
+    const [pa, pb] = [await pos(a), await pos(b)];
+    expect(Math.abs(pa.y - pb.y)).toBeGreaterThan(20);
+  }
+});

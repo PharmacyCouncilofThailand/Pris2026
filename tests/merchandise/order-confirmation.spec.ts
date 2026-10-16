@@ -1,5 +1,5 @@
 import { test, expect, login } from "./fixtures";
-import { makeStore } from "./data";
+import { image, makeOptionsProduct, makeSingle, makeStore, stubImages, uid } from "./data";
 import {
   confirmButton,
   KEY_PREFIX,
@@ -392,4 +392,37 @@ test("review puts payment info and the lock notice in the panel at 1024, inline 
   await expect(panel.locator(".merch-checkout-bar-total")).toContainText(
     "ยอดชำระเงินทั้งหมด",
   );
+});
+
+test("review quantity sits at the row's right edge with or without an image", async ({ page, fake, context }) => {
+  await stubImages(context);
+  const withImage = makeOptionsProduct({ images: [image(1)] });
+  const plain = makeSingle({ id: uid(2), nameTh: "สินค้า 2" });
+  fake.store = makeStore();
+  fake.products = [withImage, plain];
+  for (const p of [withImage, plain])
+    fake.seedLine({ productId: p.id, variantId: p.variants[0].id, bundleSelections: [], quantity: 1 });
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await login(page); await openCheckout(page); await reachReview(page);
+  const items = page.locator(".merch-review-item");
+  await expect(items).toHaveCount(2);
+  for (let i = 0; i < 2; i++) {
+    const qty = (await items.nth(i).locator(".merch-review-qty").boundingBox())!;
+    const row = (await items.nth(i).locator(".merch-review-price").boundingBox())!;
+    expect(Math.abs(qty.x + qty.width - (row.x + row.width))).toBeLessThanOrEqual(2);
+    expect(row.width).toBeGreaterThanOrEqual(300);
+  }
+});
+test("review sections are separate white cards without doubled dividers", async ({ page, fake }) => {
+  seedCheckout(fake); await login(page); await openCheckout(page); await reachReview(page);
+  const sections = page.locator(".merch-review-section");
+  expect(await sections.count()).toBeGreaterThan(0);
+  for (const s of await sections.all())
+    expect(await s.evaluate((el) => { const c = getComputedStyle(el); return [c.backgroundColor, c.borderBottomWidth]; })).toEqual(["rgb(255, 255, 255)", "0px"]);
+});
+test("the Thai QR logo is 24px tall", async ({ page, fake }) => {
+  seedCheckout(fake); await login(page); await openCheckout(page); await reachReview(page);
+  const box = (await page.locator(".merch-payment-option img").boundingBox())!;
+  expect(Math.abs(box.height - 24)).toBeLessThanOrEqual(1);
+  expect(box.width).toBeGreaterThan(24);
 });

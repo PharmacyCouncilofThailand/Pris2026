@@ -14,6 +14,7 @@ import {
 } from "@/lib/merchandiseRecipient";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { CartDto, Recipient } from "@/types/merchandise";
+import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 import { CheckoutBar } from "./CheckoutBar";
 import { CheckoutSteps } from "./CheckoutSteps";
 import RecipientForm from "./RecipientForm";
@@ -257,16 +258,20 @@ function ReviewBody({
           const detail = describeLine(line);
           return (
             <article className="merch-review-item" key={line.id}>
-              {image && (
-                <Image
-                  unoptimized
-                  src={image.url}
-                  alt=""
-                  width={64}
-                  height={72}
-                />
-              )}
-              <div>
+              <div className="merch-review-image">
+                {image ? (
+                  <Image
+                    unoptimized
+                    src={image.url}
+                    alt=""
+                    width={80}
+                    height={80}
+                  />
+                ) : (
+                  <ProductImagePlaceholder />
+                )}
+              </div>
+              <div className="merch-review-item-text">
                 <h3>{line.product?.nameTh ?? "สินค้านี้ไม่มีแล้ว"}</h3>
                 {detail && <p className="merch-cart-muted">{detail}</p>}
                 <p className="merch-review-price">
