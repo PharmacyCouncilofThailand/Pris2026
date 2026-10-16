@@ -293,6 +293,11 @@ test("after the order is created, Back shows an empty cart without any error", a
   await reachReview(page);
   await confirmButton(page).click();
   await expect(page).toHaveURL(ORDER_URL);
+  // The real order page (not a placeholder) is what Back leaves.
+  await expect(
+    page.getByRole("heading", { name: /^คำสั่งซื้อ PRIS2026-M-\d+$/ }),
+  ).toBeVisible();
+  await expect(page.getByRole("img", { name: /^QR สำหรับ/ })).toBeVisible();
   await page.goBack();
   await expect(page).toHaveURL(/\/th\/souvenirs\/cart$/);
   await expect(

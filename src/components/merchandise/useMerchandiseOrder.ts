@@ -4,30 +4,18 @@ import { merchandiseFailure } from "@/lib/merchandiseApi";
 import type { OrderDetail } from "@/types/merchandise";
 import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseResource } from "./useMerchandiseResource";
-export function useMerchandiseOrder(orderId: string) {
-  const { api, eventCode, token, ownerIdentity, ownerId, store } =
-      useMerchandise(),
-    eventId = store.data?.eventId;
+export function useMerchandiseOrder(orderId: string, enabled = true) {
+  const { api, token, ownerIdentity } = useMerchandise();
   const scope = useMemo(
-    () =>
-      token && eventId
-        ? { eventCode, eventId, ownerIdentity, token, orderId }
-        : null,
-    [token, eventCode, eventId, ownerIdentity, orderId],
+    () => (token && enabled ? { ownerIdentity, token, orderId } : null),
+    [token, enabled, ownerIdentity, orderId],
   );
   const load = useCallback(
-    async (signal: AbortSignal) => {
-      if (!token || !eventId)
-        throw merchandiseFailure(401, "MERCH_AUTH_REQUIRED");
-      const data = await api.order(orderId, token, signal);
-      if (
-        data.eventId !== eventId ||
-        (ownerId !== null && data.buyer.id !== ownerId)
-      )
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-      return data;
+    (signal: AbortSignal) => {
+      if (!token) throw merchandiseFailure(401, "MERCH_AUTH_REQUIRED");
+      return api.order(token, orderId, signal);
     },
-    [api, token, eventId, ownerId, orderId],
+    [api, token, orderId],
   );
   return useMerchandiseResource(scope, load);
 }

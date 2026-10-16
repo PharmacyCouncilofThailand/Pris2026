@@ -43,6 +43,8 @@ export class FakeMerchApi {
   cart: CartDto;
   orders = new Map<string, OrderDetail>();
   calls: RecordedCall[] = [];
+  /** Test seam: runs before payment-checks / payment-attempts reply, so a test can move the payment on like the real worker would. */
+  onPayment?: (kind: "check" | "attempt", order: OrderDetail) => void;
   private pending: Pending[] = [];
   private versionSeq = 0;
   private orderSeq = 0;
@@ -262,7 +264,10 @@ export class FakeMerchApi {
       if (!o)
         return this.failure(404, "MERCH_ORDER_NOT_FOUND", "ไม่พบคำสั่งซื้อ");
       if (method === "GET" && !g[2]) return this.ok(o);
-      if (method === "POST" && g[2]) return this.ok({ payment: o.payment });
+      if (method === "POST" && g[2]) {
+        this.onPayment?.(g[2] === "payment-checks" ? "check" : "attempt", o);
+        return this.ok({ payment: o.payment });
+      }
     }
     return null;
   }
