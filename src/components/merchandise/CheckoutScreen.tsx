@@ -218,7 +218,7 @@ function CheckoutWorkspace() {
         ) : uncertain ? (
           <button
             type="button"
-            disabled={loading || !eligible || checkout.blocked}
+            disabled={checkout.blocked}
             onClick={() => void checkout.retry()}
           >
             ลองอีกครั้ง

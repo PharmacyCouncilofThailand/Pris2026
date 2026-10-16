@@ -1,5 +1,12 @@
 import { merchandiseFailure } from "./merchandiseApi";
 import type { RecipientDraft } from "./merchandiseRecipient";
+import type { Recipient } from "../types/merchandise";
+
+/** The exact POST body a pending Idempotency-Key was first sent with. */
+export interface PendingBody {
+  cartVersion: string;
+  recipient: Recipient;
+}
 
 const PREFIX = "pris_merchandise_checkout:";
 const name = (eventCode: string, buyerId: number) =>
@@ -8,8 +15,37 @@ const name = (eventCode: string, buyerId: number) =>
 export interface CheckoutState {
   key: string | null;
   draft: RecipientDraft | null;
+  body: PendingBody | null;
 }
-const empty = (): CheckoutState => ({ key: null, draft: null });
+const empty = (): CheckoutState => ({ key: null, draft: null, body: null });
+const NULLABLE = ["company", "deliveryNote"];
+const FIELDS = [
+  "fullName",
+  "phone",
+  "addressLine",
+  "subdistrict",
+  "district",
+  "province",
+  "postalCode",
+  ...NULLABLE,
+];
+function validBody(v: unknown): v is PendingBody {
+  if (typeof v !== "object" || v === null) return false;
+  const b = v as Record<string, unknown>;
+  if (typeof b.cartVersion !== "string" || !b.cartVersion) return false;
+  const r = b.recipient as Record<string, unknown> | null;
+  if (typeof r !== "object" || r === null) return false;
+  return FIELDS.every((f) =>
+    NULLABLE.includes(f)
+      ? r[f] === null || typeof r[f] === "string"
+      : typeof r[f] === "string",
+  );
+}
+
+const readDraft = (d: unknown): RecipientDraft | null =>
+  typeof d === "object" && d !== null && !Array.isArray(d)
+    ? (d as RecipientDraft)
+    : null;
 
 export function readCheckout(
   storage: Storage,
@@ -22,17 +58,17 @@ export function readCheckout(
     );
     if (typeof v !== "object" || v === null || Array.isArray(v)) return empty();
     const o = v as Record<string, unknown>;
+    // A body that is present but unreadable means we cannot replay faithfully:
+    // treat the whole pending request as absent.
+    if (o.body !== undefined && o.body !== null && !validBody(o.body))
+      return { ...empty(), draft: readDraft(o.draft) };
     return {
       key:
         typeof o.key === "string" && /^[A-Za-z0-9_-]{1,100}$/.test(o.key)
           ? o.key
           : null,
-      draft:
-        typeof o.draft === "object" &&
-        o.draft !== null &&
-        !Array.isArray(o.draft)
-          ? (o.draft as RecipientDraft)
-          : null,
+      draft: readDraft(o.draft),
+      body: validBody(o.body) ? o.body : null,
     };
   } catch {
     return empty();
@@ -48,6 +84,28 @@ export function ensureCheckoutKey(
   if (current.key) return current.key;
   const key = crypto.randomUUID();
   const raw = JSON.stringify({ ...current, key });
+  try {
+    storage.setItem(name(eventCode, buyerId), raw);
+    if (storage.getItem(name(eventCode, buyerId)) !== raw) throw new Error();
+  } catch {
+    throw merchandiseFailure(0, "MERCH_STORAGE_UNAVAILABLE");
+  }
+  return key;
+}
+
+/**
+ * Persist key + the exact request body in one write, and read it back, BEFORE
+ * the POST. Reuses an existing key. Throws MERCH_STORAGE_UNAVAILABLE.
+ */
+export function beginCheckoutRequest(
+  storage: Storage,
+  eventCode: string,
+  buyerId: number,
+  body: PendingBody,
+): string {
+  const current = readCheckout(storage, eventCode, buyerId);
+  const key = current.key ?? crypto.randomUUID();
+  const raw = JSON.stringify({ ...current, key, body });
   try {
     storage.setItem(name(eventCode, buyerId), raw);
     if (storage.getItem(name(eventCode, buyerId)) !== raw) throw new Error();

@@ -147,7 +147,9 @@ test("a closed store at POST time says so and disables confirmation", async ({
   await reachReview(page);
   fake.store = makeStore({ state: "closed" });
   await confirmButton(page).click();
-  await expect(page.locator("main [role=alert]")).toHaveText("ปิดรับพรีออเดอร์แล้ว");
+  await expect(page.locator("main [role=alert]")).toHaveText(
+    "ปิดรับพรีออเดอร์แล้ว",
+  );
   await expect(confirmButton(page)).toBeDisabled();
 });
 
@@ -248,6 +250,35 @@ test("401 at POST goes to login, and coming back resumes with the draft and the 
   const posts = orderPosts(fake);
   expect(posts).toHaveLength(2);
   expect(posts[1].headers["idempotency-key"]).toBe(key);
+  expect(posts[1].body).toEqual(posts[0].body);
+});
+
+test("a lost response survives a reload: retry replays the persisted key and body even though the cart is now empty", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await reachReview(page);
+  fake.failNext("POST", /orders$/, "lost");
+  await confirmButton(page).click();
+  await expect(page.getByText("ยังไม่ทราบผลการยืนยัน")).toBeVisible();
+  expect(fake.orders.size).toBe(1);
+  expect(fake.cart.items).toHaveLength(0);
+  await page.reload();
+  await expect(page.getByText("ยังไม่ทราบผลการยืนยัน")).toBeVisible();
+  await expect(retryButton(page)).toBeEnabled();
+  await retryButton(page).click();
+  await expect(page).toHaveURL(ORDER_URL);
+  const posts = orderPosts(fake);
+  expect(posts).toHaveLength(2);
+  expect(posts[1].headers["idempotency-key"]).toBe(
+    posts[0].headers["idempotency-key"],
+  );
+  expect(JSON.stringify(posts[1].body)).toBe(JSON.stringify(posts[0].body));
+  expect(fake.orders.size).toBe(1);
+  expect(await storedKey(page)).toBeNull();
 });
 
 test("after the order is created, Back shows an empty cart without any error", async ({
