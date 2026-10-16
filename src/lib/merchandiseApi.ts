@@ -4,18 +4,13 @@ import type {
   ProductDto,
   Page,
   CartDto,
-  CartAddInput,
-  CartUpdateInput,
-  QuoteInput,
-  QuoteDto,
-  ConfirmOrderInput,
-  ConfirmOrderResult,
+  CartItemInput,
+  CartItemPatch,
+  CreateOrderResult,
   OrderSummary,
   OrderDetail,
-  AttemptInput,
-  AttemptResult,
-  PaymentCheckResult,
-  OrderRequestDto,
+  PaymentResult,
+  Recipient,
 } from "../types/merchandise";
 import {
   record,
@@ -25,13 +20,10 @@ import {
   productResponse,
   pageResponse,
   cartResponse,
-  quoteResponse,
-  confirmResponse,
   orderSummaryResponse,
   orderResponse,
-  attemptResponse,
-  checkResponse,
-  requestResponse,
+  createOrderResponse,
+  paymentResponse,
 } from "./merchandiseResponse";
 
 const messages: Record<number, string> = {
@@ -79,7 +71,7 @@ const resourceId = (id: string) => {
   return encodeURIComponent(id.toLowerCase());
 };
 const intentKey = (key: string) => {
-  if (typeof key !== "string" || !/^[A-Za-z0-9:_-]{1,160}$/.test(key))
+  if (typeof key !== "string" || !/^[A-Za-z0-9_-]{1,100}$/.test(key))
     throw merchandiseFailure(0, "MERCH_INVALID_REQUEST_KEY");
   return key;
 };
@@ -143,8 +135,7 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
       signal?: AbortSignal;
     } = {},
   ) {
-    const { method = "GET", token, signal } = config,
-      mutation = method !== "GET";
+    const { method = "GET", token, signal } = config;
     if (
       config.private &&
       (typeof token !== "string" || !token.trim() || /[\r\n]/.test(token))
@@ -170,40 +161,29 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
       });
     } catch (error) {
       if (signal?.aborted) throw error;
-      throw merchandiseFailure(
-        0,
-        mutation ? "MERCH_NETWORK_UNKNOWN" : "MERCH_LOAD_FAILED",
-        mutation,
-      );
+      throw merchandiseFailure(0, "MERCH_NETWORK_UNKNOWN", true);
     }
   }
-  async function errorFor(
-    response: Response,
-    mutation: boolean,
-  ): Promise<MerchandiseApiError> {
+  async function errorFor(response: Response): Promise<MerchandiseApiError> {
     const body: unknown = await response.json().catch(() => null);
     const failure = merchandiseFailure(
       response.status,
       record(body) && safeCode(body.code)
         ? (body.code as string)
         : "MERCH_LOAD_FAILED",
-      mutation && response.status >= 500,
+      response.status >= 500,
     );
-    if (
-      record(body) &&
-      typeof body.requestId === "string" &&
-      /^[A-Za-z0-9_-]{1,160}$/.test(body.requestId)
-    )
-      failure.body.requestId = body.requestId;
-    if (
-      record(body) &&
-      record(body.details) &&
-      Number.isSafeInteger(body.details.resourceVersion) &&
-      (body.details.resourceVersion as number) >= 0
-    )
-      failure.body.details = {
-        resourceVersion: body.details.resourceVersion as number,
-      };
+    if (record(body)) {
+      if (typeof body.error === "string" && body.error.trim())
+        failure.body.error = body.error;
+      failure.message = failure.body.error;
+      if (
+        typeof body.requestId === "string" &&
+        /^[A-Za-z0-9_-]{1,160}$/.test(body.requestId)
+      )
+        failure.body.requestId = body.requestId;
+      if (record(body.details)) failure.body.details = body.details;
+    }
     return failure;
   }
   async function data<T>(
@@ -211,19 +191,11 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
     check: Check,
     config: Parameters<typeof request>[1] = {},
   ): Promise<T> {
-    const response = await request(path, config),
-      mutation = config?.method !== undefined && config.method !== "GET";
-    if (!response.ok) throw await errorFor(response, mutation);
-    if (
-      !response.headers
-        .get("content-type")
-        ?.toLowerCase()
-        .includes("application/json")
-    )
-      throw merchandiseFailure(response.status, "MERCH_BAD_RESPONSE", mutation);
+    const response = await request(path, config);
+    if (!response.ok) throw await errorFor(response);
     const body: unknown = await response.json().catch(() => null);
     if (!record(body) || body.success !== true || !check(body.data))
-      throw merchandiseFailure(response.status, "MERCH_BAD_RESPONSE", mutation);
+      throw merchandiseFailure(response.status, "MERCH_BAD_RESPONSE");
     return body.data as T;
   }
   const owned = (token: string, signal?: AbortSignal) => ({
@@ -236,23 +208,6 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
       throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
     return result;
   };
-  const paymentIdentity = <
-    T extends {
-      orderId: string;
-      payment: { attempt: { orderId: string } | null };
-    },
-  >(
-    result: T,
-    id: string,
-  ): T => {
-    if (
-      result.orderId.toLowerCase() !== id.toLowerCase() ||
-      (result.payment.attempt &&
-        result.payment.attempt.orderId.toLowerCase() !== id.toLowerCase())
-    )
-      throw merchandiseFailure(0, "MERCH_BAD_RESPONSE", true);
-    return result;
-  };
   return {
     async store(eventCode: string, signal?: AbortSignal) {
       const result = await data<StoreDto>(
@@ -260,17 +215,11 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
         storeResponse,
         { signal },
       );
-      if (
-        result.eventCode !== eventCode ||
-        result.categories.some(
-          (c) => c.eventId !== result.eventId || !c.visible,
-        ) ||
-        result.banners.some((b) => b.eventId !== result.eventId || !b.active)
-      )
+      if (result.eventCode !== eventCode)
         throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
       return result;
     },
-    products: (
+    products: async (
       eventCode: string,
       filters: MerchandiseCatalogFilters = {},
       signal?: AbortSignal,
@@ -290,76 +239,59 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
         id,
       );
     },
-    cart: (eventCode: string, token: string, signal?: AbortSignal) =>
+    cart: async (eventCode: string, token: string, signal?: AbortSignal) =>
       data<CartDto>(
         `${merchandiseEventBase(eventCode)}/cart`,
         cartResponse,
         owned(token, signal),
       ),
-    add: (
+    addCartItem: async (
       eventCode: string,
       token: string,
-      input: CartAddInput,
-      key: string,
+      input: CartItemInput,
       signal?: AbortSignal,
     ) =>
       data<CartDto>(
         `${merchandiseEventBase(eventCode)}/cart/items`,
         cartResponse,
-        { ...owned(token, signal), method: "POST", input, key: intentKey(key) },
+        { ...owned(token, signal), method: "POST", input },
       ),
-    update: (
+    updateCartItem: async (
       eventCode: string,
       token: string,
-      id: string,
-      input: CartUpdateInput,
+      itemId: string,
+      input: CartItemPatch,
       signal?: AbortSignal,
     ) =>
       data<CartDto>(
-        `${merchandiseEventBase(eventCode)}/cart/items/${resourceId(id)}`,
+        `${merchandiseEventBase(eventCode)}/cart/items/${resourceId(itemId)}`,
         cartResponse,
         { ...owned(token, signal), method: "PATCH", input },
       ),
-    remove: (
+    removeCartItem: async (
       eventCode: string,
       token: string,
-      id: string,
-      expectedRevision: number,
+      itemId: string,
       signal?: AbortSignal,
     ) =>
       data<CartDto>(
-        `${merchandiseEventBase(eventCode)}/cart/items/${resourceId(id)}`,
+        `${merchandiseEventBase(eventCode)}/cart/items/${resourceId(itemId)}`,
         cartResponse,
-        {
-          ...owned(token, signal),
-          method: "DELETE",
-          input: { expectedRevision },
-        },
+        { ...owned(token, signal), method: "DELETE" },
       ),
-    quote: (
+    createOrder: async (
       eventCode: string,
       token: string,
-      input: QuoteInput,
-      signal?: AbortSignal,
-    ) =>
-      data<QuoteDto>(
-        `${merchandiseEventBase(eventCode)}/checkout-quotes`,
-        quoteResponse,
-        { ...owned(token, signal), method: "POST", input },
-      ),
-    confirm: (
-      eventCode: string,
-      token: string,
-      input: ConfirmOrderInput,
       key: string,
+      input: { cartVersion: string; recipient: Recipient },
       signal?: AbortSignal,
     ) =>
-      data<ConfirmOrderResult>(
+      data<CreateOrderResult>(
         `${merchandiseEventBase(eventCode)}/orders`,
-        confirmResponse,
+        createOrderResponse,
         { ...owned(token, signal), method: "POST", input, key: intentKey(key) },
       ),
-    orders: (
+    orders: async (
       eventCode: string,
       token: string,
       filters: MerchandisePageFilters = {},
@@ -370,88 +302,32 @@ export function createMerchandiseApi(options: ClientOptions = {}) {
         pageResponse(orderSummaryResponse),
         owned(token, signal),
       ),
-    async order(id: string, token: string, signal?: AbortSignal) {
+    async order(token: string, orderId: string, signal?: AbortSignal) {
       return identity(
         await data<OrderDetail>(
-          `/api/v1/merchandise/orders/${resourceId(id)}`,
+          `/api/v1/merchandise/orders/${resourceId(orderId)}`,
           orderResponse,
           owned(token, signal),
         ),
-        id,
+        orderId,
       );
     },
-    async createAttempt(
-      id: string,
+    checkPayment: async (
       token: string,
-      input: AttemptInput,
-      key: string,
-      signal?: AbortSignal,
-    ) {
-      return paymentIdentity(
-        await data<AttemptResult>(
-          `/api/v1/merchandise/orders/${resourceId(id)}/payment-attempts`,
-          attemptResponse,
-          {
-            ...owned(token, signal),
-            method: "POST",
-            input,
-            key: intentKey(key),
-          },
-        ),
-        id,
-      );
-    },
-    async checkPayment(id: string, token: string, signal?: AbortSignal) {
-      return paymentIdentity(
-        await data<PaymentCheckResult>(
-          `/api/v1/merchandise/orders/${resourceId(id)}/payment-checks`,
-          checkResponse,
-          { ...owned(token, signal), method: "POST", input: {} },
-        ),
-        id,
-      );
-    },
-    orderRequest: (
-      eventCode: string,
-      token: string,
-      key: string,
+      orderId: string,
       signal?: AbortSignal,
     ) =>
-      data<OrderRequestDto>(
-        `${merchandiseEventBase(eventCode)}/order-requests/${encodeURIComponent(intentKey(key))}`,
-        requestResponse,
-        owned(token, signal),
+      data<PaymentResult>(
+        `/api/v1/merchandise/orders/${resourceId(orderId)}/payment-checks`,
+        paymentResponse,
+        { ...owned(token, signal), method: "POST" },
       ),
-    async qr(
-      id: string,
-      attemptId: string,
-      token: string,
-      signal?: AbortSignal,
-    ): Promise<Blob> {
-      const response = await request(
-        `/api/v1/merchandise/orders/${resourceId(id)}/payment-attempts/${resourceId(attemptId)}/qr`,
-        owned(token, signal),
-      );
-      if (!response.ok) throw await errorFor(response, false);
-      if (
-        response.headers
-          .get("content-type")
-          ?.split(";")[0]
-          .trim()
-          .toLowerCase() !== "image/png"
-      )
-        throw merchandiseFailure(response.status, "MERCH_BAD_QR");
-      const blob = await response.blob(),
-        prefix = new Uint8Array(await blob.slice(0, 8).arrayBuffer());
-      if (
-        prefix.length !== 8 ||
-        ![137, 80, 78, 71, 13, 10, 26, 10].every(
-          (value, index) => prefix[index] === value,
-        )
-      )
-        throw merchandiseFailure(response.status, "MERCH_BAD_QR");
-      return blob;
-    },
+    requestQr: async (token: string, orderId: string, signal?: AbortSignal) =>
+      data<PaymentResult>(
+        `/api/v1/merchandise/orders/${resourceId(orderId)}/payment-attempts`,
+        paymentResponse,
+        { ...owned(token, signal), method: "POST" },
+      ),
   };
 }
 export type MerchandiseApi = ReturnType<typeof createMerchandiseApi>;
