@@ -1,23 +1,18 @@
 "use client";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { useAuth } from "@/context/AuthContext";
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
-import {
-  defaultRecipient,
-  validateRecipientDraft,
-  type RecipientErrors,
-} from "@/lib/merchandiseRecipient";
-import { canCheckout } from "@/lib/merchandiseSelection";
+import { canCheckout, describeLine } from "@/lib/merchandiseSelection";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
-import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
+import { validateRecipient } from "@/lib/merchandiseRecipient";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
-import type { QuoteDto, Amounts } from "@/types/merchandise";
+import type { Amounts, CartDto, Recipient } from "@/types/merchandise";
 import RecipientForm from "./RecipientForm";
-import { useMerchandiseConfirmation } from "./useMerchandiseConfirmation";
+import { useMerchandiseCheckout } from "./useMerchandiseCheckout";
 
 export default function CheckoutScreen() {
   return (
@@ -64,34 +59,18 @@ function CheckoutLoader() {
 }
 function CheckoutWorkspace() {
   const { user } = useAuth();
-  const { api, eventCode, token, ownerId, cart, store } = useMerchandise();
-  const [recipient, setRecipient] = useState(() =>
-    defaultRecipient(user ?? {}),
-  );
-  const [errors, setErrors] = useState<RecipientErrors>({}),
-    [quote, setQuote] = useState<QuoteDto | null>(null);
-  const [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState<string | null>(null),
-    [unauthorized, setUnauthorized] = useState(false),
-    [focusName, setFocusName] = useState(false);
-  const reviewRequired = useCallback((message: string) => {
-    setQuote(null);
-    setNotice(message);
-    setFocusName(true);
-  }, []);
-  const confirmation = useMerchandiseConfirmation(reviewRequired);
-  const active = useRef(false),
-    pending = useRef(false),
-    abort = useRef<AbortController | null>(null),
-    bar = useRef<HTMLDivElement>(null),
+  const { store, cart: contextCart } = useMerchandise();
+  const checkout = useMerchandiseCheckout();
+  const { step, status, message, cart, loading } = checkout;
+  const [returned, setReturned] = useState(false);
+  const bar = useRef<HTMLDivElement>(null),
     heading = useRef<HTMLHeadingElement>(null);
-  useLayoutEffect(() => {
-    active.current = true;
-    return () => {
-      active.current = false;
-      abort.current?.abort();
-    };
-  }, [token, ownerId, eventCode]);
+  const review = step === "review";
+  const storeData = store.data!;
+  const eligible = cart ? canCheckout(cart, storeData) : false;
+  const uncertain = status === "uncertain";
+  const submitting = status === "submitting";
+  const validated = validateRecipient(checkout.draft);
   useLayoutEffect(() => {
     const element = bar.current;
     if (!element) return;
@@ -107,183 +86,36 @@ function CheckoutWorkspace() {
       observer.disconnect();
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
-  }, [confirmation.state.phase]);
+  }, []);
   useLayoutEffect(() => {
-    if (quote) {
+    if (review) {
       heading.current?.focus();
       window.scrollTo(0, 0);
     }
-  }, [quote]);
-  const submit = async () => {
-    if (pending.current || !token || !canCheckout(cart.data!, store.data!))
-      return;
-    const validated = validateRecipientDraft(recipient);
-    setErrors(validated.errors);
-    if (!validated.recipient) return;
-    pending.current = true;
-    setBusy(true);
-    setUnauthorized(false);
-    const controller = new AbortController();
-    abort.current = controller;
-    const current = () => active.current && !controller.signal.aborted;
-    let currentCart = cart.data!,
-      currentStore = store.data!,
-      refreshed = false;
-    try {
-      let value: QuoteDto;
-      try {
-        value = await api.quote(
-          eventCode,
-          token,
-          {
-            expectedCartRevision: currentCart.revision,
-            recipient: validated.recipient,
-          },
-          controller.signal,
-        );
-      } catch (error) {
-        if (
-          !(error instanceof MerchandiseApiError) ||
-          error.status !== 409 ||
-          !current()
-        )
-          throw error;
-        [currentCart, currentStore] = await Promise.all([
-          api.cart(eventCode, token, controller.signal),
-          api.store(eventCode, controller.signal),
-        ]);
-        if (!current()) return;
-        if (
-          currentCart.eventId !== store.data!.eventId ||
-          currentStore.eventId !== store.data!.eventId
-        )
-          throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-        cart.accept(currentCart);
-        store.accept(currentStore);
-        refreshed = true;
-        if (!canCheckout(currentCart, currentStore)) {
-          setNotice(
-            currentStore.state === "closed"
-              ? "ปิดรับพรีออเดอร์แล้ว ไม่สามารถสร้างคำสั่งซื้อใหม่ได้"
-              : "มีรายการที่ไม่พร้อมขาย กรุณากลับไปตรวจสอบตะกร้า",
-          );
-          return;
-        }
-        value = await api.quote(
-          eventCode,
-          token,
-          {
-            expectedCartRevision: currentCart.revision,
-            recipient: validated.recipient,
-          },
-          controller.signal,
-        );
-      }
-      if (!current()) return;
-      if (value.cartRevision !== currentCart.revision)
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-      const changed =
-        refreshed ||
-        value.amounts.totalMinor !== currentCart.amounts?.totalMinor ||
-        value.items.some((item) => {
-          const line = currentCart.items.find((c) => c.id === item.id);
-          return (
-            !line ||
-            line.quantity !== item.quantity ||
-            line.unitPriceMinor !== item.unitPriceMinor
-          );
-        });
-      setRecipient(value.recipient);
-      setQuote(value);
-      setNotice(
-        changed
-          ? "รายการหรือราคามีการเปลี่ยนแปลง กรุณาตรวจสอบยอดและรายละเอียดล่าสุดอีกครั้งก่อนยืนยัน"
-          : null,
-      );
-    } catch (error) {
-      if (!current()) return;
-      setUnauthorized(
-        error instanceof MerchandiseApiError && error.status === 401,
-      );
-      setNotice(
-        "ตรวจสอบคำสั่งซื้อไม่สำเร็จ ยังไม่ได้สร้างคำสั่งซื้อ กรุณาลองอีกครั้ง",
-      );
-    } finally {
-      if (current()) {
-        pending.current = false;
-        setBusy(false);
-      }
-    }
-  };
-  const eligible = canCheckout(cart.data!, store.data!);
-  const amounts = quote?.amounts ?? cart.data!.amounts;
-  if (confirmation.state.phase !== "ready") {
-    const state = confirmation.state;
-    const error =
-      state.phase === "recovery" && state.result.kind === "unknown"
-        ? state.result.error
+  }, [review]);
+  const blockedReason =
+    checkout.closed || storeData.state === "closed"
+      ? "ปิดรับพรีออเดอร์แล้ว"
+      : cart && !eligible
+        ? "ตะกร้ายังไม่พร้อมสำหรับสั่งซื้อ"
         : null;
-    const working = state.phase !== "recovery";
-    return (
-      <main className="merch-cart merch-order-recovery" aria-busy={working}>
-        <h1>กำลังตรวจสอบคำสั่งซื้อ</h1>
-        <section className="merch-order-message" role="status">
-          <h2>
-            {state.phase === "confirming"
-              ? "กำลังยืนยันคำสั่งซื้อ"
-              : state.phase === "completed"
-                ? "กำลังเปิดคำสั่งซื้อ"
-                : working
-                  ? "กำลังตรวจสอบคำขอเดิม"
-                  : "ยังยืนยันผลไม่สำเร็จ"}
-          </h2>
-          <p>ระบบจะตรวจสอบคำขอเดิม โดยไม่สร้างคำสั่งซื้อซ้ำ</p>
-          {error?.body.code === "MERCH_STORAGE_UNAVAILABLE" && (
-            <p>
-              ไม่สามารถอ่านหรือเก็บข้อมูลคำขอได้
-              กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์
-            </p>
-          )}
-          <Link className="merch-cart-secondary" href="/souvenirs/orders">
-            คำสั่งซื้อของฉัน
-          </Link>
-        </section>
-        <div className="merch-cart-bar merch-order-bar" ref={bar}>
-          {error?.status === 401 ? (
-            <Link
-              className="merch-cart-secondary"
-              href={merchandiseLoginPath("/souvenirs/checkout", true)}
-            >
-              เข้าสู่ระบบอีกครั้ง
-            </Link>
-          ) : (
-            <button
-              type="button"
-              disabled={working}
-              onClick={() => void confirmation.recover()}
-            >
-              {working ? "กำลังตรวจสอบคำสั่งซื้อ" : "ตรวจสอบอีกครั้ง"}
-              <ArrowRight size={22} aria-hidden="true" />
-            </button>
-          )}
-        </div>
-      </main>
-    );
-  }
   return (
     <main className="merch-cart merch-checkout">
-      {quote ? (
-        <button
-          className="merch-cart-back"
-          type="button"
-          onClick={() => {
-            setQuote(null);
-            setFocusName(true);
-          }}
-        >
-          <ArrowLeft size={18} aria-hidden="true" />
-          กลับไปแก้ข้อมูลผู้รับ
-        </button>
+      {review ? (
+        !uncertain && (
+          <button
+            className="merch-cart-back"
+            type="button"
+            disabled={submitting}
+            onClick={() => {
+              setReturned(true);
+              checkout.back();
+            }}
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            กลับไปแก้ข้อมูลผู้รับ
+          </button>
+        )
       ) : (
         <Link className="merch-cart-back" href="/souvenirs/cart">
           <ArrowLeft size={18} aria-hidden="true" />
@@ -291,19 +123,19 @@ function CheckoutWorkspace() {
         </Link>
       )}
       <h1 ref={heading} tabIndex={-1}>
-        {quote ? "ตรวจสอบคำสั่งซื้อ" : "ข้อมูลผู้รับ"}
+        {review ? "ตรวจสอบคำสั่งซื้อ" : "ข้อมูลผู้รับ"}
       </h1>
       <ol className="merch-checkout-steps" aria-label="ขั้นตอนสั่งซื้อ">
         {["ตะกร้า", "ที่อยู่", "ตรวจสอบ", "ชำระเงิน"].map((label, index) => {
-          const step = quote ? 2 : 1;
+          const current = review ? 2 : 1;
           return (
             <li
               key={label}
-              aria-current={index === step ? "step" : undefined}
-              data-completed={index < step}
+              aria-current={index === current ? "step" : undefined}
+              data-completed={index < current}
             >
               <span>
-                {index < step ? (
+                {index < current ? (
                   <Check size={14} aria-hidden="true" />
                 ) : (
                   index + 1
@@ -314,182 +146,202 @@ function CheckoutWorkspace() {
           );
         })}
       </ol>
-      {notice && (
-        <div className="merch-cart-notice" role="status">
-          {notice}
-          {unauthorized && (
-            <Link
-              className="merch-cart-secondary"
-              href={merchandiseLoginPath("/souvenirs/checkout", true)}
-            >
-              เข้าสู่ระบบอีกครั้ง
-            </Link>
+      {message && (
+        <div
+          className="merch-cart-notice"
+          role={status === "error" ? "alert" : "status"}
+        >
+          {message}
+          {uncertain && (
+            <>
+              {" "}
+              <Link href="/souvenirs/orders">คำสั่งซื้อของฉัน</Link>
+            </>
           )}
         </div>
       )}
-      {!eligible && (
+      {blockedReason && (
         <p className="merch-cart-notice">
-          {store.data!.state === "closed"
-            ? "ปิดรับพรีออเดอร์แล้ว"
-            : "ตะกร้ายังไม่พร้อมสำหรับสั่งซื้อ"}{" "}
+          {blockedReason}{" "}
           <Link href="/souvenirs/cart">กลับไปตรวจสอบตะกร้า</Link>
         </p>
       )}
       <div className="merch-cart-grid">
         <section>
-          {!quote ? (
+          {!review ? (
             <RecipientForm
-              value={recipient}
-              onChange={(value) => {
-                setRecipient(value);
-                setErrors({});
-              }}
-              onSubmit={() => void submit()}
-              errors={errors}
-              busy={busy}
-              buyerEmail={user?.email ?? ""}
-              focusName={focusName}
+              value={checkout.draft}
+              onChange={checkout.setDraft}
+              onSubmit={checkout.toReview}
+              errors={checkout.errors}
+              busy={false}
+              buyerEmail={
+                user?.email ?? contextCart.data?.buyerDefaults.email ?? ""
+              }
+              focusName={returned}
             />
+          ) : !cart ? (
+            loading ? (
+              <p role="status">กำลังตรวจสอบตะกร้า</p>
+            ) : (
+              <button
+                className="merch-cart-secondary"
+                type="button"
+                onClick={() => void checkout.reloadReview()}
+              >
+                ลองโหลดตะกร้าอีกครั้ง
+              </button>
+            )
           ) : (
-            <>
-              <section aria-label="รายการที่ตรวจสอบ">
-                {quote.items.map((item) => {
-                  const image = cart.data!.items.find(
-                    (line) => line.id === item.id,
-                  )?.product?.images[0];
-                  return (
-                    <article className="merch-review-item" key={item.id}>
-                      {image && (
-                        <Image
-                          unoptimized
-                          src={image.url}
-                          alt={image.altTh}
-                          width={80}
-                          height={92}
-                        />
-                      )}
-                      <div>
-                        <h2>{item.nameTh}</h2>
-                        <p className="merch-cart-muted">
-                          {[item.colorTh, item.sizeTh]
-                            .filter(Boolean)
-                            .join(" · ") ||
-                            (item.kind === "bundle"
-                              ? "ชุดสินค้า"
-                              : "ไม่มีตัวเลือก")}
-                        </p>
-                        <p className="merch-cart-unit-price">
-                          {formatMinorBaht(item.unitPriceMinor)}
-                        </p>
-                        <p>
-                          {item.quantity}{" "}
-                          {item.kind === "bundle" ? "ชุด" : "ชิ้น"} · รวม{" "}
-                          {formatMinorBaht(item.lineTotalMinor)}
-                        </p>
-                        {item.components.length > 0 && (
-                          <ul className="merch-cart-components">
-                            {item.components.map((c, index) => (
-                              <li key={index}>
-                                {c.nameTh} × {c.quantityPerBundle} ·{" "}
-                                {[c.colorTh, c.sizeTh]
-                                  .filter(Boolean)
-                                  .join(" · ") || "ไม่มีตัวเลือก"}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
-              </section>
-              <section className="merch-review-section">
-                <div className="merch-review-title">
-                  <h2>ที่อยู่จัดส่ง</h2>
-                  <button
-                    className="merch-cart-secondary"
-                    type="button"
-                    onClick={() => {
-                      setQuote(null);
-                      setFocusName(true);
-                    }}
-                  >
-                    แก้ไขข้อมูลผู้รับ
-                  </button>
-                </div>
-                <address>
-                  <strong>{quote.recipient.fullName}</strong>
-                  <br />
-                  {quote.recipient.phone}
-                  <br />
-                  {quote.recipient.company && (
-                    <>
-                      {quote.recipient.company}
-                      <br />
-                    </>
-                  )}
-                  {quote.recipient.addressLine}
-                  <br />
-                  {quote.recipient.subdistrict} {quote.recipient.district}
-                  <br />
-                  {quote.recipient.province} {quote.recipient.postalCode}
-                  <br />
-                  ประเทศไทย
-                  {quote.recipient.deliveryNote && (
-                    <p>หมายเหตุจัดส่ง: {quote.recipient.deliveryNote}</p>
-                  )}
-                </address>
-              </section>
-              <section className="merch-review-section">
-                <h2>ชำระเงินด้วย</h2>
-                <p className="merch-payment-method">Thai QR PromptPay</p>
-                <p>
-                  ค่าสินค้าและค่าจัดส่งเท่านั้น ไม่มีค่าธรรมเนียมชำระเงินเพิ่ม
-                </p>
-              </section>
-              <p className="merch-review-lock">
-                เมื่อยืนยันคำสั่งซื้อแล้ว จะไม่สามารถแก้ไขรายการสินค้า จำนวน
-                ตัวเลือก หรือข้อมูลผู้รับได้ด้วยตนเอง
-              </p>
-              {quote.productionInfoTh && (
-                <section className="merch-review-section">
-                  <h2>การผลิต</h2>
-                  <p>{quote.productionInfoTh}</p>
-                </section>
-              )}
-              {quote.shippingInfoTh && (
-                <section className="merch-review-section">
-                  <h2>การจัดส่ง</h2>
-                  <p>{quote.shippingInfoTh}</p>
-                </section>
-              )}
-            </>
+            <ReviewBody
+              cart={cart}
+              recipient={validated.ok ? validated.value : null}
+              productionInfoTh={storeData.productionInfoTh}
+              shippingInfoTh={storeData.shippingInfoTh}
+            />
           )}
         </section>
-        <CheckoutSummary amounts={amounts} />
+        <CheckoutSummary
+          amounts={(review ? cart : contextCart.data)?.amounts ?? null}
+        />
       </div>
       <div className="merch-cart-bar" ref={bar}>
-        {quote ? (
+        {!review ? (
+          <button
+            type="submit"
+            form="merch-recipient-form"
+            disabled={!canCheckout(contextCart.data!, storeData)}
+          >
+            ตรวจสอบคำสั่งซื้อ
+            <ArrowRight size={22} aria-hidden="true" />
+          </button>
+        ) : uncertain ? (
           <button
             type="button"
-            disabled={busy || !eligible}
-            onClick={() => void confirmation.confirm(quote)}
+            disabled={loading || !eligible || checkout.blocked}
+            onClick={() => void checkout.retry()}
           >
-            ยืนยันคำสั่งซื้อ · {formatMinorBaht(quote.amounts.totalMinor)}
+            ลองอีกครั้ง
             <ArrowRight size={22} aria-hidden="true" />
           </button>
         ) : (
           <button
-            type="submit"
-            form="merch-recipient-form"
-            disabled={busy || !eligible || unauthorized}
+            type="button"
+            disabled={
+              submitting ||
+              loading ||
+              !eligible ||
+              checkout.closed ||
+              checkout.blocked
+            }
+            onClick={() => void checkout.confirm()}
           >
-            {busy ? "กำลังตรวจสอบคำสั่งซื้อ" : "ตรวจสอบคำสั่งซื้อ"}
+            {submitting
+              ? "กำลังยืนยันคำสั่งซื้อ"
+              : `ยืนยันคำสั่งซื้อ${cart?.amounts ? " · " + formatMinorBaht(cart.amounts.totalMinor) : ""}`}
             <ArrowRight size={22} aria-hidden="true" />
           </button>
         )}
       </div>
     </main>
+  );
+}
+function ReviewBody({
+  cart,
+  recipient,
+  productionInfoTh,
+  shippingInfoTh,
+}: {
+  cart: CartDto;
+  recipient: Recipient | null;
+  productionInfoTh: string | null;
+  shippingInfoTh: string | null;
+}) {
+  return (
+    <>
+      <section aria-label="รายการที่ตรวจสอบ">
+        {cart.items.map((line) => {
+          const image = line.product?.images[0];
+          const detail = describeLine(line);
+          return (
+            <article className="merch-review-item" key={line.id}>
+              {image && (
+                <Image
+                  unoptimized
+                  src={image.url}
+                  alt=""
+                  width={80}
+                  height={92}
+                />
+              )}
+              <div>
+                <h2>{line.product?.nameTh ?? "สินค้านี้ไม่มีแล้ว"}</h2>
+                {detail && <p className="merch-cart-muted">{detail}</p>}
+                {line.unitPriceMinor !== null && (
+                  <p className="merch-cart-unit-price">
+                    {formatMinorBaht(line.unitPriceMinor)}
+                  </p>
+                )}
+                <p>
+                  {line.quantity}{" "}
+                  {line.product?.kind === "bundle" ? "ชุด" : "ชิ้น"}
+                  {line.lineTotalMinor !== null &&
+                    ` · รวม ${formatMinorBaht(line.lineTotalMinor)}`}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+      <section className="merch-review-section">
+        <h2>ที่อยู่จัดส่ง</h2>
+        {recipient && (
+          <address>
+            <strong>{recipient.fullName}</strong>
+            <br />
+            {recipient.phone}
+            <br />
+            {recipient.company && (
+              <>
+                {recipient.company}
+                <br />
+              </>
+            )}
+            {recipient.addressLine}
+            <br />
+            {recipient.subdistrict} {recipient.district}
+            <br />
+            {recipient.province} {recipient.postalCode}
+            <br />
+            ประเทศไทย
+            {recipient.deliveryNote && (
+              <p>หมายเหตุจัดส่ง: {recipient.deliveryNote}</p>
+            )}
+          </address>
+        )}
+      </section>
+      <section className="merch-review-section">
+        <h2>ชำระเงินด้วย</h2>
+        <p className="merch-payment-method">Thai QR PromptPay</p>
+        <p>ค่าสินค้าและค่าจัดส่งเท่านั้น ไม่มีค่าธรรมเนียมชำระเงินเพิ่ม</p>
+      </section>
+      <p className="merch-review-lock">
+        เมื่อยืนยันคำสั่งซื้อแล้ว จะไม่สามารถแก้ไขรายการสินค้า จำนวน ตัวเลือก
+        หรือข้อมูลผู้รับได้ด้วยตนเอง
+      </p>
+      {productionInfoTh && (
+        <section className="merch-review-section">
+          <h2>การผลิต</h2>
+          <p>{productionInfoTh}</p>
+        </section>
+      )}
+      {shippingInfoTh && (
+        <section className="merch-review-section">
+          <h2>การจัดส่ง</h2>
+          <p>{shippingInfoTh}</p>
+        </section>
+      )}
+    </>
   );
 }
 function CheckoutSummary({ amounts }: { amounts: Amounts | null }) {

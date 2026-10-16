@@ -18,7 +18,9 @@ export interface RecordedCall {
   headers: Record<string, string>;
   body: unknown;
 }
-type Failure = { status: number; body?: unknown } | "network";
+// "network": request never reaches the server. "lost": the server processes the
+// request, then the response is dropped (the client cannot know the outcome).
+type Failure = { status: number; body?: unknown } | "network" | "lost";
 interface Pending {
   method: string;
   pattern: string | RegExp;
@@ -182,6 +184,11 @@ export class FakeMerchApi {
     if (idx >= 0) {
       const [p] = this.pending.splice(idx, 1);
       if (p.response === "network") return route.abort("failed");
+      if (p.response === "lost") {
+        if (path.startsWith(BASE))
+          this.dispatch(method, path, url, req.headers(), body);
+        return route.abort("failed");
+      }
       return send(p.response.status, p.response.body);
     }
 

@@ -181,16 +181,11 @@ test("a valid cart on an open store proceeds to checkout", async ({
   await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(proceed(page)).toBeEnabled();
-  // Checkout is a separate screen with its own spec; only the hand-off is under test.
-  await page.route(/\/th\/souvenirs\/checkout/, (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "text/html",
-      body: "<!doctype html><title>checkout</title>",
-    }),
-  );
   await proceed(page).click();
   await expect(page).toHaveURL(/\/th\/souvenirs\/checkout$/);
+  await expect(
+    page.getByRole("heading", { name: "ข้อมูลผู้รับ", exact: true }),
+  ).toBeVisible();
 });
 
 test("a closed store disables checkout but keeps the cart readable", async ({
