@@ -50,7 +50,9 @@ for (const [state, text] of states)
     ];
     await page.goto("/th/souvenirs");
     await expect(page.locator(".merch-product")).toHaveCount(1);
-    await expect(page.locator(".merchandise-store-status")).toContainText(text);
+    await expect(
+      page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" }),
+    ).toContainText(text);
     await expect(addButtons(page)).toHaveCount(0);
   });
 
@@ -64,9 +66,9 @@ test("not_open store shows the opening time when the API gives one", async ({
   });
   fake.products = [makeSingle()];
   await page.goto("/th/souvenirs");
-  await expect(page.locator(".merchandise-store-opens")).toContainText(
-    "1 พ.ย. 2026 10:00",
-  );
+  await expect(
+    page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" }),
+  ).toContainText("เปิดรับ 1 พ.ย. 2026 10:00");
 });
 
 test("typing a search keeps q in the URL and filters locally without another products request", async ({
@@ -163,7 +165,7 @@ test("legacy URL with category and bundle keeps bundle only", async ({
   ).toHaveText("ชุดสินค้า");
 });
 
-test("storefront has no bottom bar; my orders link sits top right only when logged in", async ({
+test("storefront has no bottom bar; my orders link shows only when logged in", async ({
   page,
   fake,
 }) => {
@@ -173,15 +175,25 @@ test("storefront has no bottom bar; my orders link sits top right only when logg
   await expect(
     page.getByRole("link", { name: "คำสั่งซื้อของฉัน" }),
   ).toHaveCount(0);
-  // Logged out there is nothing to show, so no empty toolbar row either.
   await expect(page.locator(".merch-shop-toolbar")).toHaveCount(0);
+});
+
+test("my orders link sits in the catalog heading row when logged in", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
   await login(page);
   await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-shop-toolbar")).toHaveCount(0);
   const link = page.getByRole("link", { name: "คำสั่งซื้อของฉัน" });
-  const box = (await link.boundingBox())!,
-    banner = (await page.locator(".merch-search").boundingBox())!;
-  expect(box.y + box.height).toBeLessThanOrEqual(banner.y);
-  expect(box.x + box.width).toBeGreaterThan(page.viewportSize()!.width / 2);
+  const heading = page.getByRole("heading", { name: "สินค้าทั้งหมด" });
+  const l = (await link.boundingBox())!,
+    h = (await heading.boundingBox())!;
+  expect(
+    Math.abs(l.y + l.height / 2 - (h.y + h.height / 2)),
+  ).toBeLessThanOrEqual(8);
+  expect(l.x).toBeGreaterThan(h.x + h.width);
 });
 
 test("loads limit=100, follows pagination.totalPages, then pages client-side by 12", async ({
@@ -363,4 +375,111 @@ test("anonymous quick add goes to login with the intent, then adds exactly once 
       (c) => c.method === "POST" && c.path.endsWith("/cart/items"),
     ),
   ).toHaveLength(1);
+});
+
+test("store info banner shows the close date and the shipping fee from the store", async ({
+  page,
+  fake,
+}) => {
+  fake.store = makeStore({
+    shippingBaht: 0,
+    shippingInfoTh: "รับที่หน้างาน",
+  });
+  fake.products = [makeSingle()];
+  await page.goto("/th/souvenirs");
+  const info = page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" });
+  await expect(info).toContainText("พรีออเดอร์ของที่ระลึก PRIS 2026");
+  await expect(info).toContainText("ปิดรับ 30 ต.ค. 2026");
+  await expect(info).toContainText("จัดส่งฟรี");
+  await expect(info).toContainText("รับที่หน้างาน");
+  await expect(page.getByText(/จัดส่งทั่วไทย/)).toHaveCount(0);
+  fake.store = makeStore({ shippingBaht: 50 });
+  await page.reload();
+  await expect(info).toContainText("ค่าจัดส่ง ฿50.00 ต่อออเดอร์");
+});
+
+test("open store without a close date shows no date line", async ({
+  page,
+  fake,
+}) => {
+  fake.store = makeStore({ closesAt: null });
+  fake.products = [makeSingle()];
+  await page.goto("/th/souvenirs");
+  const info = page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" });
+  await expect(info).toBeVisible();
+  await expect(info).not.toContainText("ปิดรับ");
+  await expect(info).not.toContainText("Invalid");
+});
+
+test("cards are vertical at 1440 with a 44px add button", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle({ nameTh: "แก้วน้ำ Pris" })];
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/th/souvenirs");
+  const media = (await page.locator(".merch-product-media").boundingBox())!;
+  const name = (await page
+    .getByRole("heading", { name: "แก้วน้ำ Pris" })
+    .boundingBox())!;
+  expect(name.y).toBeGreaterThan(media.y + media.height - 1);
+  expect(Math.abs(media.width - media.height)).toBeLessThanOrEqual(1);
+  const box = (await addButtons(page).boundingBox())!;
+  expect(box.width).toBeCloseTo(44, 0);
+  expect(box.height).toBeCloseTo(44, 0);
+  await expect(page.locator(".merch-preorder")).toHaveCount(0);
+});
+
+test("broken product image falls back to the placeholder", async ({
+  page,
+  fake,
+  context,
+}) => {
+  await context.route("https://img.example.test/**", (r) =>
+    r.fulfill({ status: 404 }),
+  );
+  fake.products = [makeSingle({ images: [image(1)] })];
+  await page.goto("/th/souvenirs");
+  await expect(
+    page.locator(".merch-product-media .merch-image-placeholder"),
+  ).toBeVisible();
+  const m = (await page.locator(".merch-product-media").boundingBox())!;
+  expect(Math.abs(m.width - m.height)).toBeLessThanOrEqual(1);
+});
+
+test("search and pills share a row at 1280", async ({ page, fake }) => {
+  fake.store = makeStore({
+    categories: [{ id: uid(900), nameTh: "เครื่องแต่งกาย", sortOrder: 1 }],
+  });
+  fake.products = [makeSingle()];
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/th/souvenirs");
+  const pill = page.getByRole("button", { name: "ทั้งหมด", exact: true });
+  await expect(pill).toBeVisible();
+  const s = (await page.locator(".merch-search").boundingBox())!,
+    p = (await pill.boundingBox())!;
+  expect(
+    Math.abs(s.y + s.height / 2 - (p.y + p.height / 2)),
+  ).toBeLessThanOrEqual(12);
+  expect(s.width).toBeLessThanOrEqual(421);
+  await page.setViewportSize({ width: 390, height: 800 });
+  const s2 = (await page.locator(".merch-search").boundingBox())!,
+    p2 = (await pill.boundingBox())!;
+  expect(p2.y).toBeGreaterThanOrEqual(s2.y + s2.height - 1);
+});
+
+test("a product that can't be bought shows a tag and no add button", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [
+    makeSingle({ purchasable: false, unavailableCodes: ["OUT_OF_STOCK"] }),
+  ];
+  await page.goto("/th/souvenirs");
+  const card = page.locator(".merch-product");
+  await expect(card).toHaveCount(1);
+  await expect(card).toContainText("ยังไม่พร้อมขาย");
+  await expect(card.getByRole("button", { name: "เพิ่มลงตะกร้า" })).toHaveCount(
+    0,
+  );
 });

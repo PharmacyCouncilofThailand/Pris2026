@@ -10,7 +10,8 @@ type Name =
   | "truck"
   | "left"
   | "right"
-  | "lock";
+  | "lock"
+  | "plus";
 const paths: Record<Name, string> = {
   cart: "M3 3h2l3 12h10l3-8H6M9 20h.01M18 20h.01",
   globe:
@@ -24,6 +25,7 @@ const paths: Record<Name, string> = {
     "M3 5h11v12H3zM14 9h4l3 4v4h-7M8 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM20 18a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z",
   left: "m15 5-7 7 7 7",
   right: "m9 5 7 7-7 7",
+  plus: "M12 5v14M5 12h14",
   lock: "M6 10h12v11H6zM8 10V6a4 4 0 0 1 8 0v4M12 14v3",
 };
 export function Icon({

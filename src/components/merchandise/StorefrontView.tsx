@@ -5,11 +5,14 @@ import type { ReactNode } from "react";
 import type { ProductDto, StoreDto } from "@/types/merchandise";
 import { formatBaht } from "@/lib/merchandiseFormat";
 import { Icon } from "./storefront-icons";
-import { ShopToolbar } from "./ShopToolbar";
+import { Link } from "@/i18n/routing";
+import { StoreInfoBanner } from "./StoreInfoBanner";
+import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 export interface StorefrontViewProps {
   store: StoreDto;
   products: ProductDto[];
   headerSlot: ReactNode | null;
+  showOrdersLink: boolean;
   query: string;
   activeCategory: string;
   activeKind: "all" | "bundle";
@@ -148,31 +151,33 @@ function ProductCard({
             onError={() => setFailed(true)}
           />
         ) : (
-          <span className="merch-image-empty">
-            {image ? "โหลดรูปภาพไม่สำเร็จ" : "ยังไม่มีรูปสินค้า"}
-          </span>
+          <ProductImagePlaceholder failed={Boolean(image)} />
         )}
-        <span className="merch-preorder">พรีออเดอร์</span>
+        {!product.purchasable && (
+          <span className="merch-unavailable-tag">ยังไม่พร้อมขาย</span>
+        )}
       </button>
       <div className="merch-product-body">
         <h3 id={titleId}>{product.nameTh}</h3>
-        <p className="merch-price">
-          {product.price
-            ? `${product.price.kind === "from" ? "เริ่มต้น " : ""}${formatBaht(product.price.amountBaht)}`
-            : "ยังไม่กำหนดราคา"}
-        </p>
-        {storeOpen && (
-          <button
-            type="button"
-            className="merch-add"
-            aria-describedby={titleId}
-            disabled={busy || !product.purchasable}
-            onClick={() => onAdd(product.id)}
-          >
-            <Icon name="cart" />
-            <span>เพิ่มลงตะกร้า</span>
-          </button>
-        )}
+        <div className="merch-product-buy">
+          <p className="merch-price">
+            {product.price
+              ? `${product.price.kind === "from" ? "เริ่มต้น " : ""}${formatBaht(product.price.amountBaht)}`
+              : "ยังไม่กำหนดราคา"}
+          </p>
+          {storeOpen && product.purchasable && (
+            <button
+              type="button"
+              className="merch-add"
+              aria-describedby={titleId}
+              disabled={busy}
+              onClick={() => onAdd(product.id)}
+            >
+              <Icon name="plus" />
+              <span className="merch-sr-only">เพิ่มลงตะกร้า</span>
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );
@@ -186,68 +191,72 @@ export function StorefrontView(props: StorefrontViewProps) {
       {props.headerSlot}
       <h1 className="merch-sr-only">ร้านของที่ระลึก</h1>
       <main className="merch-store-content">
-        <ShopToolbar />
         <BannerCarousel store={props.store} />
-        <div className="merch-search">
-          <Icon name="search" />
-          <label className="merch-sr-only" htmlFor={searchId}>
-            ค้นหาสินค้า
-          </label>
-          <input
-            id={searchId}
-            type="search"
-            value={props.query}
-            placeholder="ค้นหาสินค้า"
-            onChange={(e) => props.onQuery(e.target.value)}
-            autoComplete="off"
-          />
+        <StoreInfoBanner store={props.store} />
+        <div className="merch-catalog-controls">
+          <div className="merch-search">
+            <Icon name="search" />
+            <label className="merch-sr-only" htmlFor={searchId}>
+              ค้นหาสินค้า
+            </label>
+            <input
+              id={searchId}
+              type="search"
+              value={props.query}
+              placeholder="ค้นหาสินค้า"
+              onChange={(e) => props.onQuery(e.target.value)}
+              autoComplete="off"
+            />
+          </div>
+          <nav className="merch-categories" aria-label="หมวดสินค้า">
+            <button
+              type="button"
+              className="merch-pill"
+              aria-pressed={
+                props.activeCategory === "all" && props.activeKind === "all"
+              }
+              onClick={() => props.onFilter("all")}
+            >
+              <Icon name="grid" />
+              ทั้งหมด
+            </button>
+            {[...props.store.categories]
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  className="merch-pill"
+                  aria-pressed={
+                    props.activeKind !== "bundle" &&
+                    props.activeCategory === c.id
+                  }
+                  onClick={() => props.onFilter({ categoryId: c.id })}
+                >
+                  <Icon name="tag" />
+                  {c.nameTh}
+                </button>
+              ))}
+            <button
+              type="button"
+              className="merch-pill"
+              aria-pressed={props.activeKind === "bundle"}
+              onClick={() => props.onFilter("bundle")}
+            >
+              <Icon name="gift" />
+              ชุดสินค้า
+            </button>
+          </nav>
         </div>
-        <nav className="merch-categories" aria-label="หมวดสินค้า">
-          <button
-            type="button"
-            className="merch-pill"
-            aria-pressed={
-              props.activeCategory === "all" && props.activeKind === "all"
-            }
-            onClick={() => props.onFilter("all")}
-          >
-            <Icon name="grid" />
-            ทั้งหมด
-          </button>
-          {[...props.store.categories]
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map((c) => (
-              <button
-                type="button"
-                key={c.id}
-                className="merch-pill"
-                aria-pressed={
-                  props.activeKind !== "bundle" && props.activeCategory === c.id
-                }
-                onClick={() => props.onFilter({ categoryId: c.id })}
-              >
-                <Icon name="tag" />
-                {c.nameTh}
-              </button>
-            ))}
-          <button
-            type="button"
-            className="merch-pill"
-            aria-pressed={props.activeKind === "bundle"}
-            onClick={() => props.onFilter("bundle")}
-          >
-            <Icon name="gift" />
-            ชุดสินค้า
-          </button>
-        </nav>
         <div className="merch-catalog-heading">
           <h2>
             {props.activeKind === "bundle" ? "ชุดสินค้า" : "สินค้าทั้งหมด"}
           </h2>
-          <p>
-            <Icon name="truck" />
-            <span>จัดส่งทั่วไทย 50 บาทต่อออเดอร์</span>
-          </p>
+          {props.showOrdersLink && (
+            <Link href="/souvenirs/orders" className="merch-my-orders">
+              คำสั่งซื้อของฉัน
+            </Link>
+          )}
         </div>
         {props.errorMessage && (
           <div className="merch-message merch-error" role="alert">

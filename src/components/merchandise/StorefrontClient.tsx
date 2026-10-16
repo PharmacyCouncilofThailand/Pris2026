@@ -15,7 +15,6 @@ import { useMerchandiseResource } from "./useMerchandiseResource";
 import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
 import { StorefrontView } from "./StorefrontView";
 import { filterCatalog, nextCatalogFilter } from "@/lib/merchandiseCatalog";
-import { formatMerchandiseTime } from "@/lib/merchandiseFormat";
 import {
   savePurchaseIntent,
   type PurchaseIntent,
@@ -27,7 +26,6 @@ import {
 import {
   defaultSelection,
   selectionComplete,
-  unavailableMessage,
 } from "@/lib/merchandiseSelection";
 import type { ProductDto } from "@/types/merchandise";
 
@@ -43,6 +41,14 @@ export default function StorefrontClient() {
     () => merchandiseReturnPath("/souvenirs" + (search ? "?" + search : "")),
     [search],
   );
+  useEffect(() => {
+    if (!canonical) return;
+    try {
+      window.sessionStorage.setItem("pris_merch_storefront_url", canonical);
+    } catch {
+      /* storage unavailable */
+    }
+  }, [canonical]);
   const filters = useMemo(() => {
     const q = new URL(canonical ?? "/souvenirs", "https://internal.invalid")
       .searchParams;
@@ -181,7 +187,6 @@ export default function StorefrontClient() {
         )}
       </main>
     );
-  const state = store.data.state;
   const add = (productId: string) => {
     if (addStarted.current) return;
     const product = catalog.data?.find((p) => p.id === productId);
@@ -223,23 +228,7 @@ export default function StorefrontClient() {
     change(pendingQuery.current ? patch : { q: query, ...patch });
   const header = (
     <>
-      {state !== "open" && (
-        <p className="merchandise-store-status" role="status">
-          {unavailableMessage("STORE_NOT_OPEN", state)}
-        </p>
-      )}
-      {state === "not_open" && store.data.opensAt && (
-        <p className="merchandise-store-note merchandise-store-opens">
-          เปิดรับ {formatMerchandiseTime(store.data.opensAt)}
-        </p>
-      )}
-      {store.data.productionInfoTh && (
-        <p className="merchandise-store-note">{store.data.productionInfoTh}</p>
-      )}
-      {store.data.shippingInfoTh && (
-        <p className="merchandise-store-note">{store.data.shippingInfoTh}</p>
-      )}
-      <div className="mx-auto max-w-[1600px] px-4">
+      <div className="mx-auto max-w-[1200px] px-4">
         <MerchandiseIntentResume intentId={filters.intentId} />
       </div>
     </>
@@ -257,6 +246,7 @@ export default function StorefrontClient() {
         store={store.data}
         products={view.items}
         headerSlot={header}
+        showOrdersLink={Boolean(token)}
         query={query}
         activeCategory={filters.categoryId ?? "all"}
         activeKind={filters.kind === "bundle" ? "bundle" : "all"}
