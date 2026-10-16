@@ -1,7 +1,10 @@
 "use client";
+import { useState } from "react";
 import { Check, Truck } from "lucide-react";
+import { Link } from "@/i18n/routing";
 import { formatMerchandiseTime } from "@/lib/merchandiseFormat";
 import type { OrderDetail } from "@/types/merchandise";
+import { useRedirectCountdown } from "./useRedirectCountdown";
 
 export default function PaidOrder({ order }: { order: OrderDetail }) {
   const { shipping } = order;
@@ -62,5 +65,32 @@ export default function PaidOrder({ order }: { order: OrderDetail }) {
         พร้อมเลขคำสั่งซื้อและหลักฐานที่เกี่ยวข้อง
       </p>
     </>
+  );
+}
+
+// Shown only when the order turns paid while the buyer is on this page.
+export function JustPaidCard({ orderNumber }: { orderNumber: string }) {
+  const seconds = useRedirectCountdown(true, 10, "/souvenirs/orders");
+  // The live region only changes at 10, 5 and 0 so it is not read every second.
+  const [spoken, setSpoken] = useState(seconds);
+  if ((seconds === 10 || seconds === 5 || seconds === 0) && spoken !== seconds)
+    setSpoken(seconds);
+  return (
+    <section className="merch-just-paid" aria-labelledby="merch-paid-title">
+      <span className="merch-paid-icon">
+        <Check size={32} aria-hidden="true" />
+      </span>
+      <h2 id="merch-paid-title">ชำระเงินสำเร็จ</h2>
+      <Link href="/souvenirs/orders" className="merch-just-paid-button">
+        ไปหน้ารายการคำสั่งซื้อ
+      </Link>
+      <p className="merch-cart-muted">
+        จะพาไปหน้ารายการคำสั่งซื้อใน {seconds} วินาที
+      </p>
+      <span className="sr-only" aria-live="polite">
+        คำสั่งซื้อ {orderNumber} ชำระเงินสำเร็จ เหลืออีก{" "}
+        {spoken} วินาทีก่อนไปหน้ารายการ
+      </span>
+    </section>
   );
 }

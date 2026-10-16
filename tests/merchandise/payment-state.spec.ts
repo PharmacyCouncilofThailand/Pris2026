@@ -98,7 +98,7 @@ const states: {
     name: "qr_active",
     payment: {},
     title: "รอชำระเงิน",
-    text: "ใช้แอปธนาคารสแกน หรือบันทึกภาพ QR แล้วเลือกรูปในแอปธนาคาร",
+    text: "ใช้แอปธนาคารสแกน QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร",
     button: "ตรวจสอบการชำระเงิน",
   },
   {
@@ -225,15 +225,9 @@ test("the QR image decodes to the original payload and nothing leaks to storage 
     return jsQR(data.data, data.width, data.height)?.data ?? null;
   });
   expect(decoded).toBe(syntheticQrPayload);
-  const save = page.getByRole("link", { name: "บันทึกภาพ QR" });
-  await expect(save).toHaveAttribute(
-    "download",
-    "souvenir-payment-PRIS2026-M-000001.png",
-  );
-  expect(await save.getAttribute("href")).toBe(await img.getAttribute("src"));
   await expect(
     page.getByText(
-      "ถ้าบันทึกไม่ได้ ให้กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร",
+      "กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร",
     ),
   ).toBeVisible();
   const stored = await page.evaluate(() =>
@@ -300,9 +294,11 @@ test("polling GETs the order every 10 seconds, then stops once paid", async ({
   await expect(heading(page, "ชำระเงินสำเร็จ")).toBeVisible();
   await page.waitForTimeout(300);
   const settled = orderGets(fake);
-  await page.clock.runFor(60_000);
+  await page.clock.runFor(9_000);
   await page.waitForTimeout(300);
   expect(orderGets(fake)).toBe(settled);
+  await page.clock.runFor(1_000);
+  await expect(page).toHaveURL(/\/th\/souvenirs\/orders$/);
 });
 
 test("hidden tabs stop polling; returning checks once and not again within 5 seconds", async ({
@@ -528,6 +524,9 @@ test("the order page lists bundle components, server amounts, recipient and shop
   fake,
 }) => {
   seed(fake, {
+    paymentStatus: "paid",
+    paidAt: now,
+    payment: view({ state: "paid", attempt: null, ...noButtons }),
     productionInfoTh: "ผลิตหลังปิดรับพรีออเดอร์",
     shippingInfoTh: "จัดส่งภายใน 30 วัน",
     items: [
@@ -588,4 +587,88 @@ test("qr_active with a null payload shows a notice and a check button, not a bro
   await expect(
     page.getByRole("button", { name: "ตรวจสอบการชำระเงิน", exact: true }),
   ).toBeEnabled();
+});
+
+test("unpaid order shows only the QR card with the PRIS logo", async ({
+  page,
+  fake,
+}) => {
+  seed(fake);
+  await open(page);
+  await expect(
+    page.locator(".merch-pay-card img[alt='PRIS 2026']"),
+  ).toBeVisible();
+  await expect(heading(page, "รอชำระเงิน")).toBeVisible();
+  await expect(page.getByRole("link", { name: "กลับหน้าประวัติ" })).toHaveCount(
+    0,
+  );
+  await expect(page.getByRole("link", { name: "บันทึกภาพ QR" })).toHaveCount(0);
+  await expect(page.locator(".merch-order-item")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "ผู้รับ" })).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { level: 1, name: `คำสั่งซื้อ ${NUMBER}` }),
+  ).toBeAttached();
+});
+
+test("paying while on the page counts down 10 seconds then opens the order list", async ({
+  page,
+  fake,
+}) => {
+  seed(fake);
+  await page.clock.install();
+  await open(page);
+  await expect(page.getByRole("img", { name: /^QR สำหรับ/ })).toBeVisible();
+  fake.setPayment(ids.order, { state: "paid", canCheck: false, attempt: null });
+  await page.clock.runFor(10_000);
+  await expect(heading(page, "ชำระเงินสำเร็จ")).toBeVisible();
+  await expect(
+    page.getByText("จะพาไปหน้ารายการคำสั่งซื้อใน 10 วินาที"),
+  ).toBeVisible();
+  await page.clock.runFor(5_000);
+  await expect(
+    page.getByText("จะพาไปหน้ารายการคำสั่งซื้อใน 5 วินาที"),
+  ).toBeVisible();
+  await page.clock.runFor(5_000);
+  await expect(page).toHaveURL(/\/th\/souvenirs\/orders$/);
+});
+
+test("the just-paid button opens the order list at once", async ({
+  page,
+  fake,
+}) => {
+  seed(fake);
+  await page.clock.install();
+  await open(page);
+  await expect(page.getByRole("img", { name: /^QR สำหรับ/ })).toBeVisible();
+  fake.setPayment(ids.order, { state: "paid", canCheck: false, attempt: null });
+  await page.clock.runFor(10_000);
+  await page.getByRole("link", { name: "ไปหน้ารายการคำสั่งซื้อ" }).click();
+  await expect(page).toHaveURL(/\/th\/souvenirs\/orders$/);
+});
+
+test("an order already paid on load shows details and never redirects", async ({
+  page,
+  fake,
+}) => {
+  seed(fake, {
+    paymentStatus: "paid",
+    paidAt: now,
+    payment: view({ state: "paid", attempt: null, ...noButtons }),
+  });
+  await page.clock.install();
+  await open(page);
+  await expect(page.getByRole("link", { name: "กลับหน้าประวัติ" })).toBeVisible();
+  await expect(heading(page, "ยังไม่จัดส่ง")).toBeVisible();
+  await page.clock.runFor(15_000);
+  await expect(page).toHaveURL(new RegExp(`/souvenirs/orders/${ids.order}$`));
+});
+
+test("verifying after QR shows no countdown", async ({ page, fake }) => {
+  seed(fake);
+  await page.clock.install();
+  await open(page);
+  fake.setPayment(ids.order, { state: "verifying", canCheck: false });
+  await page.clock.runFor(15_000);
+  await expect(page.getByText(/จะพาไปหน้ารายการคำสั่งซื้อ/)).toHaveCount(0);
+  await expect(page).toHaveURL(new RegExp(`/souvenirs/orders/${ids.order}$`));
 });

@@ -121,7 +121,7 @@ export function panelModel(
         ...base,
         title: "รอชำระเงิน",
         message: view.attempt?.qrPayload
-          ? "ใช้แอปธนาคารสแกน หรือบันทึกภาพ QR แล้วเลือกรูปในแอปธนาคาร"
+          ? "ใช้แอปธนาคารสแกน QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร"
           : "ไม่สามารถแสดง QR ได้ กรุณากดตรวจสอบการชำระเงิน",
         showQr: !!view.attempt?.qrPayload,
         primary: check,

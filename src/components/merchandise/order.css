@@ -180,19 +180,6 @@
   margin: 20px auto;
   image-rendering: crisp-edges;
 }
-.merch-qr-save {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #b8c9e9;
-  color: #0055ff;
-  border-radius: 12px;
-  min-height: 48px;
-  padding: 10px 16px;
-  margin-block: 22px;
-  font-weight: 600;
-}
 .merch-payment-panel > p {
   line-height: 1.8;
 }
@@ -266,4 +253,34 @@
 .merch-payment-panel > button {
   display: block;
   margin-inline: auto;
+}
+.merch-pay-card {
+  max-width: 440px;
+  margin: 24px auto 0;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+}
+.merch-pay-card .merch-payment-panel,
+.merch-pay-card .merch-just-paid {
+  padding: 0;
+}
+.merch-just-paid h2 {
+  font-size: 23px;
+  font-weight: 800;
+  margin-block: 0 14px;
+}
+.merch-just-paid-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 22px;
+  margin-block: 8px 14px;
+  border-radius: 999px;
+  color: white;
+  background: #ff5800;
+  font-size: 17px;
+  font-weight: 700;
 }

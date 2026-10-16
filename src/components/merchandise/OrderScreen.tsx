@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { formatBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { OrderDetail } from "@/types/merchandise";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
-import PaidOrder from "./PaidOrder";
+import PaidOrder, { JustPaidCard } from "./PaidOrder";
 import PaymentPanel from "./PaymentPanel";
 import { takePrimedOrder, useMerchandiseOrder } from "./useMerchandiseOrder";
 import { usePaymentPolling } from "./usePaymentPolling";
@@ -74,6 +75,9 @@ function OrderLoader({ orderId }: { orderId: string }) {
   );
 }
 
+const isPaid = (o: OrderDetail) =>
+  o.paymentStatus === "paid" || o.payment.state === "paid";
+
 function OrderWorkspace({
   orderId,
   initial,
@@ -85,8 +89,39 @@ function OrderWorkspace({
 }) {
   const polling = usePaymentPolling(orderId, initial, receivedAt);
   const { order } = polling;
-  const paid = order.paymentStatus === "paid" || order.payment.state === "paid";
+  const [initialPaid] = useState(() => isPaid(initial));
+  const paid = isPaid(order);
   const { recipient, amounts } = order;
+  if (!paid || !initialPaid)
+    return (
+      <main className="merch-cart merch-order merch-pay">
+        <h1 className="sr-only">คำสั่งซื้อ {order.orderNumber}</h1>
+        <div className="merch-pay-card">
+          <Image
+            src="/assets/Img/logo/Logo-Final .png"
+            alt="PRIS 2026"
+            width={200}
+            height={80}
+            className="brightness-0 h-12 w-auto mx-auto"
+          />
+          {paid ? (
+            <JustPaidCard orderNumber={order.orderNumber} />
+          ) : (
+            <PaymentPanel
+              order={order}
+              busy={polling.busy}
+              expiredLocally={polling.expiredLocally}
+              remainingMs={polling.remainingMs}
+              locked={polling.locked}
+              notice={polling.notice}
+              unauthorized={polling.unauthorized}
+              onRequestQr={() => void polling.requestQr()}
+              onCheck={() => void polling.check()}
+            />
+          )}
+        </div>
+      </main>
+    );
   return (
     <main className="merch-cart merch-order">
       <Link className="merch-cart-back" href="/souvenirs/orders">
@@ -174,21 +209,7 @@ function OrderWorkspace({
           )}
         </div>
         <div>
-          {paid ? (
-            <PaidOrder order={order} />
-          ) : (
-            <PaymentPanel
-              order={order}
-              busy={polling.busy}
-              expiredLocally={polling.expiredLocally}
-              remainingMs={polling.remainingMs}
-              locked={polling.locked}
-              notice={polling.notice}
-              unauthorized={polling.unauthorized}
-              onRequestQr={() => void polling.requestQr()}
-              onCheck={() => void polling.check()}
-            />
-          )}
+          <PaidOrder order={order} />
         </div>
       </div>
     </main>

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { Download } from "lucide-react";
 
 // The payload is drawn off-screen and only its rendered PNG is shown, so the
 // buyer can long-press or save it. The payload itself stays in memory: never
@@ -42,17 +41,8 @@ export default function PaymentQr({
             width={280}
             height={280}
           />
-          <a
-            className="merch-qr-save"
-            href={dataUrl}
-            download={`souvenir-payment-${orderNumber}.png`}
-          >
-            <Download size={18} aria-hidden="true" />
-            บันทึกภาพ QR
-          </a>
           <p className="merch-cart-muted">
-            ถ้าบันทึกไม่ได้ ให้กดค้างที่รูป QR หรือแคปหน้าจอ
-            แล้วเลือกรูปในแอปธนาคาร
+            กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร
           </p>
         </>
       )}
