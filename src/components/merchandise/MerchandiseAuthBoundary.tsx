@@ -1,29 +1,24 @@
 "use client";
 import {
+  useCallback,
   useEffect,
-  useLayoutEffect,
-  useMemo,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 import { Link, useRouter, usePathname } from "@/i18n/routing";
+import toast from "react-hot-toast";
 import { useMerchandise } from "./MerchandiseProvider";
 import {
-  clearForeignPurchaseIntent,
-  clearPurchaseIntent,
   readPurchaseIntent,
   resumePurchaseIntent,
-  type IntentResult,
 } from "@/lib/merchandiseIntent";
 import {
   merchandiseLoginPath,
   merchandiseReturnPath,
 } from "@/lib/merchandiseRoutes";
-import type { CartDto } from "@/types/merchandise";
-import toast from "react-hot-toast";
 import { MerchandiseApiError } from "@/lib/merchandiseApi";
-import { clearForeignCheckouts } from "@/lib/merchandiseCheckoutKey";
+import { applyOwnerChange } from "@/lib/merchandiseSession";
 
 // Header is already mounted for every auth journey, including its null view on
 // login. Observe ownership here without modifying the incumbent AuthContext.
@@ -31,26 +26,18 @@ export function useMerchandiseSessionCleanup(buyerId: number | null) {
   const previous = useRef<number | null | undefined>(undefined);
   useEffect(() => {
     try {
-      // Expiry at hydration has no previous owner; expiry during a mounted
-      // session still has a stored token. Keep the non-PII retry key in both
-      // cases. Explicit logout clears stored auth, and a different owner clears
-      // the intent before any cart write.
-      if (
-        previous.current !== undefined &&
-        previous.current !== null &&
-        previous.current !== buyerId &&
-        (buyerId !== null ||
-          !(
-            window.localStorage.getItem("pris_token") ||
-            window.sessionStorage.getItem("pris_token")
-          ))
-      ) {
-        clearPurchaseIntent(window.sessionStorage);
-        clearForeignCheckouts(window.sessionStorage, buyerId as number);
-      } else if (buyerId !== null) {
-        clearForeignPurchaseIntent(window.sessionStorage, buyerId);
-        clearForeignCheckouts(window.sessionStorage, buyerId as number);
-      }
+      const loggedOut =
+        buyerId === null &&
+        !(
+          window.localStorage.getItem("pris_token") ||
+          window.sessionStorage.getItem("pris_token")
+        );
+      applyOwnerChange(
+        window.sessionStorage,
+        previous.current,
+        buyerId,
+        loggedOut,
+      );
     } catch {
       /* Storage denial cannot authorize any cart write. */
     }
@@ -86,161 +73,106 @@ export function MerchandiseAuthBoundary({
   );
 }
 
+// One automatic add per intent id, even if React re-runs the effect.
+const started = new Set<string>();
+
+type Failure = { message: string; reauthenticate: boolean };
+
+/** After login the buyer lands here with ?intentId=...; it adds that intent once. */
 export function MerchandiseIntentResume({
   intentId,
-  onAdded,
-  onResult,
-  onPending,
+  onFailed,
 }: {
   intentId: string | null;
-  onAdded: (cart: CartDto) => void;
-  onResult?: (id: string, result: IntentResult) => void;
-  onPending?: (id: string) => void;
+  /** The API refused the add (not a session or network problem): refresh the page data. */
+  onFailed?: () => void;
 }) {
-  const { api, eventCode, token, ownerId } = useMerchandise(),
+  const { api, token, setCart, cart } = useMerchandise(),
     pathname = usePathname(),
     router = useRouter();
-  const [result, setResult] = useState<{
-    scope: object;
-    value: IntentResult;
-  } | null>(null);
-  const [retry, setRetry] = useState(0);
-  const session = useRef<{
-    token: string | null;
-    ownerId: number | null;
-    eventCode: string;
-  } | null>(null);
-  const scope = useMemo(
-    () => ({ eventCode, ownerId, intentId, token }),
-    [eventCode, ownerId, intentId, token],
-  );
-  useLayoutEffect(() => {
-    session.current = { token, ownerId, eventCode };
-    return () => {
-      session.current = null;
-    };
-  }, [token, ownerId, eventCode]);
+  const [failure, setFailure] = useState<Failure | null>(null);
+  const where = useRef({ pathname, router });
+  const reload = useRef(cart.reload);
+  const accept = useRef(setCart);
+  const failed = useRef(onFailed);
   useEffect(() => {
-    if (!token && intentId) {
-      router.replace(merchandiseLoginPath(pathname + window.location.search));
+    failed.current = onFailed;
+    where.current = { pathname, router };
+    reload.current = cart.reload;
+    accept.current = setCart;
+  });
+  const strip = useCallback(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.delete("intentId");
+    const { pathname: path, router: r } = where.current;
+    r.replace(merchandiseReturnPath(path + url.search) ?? path, {
+      scroll: false,
+    });
+  }, []);
+  useEffect(() => {
+    if (!intentId) return;
+    if (!token) {
+      where.current.router.replace(
+        merchandiseLoginPath(where.current.pathname + window.location.search),
+      );
       return;
     }
-    if (!token || !ownerId || !intentId) return;
-    let active = true;
-    const isCurrent = () =>
-      session.current?.token === token &&
-      session.current.ownerId === ownerId &&
-      session.current.eventCode === eventCode;
-    const run = async () => {
+    let cancelled = false;
+    void (async () => {
       await Promise.resolve();
-      if (!active || !isCurrent()) return;
-      onPending?.(intentId);
-      let value: IntentResult;
+      if (cancelled || started.has(intentId)) return;
+      const intent = readPurchaseIntent(window.sessionStorage, intentId);
+      if (!intent) {
+        strip();
+        return;
+      }
+      started.add(intentId);
+      setFailure(null);
       try {
-        const intent = readPurchaseIntent(window.sessionStorage, eventCode);
-        if (!intent || intent.id !== intentId) {
-          onResult?.(intentId, { kind: "none" });
-          return;
-        }
-        value = await resumePurchaseIntent({
-          storage: window.sessionStorage,
+        const next = await resumePurchaseIntent(
           api,
-          eventCode,
           token,
-          buyerId: ownerId,
-          isCurrent,
-        });
-      } catch {
-        value = {
-          kind: "error",
-          error: new Error(
-            "ไม่สามารถเก็บรายการที่เลือกได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์",
-          ),
-          uncertain: false,
-        };
-      }
-      if (!active || !isCurrent()) return;
-      setResult({ scope, value });
-      onResult?.(intentId, value);
-      if (value.kind === "added") {
-        onAdded(value.cart);
-        toast.success("เพิ่มลงตะกร้าแล้ว", {
-          id: `merchandise-intent:${value.intentId}`,
-        });
-        const url = new URL(window.location.href);
-        url.searchParams.delete("intentId");
-        router.replace(
-          merchandiseReturnPath(pathname + url.search) ?? pathname,
+          intent,
+          window.sessionStorage,
         );
-      } else if (value.kind === "needs_selection") {
-        if (
-          merchandiseReturnPath(pathname + window.location.search) !==
-          value.path
-        )
-          router.replace(value.path);
+        accept.current(next);
+        toast.success("เพิ่มลงตะกร้าแล้ว", {
+          id: `merchandise-intent:${intentId}`,
+        });
+      } catch (error) {
+        const e = error instanceof MerchandiseApiError ? error : null;
+        if (e?.uncertain) reload.current();
+        else if (e?.status !== 401) failed.current?.();
+        if (!cancelled)
+          setFailure({
+            message: e?.uncertain
+              ? "ยังยืนยันผลการเพิ่มสินค้าไม่ได้ กรุณาตรวจสอบตะกร้าของคุณ"
+              : (e?.message ?? "เพิ่มสินค้าไม่สำเร็จ กรุณาลองอีกครั้ง"),
+            reauthenticate: e?.status === 401,
+          });
+      } finally {
+        started.delete(intentId);
       }
-    };
-    void run();
+      if (!cancelled) strip();
+    })();
     return () => {
-      active = false;
+      cancelled = true;
     };
-  }, [
-    api,
-    eventCode,
-    token,
-    ownerId,
-    intentId,
-    onAdded,
-    onResult,
-    onPending,
-    pathname,
-    router,
-    retry,
-    scope,
-  ]);
-  const current = result?.scope === scope ? result.value : null;
-  if (
-    !current ||
-    current.kind === "none" ||
-    current.kind === "cancelled" ||
-    current.kind === "added"
-  )
-    return null;
+  }, [api, token, intentId, strip]);
+  if (!failure) return null;
   return (
     <div
       className="my-5 rounded-xl bg-blue-50 p-4 text-sm leading-7 text-[#0b1535]"
-      role="status"
+      role="alert"
     >
-      {current.kind === "needs_selection" ? (
-        <p>กรุณาเลือกตัวเลือกสินค้าก่อนเพิ่มลงตะกร้า</p>
-      ) : (
-        <>
-          <p>
-            {current.uncertain
-              ? "ยังยืนยันผลเพิ่มสินค้าลงตะกร้าไม่ได้ กรุณาตรวจสอบอีกครั้ง"
-              : current.error.message}
-          </p>
-          {current.error instanceof MerchandiseApiError &&
-          current.error.status === 401 ? (
-            <Link
-              className="mt-3 inline-flex min-h-11 items-center rounded-xl border border-[#0055ff] bg-white px-4 font-semibold text-[#0055ff] focus-visible:outline-2 focus-visible:outline-offset-4"
-              href={merchandiseLoginPath(
-                pathname + window.location.search,
-                true,
-              )}
-            >
-              เข้าสู่ระบบอีกครั้ง
-            </Link>
-          ) : (
-            <button
-              type="button"
-              className="mt-3 min-h-11 rounded-xl border border-[#0055ff] bg-white px-4 font-semibold text-[#0055ff] focus-visible:outline-2 focus-visible:outline-offset-4"
-              onClick={() => setRetry((v) => v + 1)}
-            >
-              ตรวจสอบอีกครั้ง
-            </button>
-          )}
-        </>
+      <p>{failure.message}</p>
+      {failure.reauthenticate && (
+        <Link
+          className="mt-3 inline-flex min-h-11 items-center rounded-xl border border-[#0055ff] bg-white px-4 font-semibold text-[#0055ff] focus-visible:outline-2 focus-visible:outline-offset-4"
+          href={merchandiseLoginPath(pathname, true)}
+        >
+          เข้าสู่ระบบอีกครั้ง
+        </Link>
       )}
     </div>
   );

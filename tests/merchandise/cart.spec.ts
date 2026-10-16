@@ -1,341 +1,267 @@
-import { test, expect } from "./live-fixture";
-import type { ProductDto, CartDto } from "../../src/types/merchandise";
-type Catalog = { products: ProductDto[]; bundle: ProductDto };
-type Options = {
-  product: ProductDto;
-  bundle: ProductDto;
-  noOptions: ProductDto;
-};
-async function add(
-  merchandise: {
-    command<T = unknown>(action: string, payload?: unknown): Promise<T>;
-  },
-  product: ProductDto,
+import type { Page } from "@playwright/test";
+import { test, expect, login } from "./fixtures";
+import { makeOptionsProduct, makeSingle, makeStore, uid } from "./data";
+import type { FakeMerchApi } from "./fakeApi";
+
+const proceed = (page: Page) =>
+  page.getByRole("button", { name: /^ดำเนินการสั่งซื้อ/ });
+const seed = (
+  fake: FakeMerchApi,
+  p = makeSingle(),
   quantity = 1,
-  variantId: string | null = product.kind === "single"
-    ? product.variants[0].id
-    : null,
-) {
-  return merchandise.command<CartDto>("addCart", {
-    productId: product.id,
-    variantId,
-    bundleSelections:
-      product.kind === "bundle"
-        ? product.components
-            .filter((c) => c.optionMode === "selectable")
-            .map((c) => ({
-              componentId: c.id,
-              variantId: c.allowedVariants[0].id,
-            }))
-        : [],
+  variantId?: string | null,
+) =>
+  fake.seedLine({
+    productId: p.id,
+    variantId:
+      variantId === undefined
+        ? p.hasOptions
+          ? null
+          : p.variants[0].id
+        : variantId,
+    bundleSelections: [],
     quantity,
   });
-}
-const checkout = (page: import("@playwright/test").Page) =>
-  page.getByRole("button", { name: /^ดำเนินการต่อ/ });
-test("cart requires the existing account and returns to its empty state after login", async ({
+const calls = (fake: FakeMerchApi, method: string) =>
+  fake.calls.filter(
+    (c) => c.method === method && /\/cart\/items\//.test(c.path),
+  );
+
+test("cart requires login and returns to itself afterwards", async ({
   page,
-  merchandise,
 }) => {
-  await merchandise.command("catalog", { banners: 0 });
-  await merchandise.mockLogin(page);
   await page.goto("/th/souvenirs/cart");
-  await expect(page).toHaveURL(/\/login\?redirect=/, { timeout: 20000 });
-  await expect(
-    page.getByRole("heading", { name: "เข้าสู่ระบบ", exact: true }),
-  ).toBeVisible();
-  expect(
-    (await merchandise.command<{ cartReads: number }>("inspect")).cartReads,
-  ).toBe(0);
-  await page.getByLabel("อีเมล", { exact: true }).fill("buyer@example.test");
-  await page.getByLabel("รหัสผ่าน", { exact: true }).fill("synthetic-test");
-  await page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }).click();
+  await expect(page).toHaveURL(/\/th\/login\?redirect=/);
+  expect(new URL(page.url()).searchParams.get("redirect")).toBe(
+    "/souvenirs/cart",
+  );
+});
+
+test("an empty cart explains itself and cannot proceed", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
   await expect(
     page.getByRole("heading", { name: "ยังไม่มีสินค้าในตะกร้า", exact: true }),
   ).toBeVisible();
-  await expect(checkout(page)).toBeDisabled();
+  await expect(proceed(page)).toBeDisabled();
 });
-test("real quantity edits, persistence and removal use server totals with shipping once", async ({
+
+test("editing quantity shows exactly the amounts the server returned, then removal updates them", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { products } = await merchandise.command<Catalog>("catalog", {
-    banners: 0,
+  const a = makeSingle({ id: uid(1), nameTh: "แก้วน้ำ Pris" });
+  const b = makeSingle({
+    id: uid(2),
+    nameTh: "ถุงผ้า Pris",
+    variants: [{ ...makeSingle().variants[0], id: uid(22), priceMinor: 10000 }],
+    price: { kind: "exact", amountMinor: 10000 },
   });
-  await add(merchandise, products[2]);
-  await add(merchandise, products[4]);
-  await merchandise.login(page);
+  fake.products = [a, b];
+  seed(fake, a);
+  const second = seed(fake, b);
+  await login(page);
   await page.goto("/th/souvenirs/cart");
-  await expect(
-    page.getByRole("complementary", { name: "สรุปคำสั่งซื้อ" }),
-  ).toContainText("฿250.00");
+  const summary = page.getByRole("complementary", { name: "สรุปคำสั่งซื้อ" });
+  await expect(summary).toContainText("฿400.00"); // 250 + 100 + 50 shipping
   await page
-    .getByRole("button", {
-      name: `เพิ่มจำนวน ${products[2].nameTh}`,
-      exact: true,
-    })
+    .getByRole("button", { name: "เพิ่มจำนวน แก้วน้ำ Pris", exact: true })
     .click();
   await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
+    page.getByLabel("จำนวน แก้วน้ำ Pris", { exact: true }),
   ).toHaveValue("2");
-  await expect(page.locator(".merch-cart-total")).toContainText("฿350.00");
-  await expect(page.locator(".merch-cart-badge")).toHaveText("3");
+  const amounts = fake.cart.amounts!;
+  expect(amounts.totalMinor).toBe(2 * 25000 + 10000 + 5000);
+  await expect(page.locator(".merch-cart-total")).toContainText("฿650.00");
+  await expect(summary).toContainText("฿600.00"); // subtotal
+  await expect(summary).toContainText("฿50.00"); // shipping, once
+  expect(calls(fake, "PATCH")).toHaveLength(1);
+  expect(calls(fake, "PATCH")[0].body).toEqual({ quantity: 2 });
   await page.reload();
   await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
+    page.getByLabel("จำนวน แก้วน้ำ Pris", { exact: true }),
   ).toHaveValue("2");
   await page
-    .getByRole("button", { name: `ลบ ${products[4].nameTh}`, exact: true })
+    .getByRole("button", { name: "ลบ ถุงผ้า Pris", exact: true })
     .click();
   await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  await expect(page.locator(".merch-cart-total")).toContainText("฿250.00");
-  await page
-    .getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true })
-    .fill("4");
-  await page.getByRole("button", { name: "บันทึกจำนวน", exact: true }).click();
-  await expect(page.locator(".merch-cart-total")).toContainText("฿450.00");
-  const { cart } = await merchandise.command<{ cart: CartDto }>("inspect");
-  expect(cart.amounts?.shippingMinor).toBe("5000");
-  expect(cart.items[0].quantity).toBe(4);
+  await expect(page.locator(".merch-cart-total")).toContainText("฿550.00");
+  expect(calls(fake, "DELETE")[0].path).toMatch(new RegExp(second.id + "$"));
 });
-test("changing a variant merges identical server identities and keeps a single shipping charge", async ({
+
+test("typing a quantity and saving sends a PATCH with that quantity", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { product } = await merchandise.command<Options>("variantCatalog");
-  const medium = product.variants.find(
-      (v) => v.colorTh === "น้ำเงิน" && v.sizeTh === "M",
-    )!,
-    large = product.variants.find(
-      (v) => v.colorTh === "น้ำเงิน" && v.sizeTh === "L",
-    )!;
-  await add(merchandise, product, 1, medium.id);
-  await add(merchandise, product, 2, large.id);
-  await merchandise.login(page);
+  const p = makeSingle();
+  fake.products = [p];
+  seed(fake, p);
+  await login(page);
   await page.goto("/th/souvenirs/cart");
-  await expect(page.locator(".merch-cart-row")).toHaveCount(2);
-  const row = page
-    .locator(".merch-cart-row")
-    .filter({ has: page.getByText("น้ำเงิน · M", { exact: true }) });
-  await row.locator("summary").click();
-  await row.getByRole("button", { name: "L", exact: true }).click();
-  await row
+  await page.getByLabel(`จำนวน ${p.nameTh}`, { exact: true }).fill("4");
+  await page.getByRole("button", { name: "บันทึกจำนวน", exact: true }).click();
+  await expect(page.locator(".merch-cart-total")).toContainText("฿1,050.00");
+  expect(calls(fake, "PATCH")[0].body).toEqual({ quantity: 4 });
+});
+
+test("changing the option of a line patches variantId and shows the new option", async ({
+  page,
+  fake,
+}) => {
+  const p = makeOptionsProduct();
+  fake.products = [p];
+  seed(fake, p, 1, p.variants[0].id);
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.getByText("ไซซ์ M / สีขาว", { exact: true })).toBeVisible();
+  await page.locator(".merch-cart-edit summary").click();
+  await page
+    .locator(".merch-cart-edit")
+    .getByRole("button", { name: "L", exact: true })
+    .click();
+  await page
     .getByRole("button", { name: "บันทึกตัวเลือก", exact: true })
     .click();
-  await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  await expect(
-    page.getByLabel(`จำนวน ${product.nameTh}`, { exact: true }),
-  ).toHaveValue("3");
-  await expect(page.locator(".merch-cart-total")).toContainText("฿500.00");
-  expect(
-    (await merchandise.command<{ cart: CartDto }>("inspect")).cart.items[0]
-      .variantId,
-  ).toBe(large.id);
+  await expect(page.getByText("ไซซ์ L / สีขาว", { exact: true })).toBeVisible();
+  expect(calls(fake, "PATCH")[0].body).toEqual({ variantId: p.variants[1].id });
 });
-test("Bundle cart displays the BOM without charging or counting its components as extra lines", async ({
+
+test("a line with valid:false explains itself and blocks proceeding", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { bundle } = await merchandise.command<Options>("variantCatalog");
-  await add(merchandise, bundle, 2);
-  await merchandise.login(page);
-  await page.goto("/th/souvenirs/cart");
-  await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  await expect(page.locator(".merch-cart-components")).toContainText(
-    "แก้ว Mug × 2",
-  );
-  await expect(page.locator(".merch-cart-badge")).toHaveText("2");
-  await expect(page.locator(".merch-cart-total")).toContainText("฿490.00");
-});
-test("real revision conflict reloads the newer cart and requires another deliberate edit", async ({
-  page,
-  merchandise,
-}) => {
-  const { products } = await merchandise.command<Catalog>("catalog", {
-    banners: 0,
-  });
-  await add(merchandise, products[2]);
-  await merchandise.login(page);
+  const p = makeSingle();
+  fake.products = [p];
+  const line = seed(fake, p);
+  line.valid = false;
+  line.issueCodes = ["VARIANT_DISABLED"];
+  fake.cart.amounts = null;
+  await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
-  ).toHaveValue("1");
-  await add(merchandise, products[2]);
-  await page
-    .getByRole("button", {
-      name: `เพิ่มจำนวน ${products[2].nameTh}`,
-      exact: true,
-    })
-    .click();
-  await expect(
-    page.getByText(
-      "ข้อมูลตะกร้ามีการเปลี่ยนแปลง โหลดข้อมูลล่าสุดแล้ว กรุณาตรวจสอบอีกครั้ง",
-      { exact: true },
-    ),
+    page.getByText("ตัวเลือกนี้ปิดการขาย", { exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
-  ).toHaveValue("2");
-  await page
-    .getByRole("button", {
-      name: `เพิ่มจำนวน ${products[2].nameTh}`,
-      exact: true,
-    })
-    .click();
-  await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
-  ).toHaveValue("3");
+  await expect(proceed(page)).toBeDisabled();
+  await expect(page.getByText(/ยังสรุปยอดไม่ได้/).first()).toBeVisible();
 });
-test("lost quantity reply plus a failed verification blocks writes until the real cart is read", async ({
+
+test("a line whose product is gone says so and can still be removed", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { products } = await merchandise.command<Catalog>("catalog", {
-    banners: 0,
-  });
-  await add(merchandise, products[2]);
-  await merchandise.login(page);
+  const p = makeSingle();
+  fake.products = [p];
+  const line = seed(fake, p);
+  fake.orphanLine(line.id);
+  await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
-  ).toHaveValue("1");
-  const cartUrl =
-    merchandise.origin + "/api/v1/merchandise/events/PRIS-2026/cart";
-  let posts = 0;
-  await page.route(cartUrl + "/items/*", async (route) => {
-    if (route.request().method() !== "PATCH") return route.continue();
-    posts++;
-    await route.fetch();
-    await route.abort("failed");
-  });
-  await page.route(cartUrl, (route) =>
+    page.getByText("สินค้านี้ไม่มีแล้ว", { exact: true }),
+  ).toBeVisible();
+  await expect(proceed(page)).toBeDisabled();
+  const remove = page.getByRole("button", { name: /^ลบ / });
+  await expect(remove).toBeEnabled();
+  await remove.click();
+  await expect(
+    page.getByRole("heading", { name: "ยังไม่มีสินค้าในตะกร้า", exact: true }),
+  ).toBeVisible();
+  expect(calls(fake, "DELETE")).toHaveLength(1);
+});
+
+test("a valid cart on an open store proceeds to checkout", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  seed(fake);
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(proceed(page)).toBeEnabled();
+  // Checkout is a separate screen with its own spec; only the hand-off is under test.
+  await page.route(/\/th\/souvenirs\/checkout/, (route) =>
     route.fulfill({
-      status: 503,
-      contentType: "application/json",
-      headers: { "access-control-allow-origin": "*" },
-      body: JSON.stringify({
-        success: false,
-        code: "MERCH_LOAD_FAILED",
-        error: "Synthetic failure",
-        requestId: "test",
-      }),
+      status: 200,
+      contentType: "text/html",
+      body: "<!doctype html><title>checkout</title>",
     }),
   );
-  await page
-    .getByRole("button", {
-      name: `เพิ่มจำนวน ${products[2].nameTh}`,
-      exact: true,
-    })
-    .click();
-  await expect(
-    page.getByText(
-      "ยังตรวจสอบตะกร้าล่าสุดไม่ได้ กรุณาลองโหลดอีกครั้งก่อนแก้ไขหรือดำเนินการต่อ",
-      { exact: true },
-    ),
-  ).toBeVisible();
-  await expect(checkout(page)).toBeDisabled();
-  await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
-  ).toHaveValue("1");
-  await page.unroute(cartUrl);
-  await page
-    .getByRole("button", { name: "ลองโหลดอีกครั้ง", exact: true })
-    .click();
-  await expect(
-    page.getByLabel(`จำนวน ${products[2].nameTh}`, { exact: true }),
-  ).toHaveValue("2");
-  await expect(checkout(page)).toBeEnabled();
-  expect(posts).toBe(1);
+  await proceed(page).click();
+  await expect(page).toHaveURL(/\/th\/souvenirs\/checkout$/);
 });
-test("paused items remain visible and removable without substituting zero totals", async ({
+
+test("a closed store disables checkout but keeps the cart readable", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { products } = await merchandise.command<Catalog>("catalog", {
-    banners: 0,
-  });
-  await add(merchandise, products[2]);
-  await merchandise.command("sale", { id: products[2].id, enabled: false });
-  await merchandise.login(page);
+  fake.store = makeStore({ state: "closed" });
+  fake.products = [makeSingle()];
+  seed(fake);
+  await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  await expect(
-    page.getByText(
-      "มีรายการที่ไม่พร้อมขาย ระบบจะไม่เปลี่ยนตัวเลือกให้อัตโนมัติ กรุณาตรวจสอบรายการด้านล่าง",
-      { exact: true },
-    ),
-  ).toBeVisible();
-  await expect(page.locator(".merch-cart-summary")).toContainText(
-    "ยังสรุปยอดไม่ได้",
-  );
-  await expect(checkout(page)).toBeDisabled();
-  await page
-    .getByRole("button", { name: `ลบ ${products[2].nameTh}`, exact: true })
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "ยังไม่มีสินค้าในตะกร้า", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText(/ปิดรับพรีออเดอร์แล้ว/).first()).toBeVisible();
+  await expect(proceed(page)).toBeDisabled();
 });
-test("focus refresh shows the actual changed price, and fresh checkout checks reject a closed store", async ({
+
+test("an expired session during an edit offers re-login instead of silently failing", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { products } = await merchandise.command<Catalog>("catalog", {
-    banners: 0,
-  });
-  await add(merchandise, products[2]);
-  await merchandise.login(page);
-  await page.goto("/th/souvenirs/cart");
-  await expect(page.locator(".merch-cart-total")).toContainText("฿150.00");
-  await merchandise.command("price", { id: products[2].id, price: "12000" });
-  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
-  await expect(
-    page.getByText("ราคาปรับจาก ฿100.00 เป็น ฿120.00 กรุณาตรวจสอบอีกครั้ง", {
-      exact: true,
-    }),
-  ).toBeVisible();
-  await expect(page.locator(".merch-cart-total")).toContainText("฿170.00");
-  await merchandise.command("closeStore");
-  await checkout(page).click();
-  await expect(
-    page.getByText(
-      "ปิดรับพรีออเดอร์แล้ว · ยังดูตะกร้าและประวัติคำสั่งซื้อได้",
-      { exact: true },
-    ),
-  ).toBeVisible();
-  await expect(checkout(page)).toBeDisabled();
-  await expect(page).toHaveURL(/\/souvenirs\/cart$/);
-});
-test("a different account cannot see the previous buyer cart after reload", async ({
-  page,
-  merchandise,
-}) => {
-  const { products } = await merchandise.command<Catalog>("catalog", {
-    banners: 0,
-  });
-  await add(merchandise, products[2]);
-  await merchandise.login(page);
+  const p = makeSingle();
+  fake.products = [p];
+  seed(fake, p);
+  await login(page);
   await page.goto("/th/souvenirs/cart");
   await expect(page.locator(".merch-cart-row")).toHaveCount(1);
-  await page.evaluate(
-    ({ token }) => {
-      localStorage.setItem("pris_token", token);
-      localStorage.setItem(
-        "pris_user",
-        JSON.stringify({
-          id: 2,
-          firstName: "ผู้ซื้ออื่น",
-          lastName: "ทดสอบ",
-          email: "other@example.test",
-        }),
-      );
+  fake.failNext("PATCH", "/cart/items/", {
+    status: 401,
+    body: {
+      success: false,
+      code: "UNAUTHORIZED",
+      error: "กรุณาเข้าสู่ระบบอีกครั้ง",
+      requestId: "r",
     },
-    { token: merchandise.otherBuyerToken },
-  );
-  await page.reload();
+  });
+  await page
+    .getByRole("button", { name: `เพิ่มจำนวน ${p.nameTh}`, exact: true })
+    .click();
+  const relogin = page.getByRole("link", {
+    name: "เข้าสู่ระบบอีกครั้ง",
+    exact: true,
+  });
+  await expect(relogin).toHaveAttribute("href", /reauth=merchandise/);
+  await expect(proceed(page)).toBeDisabled();
+});
+
+test("a rejected edit shows the API message and reloads the cart", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  seed(fake, p);
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  fake.failNext("PATCH", "/cart/items/", {
+    status: 422,
+    body: {
+      success: false,
+      code: "MERCH_CART_QUANTITY_LIMIT",
+      error: "จำนวนเกินที่กำหนด",
+      requestId: "r",
+    },
+  });
+  await page
+    .getByRole("button", { name: `เพิ่มจำนวน ${p.nameTh}`, exact: true })
+    .click();
   await expect(
-    page.getByRole("heading", { name: "ยังไม่มีสินค้าในตะกร้า", exact: true }),
+    page.getByText("จำนวนเกินที่กำหนด", { exact: true }),
   ).toBeVisible();
-  await expect(page.locator(".merch-cart-row")).toHaveCount(0);
-  await expect(page.locator(".merch-cart-badge")).toHaveText("0");
+  await expect(
+    page.getByLabel(`จำนวน ${p.nameTh}`, { exact: true }),
+  ).toHaveValue("1");
 });

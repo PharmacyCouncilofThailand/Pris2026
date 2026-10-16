@@ -79,3 +79,10 @@
     transition: none;
   }
 }
+.merchandise-store-note {
+  max-width: 1600px;
+  margin: auto;
+  padding: 4px 24px 0;
+  color: #536074;
+  font-size: 14px;
+}

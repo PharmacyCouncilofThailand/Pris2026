@@ -9,10 +9,15 @@ import {
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
-import { canCheckout } from "@/lib/merchandiseCart";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
-import type { CartLine, LineSelection } from "@/types/merchandise";
+import { canCheckout, unavailableMessage } from "@/lib/merchandiseSelection";
+import type {
+  CartDto,
+  CartItemPatch,
+  CartLine,
+  StoreDto,
+} from "@/types/merchandise";
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import CartRow from "./CartRow";
@@ -61,29 +66,32 @@ function CartLoader() {
   return <CartWorkspace />;
 }
 function CartWorkspace() {
-  const { api, eventCode, token, ownerId, cart, store } = useMerchandise(),
+  const { api, eventCode, token, cart, store, setCart } = useMerchandise(),
     router = useRouter();
   const data = cart.data!,
     settings = store.data!;
-  const acceptCart = cart.accept,
-    acceptStore = store.accept;
+  const acceptStore = store.accept;
   const [busy, setBusy] = useState(false),
     [blocked, setBlocked] = useState(false),
     [notice, setNotice] = useState<string | null>(null),
     [unauthorized, setUnauthorized] = useState(false);
   const [reset, setReset] = useState(0),
     [priceChanges, setPriceChanges] = useState<
-      Record<string, { from: string; to: string }>
+      Record<string, { from: number; to: number }>
     >({});
   const pending = useRef(false),
     active = useRef(false),
-    session = useRef({ token, ownerId, eventCode }),
+    epoch = useRef(0),
+    latest = useRef(data),
     bar = useRef<HTMLDivElement>(null);
   const focusAfterWrite = useRef<{
     id: string;
     label: string | null;
     quantityId: string;
   } | null>(null);
+  useEffect(() => {
+    latest.current = data;
+  });
   useLayoutEffect(() => {
     if (busy || !focusAfterWrite.current) return;
     const target = focusAfterWrite.current;
@@ -106,22 +114,13 @@ function CartWorkspace() {
       document.getElementById("merch-cart-title"),
     ].find((candidate) => candidate && !candidate.matches(":disabled"));
     element?.focus();
-  }, [busy, data.revision, reset]);
+  }, [busy, data.cartVersion, reset]);
   useLayoutEffect(() => {
     active.current = true;
-    session.current = { token, ownerId, eventCode };
     return () => {
       active.current = false;
     };
-  }, [token, ownerId, eventCode]);
-  const current = useCallback(
-    () =>
-      active.current &&
-      session.current.token === token &&
-      session.current.ownerId === ownerId &&
-      session.current.eventCode === eventCode,
-    [token, ownerId, eventCode],
-  );
+  }, []);
   useLayoutEffect(() => {
     const element = bar.current;
     if (!element) return;
@@ -138,23 +137,22 @@ function CartWorkspace() {
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
   }, []);
-  const synchronize = useCallback(async () => {
+  // Re-read cart and store. A write that starts meanwhile wins (epoch).
+  const refresh = useCallback(async (): Promise<{
+    cart: CartDto;
+    store: StoreDto;
+  } | null> => {
+    const started = epoch.current;
     const [fresh, freshStore] = await Promise.all([
       api.cart(eventCode, token!),
       api.store(eventCode),
     ]);
-    if (!current()) return null;
-    if (
-      fresh.eventId !== settings.eventId ||
-      freshStore.eventId !== settings.eventId
-    )
-      throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-    const changes: Record<string, { from: string; to: string }> = {};
+    if (!active.current || epoch.current !== started) return null;
+    const changes: Record<string, { from: number; to: number }> = {};
     for (const line of fresh.items) {
-      const old = data.items.find((i) => i.id === line.id);
+      const old = latest.current.items.find((i) => i.id === line.id);
       if (
-        old?.unitPriceMinor !== null &&
-        old?.unitPriceMinor !== undefined &&
+        old?.unitPriceMinor != null &&
         line.unitPriceMinor !== null &&
         old.unitPriceMinor !== line.unitPriceMinor
       )
@@ -164,27 +162,15 @@ function CartWorkspace() {
         };
     }
     setPriceChanges((previous) => ({ ...previous, ...changes }));
-    acceptCart(fresh);
+    setCart(fresh);
     acceptStore(freshStore);
     return { cart: fresh, store: freshStore };
-  }, [
-    api,
-    eventCode,
-    token,
-    current,
-    settings.eventId,
-    data.items,
-    acceptCart,
-    acceptStore,
-  ]);
+  }, [api, eventCode, token, setCart, acceptStore]);
   const run = useCallback(
-    async (
-      operation: (() => Promise<void>) | null = null,
-      checkout = false,
-    ) => {
+    async (operation: () => Promise<void>, remember = true) => {
       if (pending.current || !token) return;
       pending.current = true;
-      if (operation) {
+      if (remember) {
         const element = document.activeElement as HTMLElement | null;
         focusAfterWrite.current = {
           id: element?.id ?? "",
@@ -195,92 +181,92 @@ function CartWorkspace() {
       }
       setBusy(true);
       try {
-        if (operation) await operation();
-        else {
-          const fresh = await synchronize();
-          if (!fresh || !current()) return;
-          setBlocked(false);
-          if (checkout && canCheckout(fresh.cart, fresh.store))
-            router.push("/souvenirs/checkout");
-          else if (checkout)
-            setNotice(
-              "กรุณาตรวจสอบรายการและสถานะเปิดรับพรีออเดอร์ก่อนดำเนินการต่อ",
-            );
-        }
+        await operation();
       } catch (error) {
-        if (!current()) return;
+        if (!active.current) return;
         const failure =
           error instanceof MerchandiseApiError ? error : merchandiseFailure();
-        setNotice(
-          failure.status === 409
-            ? "ข้อมูลตะกร้ามีการเปลี่ยนแปลง โหลดข้อมูลล่าสุดแล้ว กรุณาตรวจสอบอีกครั้ง"
-            : "บันทึกไม่สำเร็จ กรุณาตรวจสอบข้อมูลตะกร้าล่าสุดก่อนลองอีกครั้ง",
-        );
+        setNotice(failure.message);
         setUnauthorized(failure.status === 401);
         setReset((v) => v + 1);
-        if (operation && failure.status !== 401) {
+        if (failure.status === 401) setBlocked(true);
+        else {
           try {
-            await synchronize();
-            if (current()) setBlocked(false);
+            await refresh();
+            if (active.current) setBlocked(false);
           } catch {
-            if (current()) {
+            if (active.current) {
               setBlocked(true);
               setNotice(
                 "ยังตรวจสอบตะกร้าล่าสุดไม่ได้ กรุณาลองโหลดอีกครั้งก่อนแก้ไขหรือดำเนินการต่อ",
               );
             }
           }
-        } else setBlocked(true);
+        }
       } finally {
-        if (current()) {
+        if (active.current) {
           pending.current = false;
           setBusy(false);
         }
       }
     },
-    [token, synchronize, current, router],
+    [token, refresh],
   );
   useEffect(() => {
-    const refresh = () => {
-      if (document.visibilityState === "visible") void run();
-    };
-    window.addEventListener("focus", refresh);
-    window.addEventListener("pageshow", refresh);
-    document.addEventListener("visibilitychange", refresh);
-    return () => {
-      window.removeEventListener("focus", refresh);
-      window.removeEventListener("pageshow", refresh);
-      document.removeEventListener("visibilitychange", refresh);
-    };
-  }, [run]);
-  const update = (
-    line: CartLine,
-    quantity: number,
-    selection?: LineSelection,
-  ) =>
-    void run(async () => {
-      const value = await api.update(eventCode, token!, line.id, {
-        quantity,
-        variantId: selection?.variantId ?? line.variantId,
-        bundleSelections: selection?.bundleSelections ?? line.bundleSelections,
-        expectedRevision: data.revision,
+    const quiet = () => {
+      if (document.visibilityState !== "visible" || pending.current) return;
+      refresh().catch((error: unknown) => {
+        if (error instanceof MerchandiseApiError && error.status === 401) {
+          setUnauthorized(true);
+          setNotice(error.message);
+        }
       });
-      if (!current()) return;
-      if (value.eventId !== settings.eventId)
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE", true);
-      cart.accept(value);
-      setReset((v) => v + 1);
-      setNotice("บันทึกตะกร้าแล้ว");
-    });
-  const remove = (line: CartLine) =>
+    };
+    window.addEventListener("focus", quiet);
+    window.addEventListener("pageshow", quiet);
+    document.addEventListener("visibilitychange", quiet);
+    return () => {
+      window.removeEventListener("focus", quiet);
+      window.removeEventListener("pageshow", quiet);
+      document.removeEventListener("visibilitychange", quiet);
+    };
+  }, [refresh]);
+  const write = (op: () => Promise<CartDto>, done: string) =>
     void run(async () => {
-      const value = await api.remove(eventCode, token!, line.id, data.revision);
-      if (!current()) return;
-      if (value.eventId !== settings.eventId)
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE", true);
-      cart.accept(value);
-      setNotice("นำสินค้าออกจากตะกร้าแล้ว");
+      epoch.current++;
+      const value = await op();
+      if (!active.current) return;
+      setCart(value);
+      setReset((v) => v + 1);
+      setNotice(done);
     });
+  const update = (line: CartLine, patch: CartItemPatch) =>
+    write(
+      () => api.updateCartItem(eventCode, token!, line.id, patch),
+      "บันทึกตะกร้าแล้ว",
+    );
+  const remove = (line: CartLine) =>
+    write(
+      () => api.removeCartItem(eventCode, token!, line.id),
+      "นำสินค้าออกจากตะกร้าแล้ว",
+    );
+  const reload = () =>
+    void run(async () => {
+      const fresh = await refresh();
+      if (fresh && active.current) setBlocked(false);
+    }, false);
+  const proceed = () =>
+    void run(async () => {
+      const fresh = await refresh();
+      if (!fresh || !active.current) return;
+      setBlocked(false);
+      if (canCheckout(fresh.cart, fresh.store))
+        router.push("/souvenirs/checkout");
+      else
+        setNotice(
+          "กรุณาตรวจสอบรายการและสถานะเปิดรับพรีออเดอร์ก่อนดำเนินการต่อ",
+        );
+    }, false);
   const allowed =
     canCheckout(data, settings) && !busy && !blocked && !unauthorized;
   return (
@@ -315,7 +301,7 @@ function CartWorkspace() {
             <button
               className="merch-cart-secondary"
               disabled={busy}
-              onClick={() => void run()}
+              onClick={reload}
             >
               ลองโหลดอีกครั้ง
             </button>
@@ -330,10 +316,8 @@ function CartWorkspace() {
       )}
       {settings.state !== "open" && (
         <p role="status">
-          {settings.state === "closed"
-            ? "ปิดรับพรีออเดอร์แล้ว"
-            : "ยังไม่เปิดรับพรีออเดอร์"}{" "}
-          · ยังดูตะกร้าและประวัติคำสั่งซื้อได้
+          {unavailableMessage("STORE_NOT_OPEN", settings.state)} ·
+          ยังดูตะกร้าและประวัติคำสั่งซื้อได้
         </p>
       )}
       <div className="merch-cart-grid">
@@ -341,12 +325,11 @@ function CartWorkspace() {
           {data.items.length ? (
             data.items.map((line) => (
               <CartRow
-                key={`${line.id}:${data.revision}:${reset}`}
+                key={`${line.id}:${data.cartVersion}:${reset}`}
                 line={line}
+                storeState={settings.state}
                 busy={busy || blocked || unauthorized}
-                onUpdate={(quantity, selection) =>
-                  update(line, quantity, selection)
-                }
+                onUpdate={(patch) => update(line, patch)}
                 onRemove={() => remove(line)}
                 priceChange={priceChanges[line.id]}
               />
@@ -400,12 +383,8 @@ function CartWorkspace() {
         คำสั่งซื้อของฉัน
       </Link>
       <div className="merch-cart-bar" ref={bar}>
-        <button
-          type="button"
-          disabled={!allowed}
-          onClick={() => void run(null, true)}
-        >
-          {busy ? "กำลังตรวจสอบตะกร้า" : "ดำเนินการต่อ"}
+        <button type="button" disabled={!allowed} onClick={proceed}>
+          {busy ? "กำลังตรวจสอบตะกร้า" : "ดำเนินการสั่งซื้อ"}
           {data.amounts && <> · {formatMinorBaht(data.amounts.totalMinor)}</>}
           <ArrowRight size={22} aria-hidden="true" />
         </button>

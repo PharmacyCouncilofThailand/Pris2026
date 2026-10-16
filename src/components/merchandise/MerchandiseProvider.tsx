@@ -32,6 +32,7 @@ interface MerchandiseContextValue {
   api: MerchandiseApi;
   store: MerchandiseResource<StoreDto>;
   cart: MerchandiseResource<CartDto>;
+  setCart(cart: CartDto): void;
 }
 const MerchandiseContext = createContext<MerchandiseContextValue | null>(null);
 // Explicit session/API injection keeps the same production state boundary testable.
@@ -55,22 +56,16 @@ export function MerchandiseSessionProvider({
   const ownerIdentity = token
     ? String(session.user?.id ?? session.user?.email)
     : null;
-  const eventId = store.data?.eventId;
   const cartScope = useMemo(
-    () =>
-      token && eventId ? { eventCode, eventId, ownerIdentity, token } : null,
-    [eventCode, eventId, ownerIdentity, token],
+    () => (token ? { eventCode, ownerIdentity, token } : null),
+    [eventCode, ownerIdentity, token],
   );
   const loadCart = useCallback(
-    async (signal: AbortSignal) => {
-      if (!token || !eventId)
-        throw merchandiseFailure(401, "MERCH_AUTH_REQUIRED");
-      const result = await api.cart(eventCode, token, signal);
-      if (result.eventId !== eventId)
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-      return result;
+    (signal: AbortSignal) => {
+      if (!token) throw merchandiseFailure(401, "MERCH_AUTH_REQUIRED");
+      return api.cart(eventCode, token, signal);
     },
-    [api, eventCode, token, eventId],
+    [api, eventCode, token],
   );
   const cart = useMerchandiseResource(cartScope, loadCart);
   return (
@@ -80,6 +75,7 @@ export function MerchandiseSessionProvider({
         api,
         store,
         cart,
+        setCart: cart.accept,
         token,
         ownerId: token ? (session.user?.id ?? null) : null,
         ownerIdentity,

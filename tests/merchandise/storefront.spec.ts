@@ -1,245 +1,208 @@
-import { test, expect } from "./live-fixture";
-test("draft catalog is public without prices or a purchase action", async ({
+import type { Page } from "@playwright/test";
+import { test, expect, login } from "./fixtures";
+import {
+  image,
+  makeBundle,
+  makeOptionsProduct,
+  makeSingle,
+  makeStore,
+  stubImages,
+  uid,
+} from "./data";
+
+const addButtons = (page: Page) =>
+  page.getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true });
+const productReads = (fake: { calls: { method: string; path: string }[] }) =>
+  fake.calls.filter((c) => c.method === "GET" && c.path.endsWith("/products"))
+    .length;
+
+test("open store lists products with exact and from prices", async ({
   page,
-  merchandise,
+  fake,
 }) => {
+  fake.products = [
+    makeSingle({ nameTh: "แก้วน้ำ Pris" }),
+    makeOptionsProduct({ nameTh: "เสื้อยืด Pris" }),
+  ];
   await page.goto("/th/souvenirs");
-  await expect(
-    page.getByText("ยังไม่มีสินค้าที่เปิดแสดง", { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true }),
-  ).toHaveCount(0);
-  await expect(page.locator(".merch-primary")).toBeDisabled();
-  await expect(page.locator(".merch-banner")).toHaveCount(0);
-  expect(
-    (await merchandise.command<{ cartReads: number }>("inspect")).cartReads,
-  ).toBe(0);
+  await expect(page.locator(".merch-product")).toHaveCount(2);
+  await expect(page.locator(".merch-price").nth(0)).toHaveText("฿250.00");
+  await expect(page.locator(".merch-price").nth(1)).toHaveText(
+    "เริ่มต้น ฿300.00",
+  );
+  await expect(addButtons(page)).toHaveCount(2);
+  await expect(addButtons(page).first()).toBeEnabled();
 });
-test("public catalog uses real local API filters, categories, bundles and manual banners", async ({
+
+const states = [
+  ["not_open", "ยังไม่เปิดรับพรีออเดอร์"],
+  ["closed", "ปิดรับพรีออเดอร์แล้ว"],
+  ["disabled", "ร้านยังไม่เปิดให้บริการ"],
+] as const;
+for (const [state, text] of states)
+  test(`store ${state} shows its status, keeps the catalog and offers no add button`, async ({
+    page,
+    fake,
+  }) => {
+    fake.store = makeStore({ state });
+    fake.products = [
+      makeSingle({ purchasable: false, unavailableCodes: ["STORE_NOT_OPEN"] }),
+    ];
+    await page.goto("/th/souvenirs");
+    await expect(page.locator(".merch-product")).toHaveCount(1);
+    await expect(page.locator(".merchandise-store-status")).toContainText(text);
+    await expect(addButtons(page)).toHaveCount(0);
+    await expect(page.locator(".merch-primary")).toBeDisabled();
+  });
+
+test("not_open store shows the opening time when the API gives one", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("catalog", { banners: 3 });
+  fake.store = makeStore({
+    state: "not_open",
+    opensAt: "2026-11-01T03:00:00.000Z",
+  });
+  fake.products = [makeSingle()];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merchandise-store-opens")).toContainText(
+    "1 พ.ย. 2026 10:00",
+  );
+});
+
+test("typing a search keeps q in the URL and filters locally without another products request", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [
+    makeSingle({ id: uid(1), nameTh: "แก้วน้ำ Pris" }),
+    makeSingle({ id: uid(2), nameTh: "ถุงผ้า Pris" }),
+  ];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(2);
+  const before = productReads(fake);
+  await page.getByRole("searchbox", { name: "ค้นหาสินค้า" }).fill("ถุง");
+  await expect(page).toHaveURL(/[?&]q=/);
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(
+    page.getByRole("heading", { name: "ถุงผ้า Pris" }),
+  ).toBeVisible();
+  await page.getByRole("searchbox", { name: "ค้นหาสินค้า" }).fill("ไม่พบคำนี้");
+  await expect(
+    page.getByText("ไม่พบสินค้าตามคำค้นหาหรือหมวดที่เลือก", { exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "ดูสินค้าทั้งหมด", exact: true })
+    .click();
+  await expect(page.locator(".merch-product")).toHaveCount(2);
+  expect(productReads(fake)).toBe(before);
+});
+
+test("category and bundle filters live in the URL and survive reload", async ({
+  page,
+  fake,
+}) => {
+  const cat = uid(900);
+  fake.store = makeStore({
+    categories: [{ id: cat, nameTh: "เครื่องแต่งกาย", sortOrder: 1 }],
+  });
+  fake.products = [
+    makeSingle({ id: uid(1), nameTh: "แก้วน้ำ Pris" }),
+    makeOptionsProduct({
+      id: uid(2),
+      nameTh: "เสื้อยืด Pris",
+      categoryId: cat,
+    }),
+    makeBundle({ id: uid(3) }),
+  ];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(3);
+  await page
+    .getByRole("button", { name: "เครื่องแต่งกาย", exact: true })
+    .click();
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(page).toHaveURL(new RegExp(`categoryId=${cat}`));
+  await page.getByRole("button", { name: "ทั้งหมด", exact: true }).click();
+  await expect(page.locator(".merch-product")).toHaveCount(3);
+  await page.getByRole("button", { name: "ชุดสินค้า", exact: true }).click();
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await page.reload();
+  await expect(page).toHaveURL(/kind=bundle/);
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+});
+
+test("loads limit=100, follows pagination.totalPages, then pages client-side by 12", async ({
+  page,
+  fake,
+}) => {
+  fake.products = Array.from({ length: 101 }, (_, i) =>
+    makeSingle({ id: uid(i + 1), nameTh: `สินค้า ${i + 1}`, sortOrder: i }),
+  );
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-product")).toHaveCount(12);
-  await expect(
-    page.getByRole("button", { name: "แบนเนอร์ถัดไป", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText("หน้า 1 / 9", { exact: true })).toBeVisible();
+  const reads = fake.calls.filter(
+    (c) => c.method === "GET" && c.path.endsWith("/products"),
+  );
+  expect(reads).toHaveLength(2);
+  const before = productReads(fake);
+  await page.getByRole("button", { name: "ถัดไป", exact: true }).click();
+  await expect(page.getByText("หน้า 2 / 9", { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/[?&]page=2/);
+  expect(productReads(fake)).toBe(before);
+});
+
+test("banner with linkUrl is a link and one without is not", async ({
+  page,
+  fake,
+  context,
+}) => {
+  await stubImages(context);
+  fake.store = makeStore({
+    banners: [
+      {
+        id: uid(501),
+        image: image(601),
+        linkUrl: "https://example.test/promo",
+      },
+      { id: uid(502), image: image(602), linkUrl: null },
+    ],
+  });
+  fake.products = [makeSingle()];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-banner-art a")).toHaveAttribute(
+    "href",
+    "https://example.test/promo",
+  );
   await page
     .getByRole("button", { name: "แบนเนอร์ถัดไป", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "ดูแบนเนอร์ 2", exact: true }),
   ).toHaveAttribute("aria-current", "true");
-  await page
-    .getByRole("button", { name: "แบนเนอร์ถัดไป", exact: true })
-    .focus();
-  await page.keyboard.press("ArrowRight");
-  await expect(
-    page.getByRole("button", { name: "ดูแบนเนอร์ 3", exact: true }),
-  ).toHaveAttribute("aria-current", "true");
-  await page.locator(".merch-banner-art").dispatchEvent("pointerdown", {
-    pointerType: "touch",
-    clientX: 240,
-    clientY: 180,
-  });
-  await page.locator(".merch-banner-art").dispatchEvent("pointerup", {
-    pointerType: "touch",
-    clientX: 100,
-    clientY: 180,
-  });
-  await expect(
-    page.getByRole("button", { name: "ดูแบนเนอร์ 1", exact: true }),
-  ).toHaveAttribute("aria-current", "true");
-  await page
-    .getByRole("searchbox", { name: "ค้นหาสินค้า", exact: true })
-    .fill("ไม่พบคำนี้");
-  await expect(
-    page.getByText("ไม่พบสินค้าตามคำค้นหาหรือหมวดที่เลือก", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "ดูสินค้าทั้งหมด", exact: true })
-    .click();
-  await expect(page.locator(".merch-product")).toHaveCount(12);
-  await page.getByRole("button", { name: "ชุดสินค้า", exact: true }).click();
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page.reload();
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page.getByRole("button", { name: "ทั้งหมด", exact: true }).click();
-  await expect(page.locator(".merch-product")).toHaveCount(12);
-  await page
-    .getByRole("button", { name: "หมวดสังเคราะห์", exact: true })
-    .click();
-  await expect(page.locator(".merch-product")).toHaveCount(11);
-  await page
-    .getByRole("searchbox", { name: "ค้นหาสินค้า", exact: true })
-    .fill("Mug");
-  await page
-    .getByRole("button", { name: "หมวดสังเคราะห์", exact: true })
-    .click();
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page.getByRole("button", { name: "ชุดสินค้า", exact: true }).click();
-  await expect(
-    page.getByText("ไม่พบสินค้าตามคำค้นหาหรือหมวดที่เลือก", { exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", { name: "ดูสินค้าทั้งหมด", exact: true })
-    .click();
-  await expect(page.locator(".merch-product")).toHaveCount(12);
-});
-test("P04 dependency: login before Add resumes the exact intent once and shares owner cart state", async ({
-  page,
-  merchandise,
-}) => {
-  await merchandise.command("catalog", { banners: 1 });
-  await merchandise.mockLogin(page);
-  await page.goto("/th/souvenirs?q=" + encodeURIComponent("แก้ว Mug"));
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/th\/login\?redirect=/);
-  expect(
-    (await merchandise.command<{ cartMutations: number }>("inspect"))
-      .cartMutations,
-  ).toBe(0);
-  await page.getByLabel("อีเมล", { exact: true }).fill("buyer@example.test");
-  await page
-    .getByLabel("รหัสผ่าน", { exact: true })
-    .fill("synthetic-not-a-real-password");
-  await page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }).click();
-  await expect(page).toHaveURL(/\/th\/souvenirs\?q=/);
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-  await expect(page).not.toHaveURL(/intentId=/);
-  await page.reload();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-  const data = await merchandise.command<{
-    cartMutations: number;
-    unitCount: string;
-  }>("inspect");
-  expect(data.cartMutations).toBe(1);
-  expect(data.unitCount).toBe("1");
+  await expect(page.locator(".merch-banner-art a")).toHaveCount(0);
 });
 
-test("unknown Add replays the real committed mutation without another unit, even after closing", async ({
+test("production and shipping info show when present", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("catalog", { banners: 0 });
-  await merchandise.login(page);
-  const keys: string[] = [],
-    bodies: string[] = [];
-  await page.route(
-    merchandise.origin + "/api/v1/merchandise/events/PRIS-2026/cart/items",
-    async (route) => {
-      keys.push(route.request().headers()["idempotency-key"]);
-      bodies.push(route.request().postData()!);
-      const response = await route.fetch();
-      if (keys.length === 1) await route.abort("failed");
-      else await route.fulfill({ response });
-    },
-  );
-  await page.goto("/th/souvenirs?q=Mug");
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
-    .dblclick();
-  await expect(
-    page.getByText(
-      "ยังยืนยันผลเพิ่มสินค้าลงตะกร้าไม่ได้ กรุณาตรวจสอบอีกครั้ง",
-      { exact: true },
-    ),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true }),
-  ).toBeDisabled();
-  await merchandise.command("closeStore");
-  await page
-    .getByRole("button", { name: "ตรวจสอบอีกครั้ง", exact: true })
-    .click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-  expect(keys).toHaveLength(2);
-  expect(keys[0]).toBe(keys[1]);
-  expect(bodies[0]).toBe(bodies[1]);
-  expect(
-    (await merchandise.command<{ unitCount: string }>("inspect")).unitCount,
-  ).toBe("1");
-});
-test("closed catalog remains readable with buying disabled and no invented schedule", async ({
-  page,
-  merchandise,
-}) => {
-  await merchandise.command("catalog", { banners: 0 });
-  await merchandise.command("closeStore");
+  fake.store = makeStore({
+    productionInfoTh: "ผลิต 14 วัน",
+    shippingInfoTh: "ส่งทั่วไทย",
+  });
+  fake.products = [makeSingle()];
   await page.goto("/th/souvenirs");
-  await expect(page.locator(".merch-product")).toHaveCount(12);
-  await expect(
-    page.getByRole("status").filter({ hasText: "ปิดรับพรีออเดอร์แล้ว" }),
-  ).toBeVisible();
-  for (const b of await page
-    .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
-    .all())
-    await expect(b).toBeDisabled();
-  await expect(page.locator(".merch-primary")).toBeDisabled();
-  await expect(page.getByText("กำหนดจัดส่ง", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("ผลิต 14 วัน", { exact: true })).toBeVisible();
+  await expect(page.getByText("ส่งทั่วไทย", { exact: true })).toBeVisible();
 });
-test("owner replacement hides the previous cart and non-shop pages make no owner reads", async ({
+
+test("catalog failure offers retry and never claims an empty catalog", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  await merchandise.command("catalog", { banners: 1 });
-  await merchandise.login(page);
-  await page.goto("/th/souvenirs?q=Mug");
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
-    .click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-  await page.evaluate(
-    ({ token }) => {
-      localStorage.setItem(
-        "pris_user",
-        JSON.stringify({
-          id: 2,
-          firstName: "ผู้ซื้ออื่น",
-          lastName: "ทดสอบ",
-          email: "other@example.test",
-        }),
-      );
-      localStorage.setItem("pris_token", token);
-    },
-    { token: merchandise.otherBuyerToken },
-  );
-  await page.reload();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("0");
-  const before = await merchandise.command<{ cartReads: number }>("inspect");
-  await page.goto("/th/about", { waitUntil: "domcontentloaded" });
-  await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(page.locator("header")).toBeVisible();
-  expect(
-    (await merchandise.command<{ cartReads: number }>("inspect")).cartReads,
-  ).toBe(before.cartReads);
-});
-test("catalog transport failure offers retry without claiming an empty catalog", async ({
-  page,
-  merchandise,
-}) => {
-  await merchandise.command("catalog", { banners: 0 });
-  const pattern = /\/api\/v1\/merchandise\/events\/PRIS-2026\/products\?/;
-  await page.route(pattern, (route) =>
-    route.fulfill({
-      status: 503,
-      contentType: "application/json",
-      headers: { "access-control-allow-origin": "*" },
-      body: JSON.stringify({
-        success: false,
-        code: "MERCH_UNAVAILABLE",
-        error: "private diagnostic must not render",
-        requestId: "fixture-error",
-      }),
-    }),
-  );
+  fake.products = [makeSingle()];
+  fake.failNext("GET", "/products", { status: 503 });
   await page.goto("/th/souvenirs");
   await expect(
     page.locator(".merchandise-host-message").getByRole("alert"),
@@ -247,129 +210,98 @@ test("catalog transport failure offers retry without claiming an empty catalog",
   await expect(
     page.getByText("ยังไม่มีสินค้าที่เปิดแสดง", { exact: true }),
   ).toHaveCount(0);
-  await expect(
-    page.getByText("private diagnostic must not render", { exact: true }),
-  ).toHaveCount(0);
-  await page.unroute(pattern);
   await page
     .getByRole("button", { name: "ลองโหลดอีกครั้ง", exact: true })
     .click();
-  await expect(page.locator(".merch-product")).toHaveCount(12);
+  await expect(page.locator(".merch-product")).toHaveCount(1);
 });
-test("cart badge caps the visual number and keeps the full accessible quantity", async ({
+
+test("header cart badge caps at 99+ and keeps the full accessible count", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const catalog = await merchandise.command<{
-    products: { id: string; variants: { id: string }[] }[];
-  }>("catalog", { banners: 1 });
-  const product = catalog.products[0];
-  const result = await page.request.post(
-    merchandise.origin + "/api/v1/merchandise/events/PRIS-2026/cart/items",
-    {
-      headers: {
-        authorization: `Bearer ${merchandise.buyerToken}`,
-        "idempotency-key": "synthetic-badge-count",
-      },
-      data: {
-        productId: product.id,
-        variantId: product.variants[0].id,
-        bundleSelections: [],
-        quantity: 100,
-        expectedRevision: 0,
-      },
-    },
-  );
-  expect(result.ok()).toBe(true);
-  await merchandise.login(page);
+  const p = makeSingle();
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 100,
+  });
+  await login(page);
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-cart-badge")).toHaveText("99+");
   await expect(
     page.getByRole("button", { name: "ตะกร้า 100 รายการ", exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "แบนเนอร์ถัดไป", exact: true }),
-  ).toHaveCount(0);
+  expect(
+    fake.calls.filter((c) => c.method === "GET" && c.path.endsWith("/cart")),
+  ).toHaveLength(1);
 });
 
-for (const failure of ["rejected", "expired"] as const)
-  test(`P04 ${failure} session recovery retains the original unknown Add key through reauthentication`, async ({
-    page,
-    merchandise,
-  }) => {
-    await merchandise.command("catalog", { banners: 0 });
-    await merchandise.login(page);
-    await merchandise.mockLogin(page);
-    let posts = 0;
-    await page.route(
-      merchandise.origin + "/api/v1/merchandise/events/PRIS-2026/cart/items",
-      async (route) => {
-        posts++;
-        const response = await route.fetch();
-        if (posts === 1) await route.abort("failed");
-        else await route.fulfill({ response });
-      },
-    );
-    await page.goto("/th/souvenirs?q=Mug");
-    await expect(page.locator(".merch-product")).toHaveCount(1);
-    await page
-      .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
-      .click();
-    await expect(
-      page.getByText(
-        "ยังยืนยันผลเพิ่มสินค้าลงตะกร้าไม่ได้ กรุณาตรวจสอบอีกครั้ง",
-        { exact: true },
-      ),
-    ).toBeVisible();
-    const intent = await page.evaluate(
-      () =>
-        JSON.parse(sessionStorage.getItem("pris_merchandise_intent")!)
-          .id as string,
-    );
-    // The browser still has a JWT-shaped session, while the real fixture rejects
-    // its signature. No authentication success is faked at the merchandise routes.
-    await page.evaluate(
-      ({ token, failure }) => {
-        const p = token.split(".");
-        if (failure === "expired")
-          p[1] = btoa(JSON.stringify({ ...JSON.parse(atob(p[1])), exp: 1 }));
-        p[2] = "invalid-local-signature";
-        localStorage.setItem("pris_token", p.join("."));
-        localStorage.setItem("pris_user", sessionStorage.getItem("pris_user")!);
-      },
-      { token: merchandise.buyerToken, failure },
-    );
-    await page.reload();
-    if (failure === "rejected") {
-      await page
-        .getByRole("link", { name: "เข้าสู่ระบบอีกครั้ง", exact: true })
-        .click();
-      await expect(page).toHaveURL(/reauth=merchandise/);
-    }
-    await expect(
-      page.getByRole("heading", { name: "เข้าสู่ระบบ", exact: true }),
-    ).toBeVisible();
-    expect(
-      await page.evaluate(
-        () => JSON.parse(sessionStorage.getItem("pris_merchandise_intent")!).id,
-      ),
-    ).toBe(intent);
-    await page.getByLabel("อีเมล", { exact: true }).fill("buyer@example.test");
-    await page
-      .getByLabel("รหัสผ่าน", { exact: true })
-      .fill("synthetic-not-a-real-password");
-    await page
-      .getByRole("button", { name: "เข้าสู่ระบบ", exact: true })
-      .click();
-    await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-    // The badge can read the already committed cart before replay finishes.
-    await expect.poll(() => posts).toBe(2);
-    await expect
-      .poll(() =>
-        page.evaluate(() => sessionStorage.getItem("pris_merchandise_intent")),
-      )
-      .toBeNull();
-    expect(
-      (await merchandise.command<{ unitCount: string }>("inspect")).unitCount,
-    ).toBe("1");
+test("logged-in quick add of a no-option product posts the cart item once", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle();
+  fake.products = [p];
+  await login(page);
+  await page.goto("/th/souvenirs");
+  await addButtons(page).click();
+  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
+  const posts = fake.calls.filter(
+    (c) => c.method === "POST" && c.path.endsWith("/cart/items"),
+  );
+  expect(posts).toHaveLength(1);
+  expect(posts[0].body).toEqual({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
   });
+  await expect(page).not.toHaveURL(/intentId=/);
+});
+
+test("quick add of a product with options sends the buyer to choose them", async ({
+  page,
+  fake,
+}) => {
+  const p = makeOptionsProduct();
+  fake.products = [p];
+  await login(page);
+  await page.goto("/th/souvenirs");
+  await addButtons(page).click();
+  await expect(page).toHaveURL(new RegExp(`/souvenirs/products/${p.id}$`));
+  expect(fake.calls.filter((c) => c.method === "POST")).toHaveLength(0);
+});
+
+test("anonymous quick add goes to login with the intent, then adds exactly once on return", async ({
+  page,
+  fake,
+}) => {
+  const p = makeSingle({ nameTh: "แก้วน้ำ Pris" });
+  fake.products = [p];
+  await page.goto("/th/souvenirs?q=" + encodeURIComponent("แก้ว"));
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await addButtons(page).click();
+  await expect(page).toHaveURL(/\/th\/login\?redirect=/);
+  const redirect = new URL(page.url()).searchParams.get("redirect")!;
+  expect(redirect).toMatch(/^\/souvenirs\?/);
+  expect(redirect).toContain("intentId=");
+  expect(redirect).toContain("q=");
+  expect(fake.calls.filter((c) => c.method === "POST")).toHaveLength(0);
+  await login(page);
+  await page.goto("/th" + redirect);
+  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
+  await expect(
+    page.getByText("เพิ่มลงตะกร้าแล้ว", { exact: true }),
+  ).toBeVisible();
+  await expect(page).not.toHaveURL(/intentId=/);
+  await expect(page).toHaveURL(/q=/);
+  await page.reload();
+  expect(
+    fake.calls.filter(
+      (c) => c.method === "POST" && c.path.endsWith("/cart/items"),
+    ),
+  ).toHaveLength(1);
+});

@@ -1,8 +1,10 @@
 import type {
   BundleSelection,
+  CartDto,
   CartLine,
   Minor,
   ProductDto,
+  StoreDto,
   VariantDto,
 } from "../types/merchandise";
 
@@ -55,7 +57,7 @@ export function parseQuantity(value: string): number | null {
     : null;
 }
 
-function variantText(v: VariantDto | undefined | null): string {
+export function variantLabel(v: VariantDto | undefined | null): string {
   if (!v) return "";
   const parts: string[] = [];
   if (v.sizeTh) parts.push(`ไซซ์ ${v.sizeTh}`);
@@ -67,17 +69,57 @@ export function describeLine(line: CartLine): string {
   const p = line.product;
   if (!p) return "";
   if (p.kind === "single") {
-    return variantText(p.variants.find((v) => v.id === line.variantId));
+    return variantLabel(p.variants.find((v) => v.id === line.variantId));
   }
   return p.components
     .map((c) => {
       let variant: VariantDto | null | undefined = c.fixedVariant;
       if (c.mode === "selectable") {
-        const chosen = line.bundleSelections.find((b) => b.componentId === c.id);
+        const chosen = line.bundleSelections.find(
+          (b) => b.componentId === c.id,
+        );
         variant = c.allowedVariants.find((v) => v.id === chosen?.variantId);
       }
-      const opt = variantText(variant);
+      const opt = variantLabel(variant);
       return `${c.nameTh} × ${c.quantityPerBundle}${opt ? ` (${opt})` : ""}`;
     })
     .join(", ");
+}
+
+const storeText: Record<StoreDto["state"], string> = {
+  not_open: "ยังไม่เปิดรับพรีออเดอร์",
+  closed: "ปิดรับพรีออเดอร์แล้ว",
+  disabled: "ร้านยังไม่เปิดให้บริการ",
+  open: "ยังไม่เปิดรับพรีออเดอร์",
+};
+
+/** One Thai message per product `unavailableCodes` / cart `issueCodes` entry. */
+export function unavailableMessage(
+  code: string,
+  storeState: StoreDto["state"],
+): string {
+  switch (code) {
+    case "STORE_NOT_OPEN":
+      return storeText[storeState];
+    case "PRODUCT_DISABLED":
+      return "สินค้านี้ปิดการขายชั่วคราว";
+    case "VARIANT_DISABLED":
+      return "ตัวเลือกนี้ปิดการขาย";
+    case "COMPONENT_UNAVAILABLE":
+      return "สินค้าในชุดบางรายการปิดการขาย";
+    case "PRODUCT_MISSING":
+      return "สินค้านี้ไม่มีแล้ว";
+    default:
+      return "สินค้านี้ไม่พร้อมขาย";
+  }
+}
+
+/** Checkout needs an open store, a non-empty valid cart and server amounts. */
+export function canCheckout(cart: CartDto, store: StoreDto): boolean {
+  return (
+    store.state === "open" &&
+    cart.items.length > 0 &&
+    cart.items.every((line) => line.valid) &&
+    cart.amounts !== null
+  );
 }

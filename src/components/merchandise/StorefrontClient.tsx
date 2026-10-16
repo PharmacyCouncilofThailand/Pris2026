@@ -9,33 +9,34 @@ import {
   type PointerEvent,
 } from "react";
 import { useSearchParams } from "next/navigation";
-import { StorefrontView } from "@conference/merchandise-storefront-view";
+import toast from "react-hot-toast";
 import { Link, useRouter } from "@/i18n/routing";
 import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseResource } from "./useMerchandiseResource";
 import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
-import { merchandiseFailure } from "@/lib/merchandiseApi";
+import { StorefrontView } from "./StorefrontView";
+import { filterCatalog } from "@/lib/merchandiseCatalog";
+import { formatMerchandiseTime } from "@/lib/merchandiseFormat";
+import {
+  savePurchaseIntent,
+  type PurchaseIntent,
+} from "@/lib/merchandiseIntent";
 import {
   merchandiseLoginPath,
   merchandiseReturnPath,
 } from "@/lib/merchandiseRoutes";
 import {
-  purchaseIntentReturnPath,
-  writePurchaseIntent,
-  type IntentResult,
-  type PurchaseIntent,
-} from "@/lib/merchandiseIntent";
-import toast from "react-hot-toast";
+  defaultSelection,
+  selectionComplete,
+  unavailableMessage,
+} from "@/lib/merchandiseSelection";
+import type { ProductDto } from "@/types/merchandise";
 
-const storeLabels = {
-  unconfigured: "ยังไม่กำหนดช่วงเปิดรับพรีออเดอร์",
-  disabled: "ปิดรับคำสั่งซื้อในขณะนี้",
-  not_open: "ยังไม่ถึงเวลาเปิดรับพรีออเดอร์",
-  closed: "ปิดรับพรีออเดอร์แล้ว",
-  open: "",
-} satisfies Record<import("@/types/merchandise").StoreState, string>;
+const PAGE_SIZE = 12;
+const MAX_PAGES = 50;
+
 export default function StorefrontClient() {
-  const { store, api, eventCode, token, cart } = useMerchandise(),
+  const { store, api, eventCode, token } = useMerchandise(),
     router = useRouter(),
     params = useSearchParams(),
     search = params.toString();
@@ -88,80 +89,50 @@ export default function StorefrontClient() {
     const timer = setTimeout(() => change({ q: query }), 200);
     return () => clearTimeout(timer);
   }, [query, filters.query, change]);
-  const eventId = store.data?.eventId;
-  const scope = useMemo(
-    () =>
-      eventId
-        ? {
-            eventId,
-            eventCode,
-            q: filters.query,
-            categoryId: filters.categoryId,
-            kind: filters.kind,
-            page: filters.page,
-          }
-        : null,
-    [
-      eventId,
-      eventCode,
-      filters.query,
-      filters.categoryId,
-      filters.kind,
-      filters.page,
-    ],
-  );
-  const load = useCallback(
+
+  // Search and filters run on the full published catalog, loaded once (spec 6.1).
+  const loadAll = useCallback(
     async (signal: AbortSignal) => {
-      const result = await api.products(
+      const first = await api.products(
         eventCode,
+        { limit: 100, page: 1 },
+        signal,
+      );
+      const items: ProductDto[] = [...first.items];
+      const pages = Math.min(first.pagination.totalPages, MAX_PAGES);
+      for (let page = 2; page <= pages; page++)
+        items.push(
+          ...(await api.products(eventCode, { limit: 100, page }, signal))
+            .items,
+        );
+      return items;
+    },
+    [api, eventCode],
+  );
+  const catalog = useMerchandiseResource(eventCode, loadAll);
+  const view = useMemo(
+    () =>
+      filterCatalog(
+        catalog.data ?? [],
         {
-          search: filters.query || undefined,
+          q: query,
           categoryId: filters.categoryId,
           kind: filters.kind ?? undefined,
           page: filters.page,
-          limit: 24,
         },
-        signal,
-      );
-      if (result.items.some((p) => p.eventId !== eventId))
-        throw merchandiseFailure(0, "MERCH_BAD_RESPONSE");
-      return result;
-    },
-    [
-      api,
-      eventCode,
-      eventId,
-      filters.query,
-      filters.categoryId,
-      filters.kind,
-      filters.page,
-    ],
+        PAGE_SIZE,
+      ),
+    [catalog.data, query, filters.categoryId, filters.kind, filters.page],
   );
-  const products = useMerchandiseResource(scope, load);
-  const [resolution, setResolution] = useState<{
-    id: string;
-    uncertain: boolean;
-  } | null>(null);
-  const addStarted = useRef<string | null>(null);
-  const pending = useCallback(
-    (id: string) => setResolution({ id, uncertain: true }),
-    [],
-  );
-  const resolved = useCallback((id: string, result: IntentResult) => {
-    const uncertain = result.kind === "error" && result.uncertain;
-    if (!uncertain) addStarted.current = null;
-    setResolution({ id, uncertain });
-  }, []);
-  const { reload: reloadCart } = cart;
-  const added = useCallback(() => reloadCart(), [reloadCart]);
-  const purchaseBusy = Boolean(
-    token &&
-    filters.intentId &&
-    (resolution?.id !== filters.intentId || resolution.uncertain),
-  );
+
+  const addStarted = useRef(false);
+  useEffect(() => {
+    if (!filters.intentId) addStarted.current = false;
+  }, [filters.intentId]);
+  const purchaseBusy = Boolean(token && filters.intentId);
   const canBuy =
     store.data?.state === "open" &&
-    Boolean(products.data?.items.some((product) => product.purchasable));
+    Boolean(catalog.data?.some((product) => product.purchasable));
   const viewRoot = useRef<HTMLDivElement>(null),
     swipe = useRef<{ x: number; y: number } | null>(null);
   useLayoutEffect(() => {
@@ -179,7 +150,7 @@ export default function StorefrontClient() {
       observer.disconnect();
       document.documentElement.style.removeProperty("--merch-host-bar-height");
     };
-  }, [store.status, products.status]);
+  }, [store.status, catalog.status]);
   const startSwipe = (e: PointerEvent<HTMLDivElement>) => {
     if (
       e.pointerType === "touch" &&
@@ -200,18 +171,18 @@ export default function StorefrontClient() {
         )
         ?.click();
   };
-  if (!store.data || products.error)
+  if (!store.data || catalog.error)
     return (
       <main
         className="merchandise-host-message"
         aria-busy={store.status === "loading"}
       >
-        {store.error || products.error ? (
+        {store.error || catalog.error ? (
           <>
-            <p role="alert">{(store.error ?? products.error)!.message}</p>
+            <p role="alert">{(store.error ?? catalog.error)!.message}</p>
             <button
               className="mt-4 min-h-11 rounded-xl bg-[#0055ff] px-5 font-semibold text-white"
-              onClick={store.error ? store.reload : products.reload}
+              onClick={store.error ? store.reload : catalog.reload}
             >
               ลองโหลดอีกครั้ง
             </button>
@@ -221,27 +192,39 @@ export default function StorefrontClient() {
         )}
       </main>
     );
+  const state = store.data.state;
   const add = (productId: string) => {
     if (addStarted.current) return;
+    const product = catalog.data?.find((p) => p.id === productId);
+    if (!product) return;
+    const selection = defaultSelection(product);
+    if (!selectionComplete(product, selection)) {
+      router.push(`/souvenirs/products/${productId}`);
+      return;
+    }
     try {
       const destination = new URL(
         canonical ?? "/souvenirs",
         "https://internal.invalid",
       );
-      destination.searchParams.delete("intentId");
+      const id = crypto.randomUUID();
+      destination.searchParams.set("intentId", id);
+      const returnPath = destination.pathname + destination.search;
       const intent: PurchaseIntent = {
-        id: crypto.randomUUID(),
+        id,
         eventCode,
-        returnPath: destination.pathname + destination.search,
-        selection: { productId, variantId: null, bundleSelections: [] },
+        returnPath,
+        productId,
+        selection,
         quantity: 1,
       };
-      addStarted.current = intent.id;
-      writePurchaseIntent(window.sessionStorage, intent);
-      const path = purchaseIntentReturnPath(intent);
-      router.push(token ? path : merchandiseLoginPath(path), { scroll: false });
+      savePurchaseIntent(window.sessionStorage, intent);
+      addStarted.current = true;
+      router.push(token ? returnPath : merchandiseLoginPath(returnPath), {
+        scroll: false,
+      });
     } catch {
-      addStarted.current = null;
+      addStarted.current = false;
       toast.error(
         "ไม่สามารถเก็บรายการที่เลือกได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์",
       );
@@ -251,21 +234,24 @@ export default function StorefrontClient() {
     change(pendingQuery.current ? patch : { q: query, ...patch });
   const header = (
     <>
-      {store.data.state !== "open" && (
+      {state !== "open" && (
         <p className="merchandise-store-status" role="status">
-          {storeLabels[store.data.state]}
+          {unavailableMessage("STORE_NOT_OPEN", state)}
         </p>
       )}
-      {filters.kind === "single" && (
-        <p className="merchandise-store-status">แสดงเฉพาะสินค้ารายชิ้น</p>
+      {state === "not_open" && store.data.opensAt && (
+        <p className="merchandise-store-note merchandise-store-opens">
+          เปิดรับ {formatMerchandiseTime(store.data.opensAt)}
+        </p>
+      )}
+      {store.data.productionInfoTh && (
+        <p className="merchandise-store-note">{store.data.productionInfoTh}</p>
+      )}
+      {store.data.shippingInfoTh && (
+        <p className="merchandise-store-note">{store.data.shippingInfoTh}</p>
       )}
       <div className="mx-auto max-w-[1600px] px-4">
-        <MerchandiseIntentResume
-          intentId={filters.intentId}
-          onAdded={added}
-          onResult={resolved}
-          onPending={pending}
-        />
+        <MerchandiseIntentResume intentId={filters.intentId} />
       </div>
     </>
   );
@@ -279,27 +265,33 @@ export default function StorefrontClient() {
       }}
     >
       <StorefrontView
-        mode="storefront"
         store={store.data}
-        products={(products.data?.items ?? []).map((product) =>
-          store.data!.state === "open"
-            ? product
-            : { ...product, purchasable: false },
-        )}
+        products={view.items}
         headerSlot={header}
         query={query}
         activeCategory={filters.categoryId ?? "all"}
         activeKind={filters.kind === "bundle" ? "bundle" : "all"}
-        busy={products.status === "loading" || purchaseBusy}
+        busy={catalog.status === "loading" || purchaseBusy}
         errorMessage={null}
-        noMatches={Boolean(filters.query || filters.categoryId || filters.kind)}
-        pagination={products.data?.pagination ?? null}
+        noMatches={Boolean(query || filters.categoryId || filters.kind)}
+        pagination={
+          catalog.data
+            ? {
+                page: view.page,
+                limit: PAGE_SIZE,
+                total: view.total,
+                totalPages: view.totalPages,
+              }
+            : null
+        }
         primaryLabel={
           canBuy
             ? token
               ? "ดูตะกร้า"
               : "เข้าสู่ระบบเพื่อสั่งซื้อ"
-            : storeLabels[store.data.state] || "ยังไม่มีสินค้าที่เปิดขาย"
+            : state !== "open"
+              ? unavailableMessage("STORE_NOT_OPEN", state)
+              : "ยังไม่มีสินค้าที่เปิดขาย"
         }
         primaryDisabled={!canBuy}
         onQuery={(value) => {
@@ -316,9 +308,7 @@ export default function StorefrontClient() {
         onKind={(value) =>
           withDraft({ kind: value === "all" ? null : "bundle" })
         }
-        onPage={(page) =>
-          withDraft({ page: String(query === filters.query ? page : 1) })
-        }
+        onPage={(page) => withDraft({ page: String(page) })}
         onProduct={(id) => router.push(`/souvenirs/products/${id}`)}
         onAdd={add}
         onPrimary={() =>
@@ -328,7 +318,7 @@ export default function StorefrontClient() {
               : merchandiseLoginPath(canonical ?? "/souvenirs"),
           )
         }
-        onRetry={products.reload}
+        onRetry={catalog.reload}
       />
       {token && (
         <div className="merchandise-history-link">

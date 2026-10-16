@@ -3,66 +3,77 @@ import { useState } from "react";
 import Image from "next/image";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import type { CartLine, LineSelection } from "@/types/merchandise";
-import { cartIssueMessage, cartLineOptions } from "@/lib/merchandiseCart";
+import type {
+  CartItemPatch,
+  CartLine,
+  StoreDto,
+  VariantDto,
+} from "@/types/merchandise";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
 import {
-  initialSelection,
+  describeLine,
   parseQuantity,
-  selectionReady,
+  selectionComplete,
+  unavailableMessage,
   variantLabel,
+  type Selection,
 } from "@/lib/merchandiseSelection";
 import VariantSelector from "./VariantSelector";
 import BundleSelector from "./BundleSelector";
+
+const MAX_QUANTITY = 9999;
+
 export default function CartRow({
   line,
+  storeState,
   busy,
   onUpdate,
   onRemove,
   priceChange,
 }: {
   line: CartLine;
+  storeState: StoreDto["state"];
   busy: boolean;
-  onUpdate(quantity: number, selection?: LineSelection): void;
+  onUpdate(patch: CartItemPatch): void;
   onRemove(): void;
-  priceChange?: { from: string; to: string };
+  priceChange?: { from: number; to: number };
 }) {
   const product = line.product,
     image = product?.images[0];
   const name = product?.nameTh ?? "สินค้าที่ไม่พร้อมแสดง";
   const [quantity, setQuantity] = useState(String(line.quantity));
-  const [selection, setSelection] = useState<LineSelection>(() => ({
-    productId: line.productId,
+  const [selection, setSelection] = useState<Selection>(() => ({
     variantId: line.variantId,
-    bundleSelections: [
-      ...(product
-        ? initialSelection(product).bundleSelections.filter(
-            (c) =>
-              !line.bundleSelections.some(
-                (s) => s.componentId === c.componentId,
-              ),
-          )
-        : []),
-      ...line.bundleSelections,
-    ],
+    bundleSelections: line.bundleSelections,
   }));
-  const count = parseQuantity(quantity);
+  const parsed = parseQuantity(quantity),
+    count = parsed !== null && parsed <= MAX_QUANTITY ? parsed : null;
   const editOptions =
     product &&
     (product.kind === "bundle"
-      ? product.components.some((c) => c.optionMode === "selectable")
-      : product.optionMode !== "none");
+      ? product.components.some((c) => c.mode === "selectable")
+      : product.hasOptions);
   const saveOptions = () => {
-    if (!product || !selectionReady(product, selection)) return;
-    onUpdate(line.quantity, {
-      ...selection,
-      bundleSelections: selection.bundleSelections.filter((s) =>
-        product.components.some(
-          (c) => c.id === s.componentId && c.optionMode === "selectable",
-        ),
-      ),
-    });
+    if (!product || !selectionComplete(product, selection)) return;
+    onUpdate(
+      product.kind === "bundle"
+        ? { bundleSelections: selection.bundleSelections }
+        : { variantId: selection.variantId },
+    );
   };
+  const issues = line.valid
+    ? []
+    : [
+        ...new Set(
+          (product === null
+            ? ["PRODUCT_MISSING"]
+            : line.issueCodes.length
+              ? line.issueCodes
+              : ["UNKNOWN"]
+          ).map((code) => unavailableMessage(code, storeState)),
+        ),
+      ];
+  const options = product?.kind === "single" ? describeLine(line) : "";
   return (
     <article
       className={`merch-cart-row${line.valid ? "" : " merch-cart-row-invalid"}`}
@@ -74,16 +85,20 @@ export default function CartRow({
             className="merch-cart-image"
             unoptimized
             src={image.url}
-            alt={image.altTh}
+            alt={name}
             width={80}
             height={92}
           />
         )}
         <div className="merch-cart-row-detail">
           <h2>
-            <Link href={`/souvenirs/products/${line.productId}`}>{name}</Link>
+            {product ? (
+              <Link href={`/souvenirs/products/${line.productId}`}>{name}</Link>
+            ) : (
+              name
+            )}
           </h2>
-          <p className="merch-cart-muted">{cartLineOptions(line)}</p>
+          {options && <p className="merch-cart-muted">{options}</p>}
           <p className="merch-cart-unit-price">
             {line.unitPriceMinor === null
               ? "—"
@@ -102,17 +117,20 @@ export default function CartRow({
               aria-label="ส่วนประกอบต่อหนึ่งชุด"
             >
               {product.components.map((c) => {
-                const id =
-                  c.optionMode === "fixed"
-                    ? c.fixedVariantId
-                    : line.bundleSelections.find((s) => s.componentId === c.id)
-                        ?.variantId;
-                const variant = c.allowedVariants.find((v) => v.id === id);
+                let variant: VariantDto | null | undefined = c.fixedVariant;
+                if (c.mode === "selectable") {
+                  const chosen = line.bundleSelections.find(
+                    (s) => s.componentId === c.id,
+                  );
+                  variant = c.allowedVariants.find(
+                    (v) => v.id === chosen?.variantId,
+                  );
+                }
                 return (
                   <li key={c.id}>
                     {c.nameTh} × {c.quantityPerBundle} ·{" "}
                     {variant
-                      ? variantLabel(variant)
+                      ? variantLabel(variant) || "กำหนดไว้ในชุด"
                       : "ตัวเลือกเดิมไม่พร้อมขาย"}
                   </li>
                 );
@@ -123,7 +141,7 @@ export default function CartRow({
             className="merch-cart-row-actions"
             onSubmit={(e) => {
               e.preventDefault();
-              if (count !== null && line.valid) onUpdate(count);
+              if (count !== null && line.valid) onUpdate({ quantity: count });
             }}
           >
             <div className="merch-cart-stepper">
@@ -131,7 +149,7 @@ export default function CartRow({
                 type="button"
                 aria-label={`ลดจำนวน ${name}`}
                 disabled={busy || !line.valid || count === null || count <= 1}
-                onClick={() => onUpdate(count! - 1)}
+                onClick={() => onUpdate({ quantity: count! - 1 })}
               >
                 <Minus size={18} aria-hidden="true" />
               </button>
@@ -151,12 +169,9 @@ export default function CartRow({
                 type="button"
                 aria-label={`เพิ่มจำนวน ${name}`}
                 disabled={
-                  busy ||
-                  !line.valid ||
-                  count === null ||
-                  count === Number.MAX_SAFE_INTEGER
+                  busy || !line.valid || count === null || count >= MAX_QUANTITY
                 }
-                onClick={() => onUpdate(count! + 1)}
+                onClick={() => onUpdate({ quantity: count! + 1 })}
               >
                 <Plus size={18} aria-hidden="true" />
               </button>
@@ -181,7 +196,7 @@ export default function CartRow({
             )}
           </form>
           {count === null && (
-            <p role="alert">กรุณาระบุจำนวนเต็มตั้งแต่ 1 ขึ้นไป</p>
+            <p role="alert">กรุณาระบุจำนวนเต็มระหว่าง 1 ถึง {MAX_QUANTITY}</p>
           )}
           <p className="merch-cart-line-total">
             รวมรายการ:{" "}
@@ -189,11 +204,11 @@ export default function CartRow({
               ? "ยังสรุปยอดไม่ได้"
               : formatMinorBaht(line.lineTotalMinor)}
           </p>
-          {!line.valid && (
-            <p className="merch-cart-issue">
-              {cartIssueMessage(line.issueCodes)}
+          {issues.map((message) => (
+            <p className="merch-cart-issue" key={message}>
+              {message}
             </p>
-          )}
+          ))}
           {editOptions && (
             <details className="merch-cart-edit">
               <summary>เปลี่ยนตัวเลือก</summary>
@@ -217,14 +232,14 @@ export default function CartRow({
               <button
                 className="merch-cart-secondary"
                 type="button"
-                disabled={busy || !selectionReady(product, selection)}
+                disabled={busy || !selectionComplete(product, selection)}
                 onClick={saveOptions}
               >
                 บันทึกตัวเลือก
               </button>
             </details>
           )}
-          {!line.valid && (
+          {!line.valid && product && (
             <Link
               className="merch-cart-secondary"
               href={`/souvenirs/products/${line.productId}`}

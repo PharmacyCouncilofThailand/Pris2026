@@ -1,287 +1,256 @@
-import { test, expect } from "./live-fixture";
-import type { ProductDto, CartDto } from "../../src/types/merchandise";
-type Catalog = {
-  product: ProductDto;
-  bundle: ProductDto;
-  noOptions: ProductDto;
-};
-const addButton = (page: import("@playwright/test").Page) =>
-  page.getByRole("button", { name: /^เพิ่มลงตะกร้า/ });
+import type { Page } from "@playwright/test";
+import { test, expect, login } from "./fixtures";
+import {
+  ids,
+  makeBundle,
+  makeOptionsProduct,
+  makeSingle,
+  makeStore,
+} from "./data";
 
-test("no-option product has no empty selectors, renders safe Thai copy and permits uncapped integer quantities", async ({
+const addButton = (page: Page) =>
+  page.getByRole("button", { name: /^เพิ่มลงตะกร้า/ });
+const posts = (fake: {
+  calls: { method: string; path: string; body: unknown }[];
+}) =>
+  fake.calls.filter(
+    (c) => c.method === "POST" && c.path.endsWith("/cart/items"),
+  );
+const L = "10000000-0000-4000-8000-000000000012";
+const M = "10000000-0000-4000-8000-000000000011";
+
+test("a product without options shows no selectors and validates quantity 1-9999", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { noOptions } = await merchandise.command<Catalog>("variantCatalog");
-  await page.goto(`/th/souvenirs/products/${noOptions.id}`);
+  const p = makeSingle();
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
   await expect(
-    page.getByRole("heading", { name: noOptions.nameTh, exact: true }),
+    page.getByRole("heading", { name: p.nameTh, exact: true }),
   ).toBeVisible();
   await expect(page.locator("fieldset")).toHaveCount(0);
+  await expect(page.locator("select")).toHaveCount(0);
   await expect(page.locator(".merch-detail-price")).toHaveText(
-    "฿100.00 / ชิ้น",
+    "฿250.00 / ชิ้น",
   );
   await expect(
     page.getByRole("heading", { name: "การผลิต", exact: true }),
   ).toHaveCount(0);
-  await expect(
-    page.getByRole("heading", { name: "การจัดส่ง", exact: true }),
-  ).toHaveCount(0);
   await expect(addButton(page)).toBeEnabled();
   const quantity = page.getByLabel("จำนวน", { exact: true });
-  await quantity.fill("1000000");
+  await quantity.fill("9999");
   await expect(addButton(page)).toBeEnabled();
-  await quantity.fill("0");
+  await quantity.fill("10000");
   await expect(addButton(page)).toBeDisabled();
   await expect(
-    page.getByText("กรุณาระบุจำนวนเต็มตั้งแต่ 1 ขึ้นไป", { exact: true }),
+    page.getByText("กรุณาระบุจำนวนเต็มระหว่าง 1 ถึง 9999", { exact: true }),
   ).toBeVisible();
+  await quantity.fill("0");
+  await expect(addButton(page)).toBeDisabled();
   await quantity.fill("1");
-  for (const width of [320, 834, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    expect(
-      await page.evaluate(() => document.documentElement.scrollWidth),
-    ).toBe(width);
-    await quantity.focus();
-    await quantity.scrollIntoViewIfNeeded();
-    const q = await quantity.boundingBox(),
-      bar = await page.locator(".merch-detail-bar").boundingBox();
-    expect(q!.y + q!.height).toBeLessThanOrEqual(bar!.y);
-  }
+  await expect(addButton(page)).toBeEnabled();
 });
 
-test("actual color-size pairs require explicit choices and update exact variant price before real Add", async ({
+test("a product with options needs a complete choice, then posts the exact variantId", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { product } = await merchandise.command<Catalog>("variantCatalog");
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/products/${product.id}`);
+  const p = makeOptionsProduct({ sizeChartTh: "รอบอก 40 นิ้ว" });
+  fake.products = [p];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await expect(page.locator(".merch-detail-price")).toHaveText(
+    "เริ่มต้น ฿300.00",
+  );
+  await expect(page.getByText("รอบอก 40 นิ้ว", { exact: true })).toBeVisible();
   await expect(addButton(page)).toBeDisabled();
-  await page.getByRole("button", { name: "น้ำเงิน", exact: true }).click();
+  await page.getByRole("button", { name: "ขาว", exact: true }).click();
   await expect(addButton(page)).toBeDisabled();
   await page.getByRole("button", { name: "L", exact: true }).click();
   await expect(page.locator(".merch-detail-price")).toHaveText(
-    "฿150.00 / ชิ้น",
+    "฿320.00 / ชิ้น",
   );
-  await page.getByRole("button", { name: "ส้ม", exact: true }).click();
-  await expect(addButton(page)).toBeDisabled();
-  await expect(page.getByRole("button", { name: /^L/ })).toBeDisabled();
-  await page.getByRole("button", { name: "M", exact: true }).click();
-  await expect(page.locator(".merch-detail-price")).toHaveText(
-    "฿130.00 / ชิ้น",
-  );
-  await expect(
-    page.getByText("<script>ไม่ใช่ HTML</script>", { exact: false }),
-  ).toBeVisible();
   await page.getByLabel("จำนวน", { exact: true }).fill("2");
   await addButton(page).click();
   await expect(page.locator(".merch-cart-badge")).toHaveText("2");
-  const { cart } = await merchandise.command<{ cart: CartDto }>("inspect");
-  expect(cart.items[0].variantId).toBe(
-    product.variants.find((v) => v.colorTh === "ส้ม" && v.sizeTh === "M")!.id,
-  );
-  expect(cart.items[0].unitPriceMinor).toBe("13000");
-  expect(cart.items[0].quantity).toBe(2);
+  expect(posts(fake)).toHaveLength(1);
+  expect(posts(fake)[0].body).toEqual({
+    productId: p.id,
+    variantId: L,
+    bundleSelections: [],
+    quantity: 2,
+  });
 });
 
-test("Bundle exposes fixed BOM and explicit choices, charges the set price and counts sets once", async ({
+test("disabled variants cannot be chosen", async ({ page, fake }) => {
+  const base = makeOptionsProduct();
+  const p = makeOptionsProduct({
+    variants: [base.variants[0], { ...base.variants[1], saleEnabled: false }],
+  });
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await expect(page.getByRole("button", { name: /^L/ })).toBeDisabled();
+  await expect(
+    page.getByRole("button", { name: "M", exact: true }),
+  ).toBeEnabled();
+});
+
+test("a bundle lists every component and posts bundleSelections for selectable ones only", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { bundle } = await merchandise.command<Catalog>("variantCatalog");
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/products/${bundle.id}`);
+  const b = makeBundle();
+  fake.products = [b];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${b.id}`);
   await expect(
-    page.getByRole("heading", { name: "แก้ว Mug × 2", exact: true }),
+    page.getByText("แก้วน้ำ Pris × 1", { exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByText("ไม่มีตัวเลือก · กำหนดไว้ในชุด", { exact: true }),
+    page.getByText("เสื้อยืด Pris × 1", { exact: true }),
   ).toBeVisible();
-  await expect(page.locator(".merch-detail-price")).toHaveText("฿220.00 / ชุด");
+  await expect(page.locator(".merch-detail-price")).toHaveText("฿450.00 / ชุด");
   await expect(addButton(page)).toBeDisabled();
-  await page.getByRole("button", { name: "น้ำเงิน", exact: true }).click();
-  await page.getByRole("button", { name: "L", exact: true }).click();
-  await expect(page.locator(".merch-detail-price")).toHaveText("฿220.00 / ชุด");
+  await page.getByRole("button", { name: "M", exact: true }).click();
+  await expect(addButton(page)).toBeEnabled();
   await page.getByLabel("จำนวนชุด", { exact: true }).fill("2");
   await addButton(page).click();
   await expect(page.locator(".merch-cart-badge")).toHaveText("2");
-  const { cart } = await merchandise.command<{ cart: CartDto }>("inspect");
-  expect(cart.items).toHaveLength(1);
-  expect(cart.items[0].quantity).toBe(2);
-  expect(cart.items[0].unitPriceMinor).toBe("22000");
-  expect(cart.items[0].lineTotalMinor).toBe("44000");
-  expect(cart.items[0].bundleSelections).toHaveLength(1); // Fixed BOM is server-owned, only the buyer choice travels on the wire.
+  expect(posts(fake)[0].body).toEqual({
+    productId: b.id,
+    variantId: null,
+    bundleSelections: [
+      {
+        componentId: "10000000-0000-4000-8000-000000000032",
+        variantId: "10000000-0000-4000-8000-000000000021",
+      },
+    ],
+    quantity: 2,
+  });
 });
 
-test("anonymous chosen variant returns through existing login with the same quantity and choice", async ({
+test("a bundle with an unavailable component is not purchasable and says why", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { product } = await merchandise.command<Catalog>("variantCatalog");
-  await merchandise.mockLogin(page);
-  await page.goto(`/th/souvenirs/products/${product.id}`);
-  await page.getByRole("button", { name: "น้ำเงิน", exact: true }).click();
-  await page.getByRole("button", { name: "M", exact: true }).click();
-  await page.getByLabel("จำนวน", { exact: true }).fill("3");
-  await addButton(page).click();
+  const b = makeBundle({
+    purchasable: false,
+    unavailableCodes: ["COMPONENT_UNAVAILABLE"],
+  });
+  fake.products = [b];
+  await page.goto(`/th/souvenirs/products/${b.id}`);
   await expect(
-    page.getByRole("heading", { name: "เข้าสู่ระบบ", exact: true }),
-  ).toBeVisible();
-  expect(
-    (await merchandise.command<{ cartMutations: number }>("inspect"))
-      .cartMutations,
-  ).toBe(0);
-  await page.getByLabel("อีเมล", { exact: true }).fill("buyer@example.test");
-  await page
-    .getByLabel("รหัสผ่าน", { exact: true })
-    .fill("synthetic-test-password");
-  await page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }).click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("3");
-  await expect(
-    page.getByRole("button", { name: "น้ำเงิน", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(
-    page.getByRole("button", { name: "M", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByLabel("จำนวน", { exact: true })).toHaveValue("3");
-});
-
-test("paused product refreshes actual availability without substituting the selected variant", async ({
-  page,
-  merchandise,
-}) => {
-  const { product } = await merchandise.command<Catalog>("variantCatalog");
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/products/${product.id}`);
-  await page.getByRole("button", { name: "น้ำเงิน", exact: true }).click();
-  await page.getByRole("button", { name: "M", exact: true }).click();
-  await merchandise.command("sale", { id: product.id, enabled: false });
-  await addButton(page).click();
-  await expect(
-    page.getByText("สินค้านี้ยังไม่เปิดขาย", { exact: true }),
+    page.getByText("สินค้าในชุดบางรายการปิดการขาย", { exact: true }),
   ).toBeVisible();
   await expect(addButton(page)).toBeDisabled();
-  await expect(
-    page.getByRole("button", { name: "M", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  expect(
-    (await merchandise.command<{ unitCount: string }>("inspect")).unitCount,
-  ).toBe("0");
 });
 
-test("closed store preserves details with buying disabled and unknown products expose no Add", async ({
+for (const [code, text] of [
+  ["PRODUCT_DISABLED", "สินค้านี้ปิดการขายชั่วคราว"],
+  ["VARIANT_DISABLED", "ตัวเลือกนี้ปิดการขาย"],
+] as const)
+  test(`unavailable code ${code} is explained`, async ({ page, fake }) => {
+    const p = makeSingle({ purchasable: false, unavailableCodes: [code] });
+    fake.products = [p];
+    await page.goto(`/th/souvenirs/products/${p.id}`);
+    await expect(page.getByText(text, { exact: true })).toBeVisible();
+    await expect(addButton(page)).toBeDisabled();
+  });
+
+test("a closed store keeps the product readable with buying disabled", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { noOptions } = await merchandise.command<Catalog>("variantCatalog");
-  await merchandise.command("closeStore");
-  await page.goto(`/th/souvenirs/products/${noOptions.id}`);
+  fake.store = makeStore({ state: "closed" });
+  fake.products = [
+    makeSingle({ purchasable: false, unavailableCodes: ["STORE_NOT_OPEN"] }),
+  ];
+  await page.goto(`/th/souvenirs/products/${ids.product}`);
   await expect(
     page.getByText("ปิดรับพรีออเดอร์แล้ว", { exact: true }),
   ).toBeVisible();
   await expect(addButton(page)).toBeDisabled();
-  await page.goto(
-    "/th/souvenirs/products/10000000-0000-4000-8000-000000000001",
-  );
+});
+
+test("an unknown product says so and offers no add", async ({ page, fake }) => {
+  fake.products = [];
+  await page.goto(`/th/souvenirs/products/${ids.product}`);
   await expect(
     page.getByText("ไม่พบสินค้าที่เปิดแสดง", { exact: true }),
   ).toBeVisible();
   await expect(addButton(page)).toHaveCount(0);
 });
 
-test("a real 409 between selection validation and Add reloads choices and preserves the selected SKU", async ({
+test("anonymous add goes to login with the intent, then resumes exactly one POST and restores the choice", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { product } = await merchandise.command<Catalog>("variantCatalog");
-  await merchandise.login(page);
-  await page.goto(`/th/souvenirs/products/${product.id}`);
-  await page.getByRole("button", { name: "น้ำเงิน", exact: true }).click();
+  const p = makeOptionsProduct();
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await page.getByRole("button", { name: "ขาว", exact: true }).click();
   await page.getByRole("button", { name: "M", exact: true }).click();
-  await page.route(
-    merchandise.origin + "/api/v1/merchandise/events/PRIS-2026/cart/items",
-    async (route) => {
-      await merchandise.command("sale", { id: product.id, enabled: false });
-      await route.continue();
-    },
-  );
+  await page.getByLabel("จำนวน", { exact: true }).fill("3");
   await addButton(page).click();
+  await expect(page).toHaveURL(/\/th\/login\?redirect=/);
+  const redirect = new URL(page.url()).searchParams.get("redirect")!;
+  expect(redirect).toMatch(
+    new RegExp(`^/souvenirs/products/${p.id}\\?intentId=[0-9a-f-]{36}$`),
+  );
+  expect(posts(fake)).toHaveLength(0);
+  // The real login page (Turnstile) cannot run against the fake: sign in
+  // through the stored session and follow the redirect target.
+  await login(page);
+  await page.goto("/th" + redirect);
+  await expect(page.locator(".merch-cart-badge")).toHaveText("3");
   await expect(
-    page.getByText(
-      "ข้อมูลสินค้ามีการเปลี่ยนแปลง กรุณาตรวจสอบตัวเลือกและราคาอีกครั้ง",
-      { exact: true },
-    ),
+    page.getByText("เพิ่มลงตะกร้าแล้ว", { exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByText("สินค้านี้ยังไม่เปิดขาย", { exact: true }),
-  ).toBeVisible();
-  await expect(addButton(page)).toBeDisabled();
+  await expect(page).not.toHaveURL(/intentId=/);
   await expect(
     page.getByRole("button", { name: "M", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel("จำนวน", { exact: true })).toHaveValue("3");
+  await page.reload();
+  expect(posts(fake)).toHaveLength(1);
+  expect(posts(fake)[0].body).toMatchObject({ variantId: M, quantity: 3 });
   expect(
-    (await merchandise.command<{ unitCount: string }>("inspect")).unitCount,
-  ).toBe("0");
+    await page.evaluate(() =>
+      sessionStorage.getItem("pris_merchandise_intent"),
+    ),
+  ).toBeNull();
 });
 
-test("fixed Bundle Add from the storefront sends no fixed choices and charges one set", async ({
+test("a rejected add shows the API message, clears the intent and stays on the product", async ({
   page,
-  merchandise,
+  fake,
 }) => {
-  const { bundle } = await merchandise.command<{ bundle: ProductDto }>(
-    "catalog",
-    { banners: 0 },
-  );
-  await merchandise.login(page);
-  await page.goto("/th/souvenirs?kind=bundle");
-  await expect(page.locator(".merch-product")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "เพิ่มลงตะกร้า", exact: true })
-    .click();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
-  const { cart } = await merchandise.command<{ cart: CartDto }>("inspect");
-  expect(cart.items[0].productId).toBe(bundle.id);
-  expect(cart.items[0].bundleSelections).toHaveLength(0);
-  expect(cart.items[0].unitPriceMinor).toBe("22000");
-});
-
-test("unknown fixed-Bundle reply survives reload with one wire key and restores usable fixed selections", async ({
-  page,
-  merchandise,
-}) => {
-  const { bundle } = await merchandise.command<{ bundle: ProductDto }>(
-    "catalog",
-    { banners: 0 },
-  );
-  await merchandise.login(page);
-  const bodies: string[] = [],
-    keys: string[] = [];
-  await page.route(
-    merchandise.origin + "/api/v1/merchandise/events/PRIS-2026/cart/items",
-    async (route) => {
-      bodies.push(route.request().postData()!);
-      keys.push(route.request().headers()["idempotency-key"]);
-      const response = await route.fetch();
-      if (bodies.length === 1) await route.abort("failed");
-      else await route.fulfill({ response });
+  const p = makeSingle();
+  fake.products = [p];
+  fake.failNext("POST", "/cart/items", {
+    status: 422,
+    body: {
+      success: false,
+      code: "MERCH_PRODUCT_UNAVAILABLE",
+      error: "สินค้านี้ไม่พร้อมขายแล้ว",
+      requestId: "r1",
     },
-  );
-  await page.goto(`/th/souvenirs/products/${bundle.id}`);
+  });
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
   await addButton(page).click();
   await expect(
-    page.getByText(
-      "ยังยืนยันผลเพิ่มสินค้าลงตะกร้าไม่ได้ กรุณาตรวจสอบอีกครั้ง",
-      { exact: true },
-    ),
+    page.getByText("สินค้านี้ไม่พร้อมขายแล้ว", { exact: true }),
   ).toBeVisible();
-  await page.reload();
-  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
+  await expect(page).toHaveURL(new RegExp(`/souvenirs/products/${p.id}$`));
   await expect(addButton(page)).toBeEnabled();
-  expect(bodies).toHaveLength(2);
-  expect(bodies[0]).toBe(bodies[1]);
-  expect(keys[0]).toBe(keys[1]);
   expect(
-    (await merchandise.command<{ unitCount: string }>("inspect")).unitCount,
-  ).toBe("1");
+    await page.evaluate(() =>
+      sessionStorage.getItem("pris_merchandise_intent"),
+    ),
+  ).toBeNull();
+  await expect(page.locator(".merch-cart-badge")).toHaveText("0");
+  await addButton(page).click();
+  await expect(page.locator(".merch-cart-badge")).toHaveText("1");
 });

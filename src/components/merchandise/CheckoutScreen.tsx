@@ -11,7 +11,7 @@ import {
   validateRecipientDraft,
   type RecipientErrors,
 } from "@/lib/merchandiseRecipient";
-import { canCheckout } from "@/lib/merchandiseCart";
+import { canCheckout } from "@/lib/merchandiseSelection";
 import { formatMinorBaht } from "@/lib/merchandiseFormat";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
