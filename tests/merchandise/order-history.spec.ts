@@ -162,8 +162,41 @@ test("an expired token offers forced reauthentication that keeps the history pag
   expect(query.get("redirect")).toBe("/souvenirs/orders?page=2");
 });
 
+test("pending orders offer a pay button and one page hides pagination", async ({
+  page,
+  fake,
+}) => {
+  seed(fake, 1);
+  seed(fake, 2, { paymentStatus: "paid", paidAt: "2026-10-15T03:30:00.000Z" });
+  await login(page);
+  await page.goto("/th/souvenirs/orders");
+  await expect(rows(page)).toHaveCount(2);
+  const pay = rows(page)
+    .filter({ hasText: number(1) })
+    .getByRole("link", { name: "ชำระเงิน" });
+  await expect(pay).toHaveAttribute("href", `/th/souvenirs/orders/${uid(1)}`);
+  await expect(pay).toHaveCSS("background-color", "rgb(255, 88, 0)");
+  await expect(
+    rows(page).filter({ hasText: number(1) }).getByRole("link", {
+      name: "ดูรายละเอียด",
+    }),
+  ).toHaveCount(0);
+  await expect(
+    rows(page).filter({ hasText: number(2) }).getByRole("link", {
+      name: "ดูรายละเอียด",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("navigation", { name: "หน้าประวัติคำสั่งซื้อ" }),
+  ).toHaveCount(0);
+});
+
 test("rows link to the order page", async ({ page, fake }) => {
-  seed(fake, 1, { id: ids.order });
+  seed(fake, 1, {
+    id: ids.order,
+    paymentStatus: "paid",
+    paidAt: "2026-10-15T03:30:00.000Z",
+  });
   await login(page);
   await page.goto("/th/souvenirs/orders");
   await page

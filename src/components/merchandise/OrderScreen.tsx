@@ -117,15 +117,15 @@ function OrderWorkspace({
   if (justPaid || (!paid && PAYABLE.has(order.payment.state)))
     return (
       <main className="merch-cart merch-order merch-pay">
-        <h1 className="sr-only">คำสั่งซื้อ {order.orderNumber}</h1>
         <div className="merch-pay-card">
           <Image
             src="/assets/Img/logo/Logo-Final .png"
             alt="PRIS 2026"
             width={200}
             height={80}
-            className="brightness-0 h-12 w-auto mx-auto"
+            className="brightness-0 h-10 w-auto mx-auto"
           />
+          <h1 className="merch-pay-number">คำสั่งซื้อ {order.orderNumber}</h1>
           {justPaid ? (
             <JustPaidCard orderNumber={order.orderNumber} />
           ) : (

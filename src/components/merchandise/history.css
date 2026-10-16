@@ -38,8 +38,8 @@
   overflow-wrap: anywhere;
 }
 .merch-history-row-top time {
-  font-size: 12px;
-  color: #526787;
+  font-size: 13px;
+  color: #3b4b66;
 }
 .merch-order-statuses {
   display: flex;
@@ -201,4 +201,14 @@
   line-height: 1.7;
   margin-bottom: 16px;
   overflow-wrap: anywhere;
+}
+.merch-history-row-bottom > a.merch-history-pay {
+  justify-content: center;
+  min-width: 120px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  color: white;
+  background: #ff5800;
+  font-size: 19px;
+  font-weight: 700;
 }

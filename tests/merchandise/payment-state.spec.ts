@@ -98,7 +98,7 @@ const states: {
     name: "qr_active",
     payment: {},
     title: "รอชำระเงิน",
-    text: "ใช้แอปธนาคารสแกน QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร",
+    text: "โอนแล้วระบบจะยืนยันให้อัตโนมัติ",
     button: "ตรวจสอบการชำระเงิน",
   },
   {
@@ -239,10 +239,9 @@ test("the QR image decodes to the original payload and nothing leaks to storage 
   );
   expect(stored).not.toContain(syntheticQrPayload);
   expect(stored).not.toContain(encodeURIComponent(syntheticQrPayload));
-  await expect(page.getByRole("timer")).toContainText(
-    "เวลาชำระเงินคงเหลือ 10:00",
+  await expect(page.getByRole("timer")).toHaveText(
+    "ชำระภายใน 10:00 · หมดอายุ 10:10 น.",
   );
-  await expect(page.getByText("หมดอายุ 10:10 (เวลาไทย)")).toBeVisible();
   await expect(page.getByText("฿300.00").first()).toBeVisible();
 });
 
@@ -340,14 +339,16 @@ test("coming back after a long hide shows the time left from the new server view
   await page.clock.install();
   await open(page);
   const timer = page.getByRole("timer");
-  await expect(timer).toContainText("เวลาชำระเงินคงเหลือ 10:00");
+  await expect(timer).toContainText("ชำระภายใน 10:00");
   await setVisible(page, false);
   await page.clock.runFor(5_000);
   await setVisible(page, true);
   await expect.poll(() => checks(fake)).toBe(1);
-  await expect(timer).toHaveText(/^เวลาชำระเงินคงเหลือ 0[01]:\d\d$/);
+  await expect(timer).toHaveText(
+    /^ชำระภายใน 0[01]:\d\d · หมดอายุ \d\d:\d\d น\.$/,
+  );
   const [, mm, ss] = (await timer.innerText())
-    .match(/(\d\d):(\d\d)$/)!
+    .match(/ชำระภายใน (\d\d):(\d\d)/)!
     .slice(0);
   expect(Number(mm) * 60 + Number(ss)).toBeLessThanOrEqual(60);
 });
@@ -607,7 +608,32 @@ test("unpaid order shows only the QR card with the PRIS logo", async ({
   await expect(page.getByRole("heading", { name: "ผู้รับ" })).toHaveCount(0);
   await expect(
     page.getByRole("heading", { level: 1, name: `คำสั่งซื้อ ${NUMBER}` }),
-  ).toBeAttached();
+  ).toBeVisible();
+});
+
+test("the pay card is a narrow slip with one instruction and one time line", async ({
+  page,
+  fake,
+}) => {
+  seed(fake);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await open(page);
+  const card = page.locator(".merch-pay-card");
+  expect((await card.boundingBox())!.width).toBeLessThanOrEqual(440);
+  await expect(
+    page.getByRole("heading", { level: 1, name: `คำสั่งซื้อ ${NUMBER}` }),
+  ).toBeVisible();
+  await expect(card.getByText(/กดค้างที่รูป QR/)).toHaveCount(1);
+  await expect(card.getByText(/ใช้แอปธนาคาร/)).toHaveCount(0);
+  await expect(card.locator(".merch-payment-time")).toHaveText(
+    /^ชำระภายใน \d{2}:\d{2} · หมดอายุ \d{2}:\d{2} น\.$/,
+  );
+  await expect(card.getByText("โอนแล้วระบบจะยืนยันให้อัตโนมัติ")).toHaveCount(
+    1,
+  );
+  const logo = (await card.locator(".merch-payment-qr-brand").boundingBox())!,
+    qr = (await card.getByRole("img", { name: /^QR สำหรับ/ }).boundingBox())!;
+  expect(logo.y + logo.height).toBeLessThanOrEqual(qr.y + 1);
 });
 
 test("paying while on the page counts down 10 seconds then opens the order list", async ({

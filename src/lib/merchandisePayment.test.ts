@@ -89,7 +89,7 @@ test("panelModel covers all 8 states", () => {
     [p.title, p.message, p.primary, p.showQr],
     [
       "รอชำระเงิน",
-      "ใช้แอปธนาคารสแกน QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร",
+      "โอนแล้วระบบจะยืนยันให้อัตโนมัติ",
       "check",
       true,
     ],

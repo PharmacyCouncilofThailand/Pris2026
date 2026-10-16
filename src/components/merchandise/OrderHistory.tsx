@@ -10,10 +10,7 @@ import {
   merchandiseReturnPath,
   merchandiseLoginPath,
 } from "@/lib/merchandiseRoutes";
-import {
-  formatMerchandiseTime,
-  formatBaht,
-} from "@/lib/merchandiseFormat";
+import { formatMerchandiseTime, formatBaht } from "@/lib/merchandiseFormat";
 import OrderStatus from "./OrderStatus";
 export default function OrderHistory() {
   const search = useSearchParams().toString();
@@ -139,41 +136,52 @@ function HistoryLoader({ page }: { page: number }) {
                 <OrderStatus order={order} />
                 <div className="merch-history-row-bottom">
                   <strong>{formatBaht(order.amounts.totalBaht)}</strong>
-                  <Link
-                    href={`/souvenirs/orders/${order.id}`}
-                    aria-label={`ดูรายละเอียด ${order.orderNumber}`}
-                  >
-                    ดูรายละเอียด
-                    <ChevronRight size={18} aria-hidden="true" />
-                  </Link>
+                  {order.paymentStatus === "pending" ? (
+                    <Link
+                      className="merch-history-pay"
+                      href={`/souvenirs/orders/${order.id}`}
+                    >
+                      ชำระเงิน
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/souvenirs/orders/${order.id}`}
+                      aria-label={`ดูรายละเอียด ${order.orderNumber}`}
+                    >
+                      ดูรายละเอียด
+                      <ChevronRight size={18} aria-hidden="true" />
+                    </Link>
+                  )}
                 </div>
               </article>
             ))}
           </section>
-          <nav
-            className="merch-history-pagination"
-            aria-label="หน้าประวัติคำสั่งซื้อ"
-          >
-            {page > 1 && (
-              <Link
-                className="merch-cart-secondary"
-                href={`/souvenirs/orders?page=${page - 1}`}
-              >
-                หน้าก่อนหน้า
-              </Link>
-            )}
-            <p>
-              หน้า {page} จาก {resource.data.pagination.totalPages}
-            </p>
-            {page < resource.data.pagination.totalPages && (
-              <Link
-                className="merch-cart-secondary"
-                href={`/souvenirs/orders?page=${page + 1}`}
-              >
-                หน้าถัดไป
-              </Link>
-            )}
-          </nav>
+          {resource.data.pagination.totalPages > 1 && (
+            <nav
+              className="merch-history-pagination"
+              aria-label="หน้าประวัติคำสั่งซื้อ"
+            >
+              {page > 1 && (
+                <Link
+                  className="merch-cart-secondary"
+                  href={`/souvenirs/orders?page=${page - 1}`}
+                >
+                  หน้าก่อนหน้า
+                </Link>
+              )}
+              <p>
+                หน้า {page} จาก {resource.data.pagination.totalPages}
+              </p>
+              {page < resource.data.pagination.totalPages && (
+                <Link
+                  className="merch-cart-secondary"
+                  href={`/souvenirs/orders?page=${page + 1}`}
+                >
+                  หน้าถัดไป
+                </Link>
+              )}
+            </nav>
+          )}
         </div>
       )}
       {empty && (

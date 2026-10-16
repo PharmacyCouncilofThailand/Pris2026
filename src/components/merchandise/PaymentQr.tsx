@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 
 // The payload is drawn off-screen and only its rendered PNG is shown, so the
@@ -8,9 +8,12 @@ import { QRCodeCanvas } from "qrcode.react";
 export default function PaymentQr({
   payload,
   orderNumber,
+  children,
 }: {
   payload: string;
   orderNumber: string;
+  // Rendered between the QR image and the hint (the time line).
+  children?: ReactNode;
 }) {
   const canvasHost = useRef<HTMLDivElement>(null);
   const [dataUrl, setDataUrl] = useState<string | null>(null);
@@ -33,6 +36,7 @@ export default function PaymentQr({
       </div>
       {dataUrl && (
         <>
+          <span className="merch-payment-qr-brand" aria-hidden="true" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="merch-payment-qr"
@@ -41,6 +45,7 @@ export default function PaymentQr({
             width={280}
             height={280}
           />
+          {children}
           <p className="merch-cart-muted">
             กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร
           </p>

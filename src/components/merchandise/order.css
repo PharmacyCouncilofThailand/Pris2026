@@ -22,11 +22,6 @@
 .merch-order-reissue > button {
   background: #ff5800;
 }
-.merch-payment-countdown {
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  color: #0055ff;
-}
 .merch-payment-closed {
   padding: 16px;
   border-radius: 12px;
@@ -258,7 +253,7 @@
   display: block;
   margin-inline: auto;
 }
-.merch-pay-card {
+.merch-cart.merch-pay > .merch-pay-card {
   max-width: 440px;
   margin: 24px auto 0;
   background: #fff;
@@ -287,4 +282,41 @@
   background: #ff5800;
   font-size: 19px;
   font-weight: 700;
+}
+
+.merch-pay-number {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #526787;
+  overflow-wrap: anywhere;
+}
+.merch-pay-card .merch-payment-panel > h2 {
+  margin: 18px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+.merch-pay-card .merch-payment-amount {
+  font-size: 32px;
+  margin-block: 8px 16px;
+}
+.merch-payment-qr-brand {
+  display: block;
+  width: 79px;
+  height: 24px;
+  margin: 0 auto 8px;
+  background: url("/assets/Img/payment/thai-qr.webp") center / contain no-repeat;
+}
+.merch-pay-card .merch-payment-qr {
+  margin: 0 auto 12px;
+}
+.merch-payment-time {
+  margin: 0 0 8px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: #0055ff;
+}
+.merch-pay-card .merch-payment-panel > p.merch-payment-message {
+  margin-top: 12px;
+  color: #3b4b66;
 }

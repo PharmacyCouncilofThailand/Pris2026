@@ -76,25 +76,21 @@ export default function PaymentPanel({
           <span className="sr-only">{model.title}</span>
         </div>
       )}
+      {model.showQr && payload && (
+        <PaymentQr payload={payload} orderNumber={order.orderNumber}>
+          {remainingMs !== null && (
+            <p className="merch-payment-time" role="timer" aria-live="off">
+              ชำระภายใน {formatPaymentRemaining(remainingMs)}
+              {expiresAt &&
+                ` · หมดอายุ ${clock.format(new Date(expiresAt))} น.`}
+            </p>
+          )}
+        </PaymentQr>
+      )}
       {!busy && model.message && (
         <p className="merch-payment-message" role="status">
           {model.message}
         </p>
-      )}
-      {model.showQr && payload && (
-        <>
-          <PaymentQr payload={payload} orderNumber={order.orderNumber} />
-          {remainingMs !== null && (
-            <p className="merch-payment-countdown" role="timer" aria-live="off">
-              เวลาชำระเงินคงเหลือ {formatPaymentRemaining(remainingMs)}
-            </p>
-          )}
-          {expiresAt && (
-            <p className="merch-cart-muted">
-              หมดอายุ {clock.format(new Date(expiresAt))} (เวลาไทย)
-            </p>
-          )}
-        </>
       )}
       {label && idle.primary && (
         <button
