@@ -1,89 +1,83 @@
-import type { LineSelection, ProductDto, Variant } from "../types/merchandise";
+import type {
+  BundleSelection,
+  CartLine,
+  Minor,
+  ProductDto,
+  VariantDto,
+} from "../types/merchandise";
 
-export function initialSelection(product: ProductDto): LineSelection {
-  const defaults = product.variants.filter(
-    (v) => v.isDefault && v.saleEnabled && v.effectivePriceMinor !== null,
-  );
-  return {
-    productId: product.id,
-    variantId:
-      product.kind === "single" &&
-      product.optionMode === "none" &&
-      defaults.length === 1
-        ? defaults[0].id
-        : null,
-    bundleSelections:
-      product.kind === "bundle"
-        ? product.components
-            .filter((c) => c.optionMode === "fixed" && c.fixedVariantId)
-            .map((c) => ({ componentId: c.id, variantId: c.fixedVariantId! }))
-        : [],
-  };
+export type Selection = {
+  variantId: string | null;
+  bundleSelections: BundleSelection[];
+};
+
+export function defaultSelection(p: ProductDto): Selection {
+  if (p.kind === "single" && !p.hasOptions) {
+    const v = p.variants.find((x) => x.saleEnabled);
+    return { variantId: v?.id ?? null, bundleSelections: [] };
+  }
+  return { variantId: null, bundleSelections: [] };
 }
-export function selectionReady(
-  product: ProductDto,
-  selection: LineSelection,
-): boolean {
-  if (product.id !== selection.productId || !product.purchasable) return false;
-  if (product.kind === "single")
+
+export function selectionComplete(p: ProductDto, s: Selection): boolean {
+  if (p.kind === "single") {
     return (
-      selection.bundleSelections.length === 0 &&
-      product.variants.some(
-        (v) =>
-          v.id === selection.variantId &&
-          v.saleEnabled &&
-          v.effectivePriceMinor !== null,
-      )
+      s.bundleSelections.length === 0 &&
+      p.variants.some((v) => v.id === s.variantId && v.saleEnabled)
     );
-  if (
-    selection.variantId !== null ||
-    selection.bundleSelections.length !== product.components.length ||
-    product.components.length === 0
-  )
+  }
+  if (s.variantId !== null) return false;
+  const selectable = p.components.filter((c) => c.mode === "selectable");
+  const ids = new Set(selectable.map((c) => c.id));
+  // Selections for fixed components are ignored (the server fills them in).
+  const relevant = s.bundleSelections.filter((b) => ids.has(b.componentId));
+  if (relevant.length !== selectable.length) return false;
+  if (new Set(relevant.map((b) => b.componentId)).size !== selectable.length)
     return false;
-  if (
-    new Set(selection.bundleSelections.map((c) => c.componentId)).size !==
-    product.components.length
-  )
-    return false;
-  return product.components.every((c) => {
-    const chosen = selection.bundleSelections.find(
-      (s) => s.componentId === c.id,
-    );
-    return (
-      chosen !== undefined &&
-      (c.optionMode === "fixed"
-        ? chosen.variantId === c.fixedVariantId
-        : c.allowedVariants.some(
-            (v) => v.id === chosen.variantId && v.saleEnabled,
-          ))
+  return selectable.every((c) => {
+    const chosen = relevant.find((b) => b.componentId === c.id);
+    return c.allowedVariants.some(
+      (v) => v.id === chosen?.variantId && v.saleEnabled,
     );
   });
 }
-export function selectedPriceMinor(
-  product: ProductDto,
-  selection: LineSelection,
-): string | null {
-  if (
-    product.kind === "bundle" &&
-    product.id === selection.productId &&
-    product.purchasable
-  )
-    return product.basePriceMinor;
-  if (!selectionReady(product, selection)) return null;
-  return product.kind === "bundle"
-    ? product.basePriceMinor
-    : product.variants.find((v) => v.id === selection.variantId)!
-        .effectivePriceMinor;
+
+export function selectionPriceMinor(p: ProductDto, s: Selection): Minor | null {
+  if (!selectionComplete(p, s)) return null;
+  if (p.kind === "bundle") return p.price?.amountMinor ?? null;
+  const v = p.variants.find((x) => x.id === s.variantId);
+  return v?.priceMinor ?? p.price?.amountMinor ?? null;
 }
+
 export function parseQuantity(value: string): number | null {
   return /^[1-9][0-9]*$/.test(value) && Number.isSafeInteger(Number(value))
     ? Number(value)
     : null;
 }
-export function variantLabel(variant: Variant): string {
-  return (
-    [variant.colorTh, variant.sizeTh].filter(Boolean).join(" · ") ||
-    "ไม่มีตัวเลือก"
-  );
+
+function variantText(v: VariantDto | undefined | null): string {
+  if (!v) return "";
+  const parts: string[] = [];
+  if (v.sizeTh) parts.push(`ไซซ์ ${v.sizeTh}`);
+  if (v.colorTh) parts.push(`สี${v.colorTh}`);
+  return parts.join(" / ");
+}
+
+export function describeLine(line: CartLine): string {
+  const p = line.product;
+  if (!p) return "";
+  if (p.kind === "single") {
+    return variantText(p.variants.find((v) => v.id === line.variantId));
+  }
+  return p.components
+    .map((c) => {
+      let variant: VariantDto | null | undefined = c.fixedVariant;
+      if (c.mode === "selectable") {
+        const chosen = line.bundleSelections.find((b) => b.componentId === c.id);
+        variant = c.allowedVariants.find((v) => v.id === chosen?.variantId);
+      }
+      const opt = variantText(variant);
+      return `${c.nameTh} × ${c.quantityPerBundle}${opt ? ` (${opt})` : ""}`;
+    })
+    .join(", ");
 }
