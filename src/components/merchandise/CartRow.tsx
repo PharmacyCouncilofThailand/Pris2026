@@ -115,7 +115,23 @@ export default function CartRow({
             )}
           </h2>
           <div className="merch-cart-row-controls">
-            <p className="merch-cart-row-option">{options}</p>
+            <p className="merch-cart-row-option">
+              <span>{options}</span>
+              {editOptions && (
+                <>
+                  {" "}
+                  <button
+                    className="merch-cart-edit-toggle"
+                    type="button"
+                    aria-expanded={editing}
+                    aria-controls={editId}
+                    onClick={() => setEditing((v) => !v)}
+                  >
+                    แก้ไขตัวเลือก
+                  </button>
+                </>
+              )}
+            </p>
             <form
               id={formId}
               className="merch-cart-row-actions"
@@ -173,17 +189,6 @@ export default function CartRow({
               </button>
             </form>
           </div>
-          {editOptions && (
-            <button
-              className="merch-cart-edit-toggle"
-              type="button"
-              aria-expanded={editing}
-              aria-controls={editId}
-              onClick={() => setEditing((v) => !v)}
-            >
-              แก้ไขตัวเลือก
-            </button>
-          )}
           <p className="merch-cart-unit-price">
             {line.unitPriceBaht === null ? "—" : formatBaht(line.unitPriceBaht)}
             <small>

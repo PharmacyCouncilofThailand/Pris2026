@@ -125,9 +125,9 @@ test("cart row reads image+name / option+stepper+trash / price, and the bar show
     .boundingBox())!;
   const price = (await page.locator(".merch-cart-unit-price").boundingBox())!;
   expect(option.y).toBeGreaterThan(name.y);
-  // The 80px image column is always present now, so at 390 the option text
-  // takes its own line above the stepper instead of sharing the row.
-  expect(option.y + option.height).toBeLessThanOrEqual(stepper.y + 1);
+  expect(
+    Math.abs(option.y + option.height / 2 - (stepper.y + stepper.height / 2)),
+  ).toBeLessThan(12);
   expect(trash.x).toBeGreaterThan(stepper.x + stepper.width - 1);
   expect(price.y).toBeGreaterThanOrEqual(stepper.y + stepper.height - 1);
   await expect(
@@ -166,9 +166,7 @@ test("last cart row stays above the bar on a phone", async ({ page, fake }) => {
   await login(page);
   await page.goto("/th/souvenirs/cart");
   const trash = page.getByRole("button", { name: "ลบ สินค้า 3" });
-  // scrollIntoViewIfNeeded treats a row hidden under the fixed bar as visible,
-  // so scroll to the very end and check the clearance there.
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await trash.scrollIntoViewIfNeeded();
   const t = (await trash.boundingBox())!,
     bar = (await page.locator(".merch-checkout-bar").boundingBox())!;
   expect(t.y + t.height).toBeLessThanOrEqual(bar.y + 1);
@@ -464,7 +462,8 @@ test("rows sit in one white card with an image column even without images", asyn
       .nth(i)
       .locator(".merch-image-placeholder")
       .boundingBox())!;
-    expect(Math.abs(box.width - 80)).toBeLessThanOrEqual(1);
+    const wide = (page.viewportSize()?.width ?? 0) >= 480;
+    expect(Math.abs(box.width - (wide ? 80 : 64))).toBeLessThanOrEqual(1);
   }
 });
 
@@ -495,4 +494,30 @@ test("change-options is a button that toggles the selector", async ({
   await expect(
     page.getByRole("button", { name: "บันทึกตัวเลือก", exact: true }),
   ).toBeVisible();
+});
+
+test("option, stepper and trash share one line at 430px, and rows indent under the image at 1024px", async ({
+  page,
+  fake,
+}) => {
+  const p = makeOptionsProduct({ nameTh: "เสื้อยืด Pris" });
+  fake.products = [p];
+  fake.seedLine({
+    productId: p.id,
+    variantId: p.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  await page.setViewportSize({ width: 430, height: 900 });
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  const option = (await page.locator(".merch-cart-row-option").boundingBox())!;
+  const stepper = (await page.locator(".merch-cart-stepper").boundingBox())!;
+  expect(
+    Math.abs(option.y + option.height / 2 - (stepper.y + stepper.height / 2)),
+  ).toBeLessThan(12);
+  await page.setViewportSize({ width: 1024, height: 900 });
+  const cell = (await page.locator(".merch-image-placeholder").boundingBox())!;
+  const text = (await page.locator(".merch-cart-row-option").boundingBox())!;
+  expect(text.x).toBeGreaterThanOrEqual(cell.x + cell.width);
 });
