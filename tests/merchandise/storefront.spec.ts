@@ -483,3 +483,15 @@ test("a product that can't be bought shows a tag and no add button", async ({
     0,
   );
 });
+
+test("the catalog shows skeleton cards while loading", async ({ page, fake }) => {
+  fake.products = [makeSingle()];
+  await page.route("**/products?**", async (r) => {
+    await new Promise((f) => setTimeout(f, 1500));
+    await r.fallback();
+  });
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-skeleton-card").first()).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "กำลังโหลดสินค้า" })).toBeAttached();
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+});

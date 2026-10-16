@@ -1,5 +1,6 @@
 import { test, expect, login } from "./fixtures";
 import { makeSingle } from "./data";
+import { seedCheckout, openCheckout, reachReview } from "./checkoutHelpers";
 
 test("short shop pages never show the dark site background", async ({ page, fake }) => {
   const p = makeSingle(); fake.products = [p];
@@ -80,4 +81,49 @@ test("logged-in cart badge shows the cart units", async ({ page, fake }) => {
   await expect(
     page.locator("header .merch-header-cart:visible"),
   ).toHaveAccessibleName("ตะกร้า 3 รายการ");
+});
+
+test("the souvenir nav item is marked current on shop pages", async ({ page, fake }) => {
+  fake.products = [makeSingle()];
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/th/souvenirs");
+  const item = page.locator("header").getByRole("link", { name: "ของที่ระลึก" });
+  await expect(item).toHaveAttribute("aria-current", "page");
+  await expect(item).toHaveCSS("color", "rgb(0, 85, 255)");
+});
+
+test("no shop text is smaller than 13px", async ({ page, fake }) => {
+  const p = seedCheckout(fake);
+  await login(page);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const small = () =>
+    page.evaluate(() => {
+      const bad: string[] = [];
+      for (const el of Array.from(document.querySelectorAll("main *"))) {
+        const hasText = Array.from(el.childNodes).some(
+          (n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim() !== "",
+        );
+        if (!hasText) continue;
+        const cs = getComputedStyle(el);
+        if (cs.display === "none") continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) continue;
+        if (parseFloat(cs.fontSize) < 13)
+          bad.push(`${el.tagName}.${(el as HTMLElement).className} ${cs.fontSize} "${(el.textContent ?? "").trim().slice(0, 30)}"`);
+      }
+      return bad;
+    });
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  expect(await small()).toEqual([]);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  expect(await small()).toEqual([]);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  expect(await small()).toEqual([]);
+  await openCheckout(page);
+  expect(await small()).toEqual([]);
+  await reachReview(page);
+  expect(await small()).toEqual([]);
 });

@@ -1,4 +1,5 @@
 "use client";
+import { CartSkeleton } from "./MerchSkeletons";
 import {
   useCallback,
   useEffect,
@@ -62,7 +63,7 @@ function CartLoader() {
             )}
           </>
         ) : (
-          <p role="status">กำลังโหลดตะกร้า</p>
+          <CartSkeleton />
         )}
       </main>
     );

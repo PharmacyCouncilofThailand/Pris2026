@@ -1,4 +1,5 @@
 "use client";
+import { OrderCardSkeleton } from "./MerchSkeletons";
 import { useState } from "react";
 import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
@@ -69,7 +70,7 @@ function OrderLoader({ orderId }: { orderId: string }) {
           )}
         </>
       ) : (
-        <p role="status">กำลังโหลดคำสั่งซื้อ</p>
+        <OrderCardSkeleton />
       )}
     </main>
   );

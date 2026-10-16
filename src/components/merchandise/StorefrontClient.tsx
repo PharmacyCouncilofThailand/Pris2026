@@ -1,4 +1,5 @@
 "use client";
+import { ProductGridSkeleton } from "./MerchSkeletons";
 import {
   useCallback,
   useEffect,
@@ -183,7 +184,7 @@ export default function StorefrontClient() {
             </button>
           </>
         ) : (
-          <p role="status">กำลังโหลดร้านของที่ระลึก</p>
+          <ProductGridSkeleton label="กำลังโหลดร้านของที่ระลึก" />
         )}
       </main>
     );

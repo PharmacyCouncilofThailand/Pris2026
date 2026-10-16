@@ -238,6 +238,11 @@ export default function Header() {
                           <Link
                             href={item.href as LinkHref}
                             prefetch={true}
+                            aria-current={
+                              isShop && item.href === "/souvenirs"
+                                ? "page"
+                                : undefined
+                            }
                             className={cn(
                               navigationMenuTriggerStyle(),
                               "bg-transparent transition-colors font-black",
@@ -245,6 +250,9 @@ export default function Header() {
                               useDarkText
                                 ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
                                 : "text-white hover:bg-white/10 hover:text-cyan-400",
+                              isShop &&
+                                item.href === "/souvenirs" &&
+                                "text-[#0055ff]",
                             )}
                             onClick={() => {
                               if (typeof document !== "undefined") {
@@ -481,7 +489,17 @@ export default function Header() {
                               <Link
                                 href={item.href as LinkHref}
                                 prefetch={true}
-                                className="text-lg font-medium hover:text-cyan-400 block"
+                                aria-current={
+                                  isShop && item.href === "/souvenirs"
+                                    ? "page"
+                                    : undefined
+                                }
+                                className={cn(
+                                  "text-lg font-medium hover:text-cyan-400 block",
+                                  isShop &&
+                                    item.href === "/souvenirs" &&
+                                    "text-[#0055ff]",
+                                )}
                               >
                                 {t(item.labelKey as TranslationKey)}
                               </Link>

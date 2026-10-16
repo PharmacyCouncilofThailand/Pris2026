@@ -1,4 +1,5 @@
 "use client";
+import { ProductGridSkeleton } from "./MerchSkeletons";
 /* eslint-disable @next/next/no-img-element -- Portable React renderer has no Next.js dependency; media dimensions come from the API. */
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
@@ -273,9 +274,7 @@ export function StorefrontView(props: StorefrontViewProps) {
         )}
         <div aria-busy={props.busy}>
           {props.busy && !products.length ? (
-            <p className="merch-message" role="status">
-              กำลังโหลดสินค้า
-            </p>
+            <ProductGridSkeleton />
           ) : !products.length ? (
             <div className="merch-message" role="status">
               <p>
