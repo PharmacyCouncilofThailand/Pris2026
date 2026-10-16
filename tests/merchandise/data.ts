@@ -1,183 +1,206 @@
 import type {
-  StoreDto,
-  ProductDto,
-  CartDto,
   OrderDetail,
-  QuoteDto,
+  PaymentView,
+  ProductDto,
+  StoreDto,
+  VariantDto,
 } from "../../src/types/merchandise";
+
 export const ids = {
   product: "10000000-0000-4000-8000-000000000001",
   variant: "10000000-0000-4000-8000-000000000002",
-  cart: "10000000-0000-4000-8000-000000000003",
-  item: "10000000-0000-4000-8000-000000000004",
   order: "10000000-0000-4000-8000-000000000005",
   attempt: "10000000-0000-4000-8000-000000000006",
 };
 export const now = "2026-10-15T03:00:00.000Z";
-export const store: StoreDto = {
-  eventId: 1,
-  eventCode: "PRIS-2026",
-  state: "open",
-  enabled: true,
-  preorderOpensAt: "2026-10-14T00:00:00.000Z",
-  preorderClosesAt: "2026-10-16T00:00:00.000Z",
-  productionInfoTh: null,
-  shippingInfoTh: null,
-  version: 1,
-  serverNow: now,
-  shippingMinor: "5000",
-  currency: "THB",
-  categories: [],
-  banners: [],
-};
-export const product: ProductDto = {
-  id: ids.product,
-  eventId: 1,
-  kind: "single",
-  nameTh: "สินค้าสังเคราะห์สำหรับทดสอบ",
-  descriptionTh: "รายละเอียดสังเคราะห์",
-  sizeInfoTh: null,
-  images: [],
-  categoryId: null,
-  sortOrder: 0,
-  publishState: "published",
-  saleEnabled: true,
-  version: 1,
-  optionMode: "none",
-  basePriceMinor: "10000",
-  variants: [
-    {
-      id: ids.variant,
-      productId: ids.product,
-      sizeTh: null,
-      colorTh: null,
-      isDefault: true,
-      saleEnabled: true,
-      version: 1,
-      priceOverrideMinor: null,
-      effectivePriceMinor: "10000",
-    },
-  ],
-  components: [],
-  price: { kind: "exact", amountMinor: "10000" },
-  purchasable: true,
-  unavailableCodes: [],
-};
-export const amounts = {
-  subtotalMinor: "20000",
-  shippingMinor: "5000" as const,
-  totalMinor: "25000",
-  currency: "THB" as const,
-};
-export const recipient = {
-  fullName: "ผู้รับสังเคราะห์",
-  phone: "0812345678",
-  addressLine: "1 ถนนทดสอบ",
-  subdistrict: "ทดสอบ",
-  district: "ทดสอบ",
-  province: "กรุงเทพมหานคร",
-  postalCode: "10000",
-  country: "TH" as const,
-  company: null,
-  deliveryNote: null,
-};
-export const cart: CartDto = {
-  id: ids.cart,
-  eventId: 1,
-  revision: 1,
-  items: [
-    {
-      id: ids.item,
-      productId: ids.product,
-      variantId: ids.variant,
-      bundleSelections: [],
-      quantity: 2,
-      product,
-      unitPriceMinor: "10000",
-      lineTotalMinor: "20000",
-      valid: true,
-      issueCodes: [],
-    },
-  ],
-  unitCount: "2",
-  amounts,
-  serverNow: now,
-};
-const item = {
-  id: ids.item,
-  productId: ids.product,
-  variantId: ids.variant,
-  kind: "single" as const,
-  nameTh: product.nameTh,
-  sizeTh: null,
-  colorTh: null,
-  quantity: 2,
-  unitPriceMinor: "10000",
-  lineTotalMinor: "20000",
-  components: [],
-};
-export const order: OrderDetail = {
-  id: ids.order,
-  orderNumber: "MER-PRIS-SYNTHETIC-1",
-  eventId: 1,
-  createdAt: now,
-  paymentStatus: "pending",
-  paidAt: null,
-  fulfillment: {
-    status: "not_shipped",
-    carrier: null,
-    trackingId: null,
-    shippedAt: null,
-    version: 0,
-  },
-  amounts,
-  effectiveRevision: 1,
-  buyer: {
-    id: 11,
-    name: "ผู้ซื้อสังเคราะห์",
-    email: "buyer@example.test",
-    phone: "0812345678",
-  },
-  original: {
-    revision: 1,
-    kind: "original",
-    recipient,
-    items: [item],
-    createdAt: now,
-  },
-  effective: {
-    revision: 1,
-    kind: "original",
-    recipient,
-    items: [item],
-    createdAt: now,
-  },
-  payment: {
-    state: "not_created",
-    attempt: null,
-    canRequestNewQr: true,
-    canCheck: false,
+export const futureIso = "2026-10-15T03:10:00.000Z";
+
+// Synthetic EMVCo-shaped PromptPay string. Not a real payee or payment.
+export const syntheticQrPayload =
+  "00020101021229370016A000000677010111011300000000000005802TH530376454041.006304ABCD";
+
+export function makeStore(o: Partial<StoreDto> = {}): StoreDto {
+  return {
+    eventId: 1,
+    eventCode: "PRIS-2026",
+    state: "open",
+    opensAt: "2026-10-14T00:00:00.000Z",
+    closesAt: "2026-10-30T00:00:00.000Z",
+    productionInfoTh: null,
+    shippingInfoTh: null,
+    shippingMinor: 5000,
+    currency: "THB",
     serverNow: now,
-    messageCode: null,
-  },
-};
-export const quote: QuoteDto = {
-  quoteToken: "synthetic-quote",
-  cartRevision: 1,
-  items: [item],
-  amounts,
-  recipient,
-  storeVersion: 1,
-  serverNow: now,
-  productionInfoTh: null,
-  shippingInfoTh: null,
-};
-export const pageOf = <T>(items: T[]) => ({
-  items,
-  pagination: {
-    page: 1,
-    limit: 20,
-    total: items.length,
-    totalPages: items.length ? 1 : 0,
-  },
-});
+    categories: [],
+    banners: [],
+    ...o,
+  };
+}
+
+export function makeVariant(o: Partial<VariantDto> = {}): VariantDto {
+  return {
+    id: ids.variant,
+    sizeTh: null,
+    colorTh: null,
+    priceMinor: 25000,
+    saleEnabled: true,
+    ...o,
+  };
+}
+
+export function makeSingle(o: Partial<ProductDto> = {}): ProductDto {
+  return {
+    id: ids.product,
+    kind: "single",
+    nameTh: "แก้วน้ำ Pris",
+    descriptionTh: null,
+    sizeChartTh: null,
+    images: [],
+    categoryId: null,
+    sortOrder: 1,
+    hasOptions: false,
+    variants: [makeVariant()],
+    components: [],
+    price: { kind: "exact", amountMinor: 25000 },
+    purchasable: true,
+    unavailableCodes: [],
+    ...o,
+  };
+}
+
+export function makeOptionsProduct(o: Partial<ProductDto> = {}): ProductDto {
+  const v1 = makeVariant({
+    id: "10000000-0000-4000-8000-000000000011",
+    sizeTh: "M",
+    colorTh: "ขาว",
+    priceMinor: 30000,
+  });
+  const v2 = makeVariant({
+    id: "10000000-0000-4000-8000-000000000012",
+    sizeTh: "L",
+    colorTh: "ขาว",
+    priceMinor: 32000,
+  });
+  return makeSingle({
+    id: "10000000-0000-4000-8000-000000000010",
+    nameTh: "เสื้อยืด Pris",
+    hasOptions: true,
+    variants: [v1, v2],
+    price: { kind: "from", amountMinor: 30000 },
+    ...o,
+  });
+}
+
+export function makeBundle(o: Partial<ProductDto> = {}): ProductDto {
+  const v = makeVariant({
+    id: "10000000-0000-4000-8000-000000000021",
+    sizeTh: "M",
+    priceMinor: null,
+  });
+  const v2 = makeVariant({
+    id: "10000000-0000-4000-8000-000000000022",
+    sizeTh: "L",
+    priceMinor: null,
+  });
+  return makeSingle({
+    id: "10000000-0000-4000-8000-000000000020",
+    kind: "bundle",
+    nameTh: "ชุดของที่ระลึก",
+    hasOptions: true,
+    variants: [],
+    components: [
+      {
+        id: "10000000-0000-4000-8000-000000000031",
+        productId: ids.product,
+        nameTh: "แก้วน้ำ Pris",
+        quantityPerBundle: 1,
+        mode: "fixed",
+        fixedVariant: makeVariant(),
+        allowedVariants: [],
+      },
+      {
+        id: "10000000-0000-4000-8000-000000000032",
+        productId: "10000000-0000-4000-8000-000000000010",
+        nameTh: "เสื้อยืด Pris",
+        quantityPerBundle: 1,
+        mode: "selectable",
+        fixedVariant: null,
+        allowedVariants: [v, v2],
+      },
+    ],
+    price: { kind: "exact", amountMinor: 45000 },
+    ...o,
+  });
+}
+
+export function qrActive(o: Partial<PaymentView> = {}): PaymentView {
+  return {
+    state: "qr_active",
+    attempt: {
+      id: ids.attempt,
+      referenceNo: "PRIS2026M000001",
+      expiresAt: futureIso,
+      qrPayload: syntheticQrPayload,
+    },
+    canRequestNewQr: false,
+    canCheck: true,
+    retryAfterSeconds: null,
+    serverNow: now,
+    ...o,
+  };
+}
+
+export function makeOrder(o: Partial<OrderDetail> = {}): OrderDetail {
+  return {
+    id: ids.order,
+    orderNumber: "PRIS2026-M-000001",
+    createdAt: now,
+    paymentStatus: "pending",
+    paidAt: null,
+    shipping: {
+      status: "not_shipped",
+      carrier: null,
+      trackingId: null,
+      shippedAt: null,
+    },
+    amounts: {
+      subtotalMinor: 25000,
+      shippingMinor: 5000,
+      totalMinor: 30000,
+      currency: "THB",
+    },
+    buyer: {
+      name: "ผู้ซื้อ สังเคราะห์",
+      email: "buyer@example.test",
+      phone: null,
+    },
+    recipient: {
+      fullName: "ผู้ซื้อ สังเคราะห์",
+      phone: "0812345678",
+      addressLine: "1 ถนนทดสอบ",
+      subdistrict: "ตำบลทดสอบ",
+      district: "อำเภอทดสอบ",
+      province: "กรุงเทพมหานคร",
+      postalCode: "10100",
+      company: null,
+      deliveryNote: null,
+    },
+    items: [
+      {
+        id: "10000000-0000-4000-8000-000000000041",
+        kind: "single",
+        nameTh: "แก้วน้ำ Pris",
+        sizeTh: null,
+        colorTh: null,
+        quantity: 1,
+        unitPriceMinor: 25000,
+        lineTotalMinor: 25000,
+        components: [],
+      },
+    ],
+    productionInfoTh: null,
+    shippingInfoTh: null,
+    payment: qrActive(),
+    ...o,
+  };
+}

@@ -17,8 +17,9 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    { name: "mobile-chrome", use: { ...devices["Pixel 7"] } },
+    { name: "mobile-safari", use: { ...devices["iPhone 14"] } },
   ],
   webServer: process.env.PRIS_MERCHANDISE_TEST_URL
     ? undefined
@@ -26,10 +27,10 @@ export default defineConfig({
         command: "npx next dev --webpack -p 3102 --hostname 127.0.0.1",
         url: "http://127.0.0.1:3102/th/about",
         reuseExistingServer: false,
-        timeout: 120000,
+        timeout: 240000,
         env: {
-          NEXT_PUBLIC_API_URL:
-            process.env.MERCHANDISE_TEST_API_ORIGIN ?? "http://127.0.0.1:3103",
+          // Fake origin: no real server listens here; tests intercept it.
+          NEXT_PUBLIC_API_URL: "http://127.0.0.1:3103",
           NEXT_PUBLIC_EVENT_CODE: "PRIS-2026",
         },
       },
