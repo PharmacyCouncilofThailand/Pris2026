@@ -1,65 +1,76 @@
-import type { Recipient } from "../types/merchandise";
-export function defaultRecipient(user: {
-  firstName?: string;
-  lastName?: string;
-  name?: string;
-  phone?: string;
-}): Recipient {
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+import type { CartDto, Recipient } from "../types/merchandise";
+
+export type RecipientDraft = Record<keyof Recipient, string>;
+export type RecipientErrors = Partial<Record<keyof Recipient, string>>;
+
+/** Mirrors the API: strips spaces/dashes/parentheses, maps +66 to 0, then 0 + 8-9 digits. */
+export function normalizePhone(raw: string): string | null {
+  let value = raw.replace(/[\s\-()]/g, "");
+  if (value.startsWith("+66")) value = `0${value.slice(3)}`;
+  return /^0\d{8,9}$/.test(value) ? value : null;
+}
+
+export function emptyRecipient(
+  defaults: CartDto["buyerDefaults"],
+): RecipientDraft {
   return {
-    fullName: name || user.name?.trim() || "",
-    phone: user.phone?.trim() || "",
+    fullName: defaults.fullName ?? "",
+    phone: defaults.phone ?? "",
     addressLine: "",
     subdistrict: "",
     district: "",
     province: "",
     postalCode: "",
-    country: "TH",
-    company: null,
-    deliveryNote: null,
+    company: "",
+    deliveryNote: "",
   };
 }
-export type RecipientErrors = Partial<Record<keyof Recipient, string>>;
-export function validateRecipientDraft(value: Recipient): {
-  recipient: Recipient | null;
-  errors: RecipientErrors;
-} {
+
+const REQUIRED = [
+  ["fullName", "ชื่อ–นามสกุลผู้รับ", 200],
+  ["addressLine", "ที่อยู่", 500],
+  ["subdistrict", "ตำบล/แขวง", 100],
+  ["district", "อำเภอ/เขต", 100],
+  ["province", "จังหวัด", 100],
+] as const;
+
+export function validateRecipient(
+  d: RecipientDraft,
+): { ok: true; value: Recipient } | { ok: false; errors: RecipientErrors } {
   const errors: RecipientErrors = {};
-  const cleaned: Recipient = {
-    ...value,
-    fullName: value.fullName.trim(),
-    phone: value.phone.trim().replace(/[\s()-]/g, ""),
-    addressLine: value.addressLine.trim(),
-    subdistrict: value.subdistrict.trim(),
-    district: value.district.trim(),
-    province: value.province.trim(),
-    postalCode: value.postalCode.trim(),
-    company: value.company?.trim() || null,
-    deliveryNote: value.deliveryNote?.trim() || null,
-  };
-  for (const [field, label, limit] of [
-    ["fullName", "ชื่อ–นามสกุลผู้รับ", 200],
-    ["addressLine", "ที่อยู่", 1000],
-    ["subdistrict", "ตำบล/แขวง", 200],
-    ["district", "อำเภอ/เขต", 200],
-    ["province", "จังหวัด", 200],
-  ] as const) {
-    if (!cleaned[field]) errors[field] = `กรุณากรอก${label}`;
-    else if (cleaned[field].length > limit)
+  const t = (k: keyof Recipient) => (d[k] ?? "").trim();
+  for (const [field, label, limit] of REQUIRED) {
+    const v = t(field);
+    if (!v) errors[field] = `กรุณากรอก${label}`;
+    else if (v.length > limit)
       errors[field] = `${label}ยาวเกิน ${limit} ตัวอักษร`;
   }
-  if (!/^(?:0[0-9]{8,9}|\+66[0-9]{8,9})$/.test(cleaned.phone))
-    errors.phone = cleaned.phone
+  const rawPhone = (d.phone ?? "").trim();
+  const phone = rawPhone.length <= 30 ? normalizePhone(rawPhone) : null;
+  if (!phone)
+    errors.phone = rawPhone
       ? "กรุณาตรวจสอบรูปแบบเบอร์โทรผู้รับในประเทศไทย"
       : "กรุณากรอกเบอร์โทรผู้รับ";
-  else if (cleaned.phone.startsWith("+66"))
-    cleaned.phone = `0${cleaned.phone.slice(3)}`;
-  if (!/^[0-9]{5}$/.test(cleaned.postalCode))
+  if (!/^\d{5}$/.test(t("postalCode")))
     errors.postalCode = "กรุณากรอกรหัสไปรษณีย์ 5 หลัก";
-  if (cleaned.country !== "TH") errors.country = "จัดส่งเฉพาะภายในประเทศไทย";
-  if (cleaned.company && cleaned.company.length > 300)
-    errors.company = "ชื่อบริษัทยาวเกิน 300 ตัวอักษร";
-  if (cleaned.deliveryNote && cleaned.deliveryNote.length > 1000)
-    errors.deliveryNote = "หมายเหตุจัดส่งยาวเกิน 1,000 ตัวอักษร";
-  return { recipient: Object.keys(errors).length ? null : cleaned, errors };
+  const company = t("company");
+  const deliveryNote = t("deliveryNote");
+  if (company.length > 200) errors.company = "ชื่อบริษัทยาวเกิน 200 ตัวอักษร";
+  if (deliveryNote.length > 500)
+    errors.deliveryNote = "หมายเหตุจัดส่งยาวเกิน 500 ตัวอักษร";
+  if (Object.keys(errors).length || !phone) return { ok: false, errors };
+  return {
+    ok: true,
+    value: {
+      fullName: t("fullName"),
+      phone,
+      addressLine: t("addressLine"),
+      subdistrict: t("subdistrict"),
+      district: t("district"),
+      province: t("province"),
+      postalCode: t("postalCode"),
+      company: company || null,
+      deliveryNote: deliveryNote || null,
+    },
+  };
 }

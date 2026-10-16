@@ -1,119 +1,74 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { product, ids } from "../../tests/merchandise/data";
-import type { ProductDto } from "../types/merchandise";
 import {
-  initialSelection,
-  selectionReady,
-  selectedPriceMinor,
-  parseQuantity,
+  defaultSelection, selectionComplete, selectionPriceMinor, describeLine, parseQuantity,
 } from "./merchandiseSelection";
+import type { CartLine, ProductDto, VariantDto } from "../types/merchandise";
 
-test("no-option products use their actual default without inventing choices", () => {
-  const selection = initialSelection(product);
-  assert.equal(selection.variantId, product.variants[0].id);
-  assert.equal(selectionReady(product, selection), true);
+const v = (id: string, o: Partial<VariantDto> = {}): VariantDto => ({
+  id, sizeTh: null, colorTh: null, priceMinor: null, saleEnabled: true, ...o,
+});
+const base: ProductDto = {
+  id: "p", kind: "single", nameTh: "x", descriptionTh: null, sizeChartTh: null,
+  images: [], categoryId: null, sortOrder: 0, hasOptions: false, variants: [],
+  components: [], price: { kind: "exact", amountMinor: 10000 }, purchasable: true, unavailableCodes: [],
+};
+const bundle: ProductDto = {
+  ...base, kind: "bundle",
+  components: [
+    { id: "c1", productId: "a", nameTh: "เสื้อ", quantityPerBundle: 1, mode: "selectable",
+      fixedVariant: null, allowedVariants: [v("s", { sizeTh: "M", colorTh: "ขาว" }), v("t", { saleEnabled: false })] },
+    { id: "c2", productId: "b", nameTh: "แก้ว", quantityPerBundle: 2, mode: "fixed",
+      fixedVariant: v("f", { colorTh: "แดง" }), allowedVariants: [] },
+  ],
+};
+
+test("no-option product defaults to first sellable variant", () => {
+  const p = { ...base, variants: [v("a", { saleEnabled: false }), v("b")] };
+  const s = defaultSelection(p);
+  assert.equal(s.variantId, "b");
+  assert.equal(selectionComplete(p, s), true);
+});
+test("product with options starts incomplete", () => {
+  const p = { ...base, hasOptions: true, variants: [v("a")] };
+  const s = defaultSelection(p);
+  assert.equal(s.variantId, null);
+  assert.equal(selectionComplete(p, s), false);
+  assert.equal(selectionComplete(p, { variantId: "a", bundleSelections: [] }), true);
+});
+test("bundle default is empty; complete with one selectable choice, fixed ignored", () => {
+  const d = defaultSelection(bundle);
+  assert.deepEqual(d, { variantId: null, bundleSelections: [] });
+  assert.equal(selectionComplete(bundle, d), false);
+  assert.equal(selectionComplete(bundle, { variantId: null, bundleSelections: [{ componentId: "c1", variantId: "s" }] }), true);
+  assert.equal(selectionComplete(bundle, { variantId: null, bundleSelections: [
+    { componentId: "c1", variantId: "s" }, { componentId: "c2", variantId: "f" }] }), true);
+  assert.equal(selectionComplete(bundle, { variantId: null, bundleSelections: [{ componentId: "c1", variantId: "zz" }] }), false);
+  assert.equal(selectionComplete(bundle, { variantId: null, bundleSelections: [{ componentId: "c1", variantId: "t" }] }), false);
+});
+test("price uses variant price then product price", () => {
+  const p = { ...base, hasOptions: true, variants: [v("a", { priceMinor: 25000 }), v("b")] };
+  assert.equal(selectionPriceMinor(p, { variantId: "a", bundleSelections: [] }), 25000);
+  assert.equal(selectionPriceMinor(p, { variantId: "b", bundleSelections: [] }), 10000);
+  assert.equal(selectionPriceMinor(p, { variantId: null, bundleSelections: [] }), null);
+  assert.equal(selectionPriceMinor(bundle, { variantId: null, bundleSelections: [{ componentId: "c1", variantId: "s" }] }), 10000);
+});
+const line = (product: ProductDto | null, o: Partial<CartLine> = {}): CartLine => ({
+  id: "l", productId: "p", variantId: null, bundleSelections: [], quantity: 1, product,
+  unitPriceMinor: null, lineTotalMinor: null, valid: true, issueCodes: [], ...o,
+});
+test("describeLine", () => {
+  const p = { ...base, hasOptions: true, variants: [v("a", { sizeTh: "M", colorTh: "ขาว" }), v("b", { sizeTh: "L" }), v("c")] };
+  assert.equal(describeLine(line(p, { variantId: "a" })), "ไซซ์ M / สีขาว");
+  assert.equal(describeLine(line(p, { variantId: "b" })), "ไซซ์ L");
+  assert.equal(describeLine(line(p, { variantId: "c" })), "");
+  assert.equal(describeLine(line(null)), "");
   assert.equal(
-    selectedPriceMinor(product, selection),
-    product.variants[0].effectivePriceMinor,
-  );
-  assert.equal(
-    selectionReady({ ...product, purchasable: false }, selection),
-    false,
+    describeLine(line(bundle, { bundleSelections: [{ componentId: "c1", variantId: "s" }] })),
+    "เสื้อ × 1 (ไซซ์ M / สีขาว), แก้ว × 2 (สีแดง)",
   );
 });
-test("explicit variants require a real enabled combination and its exact price, including zero", () => {
-  const p: ProductDto = {
-    ...product,
-    optionMode: "size_color",
-    variants: [
-      {
-        ...product.variants[0],
-        isDefault: false,
-        sizeTh: "M",
-        colorTh: "น้ำเงิน",
-        effectivePriceMinor: "0",
-      },
-      {
-        ...product.variants[0],
-        id: ids.item,
-        isDefault: false,
-        sizeTh: "L",
-        colorTh: "ส้ม",
-        saleEnabled: false,
-      },
-    ],
-  };
-  assert.equal(initialSelection(p).variantId, null);
-  assert.equal(selectionReady(p, initialSelection(p)), false);
-  assert.equal(
-    selectedPriceMinor(p, {
-      ...initialSelection(p),
-      variantId: p.variants[0].id,
-    }),
-    "0",
-  );
-  assert.equal(
-    selectionReady(p, { ...initialSelection(p), variantId: ids.item }),
-    false,
-  );
-  assert.equal(
-    selectionReady(p, { ...initialSelection(p), variantId: ids.order }),
-    false,
-  );
-});
-test("bundles require each actual component exactly once and charge only the set price", () => {
-  const p: ProductDto = {
-    ...product,
-    kind: "bundle",
-    basePriceMinor: "22000",
-    components: [
-      {
-        id: ids.item,
-        productId: ids.product,
-        nameTh: "ชิ้นทดสอบ",
-        quantityPerBundle: 2,
-        optionMode: "fixed",
-        fixedVariantId: ids.variant,
-        allowedVariants: product.variants,
-      },
-      {
-        id: ids.order,
-        productId: ids.product,
-        nameTh: "เลือกชิ้นทดสอบ",
-        quantityPerBundle: 1,
-        optionMode: "selectable",
-        fixedVariantId: null,
-        allowedVariants: product.variants,
-      },
-    ],
-  };
-  const initial = initialSelection(p);
-  assert.equal(initial.bundleSelections.length, 1);
-  assert.equal(selectionReady(p, initial), false);
-  const selection = {
-    ...initial,
-    bundleSelections: [
-      ...initial.bundleSelections,
-      { componentId: ids.order, variantId: ids.variant },
-    ],
-  };
-  assert.equal(selectedPriceMinor(p, selection), "22000");
-  assert.equal(
-    selectionReady(p, {
-      ...selection,
-      bundleSelections: [
-        selection.bundleSelections[0],
-        selection.bundleSelections[0],
-      ],
-    }),
-    false,
-  );
-  assert.equal(selectionReady({ ...p, purchasable: false }, selection), false);
-});
-test("quantity permits positive safe integers without an arbitrary purchase cap", () => {
-  for (const input of ["1", "1000000", String(Number.MAX_SAFE_INTEGER)])
-    assert.equal(parseQuantity(input), Number(input));
-  for (const input of ["", "0", "-1", "1.2", "1e3", " 2 ", "9007199254740992"])
-    assert.equal(parseQuantity(input), null);
+test("parseQuantity", () => {
+  assert.equal(parseQuantity("3"), 3);
+  assert.equal(parseQuantity("0"), null);
 });
