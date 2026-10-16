@@ -538,8 +538,8 @@ test("the order page lists bundle components, server amounts, recipient and shop
         sizeTh: null,
         colorTh: null,
         quantity: 1,
-        unitPriceMinor: 25000,
-        lineTotalMinor: 25000,
+        unitPriceBaht: 250,
+        lineTotalBaht: 250,
         components: [
           {
             nameTh: "แก้วน้ำ Pris",

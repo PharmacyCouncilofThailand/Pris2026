@@ -28,7 +28,7 @@ export function makeStore(o: Partial<StoreDto> = {}): StoreDto {
     closesAt: "2026-10-30T00:00:00.000Z",
     productionInfoTh: null,
     shippingInfoTh: null,
-    shippingMinor: 5000,
+    shippingBaht: 50,
     currency: "THB",
     serverNow: now,
     categories: [],
@@ -42,7 +42,7 @@ export function makeVariant(o: Partial<VariantDto> = {}): VariantDto {
     id: ids.variant,
     sizeTh: null,
     colorTh: null,
-    priceMinor: 25000,
+    priceBaht: 250,
     saleEnabled: true,
     ...o,
   };
@@ -61,7 +61,7 @@ export function makeSingle(o: Partial<ProductDto> = {}): ProductDto {
     hasOptions: false,
     variants: [makeVariant()],
     components: [],
-    price: { kind: "exact", amountMinor: 25000 },
+    price: { kind: "exact", amountBaht: 250 },
     purchasable: true,
     unavailableCodes: [],
     ...o,
@@ -73,20 +73,20 @@ export function makeOptionsProduct(o: Partial<ProductDto> = {}): ProductDto {
     id: "10000000-0000-4000-8000-000000000011",
     sizeTh: "M",
     colorTh: "ขาว",
-    priceMinor: 30000,
+    priceBaht: 300,
   });
   const v2 = makeVariant({
     id: "10000000-0000-4000-8000-000000000012",
     sizeTh: "L",
     colorTh: "ขาว",
-    priceMinor: 32000,
+    priceBaht: 320,
   });
   return makeSingle({
     id: "10000000-0000-4000-8000-000000000010",
     nameTh: "เสื้อยืด Pris",
     hasOptions: true,
     variants: [v1, v2],
-    price: { kind: "from", amountMinor: 30000 },
+    price: { kind: "from", amountBaht: 300 },
     ...o,
   });
 }
@@ -95,12 +95,12 @@ export function makeBundle(o: Partial<ProductDto> = {}): ProductDto {
   const v = makeVariant({
     id: "10000000-0000-4000-8000-000000000021",
     sizeTh: "M",
-    priceMinor: null,
+    priceBaht: null,
   });
   const v2 = makeVariant({
     id: "10000000-0000-4000-8000-000000000022",
     sizeTh: "L",
-    priceMinor: null,
+    priceBaht: null,
   });
   return makeSingle({
     id: "10000000-0000-4000-8000-000000000020",
@@ -128,7 +128,7 @@ export function makeBundle(o: Partial<ProductDto> = {}): ProductDto {
         allowedVariants: [v, v2],
       },
     ],
-    price: { kind: "exact", amountMinor: 45000 },
+    price: { kind: "exact", amountBaht: 450 },
     ...o,
   });
 }
@@ -164,9 +164,9 @@ export function makeOrder(o: Partial<OrderDetail> = {}): OrderDetail {
       shippedAt: null,
     },
     amounts: {
-      subtotalMinor: 25000,
-      shippingMinor: 5000,
-      totalMinor: 30000,
+      subtotalBaht: 250,
+      shippingBaht: 50,
+      totalBaht: 300,
       currency: "THB",
     },
     buyer: {
@@ -193,8 +193,8 @@ export function makeOrder(o: Partial<OrderDetail> = {}): OrderDetail {
         sizeTh: null,
         colorTh: null,
         quantity: 1,
-        unitPriceMinor: 25000,
-        lineTotalMinor: 25000,
+        unitPriceBaht: 250,
+        lineTotalBaht: 250,
         components: [],
       },
     ],

@@ -1,4 +1,4 @@
-export const isMinor = (value: unknown): value is number =>
+export const isBaht = (value: unknown): value is number =>
   typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
 export function isIsoUtc(value: unknown): value is string {
   if (
@@ -19,9 +19,9 @@ const baht = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
-export function formatMinorBaht(minor: number): string {
-  if (!isMinor(minor)) throw new Error("Invalid minor amount");
-  return `฿${baht.format(minor / 100)}`;
+export function formatBaht(amount: number): string {
+  if (!isBaht(amount)) throw new Error("Invalid baht amount");
+  return `฿${baht.format(amount)}`;
 }
 export function formatMerchandiseTime(value: string | null): string {
   if (value === null) return "—";

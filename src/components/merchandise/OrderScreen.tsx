@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { OrderDetail } from "@/types/merchandise";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
@@ -106,8 +106,8 @@ function OrderWorkspace({
                   </p>
                 )}
                 <p>
-                  {formatMinorBaht(item.unitPriceMinor)} × {item.quantity} ={" "}
-                  {formatMinorBaht(item.lineTotalMinor)}
+                  {formatBaht(item.unitPriceBaht)} × {item.quantity} ={" "}
+                  {formatBaht(item.lineTotalBaht)}
                 </p>
                 {item.components.length > 0 && (
                   <ul>
@@ -125,15 +125,15 @@ function OrderWorkspace({
             <dl className="merch-order-amounts">
               <div>
                 <dt>ค่าสินค้า</dt>
-                <dd>{formatMinorBaht(amounts.subtotalMinor)}</dd>
+                <dd>{formatBaht(amounts.subtotalBaht)}</dd>
               </div>
               <div>
                 <dt>ค่าจัดส่ง</dt>
-                <dd>{formatMinorBaht(amounts.shippingMinor)}</dd>
+                <dd>{formatBaht(amounts.shippingBaht)}</dd>
               </div>
               <div>
                 <dt>ยอดรวม</dt>
-                <dd>{formatMinorBaht(amounts.totalMinor)}</dd>
+                <dd>{formatBaht(amounts.totalBaht)}</dd>
               </div>
             </dl>
           </section>

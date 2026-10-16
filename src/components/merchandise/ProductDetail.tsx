@@ -15,11 +15,11 @@ import {
   defaultSelection,
   parseQuantity,
   selectionComplete,
-  selectionPriceMinor,
+  selectionPriceBaht,
   unavailableMessage,
   type Selection,
 } from "@/lib/merchandiseSelection";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import { isMerchandiseId, merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import {
   readPurchaseIntent,
@@ -123,7 +123,7 @@ export default function ProductDetail({
   const count = parseQuantity(quantity),
     countOk = count !== null && count <= MAX_QUANTITY,
     complete = selectionComplete(product, selection),
-    price = selectionPriceMinor(product, selection);
+    price = selectionPriceBaht(product, selection);
   const allowed =
     store.state === "open" &&
     product.purchasable &&
@@ -204,14 +204,14 @@ export default function ProductDetail({
           <p className="merch-detail-price" aria-live="polite">
             {price !== null ? (
               <>
-                {formatMinorBaht(price)}
+                {formatBaht(price)}
                 <small> / {unit}</small>
               </>
             ) : product.price?.kind === "from" ? (
-              `เริ่มต้น ${formatMinorBaht(product.price.amountMinor)}`
+              `เริ่มต้น ${formatBaht(product.price.amountBaht)}`
             ) : product.price ? (
               <>
-                {formatMinorBaht(product.price.amountMinor)}
+                {formatBaht(product.price.amountBaht)}
                 <small> / {unit}</small>
               </>
             ) : (
@@ -316,7 +316,7 @@ export default function ProductDetail({
       <div className="merch-detail-bar" ref={barRef}>
         <button type="button" disabled={!allowed} onClick={add}>
           {busy ? "กำลังตรวจสอบรายการ" : "เพิ่มลงตะกร้า"}
-          {price !== null && <> · {formatMinorBaht(price)}</>}
+          {price !== null && <> · {formatBaht(price)}</>}
           <ArrowRight
             size={22}
             aria-hidden="true"

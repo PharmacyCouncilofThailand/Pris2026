@@ -22,7 +22,7 @@ const validStore = {
   closesAt: NOW,
   productionInfoTh: null,
   shippingInfoTh: "ส่งภายใน 7 วัน",
-  shippingMinor: 5000,
+  shippingBaht: 50,
   currency: "THB",
   serverNow: NOW,
   categories: [{ id: id(2), nameTh: "เสื้อ", sortOrder: 1 }],
@@ -32,7 +32,7 @@ const variant = {
   id: id(4),
   sizeTh: "M",
   colorTh: null,
-  priceMinor: null,
+  priceBaht: null,
   saleEnabled: true,
 };
 const product = {
@@ -47,11 +47,11 @@ const product = {
   hasOptions: true,
   variants: [variant],
   components: [],
-  price: { kind: "exact", amountMinor: 25000 },
+  price: { kind: "exact", amountBaht: 250 },
   purchasable: true,
   unavailableCodes: [],
 };
-const amounts = { subtotalMinor: 25000, shippingMinor: 5000, totalMinor: 30000, currency: "THB" };
+const amounts = { subtotalBaht: 250, shippingBaht: 50, totalBaht: 300, currency: "THB" };
 const cart = {
   cartVersion: "v1",
   items: [
@@ -62,8 +62,8 @@ const cart = {
       bundleSelections: [],
       quantity: 1,
       product,
-      unitPriceMinor: 25000,
-      lineTotalMinor: 25000,
+      unitPriceBaht: 250,
+      lineTotalBaht: 250,
       valid: true,
       issueCodes: [],
     },
@@ -108,8 +108,8 @@ const order = {
       sizeTh: "M",
       colorTh: null,
       quantity: 1,
-      unitPriceMinor: 25000,
-      lineTotalMinor: 25000,
+      unitPriceBaht: 250,
+      lineTotalBaht: 250,
       components: [],
     },
   ],
@@ -120,14 +120,14 @@ const order = {
 
 test("store", () => {
   assert.equal(storeResponse(validStore), true);
-  assert.equal(storeResponse({ ...validStore, shippingMinor: "5000" }), false);
+  assert.equal(storeResponse({ ...validStore, shippingBaht: "50" }), false);
   assert.equal(storeResponse({ ...validStore, state: "unconfigured" }), false);
   assert.equal(storeResponse({ ...validStore, extra: 1 }), true);
 });
 test("product and page", () => {
   assert.equal(productResponse(product), true);
   assert.equal(
-    productResponse({ ...product, price: { kind: "exact", amountMinor: "100" } }),
+    productResponse({ ...product, price: { kind: "exact", amountBaht: "100" } }),
     false,
   );
   assert.equal(productResponse({ ...product, price: null }), true);
@@ -138,7 +138,17 @@ test("product and page", () => {
 test("cart", () => {
   assert.equal(cartResponse(cart), true);
   assert.equal(cartResponse({ ...cart, amounts: null }), true);
-  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingMinor: 100 } }), false);
+  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 100 } }), false);
+  // A satang value under the new key must not pass as 5,000 baht shipping.
+  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 5000 } }), false);
+  // The old satang API shape must be rejected, not silently read as baht.
+  assert.equal(
+    cartResponse({
+      ...cart,
+      amounts: { subtotalMinor: 25000, shippingMinor: 5000, totalMinor: 30000, currency: "THB" },
+    }),
+    false,
+  );
 });
 test("order and payment", () => {
   assert.equal(orderResponse(order), true);

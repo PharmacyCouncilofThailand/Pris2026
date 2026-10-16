@@ -23,7 +23,7 @@ const validStore = {
   closesAt: NOW,
   productionInfoTh: null,
   shippingInfoTh: "ส่งภายใน 7 วัน",
-  shippingMinor: 5000,
+  shippingBaht: 50,
   currency: "THB",
   serverNow: NOW,
   categories: [{ id: id(2), nameTh: "เสื้อ", sortOrder: 1 }],
@@ -33,7 +33,7 @@ const variant = {
   id: id(4),
   sizeTh: "M",
   colorTh: null,
-  priceMinor: null,
+  priceBaht: null,
   saleEnabled: true,
 };
 const product = {
@@ -48,14 +48,14 @@ const product = {
   hasOptions: true,
   variants: [variant],
   components: [],
-  price: { kind: "exact", amountMinor: 25000 },
+  price: { kind: "exact", amountBaht: 250 },
   purchasable: true,
   unavailableCodes: [],
 };
 const amounts = {
-  subtotalMinor: 25000,
-  shippingMinor: 5000,
-  totalMinor: 30000,
+  subtotalBaht: 250,
+  shippingBaht: 50,
+  totalBaht: 300,
   currency: "THB",
 };
 const cart = {
@@ -68,8 +68,8 @@ const cart = {
       bundleSelections: [],
       quantity: 1,
       product,
-      unitPriceMinor: 25000,
-      lineTotalMinor: 25000,
+      unitPriceBaht: 250,
+      lineTotalBaht: 250,
       valid: true,
       issueCodes: [],
     },
@@ -124,8 +124,8 @@ const order = {
       sizeTh: "M",
       colorTh: null,
       quantity: 1,
-      unitPriceMinor: 25000,
-      lineTotalMinor: 25000,
+      unitPriceBaht: 250,
+      lineTotalBaht: 250,
       components: [],
     },
   ],

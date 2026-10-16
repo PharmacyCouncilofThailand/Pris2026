@@ -58,8 +58,8 @@ test("editing quantity shows exactly the amounts the server returned, then remov
   const b = makeSingle({
     id: uid(2),
     nameTh: "ถุงผ้า Pris",
-    variants: [{ ...makeSingle().variants[0], id: uid(22), priceMinor: 10000 }],
-    price: { kind: "exact", amountMinor: 10000 },
+    variants: [{ ...makeSingle().variants[0], id: uid(22), priceBaht: 100 }],
+    price: { kind: "exact", amountBaht: 100 },
   });
   fake.products = [a, b];
   seed(fake, a);
@@ -75,7 +75,7 @@ test("editing quantity shows exactly the amounts the server returned, then remov
     page.getByLabel("จำนวน แก้วน้ำ Pris", { exact: true }),
   ).toHaveValue("2");
   const amounts = fake.cart.amounts!;
-  expect(amounts.totalMinor).toBe(2 * 25000 + 10000 + 5000);
+  expect(amounts.totalBaht).toBe(2 * 250 + 100 + 50);
   await expect(page.locator(".merch-cart-total")).toContainText("฿650.00");
   await expect(summary).toContainText("฿600.00"); // subtotal
   await expect(summary).toContainText("฿50.00"); // shipping, once

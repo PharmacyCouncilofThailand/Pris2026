@@ -17,7 +17,7 @@ import type {
   StoreDto,
   VariantDto,
 } from "../types/merchandise";
-import { isIsoUtc, isMinor } from "./merchandiseFormat";
+import { isIsoUtc, isBaht } from "./merchandiseFormat";
 export type Check = (value: unknown) => boolean;
 export const record = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -85,7 +85,7 @@ export const storeResponse = shape<StoreDto>({
   closesAt: nullable(isIsoUtc),
   productionInfoTh: nullable(text),
   shippingInfoTh: nullable(text),
-  shippingMinor: one(5000),
+  shippingBaht: one(50),
   currency: one("THB"),
   serverNow: isIsoUtc,
   categories: list(
@@ -107,7 +107,7 @@ const variant = shape<VariantDto>({
   id: uuid,
   sizeTh: nullable(text),
   colorTh: nullable(text),
-  priceMinor: nullable(isMinor),
+  priceBaht: nullable(isBaht),
   saleEnabled: boolean,
 });
 const component = shape<BundleComponentDto>({
@@ -134,16 +134,16 @@ export const productResponse = shape<ProductDto>({
   price: nullable(
     shape<NonNullable<ProductDto["price"]>>({
       kind: one("exact", "from"),
-      amountMinor: isMinor,
+      amountBaht: isBaht,
     }),
   ),
   purchasable: boolean,
   unavailableCodes: list(text),
 });
 const amounts = shape<Amounts>({
-  subtotalMinor: isMinor,
-  shippingMinor: one(5000),
-  totalMinor: isMinor,
+  subtotalBaht: isBaht,
+  shippingBaht: one(50),
+  totalBaht: isBaht,
   currency: one("THB"),
 });
 const recipient = shape<Recipient>({
@@ -168,8 +168,8 @@ const cartLine = shape<CartLine>({
   bundleSelections: list(selection),
   quantity: positive,
   product: nullable(productResponse),
-  unitPriceMinor: nullable(isMinor),
-  lineTotalMinor: nullable(isMinor),
+  unitPriceBaht: nullable(isBaht),
+  lineTotalBaht: nullable(isBaht),
   valid: boolean,
   issueCodes: list(text),
 });
@@ -191,8 +191,8 @@ const orderItem = shape<OrderItemDto>({
   sizeTh: nullable(text),
   colorTh: nullable(text),
   quantity: positive,
-  unitPriceMinor: isMinor,
-  lineTotalMinor: isMinor,
+  unitPriceBaht: isBaht,
+  lineTotalBaht: isBaht,
   components: list(
     shape<OrderItemDto["components"][number]>({
       nameTh: text,

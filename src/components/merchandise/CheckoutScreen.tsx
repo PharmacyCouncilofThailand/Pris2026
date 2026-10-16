@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import { canCheckout, describeLine } from "@/lib/merchandiseSelection";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import { validateRecipient } from "@/lib/merchandiseRecipient";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import type { Amounts, CartDto, Recipient } from "@/types/merchandise";
@@ -238,7 +238,7 @@ function CheckoutWorkspace() {
           >
             {submitting
               ? "กำลังยืนยันคำสั่งซื้อ"
-              : `ยืนยันคำสั่งซื้อ${cart?.amounts ? " · " + formatMinorBaht(cart.amounts.totalMinor) : ""}`}
+              : `ยืนยันคำสั่งซื้อ${cart?.amounts ? " · " + formatBaht(cart.amounts.totalBaht) : ""}`}
             <ArrowRight size={22} aria-hidden="true" />
           </button>
         )}
@@ -277,16 +277,16 @@ function ReviewBody({
               <div>
                 <h2>{line.product?.nameTh ?? "สินค้านี้ไม่มีแล้ว"}</h2>
                 {detail && <p className="merch-cart-muted">{detail}</p>}
-                {line.unitPriceMinor !== null && (
+                {line.unitPriceBaht !== null && (
                   <p className="merch-cart-unit-price">
-                    {formatMinorBaht(line.unitPriceMinor)}
+                    {formatBaht(line.unitPriceBaht)}
                   </p>
                 )}
                 <p>
                   {line.quantity}{" "}
                   {line.product?.kind === "bundle" ? "ชุด" : "ชิ้น"}
-                  {line.lineTotalMinor !== null &&
-                    ` · รวม ${formatMinorBaht(line.lineTotalMinor)}`}
+                  {line.lineTotalBaht !== null &&
+                    ` · รวม ${formatBaht(line.lineTotalBaht)}`}
                 </p>
               </div>
             </article>
@@ -352,15 +352,15 @@ function CheckoutSummary({ amounts }: { amounts: Amounts | null }) {
         <dl>
           <div>
             <dt>ค่าสินค้า</dt>
-            <dd>{formatMinorBaht(amounts.subtotalMinor)}</dd>
+            <dd>{formatBaht(amounts.subtotalBaht)}</dd>
           </div>
           <div>
             <dt>ค่าจัดส่ง</dt>
-            <dd>{formatMinorBaht(amounts.shippingMinor)}</dd>
+            <dd>{formatBaht(amounts.shippingBaht)}</dd>
           </div>
           <div className="merch-cart-total">
             <dt>ยอดชำระรวม</dt>
-            <dd>{formatMinorBaht(amounts.totalMinor)}</dd>
+            <dd>{formatBaht(amounts.totalBaht)}</dd>
           </div>
         </dl>
       ) : (

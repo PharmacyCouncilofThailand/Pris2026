@@ -12,7 +12,7 @@ import {
 } from "@/lib/merchandiseRoutes";
 import {
   formatMerchandiseTime,
-  formatMinorBaht,
+  formatBaht,
 } from "@/lib/merchandiseFormat";
 import OrderStatus from "./OrderStatus";
 export default function OrderHistory() {
@@ -138,7 +138,7 @@ function HistoryLoader({ page }: { page: number }) {
                 </div>
                 <OrderStatus order={order} />
                 <div className="merch-history-row-bottom">
-                  <strong>{formatMinorBaht(order.amounts.totalMinor)}</strong>
+                  <strong>{formatBaht(order.amounts.totalBaht)}</strong>
                   <Link
                     href={`/souvenirs/orders/${order.id}`}
                     aria-label={`ดูรายละเอียด ${order.orderNumber}`}

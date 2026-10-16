@@ -105,10 +105,10 @@ test("review shows the amounts of a fresh GET cart and the POST is bound to that
       {
         ...base.variants[0],
         id: "10000000-0000-4000-8000-00000000009a",
-        priceMinor: 10000,
+        priceBaht: 100,
       },
     ],
-    price: { kind: "exact", amountMinor: 10000 },
+    price: { kind: "exact", amountBaht: 100 },
   });
   fake.products.push(other);
   fake.seedLine({

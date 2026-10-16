@@ -2,7 +2,7 @@
 import { Loader2 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import type { OrderDetail } from "@/types/merchandise";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import { formatPaymentRemaining, panelModel } from "@/lib/merchandisePayment";
 import PaymentQr from "./PaymentQr";
@@ -64,7 +64,7 @@ export default function PaymentPanel({
     >
       <h2 id="merch-payment-title">{model.title}</h2>
       <p className="merch-payment-amount">
-        {formatMinorBaht(order.amounts.totalMinor)}
+        {formatBaht(order.amounts.totalBaht)}
       </p>
       {busy && (
         <div className="merch-payment-working" role="status">

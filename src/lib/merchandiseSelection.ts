@@ -2,7 +2,7 @@ import type {
   BundleSelection,
   CartDto,
   CartLine,
-  Minor,
+  Baht,
   ProductDto,
   StoreDto,
   VariantDto,
@@ -44,11 +44,11 @@ export function selectionComplete(p: ProductDto, s: Selection): boolean {
   });
 }
 
-export function selectionPriceMinor(p: ProductDto, s: Selection): Minor | null {
+export function selectionPriceBaht(p: ProductDto, s: Selection): Baht | null {
   if (!selectionComplete(p, s)) return null;
-  if (p.kind === "bundle") return p.price?.amountMinor ?? null;
+  if (p.kind === "bundle") return p.price?.amountBaht ?? null;
   const v = p.variants.find((x) => x.id === s.variantId);
-  return v?.priceMinor ?? p.price?.amountMinor ?? null;
+  return v?.priceBaht ?? p.price?.amountBaht ?? null;
 }
 
 export function parseQuantity(value: string): number | null {

@@ -9,7 +9,7 @@ import {
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
 import { MerchandiseApiError, merchandiseFailure } from "@/lib/merchandiseApi";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
 import { canCheckout, unavailableMessage } from "@/lib/merchandiseSelection";
 import type {
@@ -152,13 +152,13 @@ function CartWorkspace() {
     for (const line of fresh.items) {
       const old = latest.current.items.find((i) => i.id === line.id);
       if (
-        old?.unitPriceMinor != null &&
-        line.unitPriceMinor !== null &&
-        old.unitPriceMinor !== line.unitPriceMinor
+        old?.unitPriceBaht != null &&
+        line.unitPriceBaht !== null &&
+        old.unitPriceBaht !== line.unitPriceBaht
       )
         changes[line.id] = {
-          from: old.unitPriceMinor,
-          to: line.unitPriceMinor,
+          from: old.unitPriceBaht,
+          to: line.unitPriceBaht,
         };
     }
     setPriceChanges((previous) => ({ ...previous, ...changes }));
@@ -349,15 +349,15 @@ function CartWorkspace() {
             <dl>
               <div>
                 <dt>ค่าสินค้า</dt>
-                <dd>{formatMinorBaht(data.amounts.subtotalMinor)}</dd>
+                <dd>{formatBaht(data.amounts.subtotalBaht)}</dd>
               </div>
               <div>
                 <dt>ค่าจัดส่ง</dt>
-                <dd>{formatMinorBaht(data.amounts.shippingMinor)}</dd>
+                <dd>{formatBaht(data.amounts.shippingBaht)}</dd>
               </div>
               <div className="merch-cart-total">
                 <dt>ยอดชำระรวม</dt>
-                <dd>{formatMinorBaht(data.amounts.totalMinor)}</dd>
+                <dd>{formatBaht(data.amounts.totalBaht)}</dd>
               </div>
             </dl>
           ) : (
@@ -385,7 +385,7 @@ function CartWorkspace() {
       <div className="merch-cart-bar" ref={bar}>
         <button type="button" disabled={!allowed} onClick={proceed}>
           {busy ? "กำลังตรวจสอบตะกร้า" : "ดำเนินการสั่งซื้อ"}
-          {data.amounts && <> · {formatMinorBaht(data.amounts.totalMinor)}</>}
+          {data.amounts && <> · {formatBaht(data.amounts.totalBaht)}</>}
           <ArrowRight size={22} aria-hidden="true" />
         </button>
       </div>

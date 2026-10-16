@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { ProductDto, StoreDto } from "@/types/merchandise";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import { Icon } from "./storefront-icons";
 export interface StorefrontViewProps {
   store: StoreDto;
@@ -161,7 +161,7 @@ function ProductCard({
         <h3 id={titleId}>{product.nameTh}</h3>
         <p className="merch-price">
           {product.price
-            ? `${product.price.kind === "from" ? "เริ่มต้น " : ""}${formatMinorBaht(product.price.amountMinor)}`
+            ? `${product.price.kind === "from" ? "เริ่มต้น " : ""}${formatBaht(product.price.amountBaht)}`
             : "ยังไม่กำหนดราคา"}
         </p>
         {storeOpen && (

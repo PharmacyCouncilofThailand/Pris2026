@@ -73,15 +73,15 @@ export class FakeMerchApi {
   private touchCart() {
     const items = this.cart.items;
     const ok = items.length > 0 && items.every((l) => l.valid);
-    const subtotal = items.reduce((s, l) => s + (l.lineTotalMinor ?? 0), 0);
+    const subtotal = items.reduce((s, l) => s + (l.lineTotalBaht ?? 0), 0);
     this.cart = {
       ...this.cart,
       cartVersion: this.nextVersion(),
       amounts: ok
         ? {
-            subtotalMinor: subtotal,
-            shippingMinor: 5000,
-            totalMinor: subtotal + 5000,
+            subtotalBaht: subtotal,
+            shippingBaht: 50,
+            totalBaht: subtotal + 50,
             currency: "THB",
           }
         : null,
@@ -310,8 +310,8 @@ export class FakeMerchApi {
         bundleSelections: input.bundleSelections,
         quantity: input.quantity,
         product,
-        unitPriceMinor: null,
-        lineTotalMinor: null,
+        unitPriceBaht: null,
+        lineTotalBaht: null,
         valid: true,
         issueCodes: [],
       };
@@ -352,19 +352,19 @@ export class FakeMerchApi {
     const p = line.product;
     let unit: number | null = null;
     if (p) {
-      if (p.kind === "bundle") unit = p.price?.amountMinor ?? null;
+      if (p.kind === "bundle") unit = p.price?.amountBaht ?? null;
       else {
         const v =
           p.variants.find((x) => x.id === line.variantId) ??
           (p.variants.length === 1 && !p.hasOptions
             ? p.variants[0]
             : undefined);
-        unit = v && v.saleEnabled ? v.priceMinor : null;
+        unit = v && v.saleEnabled ? v.priceBaht : null;
       }
     }
     target.product = p;
-    target.unitPriceMinor = unit;
-    target.lineTotalMinor = unit === null ? null : unit * line.quantity;
+    target.unitPriceBaht = unit;
+    target.lineTotalBaht = unit === null ? null : unit * line.quantity;
     target.valid = unit !== null && !!p?.purchasable;
     target.issueCodes = target.valid
       ? []
@@ -441,8 +441,8 @@ export class FakeMerchApi {
           sizeTh: v?.sizeTh ?? null,
           colorTh: v?.colorTh ?? null,
           quantity: l.quantity,
-          unitPriceMinor: l.unitPriceMinor ?? 0,
-          lineTotalMinor: l.lineTotalMinor ?? 0,
+          unitPriceBaht: l.unitPriceBaht ?? 0,
+          lineTotalBaht: l.lineTotalBaht ?? 0,
           components: [],
         };
       }),

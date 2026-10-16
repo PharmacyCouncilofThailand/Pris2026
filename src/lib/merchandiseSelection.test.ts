@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import {
   defaultSelection,
   selectionComplete,
-  selectionPriceMinor,
+  selectionPriceBaht,
   describeLine,
   parseQuantity,
   unavailableMessage,
@@ -21,7 +21,7 @@ const v = (id: string, o: Partial<VariantDto> = {}): VariantDto => ({
   id,
   sizeTh: null,
   colorTh: null,
-  priceMinor: null,
+  priceBaht: null,
   saleEnabled: true,
   ...o,
 });
@@ -37,7 +37,7 @@ const base: ProductDto = {
   hasOptions: false,
   variants: [],
   components: [],
-  price: { kind: "exact", amountMinor: 10000 },
+  price: { kind: "exact", amountBaht: 100 },
   purchasable: true,
   unavailableCodes: [],
 };
@@ -125,26 +125,26 @@ test("price uses variant price then product price", () => {
   const p = {
     ...base,
     hasOptions: true,
-    variants: [v("a", { priceMinor: 25000 }), v("b")],
+    variants: [v("a", { priceBaht: 250 }), v("b")],
   };
   assert.equal(
-    selectionPriceMinor(p, { variantId: "a", bundleSelections: [] }),
-    25000,
+    selectionPriceBaht(p, { variantId: "a", bundleSelections: [] }),
+    250,
   );
   assert.equal(
-    selectionPriceMinor(p, { variantId: "b", bundleSelections: [] }),
-    10000,
+    selectionPriceBaht(p, { variantId: "b", bundleSelections: [] }),
+    100,
   );
   assert.equal(
-    selectionPriceMinor(p, { variantId: null, bundleSelections: [] }),
+    selectionPriceBaht(p, { variantId: null, bundleSelections: [] }),
     null,
   );
   assert.equal(
-    selectionPriceMinor(bundle, {
+    selectionPriceBaht(bundle, {
       variantId: null,
       bundleSelections: [{ componentId: "c1", variantId: "s" }],
     }),
-    10000,
+    100,
   );
 });
 const line = (
@@ -157,8 +157,8 @@ const line = (
   bundleSelections: [],
   quantity: 1,
   product,
-  unitPriceMinor: null,
-  lineTotalMinor: null,
+  unitPriceBaht: null,
+  lineTotalBaht: null,
   valid: true,
   issueCodes: [],
   ...o,
@@ -229,9 +229,9 @@ test("unavailableMessage maps product and cart issue codes to Thai copy", () => 
 test("canCheckout needs an open store, valid lines and server amounts", () => {
   const line = { id: "l", valid: true } as CartLine;
   const amounts = {
-    subtotalMinor: 1,
-    shippingMinor: 5000,
-    totalMinor: 5001,
+    subtotalBaht: 1,
+    shippingBaht: 50,
+    totalBaht: 51,
     currency: "THB",
   } as const;
   const cart = (items: CartLine[], a: CartDto["amounts"]) =>

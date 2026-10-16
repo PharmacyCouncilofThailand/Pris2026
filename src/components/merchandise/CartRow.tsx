@@ -9,7 +9,7 @@ import type {
   StoreDto,
   VariantDto,
 } from "@/types/merchandise";
-import { formatMinorBaht } from "@/lib/merchandiseFormat";
+import { formatBaht } from "@/lib/merchandiseFormat";
 import {
   describeLine,
   parseQuantity,
@@ -100,15 +100,15 @@ export default function CartRow({
           </h2>
           {options && <p className="merch-cart-muted">{options}</p>}
           <p className="merch-cart-unit-price">
-            {line.unitPriceMinor === null
+            {line.unitPriceBaht === null
               ? "—"
-              : formatMinorBaht(line.unitPriceMinor)}
+              : formatBaht(line.unitPriceBaht)}
             <small> / {product?.kind === "bundle" ? "ชุด" : "ชิ้น"}</small>
           </p>
           {priceChange && (
             <p className="merch-cart-notice">
-              ราคาปรับจาก {formatMinorBaht(priceChange.from)} เป็น{" "}
-              {formatMinorBaht(priceChange.to)} กรุณาตรวจสอบอีกครั้ง
+              ราคาปรับจาก {formatBaht(priceChange.from)} เป็น{" "}
+              {formatBaht(priceChange.to)} กรุณาตรวจสอบอีกครั้ง
             </p>
           )}
           {product?.kind === "bundle" && (
@@ -200,9 +200,9 @@ export default function CartRow({
           )}
           <p className="merch-cart-line-total">
             รวมรายการ:{" "}
-            {line.lineTotalMinor === null
+            {line.lineTotalBaht === null
               ? "ยังสรุปยอดไม่ได้"
-              : formatMinorBaht(line.lineTotalMinor)}
+              : formatBaht(line.lineTotalBaht)}
           </p>
           {issues.map((message) => (
             <p className="merch-cart-issue" key={message}>
