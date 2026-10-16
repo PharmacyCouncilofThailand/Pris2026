@@ -659,9 +659,43 @@ test("an order already paid on load shows details and never redirects", async ({
   await open(page);
   await expect(page.getByRole("link", { name: "กลับหน้าประวัติ" })).toBeVisible();
   await expect(heading(page, "ยังไม่จัดส่ง")).toBeVisible();
+  expect(
+    await page.locator(".merch-order address").evaluate((e) => {
+      const s = getComputedStyle(e);
+      return [s.fontStyle, s.marginTop];
+    }),
+  ).toEqual(["normal", "12px"]);
   await page.clock.runFor(15_000);
   await expect(page).toHaveURL(new RegExp(`/souvenirs/orders/${ids.order}$`));
+  // No polling once paid: a whole minute passes without another order GET.
+  await page.waitForTimeout(300);
+  const settled = orderGets(fake);
+  await page.clock.runFor(60_000);
+  await page.waitForTimeout(300);
+  expect(orderGets(fake)).toBe(settled);
 });
+
+for (const state of ["qr_expired_closed", "review"] as const)
+  test(`an unpaid order in ${state} can no longer be paid, so it shows the order details`, async ({
+    page,
+    fake,
+  }) => {
+    seed(fake, {
+      payment: view({ state, attempt: expiredAttempt, ...noButtons }),
+    });
+    await open(page);
+    await expect(
+      page.getByRole("link", { name: "กลับหน้าประวัติ" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: `คำสั่งซื้อ ${NUMBER}` }),
+    ).toBeVisible();
+    await expect(page.locator(".merch-pay-card")).toHaveCount(0);
+    await expect(page.locator(".merch-order-item").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ผู้รับ" })).toBeVisible();
+    await expect(page.locator(".merch-payment-panel")).toBeVisible();
+    await expect(heading(page, "ชำระเงินสำเร็จ")).toHaveCount(0);
+  });
 
 test("verifying after QR shows no countdown", async ({ page, fake }) => {
   seed(fake);

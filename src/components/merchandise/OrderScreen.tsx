@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { formatBaht } from "@/lib/merchandiseFormat";
 import { merchandiseLoginPath } from "@/lib/merchandiseRoutes";
-import type { OrderDetail } from "@/types/merchandise";
+import type { OrderDetail, PaymentState } from "@/types/merchandise";
 import { MerchandiseAuthBoundary } from "./MerchandiseAuthBoundary";
 import PaidOrder, { JustPaidCard } from "./PaidOrder";
 import PaymentPanel from "./PaymentPanel";
@@ -77,6 +77,14 @@ function OrderLoader({ orderId }: { orderId: string }) {
 
 const isPaid = (o: OrderDetail) =>
   o.paymentStatus === "paid" || o.payment.state === "paid";
+// States in which the buyer can still pay; others (closed, staff review) show the details.
+const PAYABLE: ReadonlySet<PaymentState> = new Set([
+  "awaiting_qr",
+  "qr_active",
+  "verifying",
+  "qr_expired_open",
+  "check_failed",
+]);
 
 function OrderWorkspace({
   orderId,
@@ -92,7 +100,21 @@ function OrderWorkspace({
   const [initialPaid] = useState(() => isPaid(initial));
   const paid = isPaid(order);
   const { recipient, amounts } = order;
-  if (!paid || !initialPaid)
+  const panel = (
+    <PaymentPanel
+      order={order}
+      busy={polling.busy}
+      expiredLocally={polling.expiredLocally}
+      remainingMs={polling.remainingMs}
+      locked={polling.locked}
+      notice={polling.notice}
+      unauthorized={polling.unauthorized}
+      onRequestQr={() => void polling.requestQr()}
+      onCheck={() => void polling.check()}
+    />
+  );
+  const justPaid = paid && !initialPaid;
+  if (justPaid || (!paid && PAYABLE.has(order.payment.state)))
     return (
       <main className="merch-cart merch-order merch-pay">
         <h1 className="sr-only">คำสั่งซื้อ {order.orderNumber}</h1>
@@ -104,20 +126,10 @@ function OrderWorkspace({
             height={80}
             className="brightness-0 h-12 w-auto mx-auto"
           />
-          {paid ? (
+          {justPaid ? (
             <JustPaidCard orderNumber={order.orderNumber} />
           ) : (
-            <PaymentPanel
-              order={order}
-              busy={polling.busy}
-              expiredLocally={polling.expiredLocally}
-              remainingMs={polling.remainingMs}
-              locked={polling.locked}
-              notice={polling.notice}
-              unauthorized={polling.unauthorized}
-              onRequestQr={() => void polling.requestQr()}
-              onCheck={() => void polling.check()}
-            />
+            panel
           )}
         </div>
       </main>
@@ -208,9 +220,7 @@ function OrderWorkspace({
             </section>
           )}
         </div>
-        <div>
-          <PaidOrder order={order} />
-        </div>
+        <div>{paid ? <PaidOrder order={order} /> : panel}</div>
       </div>
     </main>
   );

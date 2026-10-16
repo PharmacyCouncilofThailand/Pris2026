@@ -120,7 +120,10 @@ test("review shows the amounts of a fresh GET cart and the POST is bound to that
   await toReviewButton(page).click();
   await expect(page.getByText("ถุงผ้า Pris", { exact: true })).toBeVisible();
   await expect(page.getByRole("radio", { name: "QR พร้อมเพย์" })).toBeChecked();
-  await expect(confirmButton(page)).toContainText("฿400.00");
+  await expect(confirmButton(page)).toHaveText("ยืนยันคำสั่งซื้อ");
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿400.00",
+  );
   const version = fake.cart.cartVersion;
   await confirmButton(page).click();
   await expect(page).toHaveURL(/\/th\/souvenirs\/orders\/[0-9a-f-]{36}$/);

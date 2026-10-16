@@ -127,7 +127,10 @@ test("409 MERCH_CART_CHANGED returns to a refreshed review with the notice", asy
   await expect(
     page.getByRole("heading", { name: "ตรวจสอบคำสั่งซื้อ", exact: true }),
   ).toBeVisible();
-  await expect(confirmButton(page)).toContainText("฿550.00");
+  await expect(confirmButton(page)).toHaveText("ยืนยันคำสั่งซื้อ");
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿550.00",
+  );
   expect(await storedKey(page)).toBeNull();
   const version = fake.cart.cartVersion;
   await confirmButton(page).click();

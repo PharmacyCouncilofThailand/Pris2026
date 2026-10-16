@@ -221,9 +221,7 @@ function CheckoutWorkspace() {
               }
               onClick={() => void checkout.confirm()}
             >
-              {submitting
-                ? "กำลังยืนยันคำสั่งซื้อ"
-                : `ยืนยันคำสั่งซื้อ${cart?.amounts ? " · " + formatBaht(cart.amounts.totalBaht) : ""}`}
+              {submitting ? "กำลังยืนยันคำสั่งซื้อ" : "ยืนยันคำสั่งซื้อ"}
               <ArrowRight size={22} aria-hidden="true" />
             </button>
           )}
