@@ -377,26 +377,6 @@ export default function ProductDetail({
           <p className="merch-detail-hint">
             สินค้าพรีออเดอร์ · {shippingFeeLabel(store.shippingBaht)}
           </p>
-          {(store.productionInfoTh || store.shippingInfoTh) && (
-            <div className="merch-detail-disclosures">
-              {store.productionInfoTh && (
-                <details>
-                  <summary>การผลิต</summary>
-                  <p className="merch-detail-description">
-                    {store.productionInfoTh}
-                  </p>
-                </details>
-              )}
-              {store.shippingInfoTh && (
-                <details>
-                  <summary>การจัดส่ง</summary>
-                  <p className="merch-detail-description">
-                    {store.shippingInfoTh}
-                  </p>
-                </details>
-              )}
-            </div>
-          )}
           {unavailable.map((message) => (
             <p role="status" key={message}>
               {message}

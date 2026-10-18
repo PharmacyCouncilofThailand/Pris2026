@@ -181,11 +181,11 @@ test("order and payment", () => {
   assert.equal(paymentResponse({ payment }), true);
   assert.equal(paymentResponse({ payment: { ...payment, state: "refunded" } }), false);
 });
-test("shipping fee is whole baht between 0 and 1000", () => {
-  for (const ok of [0, 50, 100, 1000]) assert.equal(storeResponse({ ...validStore, shippingBaht: ok }), true);
-  for (const bad of [-1, 1.5, 1001, 5000, "50"]) assert.equal(storeResponse({ ...validStore, shippingBaht: bad }), false);
-  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 0 } }), true);
-  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 5000 } }), false); // satang guard kept
+test("shipping fee is exactly 50 baht", () => {
+  assert.equal(storeResponse({ ...validStore, shippingBaht: 50 }), true);
+  for (const bad of [0, -1, 1.5, 100, 5000, "50"]) assert.equal(storeResponse({ ...validStore, shippingBaht: bad }), false);
+  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 0 } }), false);
+  assert.equal(cartResponse({ ...cart, amounts: { ...amounts, shippingBaht: 5000 } }), false); // satang value
 });
 test("a failed check reports its field path once", () => {
   storeResponse({ ...validStore, shippingBaht: -1 });

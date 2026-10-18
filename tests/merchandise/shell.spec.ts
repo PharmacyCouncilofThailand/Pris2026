@@ -50,11 +50,101 @@ test("souvenir pages use the site header and show no footer", async ({
       page.getByRole("button", { name: "Toggle mobile menu" }),
     ).toBeVisible();
   }
-  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.setViewportSize({ width: 1600, height: 900 });
   await expect(
     page.getByRole("link", { name: /login|เข้าสู่ระบบ/i }).first(),
   ).toBeVisible();
   await expect(page.locator("header .merch-header-cart:visible")).toBeVisible();
+});
+
+// Reads what makes the header look the way it does, so a shop page can be
+// compared with a normal light page (/th/about).
+const headerLook = (page: import("@playwright/test").Page) =>
+  page.evaluate(() => {
+    const header = document.querySelector("header")!;
+    const nav = header.querySelector('[data-slot="navigation-menu"]');
+    const list = nav?.querySelector("ul");
+    const link = [...header.querySelectorAll("a")].find(
+      (a) => a.textContent?.trim() === "ของที่ระลึก",
+    );
+    return {
+      background: getComputedStyle(header).backgroundColor,
+      border: getComputedStyle(header).borderBottomColor,
+      navVisible: !!nav && nav.getBoundingClientRect().width > 0,
+      listGap: list ? getComputedStyle(list).columnGap : null,
+      linkPadding: link ? getComputedStyle(link).paddingLeft : null,
+      linkColor: link ? getComputedStyle(link).color : null,
+    };
+  });
+
+test("the shop header looks exactly like a normal light page, plus the cart", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.goto("/th/about");
+  await expect(page.locator("header img").first()).toBeVisible();
+  const normal = await headerLook(page);
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  const shop = await headerLook(page);
+  expect(shop).toEqual(normal);
+  await expect(page.locator("header .merch-header-cart:visible")).toBeVisible();
+  await expect(
+    page.locator("header").getByRole("link", { name: "ของที่ระลึก" }),
+  ).toHaveAttribute("aria-current", "page");
+  // Scrolled: the header turns dark like other pages, and the cart turns light with it.
+  await page.evaluate(() => {
+    document.body.style.minHeight = "3000px";
+    window.scrollTo(0, 400);
+  });
+  await expect
+    .poll(() => page.evaluate(() => getComputedStyle(document.querySelector("header")!).backgroundColor))
+    .not.toBe(normal.background);
+  await expect(page.locator("header .merch-header-cart:visible")).toHaveCSS(
+    "color",
+    "rgb(255, 255, 255)",
+  );
+});
+
+test("below 1536px the shop header uses the compact menu so nothing overlaps; other pages are untouched", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  for (const width of [1280, 1440, 1535]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/th/souvenirs");
+    await expect(page.locator(".merch-product")).toHaveCount(1);
+    expect((await headerLook(page)).navVisible).toBe(false);
+    await expect(page.locator("header .merch-header-cart:visible")).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Toggle mobile menu" }),
+    ).toBeVisible();
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBe(width);
+  }
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/th/about");
+  await expect(page.locator("header img").first()).toBeVisible();
+  expect((await headerLook(page)).navVisible).toBe(true);
+  // At 1536 and up the shop shows the full menu next to the cart without overlap.
+  for (const width of [1536, 1600, 1920]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/th/souvenirs");
+    await expect(page.locator(".merch-product")).toHaveCount(1);
+    const gap = await page.evaluate(() => {
+      const header = document.querySelector("header")!;
+      const nav = header.querySelector('[data-slot="navigation-menu"]')!.getBoundingClientRect();
+      const cart = [...header.querySelectorAll(".merch-header-cart")]
+        .map((e) => e.getBoundingClientRect())
+        .find((r) => r.width > 0)!;
+      return cart.left - nav.right;
+    });
+    expect(gap, `${width}px`).toBeGreaterThanOrEqual(0);
+  }
 });
 
 test("logged-out cart button goes to login and back to the cart", async ({
@@ -81,15 +171,6 @@ test("logged-in cart badge shows the cart units", async ({ page, fake }) => {
   await expect(
     page.locator("header .merch-header-cart:visible"),
   ).toHaveAccessibleName("ตะกร้า 3 รายการ");
-});
-
-test("the souvenir nav item is marked current on shop pages", async ({ page, fake }) => {
-  fake.products = [makeSingle()];
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto("/th/souvenirs");
-  const item = page.locator("header").getByRole("link", { name: "ของที่ระลึก" });
-  await expect(item).toHaveAttribute("aria-current", "page");
-  await expect(item).toHaveCSS("color", "rgb(0, 85, 255)");
 });
 
 test("the current souvenir item in the phone menu has readable contrast on black", async ({

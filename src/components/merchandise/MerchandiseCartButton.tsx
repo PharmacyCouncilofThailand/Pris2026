@@ -6,7 +6,15 @@ import { useMerchandise } from "./MerchandiseProvider";
 import { useMerchandiseCart } from "./useMerchandiseCart";
 import { Icon } from "./storefront-icons";
 
-export function MerchandiseCartButton({ className }: { className?: string }) {
+// `tone` follows the site header: dark text on the light header at the top of
+// the page, light text once the header turns black on scroll.
+export function MerchandiseCartButton({
+  className,
+  tone = "dark",
+}: {
+  className?: string;
+  tone?: "dark" | "light";
+}) {
   const { token } = useMerchandise(),
     { units } = useMerchandiseCart(),
     router = useRouter(),
@@ -16,7 +24,10 @@ export function MerchandiseCartButton({ className }: { className?: string }) {
     <button
       type="button"
       className={cn(
-        "merch-header-cart relative inline-flex h-11 min-w-11 items-center justify-center rounded-full px-2.5 text-slate-900 transition-colors hover:bg-slate-100 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#0055ff]",
+        "merch-header-cart relative inline-flex h-11 min-w-11 items-center justify-center rounded-full px-2.5 transition-colors focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[#0055ff]",
+        tone === "dark"
+          ? "text-slate-900 hover:bg-slate-100"
+          : "text-white hover:bg-white/10",
         className,
       )}
       aria-label={`ตะกร้า ${count === null ? "กำลังตรวจสอบ" : count} รายการ`}

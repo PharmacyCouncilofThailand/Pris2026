@@ -365,7 +365,7 @@ test("a gallery image that fails to load leaves the placeholder", async ({
   const box = (await gallery.locator(".merch-detail-placeholder").boundingBox())!;
   expect(Math.abs(box.width - box.height)).toBeLessThanOrEqual(1);
 });
-test("production and shipping info are closed disclosures", async ({
+test("the product page shows no production or shipping sections", async ({
   page,
   fake,
 }) => {
@@ -376,12 +376,10 @@ test("production and shipping info are closed disclosures", async ({
   const p = makeSingle();
   fake.products = [p];
   await page.goto(`/th/souvenirs/products/${p.id}`);
-  for (const name of ["การผลิต", "การจัดส่ง"]) {
-    const d = page.locator("details", {
-      has: page.getByText(name, { exact: true }),
-    });
-    await expect(d).not.toHaveAttribute("open", "");
-  }
+  await expect(page.locator(".merch-detail-price")).toBeVisible();
+  for (const text of ["การผลิต", "การจัดส่ง", "ผลิตหลังปิดรับ", "รับที่หน้างาน"])
+    await expect(page.getByText(text, { exact: true })).toHaveCount(0);
+  await expect(page.locator(".merch-detail-info details")).toHaveCount(0);
 });
 test("a logged-in add shows the added state and a cart link", async ({
   page,

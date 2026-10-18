@@ -4,10 +4,10 @@ import { ProductGridSkeleton } from "./MerchSkeletons";
 import { useId, useState } from "react";
 import type { ReactNode } from "react";
 import type { ProductDto, StoreDto } from "@/types/merchandise";
-import { formatBaht } from "@/lib/merchandiseFormat";
+import { formatBaht, formatMerchandiseTime } from "@/lib/merchandiseFormat";
+import { unavailableMessage } from "@/lib/merchandiseSelection";
 import { Icon } from "./storefront-icons";
 import { Link } from "@/i18n/routing";
-import { StoreInfoBanner } from "./StoreInfoBanner";
 import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 export interface StorefrontViewProps {
   store: StoreDto;
@@ -193,7 +193,16 @@ export function StorefrontView(props: StorefrontViewProps) {
       <h1 className="merch-sr-only">ร้านของที่ระลึก</h1>
       <main className="merch-store-content">
         <BannerCarousel store={props.store} />
-        <StoreInfoBanner store={props.store} />
+        {!storeOpen && (
+          <div className="merch-store-status">
+            <p role="status">
+              {unavailableMessage("STORE_NOT_OPEN", props.store.state)}
+            </p>
+            {props.store.state === "not_open" && props.store.opensAt && (
+              <p>เปิดรับ {formatMerchandiseTime(props.store.opensAt)}</p>
+            )}
+          </div>
+        )}
         <div className="merch-catalog-controls">
           <div className="merch-search">
             <Icon name="search" />

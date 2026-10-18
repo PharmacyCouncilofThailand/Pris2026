@@ -29,7 +29,6 @@ const positive: Check = (v) => integer(v) && (v as number) > 0;
 export const uuid: Check = (v) =>
   typeof v === "string" &&
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
-const shippingFee: Check = (v) => natural(v) && (v as number) <= 1000;
 const one =
   (...values: unknown[]): Check =>
   (v) =>
@@ -105,7 +104,7 @@ export const storeResponse = shape<StoreDto>({
   closesAt: nullable(isIsoUtc),
   productionInfoTh: nullable(text),
   shippingInfoTh: nullable(text),
-  shippingBaht: shippingFee,
+  shippingBaht: one(50),
   currency: one("THB"),
   serverNow: isIsoUtc,
   categories: list(
@@ -162,7 +161,7 @@ export const productResponse = shape<ProductDto>({
 });
 const amounts = shape<Amounts>({
   subtotalBaht: isBaht,
-  shippingBaht: shippingFee,
+  shippingBaht: one(50),
   totalBaht: isBaht,
   currency: one("THB"),
 });

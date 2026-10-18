@@ -26,7 +26,7 @@ const seedBanners = (fake: FakeMerchApi, n: number) => {
   });
 };
 
-const widths = [320, 390, 430, 768, 834, 1024, 1279, 1280, 1440, 1920];
+const widths = [320, 390, 430, 768, 834, 1024, 1279, 1280, 1440, 1535, 1536, 1920];
 async function fits(page: Page, width: number) {
   await page.setViewportSize({ width, height: 900 });
   await page.evaluate(() => document.fonts.ready);
@@ -76,7 +76,8 @@ test("both locale headers and catalogue retain the approved columns and one row 
       });
       expect(geometry.logo).toBeLessThanOrEqual(geometry.tools);
       expect(geometry.delta).toBeLessThan(3);
-      if (width >= 1280) {
+      // Shop pages show the full menu from 1536px (the cart needs the room).
+      if (width >= 1536) {
         expect(geometry.navigation).not.toBeNull();
         expect(geometry.navigation!.left).toBeGreaterThanOrEqual(geometry.logo);
         expect(geometry.navigation!.right).toBeLessThanOrEqual(geometry.tools);

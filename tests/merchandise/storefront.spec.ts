@@ -50,9 +50,7 @@ for (const [state, text] of states)
     ];
     await page.goto("/th/souvenirs");
     await expect(page.locator(".merch-product")).toHaveCount(1);
-    await expect(
-      page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" }),
-    ).toContainText(text);
+    await expect(page.locator(".merch-store-status")).toContainText(text);
     await expect(addButtons(page)).toHaveCount(0);
   });
 
@@ -66,9 +64,9 @@ test("not_open store shows the opening time when the API gives one", async ({
   });
   fake.products = [makeSingle()];
   await page.goto("/th/souvenirs");
-  await expect(
-    page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" }),
-  ).toContainText("เปิดรับ 1 พ.ย. 2026 10:00");
+  await expect(page.locator(".merch-store-status")).toContainText(
+    "เปิดรับ 1 พ.ย. 2026 10:00",
+  );
 });
 
 test("typing a search keeps q in the URL and filters locally without another products request", async ({
@@ -248,20 +246,6 @@ test("banner with linkUrl is a link and one without is not", async ({
   await expect(page.locator(".merch-banner-art a")).toHaveCount(0);
 });
 
-test("production and shipping info show when present", async ({
-  page,
-  fake,
-}) => {
-  fake.store = makeStore({
-    productionInfoTh: "ผลิต 14 วัน",
-    shippingInfoTh: "ส่งทั่วไทย",
-  });
-  fake.products = [makeSingle()];
-  await page.goto("/th/souvenirs");
-  await expect(page.getByText("ผลิต 14 วัน", { exact: true })).toBeVisible();
-  await expect(page.getByText("ส่งทั่วไทย", { exact: true })).toBeVisible();
-});
-
 test("catalog failure offers retry and never claims an empty catalog", async ({
   page,
   fake,
@@ -377,38 +361,26 @@ test("anonymous quick add goes to login with the intent, then adds exactly once 
   ).toHaveLength(1);
 });
 
-test("store info banner shows the close date and the shipping fee from the store", async ({
+test("an open store shows no info box and no status line", async ({
   page,
   fake,
 }) => {
   fake.store = makeStore({
-    shippingBaht: 0,
     shippingInfoTh: "รับที่หน้างาน",
+    productionInfoTh: "ผลิตหลังปิดรับ",
   });
   fake.products = [makeSingle()];
   await page.goto("/th/souvenirs");
-  const info = page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" });
-  await expect(info).toContainText("พรีออเดอร์ของที่ระลึก PRIS 2026");
-  await expect(info).toContainText("ปิดรับ 30 ต.ค. 2026");
-  await expect(info).toContainText("จัดส่งฟรี");
-  await expect(info).toContainText("รับที่หน้างาน");
-  await expect(page.getByText(/จัดส่งทั่วไทย/)).toHaveCount(0);
-  fake.store = makeStore({ shippingBaht: 50 });
-  await page.reload();
-  await expect(info).toContainText("ค่าจัดส่ง ฿50.00 ต่อออเดอร์");
-});
-
-test("open store without a close date shows no date line", async ({
-  page,
-  fake,
-}) => {
-  fake.store = makeStore({ closesAt: null });
-  fake.products = [makeSingle()];
-  await page.goto("/th/souvenirs");
-  const info = page.getByRole("region", { name: "ข้อมูลการสั่งซื้อ" });
-  await expect(info).toBeVisible();
-  await expect(info).not.toContainText("ปิดรับ");
-  await expect(info).not.toContainText("Invalid");
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(page.locator(".merch-store-info")).toHaveCount(0);
+  await expect(page.locator(".merch-store-status")).toHaveCount(0);
+  for (const text of [
+    "พรีออเดอร์ของที่ระลึก PRIS 2026",
+    "รับที่หน้างาน",
+    "ผลิตหลังปิดรับ",
+  ])
+    await expect(page.getByText(text, { exact: true })).toHaveCount(0);
+  await expect(page.getByText(/^ปิดรับ |ค่าจัดส่ง|จัดส่งฟรี/)).toHaveCount(0);
 });
 
 test("cards are vertical at 1440 with a 44px add button", async ({

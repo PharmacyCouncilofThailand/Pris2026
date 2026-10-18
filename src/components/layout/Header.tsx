@@ -122,8 +122,9 @@ export default function Header() {
     pathname.startsWith("/login") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/abstracts/confirm") ||
-    pathname.startsWith("/lucky-wheel");
-  const useDarkText = isShop || (isLightPage && !isScrolled);
+    pathname.startsWith("/lucky-wheel") ||
+    isShop;
+  const useDarkText = isLightPage && !isScrolled;
 
   if (
     pathname.includes("/login") ||
@@ -176,15 +177,22 @@ export default function Header() {
       ref={headerRef}
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent py-3",
-        isShop
-          ? "bg-white border-slate-200"
-          : isScrolled
-            ? "bg-black/95 md:bg-black/90 md:backdrop-blur-md border-white/10 shadow-lg"
-            : "bg-transparent",
+        isScrolled
+          ? "bg-black/95 md:bg-black/90 md:backdrop-blur-md border-white/10 shadow-lg"
+          : "bg-transparent",
       )}
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
-        <div className="flex items-center justify-between gap-3 xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4">
+        {/* Shop pages add a cart button, so they switch to the full menu at
+            2xl (1536px) instead of xl to keep the menu from overlapping. */}
+        <div
+          className={cn(
+            "flex items-center justify-between gap-3",
+            isShop
+              ? "2xl:grid 2xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] 2xl:items-center 2xl:gap-4"
+              : "xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4",
+          )}
+        >
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link
               href="/"
@@ -215,9 +223,16 @@ export default function Header() {
             </Link>
           </div>
 
-          <div className="hidden xl:flex items-center justify-center xl:justify-self-center">
+          <div
+            className={cn(
+              "hidden items-center justify-center",
+              isShop
+                ? "2xl:flex 2xl:justify-self-center"
+                : "xl:flex xl:justify-self-center",
+            )}
+          >
             <NavigationMenu>
-              <NavigationMenuList className={cn("gap-2", isShop && "gap-0")}>
+              <NavigationMenuList className="gap-2">
                 {visibleNav.map((item) => (
                   <NavigationMenuItem key={item.labelKey}>
                     {item.disabled ? (
@@ -225,7 +240,6 @@ export default function Header() {
                         className={cn(
                           navigationMenuTriggerStyle(),
                           "bg-transparent transition-colors font-black opacity-50 cursor-not-allowed",
-                          isShop && "px-1",
                           useDarkText ? "text-slate-900" : "text-white",
                         )}
                       >
@@ -246,13 +260,9 @@ export default function Header() {
                             className={cn(
                               navigationMenuTriggerStyle(),
                               "bg-transparent transition-colors font-black",
-                              isShop && "px-1",
                               useDarkText
                                 ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
                                 : "text-white hover:bg-white/10 hover:text-cyan-400",
-                              isShop &&
-                                item.href === "/souvenirs" &&
-                                "text-[#0055ff]",
                             )}
                             onClick={() => {
                               if (typeof document !== "undefined") {
@@ -278,7 +288,6 @@ export default function Header() {
                         <NavigationMenuTrigger
                           className={cn(
                             "bg-transparent transition-colors font-black",
-                            isShop && "px-1",
                             useDarkText
                               ? "text-slate-900 hover:bg-slate-100 hover:text-blue-600"
                               : "text-white hover:bg-white/10 hover:text-cyan-400",
@@ -334,18 +343,21 @@ export default function Header() {
 
           <div
             className={cn(
-              "hidden xl:flex items-center justify-end gap-3 xl:justify-self-end",
-              isShop && "gap-1",
+              "hidden items-center justify-end gap-3",
+              isShop
+                ? "2xl:flex 2xl:justify-self-end"
+                : "xl:flex xl:justify-self-end",
             )}
           >
-            {isShop && <MerchandiseCartButton />}
+            {isShop && (
+              <MerchandiseCartButton tone={useDarkText ? "dark" : "light"} />
+            )}
             <button
               onClick={switchLocale}
               disabled={isPending}
               aria-label={localeLabel}
               className={cn(
                 "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
-                isShop && "px-2",
                 useDarkText
                   ? "text-slate-900 hover:bg-slate-100"
                   : "text-white hover:bg-white/10",
@@ -375,7 +387,6 @@ export default function Header() {
                   className={cn(
                     "inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
                     authTracking,
-                    isShop && "px-4",
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
@@ -409,7 +420,6 @@ export default function Header() {
                   className={cn(
                     "inline-flex h-10 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[11px] font-black uppercase transition-all duration-300",
                     authTracking,
-                    isShop && "px-4",
                     useDarkText
                       ? "bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-500/25"
                       : "bg-white text-slate-900 hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25",
@@ -421,8 +431,15 @@ export default function Header() {
             )}
           </div>
 
-          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
-            {isShop && <MerchandiseCartButton />}
+          <div
+            className={cn(
+              "flex items-center justify-end gap-2 shrink-0",
+              isShop ? "2xl:hidden" : "xl:hidden",
+            )}
+          >
+            {isShop && (
+              <MerchandiseCartButton tone={useDarkText ? "dark" : "light"} />
+            )}
             <button
               onClick={switchLocale}
               disabled={isPending}
@@ -494,12 +511,7 @@ export default function Header() {
                                     ? "page"
                                     : undefined
                                 }
-                                className={cn(
-                                  "text-lg font-medium hover:text-cyan-400 block",
-                                  isShop &&
-                                    item.href === "/souvenirs" &&
-                                    "text-cyan-400",
-                                )}
+                                className="text-lg font-medium hover:text-cyan-400 block"
                               >
                                 {t(item.labelKey as TranslationKey)}
                               </Link>

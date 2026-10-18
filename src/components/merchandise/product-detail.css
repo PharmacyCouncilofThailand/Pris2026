@@ -210,22 +210,6 @@
 .merch-detail-info > * + .merch-detail-hint {
   margin-top: 16px;
 }
-.merch-detail-disclosures {
-  margin-top: 24px;
-  border-top: 1px solid #d4def0;
-}
-.merch-detail-disclosures details {
-  border-bottom: 1px solid #d4def0;
-}
-.merch-detail-disclosures summary {
-  display: flex;
-  align-items: center;
-  min-height: 48px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 700;
-}
-.merch-detail-disclosures summary:focus-visible,
 .merch-detail-cart-link:focus-visible,
 .merch-detail-add-button:focus-visible {
   outline: 2px solid #0055ff;
