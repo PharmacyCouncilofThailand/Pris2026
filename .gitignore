@@ -52,3 +52,4 @@ next-env.d.ts
 /tmp/
 /output/pdf/
 /artifacts/agenda-pdf/
+/artifacts/agenda-screen/

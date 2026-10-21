@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Calendar,
   CalendarClock,
@@ -142,6 +142,18 @@ export default function AgendaSchedule() {
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    if (!selectedEventModal) return;
+    const dialog = dialogRef.current;
+    const previousFocus = document.activeElement;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
+    };
+  }, [selectedEventModal]);
   const currentDay = scheduleData[activeTab];
   const allEvents = currentDay.events;
 
@@ -198,13 +210,14 @@ export default function AgendaSchedule() {
 
   const venueColumnWidth =
     activeVenueGroup === "rooms"
-      ? "clamp(150px, 17vw, 220px)"
-      : "clamp(110px, 12vw, 190px)";
+      ? "var(--agenda-room-width, clamp(150px, 17vw, 220px))"
+      : "var(--agenda-station-width, clamp(110px, 12vw, 190px))";
   const tableColumns = `clamp(92px, 8.5vw, 120px) repeat(${desktopColumns.length}, minmax(${venueColumnWidth}, 1fr))`;
 
   useGSAP(
     () => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || containerRef.current.closest(".agenda-page"))
+        return;
       const media = gsap.matchMedia();
 
       media.add("(prefers-reduced-motion: no-preference)", () => {
@@ -233,21 +246,21 @@ export default function AgendaSchedule() {
   return (
     <>
       {/* Main Agenda Content Section */}
-      <section className="relative overflow-hidden px-4 pb-28 sm:px-6 md:px-10 lg:px-12 md:pb-40">
+      <section className="agenda-schedule relative overflow-hidden px-4 pb-28 sm:px-6 md:px-10 lg:px-12 md:pb-40">
         {/* Subtle Ambient Background Lighting */}
-        <div className="pointer-events-none absolute -right-40 top-0 h-[32rem] w-[32rem] rounded-full bg-blue-500/[0.05] blur-[140px]" />
-        <div className="pointer-events-none absolute -left-40 top-96 h-[30rem] w-[30rem] rounded-full bg-orange-500/[0.04] blur-[140px]" />
+        <div className="agenda-ambient pointer-events-none absolute -right-40 top-0 h-[32rem] w-[32rem] rounded-full bg-blue-500/[0.05] blur-[140px]" />
+        <div className="agenda-ambient pointer-events-none absolute -left-40 top-96 h-[30rem] w-[30rem] rounded-full bg-orange-500/[0.04] blur-[140px]" />
 
-        <div className="relative mx-auto max-w-[1720px] space-y-8">
+        <div className="agenda-layout relative mx-auto max-w-[1720px] space-y-8">
           {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
+          <div className="agenda-stats grid grid-cols-2 gap-3 sm:grid-cols-4 md:gap-4">
             <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm">
               <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                 <Calendar className="h-5 w-5" />
               </span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Duration
+                  {t("durationLabel")}
                 </p>
                 <p className="text-sm font-black text-slate-900 sm:text-base">
                   {t("statsDays")}
@@ -261,7 +274,7 @@ export default function AgendaSchedule() {
               </span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Venues
+                  {t("venuesLabel")}
                 </p>
                 <p className="text-sm font-black text-slate-900 sm:text-base">
                   {t("statsHalls")}
@@ -275,7 +288,7 @@ export default function AgendaSchedule() {
               </span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Innovation
+                  {t("innovationLabel")}
                 </p>
                 <p className="text-sm font-black text-slate-900 sm:text-base">
                   {t("statsInnovation")}
@@ -289,7 +302,7 @@ export default function AgendaSchedule() {
               </span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Sessions
+                  {t("sessionsLabel")}
                 </p>
                 <p className="text-sm font-black text-slate-900 sm:text-base">
                   {t("statsSessions")}
@@ -299,13 +312,13 @@ export default function AgendaSchedule() {
           </div>
 
           {/* Interactive Control Dashboard */}
-          <div className="overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-5 shadow-sm md:p-8 space-y-6">
+          <div className="agenda-controls overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-5 shadow-sm md:p-8 space-y-6">
             {/* Top Row: Day Tabs & View Switcher */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               {/* Day Selector Tabs (2 columns on mobile) */}
               <div
-                className="grid w-full grid-cols-2 gap-1 rounded-2xl bg-slate-100/90 p-1.5 shadow-inner sm:w-auto sm:inline-flex"
-                role="tablist"
+                className="agenda-days grid w-full grid-cols-2 gap-1 rounded-2xl bg-slate-100/90 p-1.5 shadow-inner sm:w-auto sm:inline-flex"
+                role="group"
                 aria-label={t("dayNavigationLabel")}
               >
                 {scheduleData.map((day, index) => {
@@ -317,8 +330,7 @@ export default function AgendaSchedule() {
                     <button
                       key={day.day}
                       type="button"
-                      role="tab"
-                      aria-selected={isActive}
+                      aria-pressed={isActive}
                       onClick={() => setActiveTab(index)}
                       className={cn(
                         "relative flex items-center justify-center gap-2 rounded-xl px-2.5 py-2.5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 sm:justify-start sm:gap-3 sm:px-5 sm:py-3",
@@ -351,9 +363,10 @@ export default function AgendaSchedule() {
               </div>
 
               {/* View Mode Toggle (Desktop only) */}
-              <div className="hidden sm:inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
+              <div className="agenda-view hidden sm:inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
                 <button
                   type="button"
+                  aria-pressed={viewMode === "grid"}
                   onClick={() => setViewMode("grid")}
                   className={cn(
                     "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all",
@@ -367,6 +380,7 @@ export default function AgendaSchedule() {
                 </button>
                 <button
                   type="button"
+                  aria-pressed={viewMode === "timeline"}
                   onClick={() => setViewMode("timeline")}
                   className={cn(
                     "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all",
@@ -383,9 +397,10 @@ export default function AgendaSchedule() {
 
             {/* Bottom Row: Venue Category Group (Only for Desktop Grid view) */}
             {viewMode === "grid" && (
-              <div className="hidden md:flex flex-wrap gap-2 pt-4 border-t border-slate-100">
+              <div className="agenda-venues hidden md:flex flex-wrap gap-2 pt-4 border-t border-slate-100">
                 <button
                   type="button"
+                  aria-pressed={activeVenueGroup === "rooms"}
                   onClick={() => setActiveVenueGroup("rooms")}
                   className={cn(
                     "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black transition-all text-center",
@@ -399,6 +414,7 @@ export default function AgendaSchedule() {
                 </button>
                 <button
                   type="button"
+                  aria-pressed={activeVenueGroup === "innovation"}
                   onClick={() => setActiveVenueGroup("innovation")}
                   className={cn(
                     "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black transition-all text-center",
@@ -417,12 +433,12 @@ export default function AgendaSchedule() {
           {/* Schedule Display Area (Harmonious Modern Light Surface) */}
           <div
             ref={containerRef}
-            className="relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-4 sm:p-6 md:p-8 shadow-xl shadow-slate-200/40"
+            className="agenda-surface relative overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-4 sm:p-6 md:p-8 shadow-xl shadow-slate-200/40"
           >
             {/* Ambient Background Grid on Light Container */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-[0.03] [background-image:radial-gradient(#2563eb_1px,transparent_1px)] [background-size:24px_24px]"
+              className="agenda-ambient pointer-events-none absolute inset-0 opacity-[0.03] [background-image:radial-gradient(#2563eb_1px,transparent_1px)] [background-size:24px_24px]"
             />
 
             {allEvents.length === 0 ? (
@@ -450,10 +466,12 @@ export default function AgendaSchedule() {
                       {/* Sticky Table Header */}
                       <div
                         role="row"
-                        className="sticky top-0 z-30 grid border-b border-slate-200 bg-slate-100/95 backdrop-blur-md"
+                        data-venue-group={activeVenueGroup}
+                        className="agenda-table-header sticky top-0 z-30 grid border-b border-slate-200 bg-slate-100/95 backdrop-blur-md"
                         style={{
                           gridTemplateColumns: tableColumns,
-                          gridTemplateRows: "36px 56px",
+                          gridTemplateRows:
+                            "var(--agenda-header-rows, 36px 56px)",
                         }}
                       >
                         <div
@@ -532,7 +550,7 @@ export default function AgendaSchedule() {
                             <React.Fragment key={boundary}>
                               <div
                                 role="rowheader"
-                                className="schedule-reveal sticky left-0 z-20 flex items-start border-r border-b border-slate-200/80 bg-slate-50/95 px-4 py-3 text-xs font-black tabular-nums text-slate-600"
+                                className="agenda-time-axis schedule-reveal sticky left-0 z-20 flex items-start border-r border-b border-slate-200/80 bg-slate-50/95 px-4 py-3 text-xs font-black tabular-nums text-slate-600"
                                 style={{ gridColumn: 1, gridRow: index + 1 }}
                               >
                                 {formatAgendaTime(
@@ -572,23 +590,31 @@ export default function AgendaSchedule() {
                               key={cell.key}
                               role="cell"
                               className={cn(
-                                "schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border p-3.5 transition-all duration-200 hover:z-20 cursor-pointer shadow-sm hover:shadow-md",
+                                "agenda-cell schedule-reveal z-10 m-1.5 self-stretch overflow-hidden rounded-xl border p-3.5 transition-all duration-200 hover:z-20 cursor-pointer shadow-sm hover:shadow-md",
                                 cellTone.card,
                               )}
+                              onClick={(clickEvent) => {
+                                clickEvent.currentTarget
+                                  .querySelector<HTMLElement>('[role="button"]')
+                                  ?.focus();
+                                setSelectedEventModal(cell.events[0]);
+                              }}
                               style={{
                                 gridColumn: `${gridColumnStart} / ${
                                   gridColumnEnd + 1
                                 }`,
                                 gridRow: `${cell.startLine} / ${cell.endLine}`,
                               }}
-                              onClick={() =>
-                                setSelectedEventModal(cell.events[0])
-                              }
                             >
                               <div className="divide-y divide-slate-200/80">
                                 {cell.events.map((event, index) => (
                                   <div
                                     key={event.id}
+                                    {...eventTrigger(
+                                      event,
+                                      locale,
+                                      setSelectedEventModal,
+                                    )}
                                     className={cn(
                                       index > 0 && "pt-4",
                                       index > 0 && "mt-4",
@@ -621,10 +647,14 @@ export default function AgendaSchedule() {
                             <div
                               key={event.id}
                               className={cn(
-                                "schedule-reveal rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md",
+                                "agenda-cell schedule-reveal rounded-xl border p-4 cursor-pointer transition-all shadow-sm hover:shadow-md",
                                 tone.card,
                               )}
-                              onClick={() => setSelectedEventModal(event)}
+                              {...eventTrigger(
+                                event,
+                                locale,
+                                setSelectedEventModal,
+                              )}
                             >
                               <AgendaEventCardContent
                                 event={event}
@@ -664,12 +694,36 @@ export default function AgendaSchedule() {
 
       {/* Session Details Modal Dialog */}
       {selectedEventModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm animate-in fade-in duration-200"
-          onClick={() => setSelectedEventModal(null)}
+        <dialog
+          ref={dialogRef}
+          aria-label={
+            locale === "th" && selectedEventModal.titleTh
+              ? selectedEventModal.titleTh
+              : selectedEventModal.title
+          }
+          className="agenda-dialog fixed inset-0 z-50 m-0 flex h-dvh max-h-none w-screen max-w-none items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
+          onCancel={() => setSelectedEventModal(null)}
+          onKeyDown={(event) => {
+            if (event.key !== "Tab") return;
+            const buttons =
+              event.currentTarget.querySelectorAll<HTMLButtonElement>("button");
+            const first = buttons[0];
+            const last = buttons[buttons.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last?.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first?.focus();
+            }
+          }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget)
+              setSelectedEventModal(null);
+          }}
         >
           <div
-            className="relative max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 text-slate-900 shadow-2xl sm:p-8"
+            className="agenda-dialog-panel relative max-h-[90dvh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-slate-200 bg-white p-6 text-slate-900 shadow-2xl sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -699,10 +753,34 @@ export default function AgendaSchedule() {
               </button>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </>
   );
+}
+
+function eventTrigger(
+  event: Event,
+  locale: string,
+  onSelect: (event: Event) => void,
+) {
+  return {
+    role: "button",
+    tabIndex: 0,
+    "aria-haspopup": "dialog" as const,
+    "aria-label": `${formatAgendaTime(event.time, locale)} ${locale === "th" && event.titleTh ? event.titleTh : event.title}`,
+    onClick: (clickEvent: React.MouseEvent<HTMLDivElement>) => {
+      clickEvent.stopPropagation();
+      clickEvent.currentTarget.focus();
+      onSelect(event);
+    },
+    onKeyDown: (keyEvent: React.KeyboardEvent<HTMLDivElement>) => {
+      if (keyEvent.key === "Enter" || keyEvent.key === " ") {
+        keyEvent.preventDefault();
+        onSelect(event);
+      }
+    },
+  };
 }
 
 function AgendaEventCardContent({
@@ -730,22 +808,27 @@ function AgendaEventCardContent({
   const tone = getEventTone(event.type);
 
   return (
-    <article className="min-w-0">
-      <div className="mb-2 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-600">
+    <article
+      className={cn(
+        "agenda-event min-w-0",
+        detailed && "agenda-event-detailed",
+      )}
+    >
+      <div className="agenda-event-meta mb-2 flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-600">
         <span
           aria-hidden="true"
           className={cn(
-            "h-1.5 w-1.5 rounded-full shadow-[0_0_6px_currentColor]",
+            "agenda-event-dot h-1.5 w-1.5 rounded-full shadow-[0_0_6px_currentColor]",
             tone.dot,
           )}
         />
-        <span className="tabular-nums font-mono text-slate-700 font-black">
+        <span className="agenda-event-time tabular-nums font-mono text-slate-700 font-black">
           {formatAgendaTime(event.time, locale)}
         </span>
         {type && (
           <span
             className={cn(
-              "rounded-full border px-2 py-0.5 text-[9px] font-bold",
+              "agenda-event-type rounded-full border px-2 py-0.5 text-[9px] font-bold",
               tone.badge,
             )}
           >
@@ -753,7 +836,7 @@ function AgendaEventCardContent({
           </span>
         )}
         {event.group && (
-          <span className="rounded-full border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-700">
+          <span className="agenda-event-group rounded-full border border-indigo-200 bg-indigo-50 px-2 py-0.5 text-[9px] font-bold text-indigo-700">
             {formatVenueGroupLabel(event.group)}
           </span>
         )}
@@ -761,7 +844,7 @@ function AgendaEventCardContent({
 
       <h4
         className={cn(
-          "whitespace-pre-line font-bold leading-snug text-slate-900 transition-colors group-hover:text-blue-600",
+          "agenda-event-title whitespace-pre-line font-bold leading-snug text-slate-900 transition-colors group-hover:text-blue-600",
           compact
             ? "text-[13px]"
             : detailed
@@ -781,7 +864,7 @@ function AgendaEventCardContent({
       {organizer && (
         <p
           className={cn(
-            "mt-2 whitespace-pre-wrap leading-relaxed text-slate-600",
+            "agenda-event-organizer mt-2 whitespace-pre-wrap leading-relaxed text-slate-600",
             compact ? "text-[11px]" : "text-sm",
           )}
         >
@@ -790,7 +873,7 @@ function AgendaEventCardContent({
         </p>
       )}
 
-      <div className="mt-2.5 flex items-start gap-1.5 text-[10px] leading-relaxed text-slate-500">
+      <div className="agenda-event-location mt-2.5 flex items-start gap-1.5 text-[10px] leading-relaxed text-slate-500">
         <MapPin
           aria-hidden="true"
           className="mt-0.5 h-3 w-3 shrink-0 text-blue-600"
@@ -800,7 +883,7 @@ function AgendaEventCardContent({
 
       {event.speakers.length > 0 && <hr className="my-3 border-slate-200/70" />}
 
-      <div className="space-y-4">
+      <div className="agenda-event-speakers space-y-4">
         {(["speakers", "moderators", "chairs"] as const).map((group) =>
           speakerGroups[group].length > 0 ? (
             <section key={group}>
@@ -868,7 +951,7 @@ function AgendaEventCardContent({
       {description && (
         <p
           className={cn(
-            "mt-3 whitespace-pre-wrap font-normal leading-relaxed text-slate-600",
+            "agenda-event-description mt-3 whitespace-pre-wrap font-normal leading-relaxed text-slate-600",
             compact ? "text-[11px]" : "text-sm",
           )}
         >
@@ -889,14 +972,14 @@ function MobileTimelineList({
   onSelectEvent: (event: Event) => void;
 }) {
   return (
-    <div className="space-y-4">
+    <div className="agenda-timeline space-y-4">
       {groups.map((group, groupIndex) => (
         <section
           key={`${group.timeLabel}-${groupIndex}`}
-          className="schedule-reveal overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+          className="agenda-timeline-group schedule-reveal overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
         >
           {/* Time Header */}
-          <div className="flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
+          <div className="agenda-timeline-time flex items-center gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3">
             <span
               className="h-5 w-1 rounded-full bg-blue-600"
               aria-hidden="true"
@@ -914,10 +997,10 @@ function MobileTimelineList({
                 <div
                   key={event.id}
                   className={cn(
-                    "px-4 py-4 cursor-pointer transition-all",
+                    "agenda-timeline-event px-4 py-4 cursor-pointer transition-all",
                     tone.mobile,
                   )}
-                  onClick={() => onSelectEvent(event)}
+                  {...eventTrigger(event, locale, onSelectEvent)}
                 >
                   <AgendaEventCardContent event={event} locale={locale} />
                 </div>
