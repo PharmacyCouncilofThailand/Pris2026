@@ -547,7 +547,8 @@ test("a broken option photo falls back to text and saved order", async ({
   context,
   fake,
 }) => {
-  await context.route("https://img.example.test/**", (route) =>
+  await stubImages(context);
+  await context.route("https://img.example.test/902.png", (route) =>
     route.fulfill({ status: 404 }),
   );
   const p = makeOptionImagesProduct();
@@ -559,6 +560,6 @@ test("a broken option photo falls back to text and saved order", async ({
   await expect(blue.locator("img")).toHaveCount(0);
   await blue.click();
   await expect(blue).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator(".merch-detail-gallery figure img")).toHaveCount(0);
-  await expect(page.locator(".merch-detail-placeholder")).toBeVisible();
+  // The failed lead (902) drops out, so the saved first image (901) leads.
+  await expect(firstFigure(page).locator("img")).toHaveAttribute("src", /901/);
 });
