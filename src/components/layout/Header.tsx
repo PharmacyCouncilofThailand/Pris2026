@@ -25,16 +25,49 @@ import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { navigationData } from "@/data/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { presentationReturnPath } from "@/lib/localizedRedirect";
+import {
+  isMerchandisePath,
+  merchandiseReturnPath,
+} from "@/lib/merchandiseRoutes";
+import { useMerchandiseSessionCleanup } from "@/components/merchandise/MerchandiseAuthBoundary";
+import { MerchandiseCartButton } from "@/components/merchandise/MerchandiseCartButton";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
-  const { isAuthenticated: isLoggedIn } = useAuth();
+  const { isAuthenticated: isLoggedIn, user } = useAuth();
+  useMerchandiseSessionCleanup(isLoggedIn ? (user?.id ?? null) : null);
   const [isPending, startTransition] = React.useTransition();
   const pathname = usePathname();
+  const isShop = isMerchandisePath(pathname);
+  const headerRef = React.useRef<HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  React.useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!isShop || !header) return;
+    const measure = () =>
+      document.documentElement.style.setProperty(
+        "--merch-host-header-height",
+        `${header.getBoundingClientRect().height}px`,
+      );
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty(
+        "--merch-host-header-height",
+      );
+    };
+  }, [isShop]);
   const isTicketPage = pathname === "/ticket";
   const locale = useLocale();
   const isThai = locale === "th";
   const authTracking = isThai ? "tracking-normal" : "tracking-widest";
+  // The accessible name starts with the visible text (EN/TH) so voice control still matches it.
+  const localeLabel =
+    locale === "en"
+      ? "TH เปลี่ยนภาษาเป็นภาษาไทย"
+      : "EN เปลี่ยนภาษาเป็นภาษาอังกฤษ";
   const router = useRouter();
   const t = useTranslations("common");
   type TranslationKey = Parameters<typeof t>[0];
@@ -89,7 +122,8 @@ export default function Header() {
     pathname.startsWith("/login") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/abstracts/confirm") ||
-    pathname.startsWith("/lucky-wheel");
+    pathname.startsWith("/lucky-wheel") ||
+    isShop;
   const useDarkText = isLightPage && !isScrolled;
 
   if (
@@ -104,6 +138,14 @@ export default function Header() {
   const switchLocale = () => {
     const newLocale = locale === "en" ? "th" : "en";
     startTransition(() => {
+      if (isMerchandisePath(pathname) && typeof window !== "undefined") {
+        router.replace(
+          merchandiseReturnPath(pathname + window.location.search) ??
+            "/souvenirs",
+          { locale: newLocale },
+        );
+        return;
+      }
       if (
         pathname === "/presentation-submission" &&
         typeof window !== "undefined"
@@ -132,6 +174,7 @@ export default function Header() {
 
   return (
     <header
+      ref={headerRef}
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent py-3",
         isScrolled
@@ -140,7 +183,16 @@ export default function Header() {
       )}
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
-        <div className="flex items-center justify-between gap-3 xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4">
+        {/* Shop pages add a cart button, so they switch to the full menu at
+            2xl (1536px) instead of xl to keep the menu from overlapping. */}
+        <div
+          className={cn(
+            "flex items-center justify-between gap-3",
+            isShop
+              ? "2xl:grid 2xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] 2xl:items-center 2xl:gap-4"
+              : "xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4",
+          )}
+        >
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link
               href="/"
@@ -171,7 +223,14 @@ export default function Header() {
             </Link>
           </div>
 
-          <div className="hidden xl:flex items-center justify-center xl:justify-self-center">
+          <div
+            className={cn(
+              "hidden items-center justify-center",
+              isShop
+                ? "2xl:flex 2xl:justify-self-center"
+                : "xl:flex xl:justify-self-center",
+            )}
+          >
             <NavigationMenu>
               <NavigationMenuList className="gap-2">
                 {visibleNav.map((item) => (
@@ -193,6 +252,11 @@ export default function Header() {
                           <Link
                             href={item.href as LinkHref}
                             prefetch={true}
+                            aria-current={
+                              isShop && item.href === "/souvenirs"
+                                ? "page"
+                                : undefined
+                            }
                             className={cn(
                               navigationMenuTriggerStyle(),
                               "bg-transparent transition-colors font-black",
@@ -277,10 +341,21 @@ export default function Header() {
             </NavigationMenu>
           </div>
 
-          <div className="hidden xl:flex items-center justify-end gap-3 xl:justify-self-end">
+          <div
+            className={cn(
+              "hidden items-center justify-end gap-3",
+              isShop
+                ? "2xl:flex 2xl:justify-self-end"
+                : "xl:flex xl:justify-self-end",
+            )}
+          >
+            {isShop && (
+              <MerchandiseCartButton tone={useDarkText ? "dark" : "light"} />
+            )}
             <button
               onClick={switchLocale}
               disabled={isPending}
+              aria-label={localeLabel}
               className={cn(
                 "flex h-10 items-center gap-2 rounded-full px-4 text-sm font-medium transition-colors",
                 useDarkText
@@ -356,10 +431,19 @@ export default function Header() {
             )}
           </div>
 
-          <div className="xl:hidden flex items-center justify-end gap-2 shrink-0">
+          <div
+            className={cn(
+              "flex items-center justify-end gap-2 shrink-0",
+              isShop ? "2xl:hidden" : "xl:hidden",
+            )}
+          >
+            {isShop && (
+              <MerchandiseCartButton tone={useDarkText ? "dark" : "light"} />
+            )}
             <button
               onClick={switchLocale}
               disabled={isPending}
+              aria-label={localeLabel}
               className={cn(
                 "flex items-center gap-1.5 px-2.5 py-2 rounded-md text-sm font-medium transition-colors",
                 useDarkText
@@ -379,7 +463,7 @@ export default function Header() {
             </button>
 
             {!isTicketPage && (
-              <Sheet>
+              <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
                 <SheetTrigger
                   className={cn(
                     "flex items-center justify-center h-[36px] w-[36px] rounded-md transition-colors",
@@ -422,6 +506,11 @@ export default function Header() {
                               <Link
                                 href={item.href as LinkHref}
                                 prefetch={true}
+                                aria-current={
+                                  isShop && item.href === "/souvenirs"
+                                    ? "page"
+                                    : undefined
+                                }
                                 className="text-lg font-medium hover:text-cyan-400 block"
                               >
                                 {t(item.labelKey as TranslationKey)}

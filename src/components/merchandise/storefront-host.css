@@ -1,0 +1,23 @@
+/* Host integration only. Product/banner/card styling stays in the shared artifact. */
+.merchandise-route-scope {
+  background: #f4f8fc;
+  min-height: 100svh;
+}
+.merchandise-route-scope .merch-store {
+  padding-top: var(--merch-host-header-height, 76px);
+}
+.merchandise-route-scope .merch-banner-art {
+  touch-action: pan-y;
+}
+.merchandise-host-message {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: calc(var(--merch-host-header-height, 76px) + 24px) 20px 40px;
+  min-height: 60vh;
+  color: #111827;
+  background: #f4f8fc;
+}
+.merchandise-route-scope :focus-visible {
+  outline: 3px solid #0055ff;
+  outline-offset: 3px;
+}

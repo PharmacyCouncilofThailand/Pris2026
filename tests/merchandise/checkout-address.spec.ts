@@ -1,0 +1,260 @@
+import { test, expect, login } from "./fixtures";
+import { makeBundle, makeSingle } from "./data";
+import {
+  fillAddress,
+  openCheckout,
+  orderPosts,
+  reachReview,
+  confirmButton,
+  seedCheckout,
+  toReviewButton,
+} from "./checkoutHelpers";
+
+test("checkout requires login and returns to itself afterwards", async ({
+  page,
+}) => {
+  await page.goto("/th/souvenirs/checkout");
+  await expect(page).toHaveURL(/\/th\/login\?redirect=/);
+  expect(new URL(page.url()).searchParams.get("redirect")).toBe(
+    "/souvenirs/checkout",
+  );
+});
+
+test("name is prefilled from buyerDefaults and fields carry the API length limits", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await expect(
+    page.getByLabel("ชื่อ–นามสกุลผู้รับ", { exact: true }),
+  ).toHaveValue("ผู้ซื้อ สังเคราะห์");
+  await expect(page.getByLabel("เบอร์โทรผู้รับ", { exact: true })).toHaveValue(
+    "",
+  );
+  const limits: [string, string][] = [
+    ["ชื่อ–นามสกุลผู้รับ", "200"],
+    ["เบอร์โทรผู้รับ", "30"],
+    ["ที่อยู่", "500"],
+    ["ตำบล/แขวง", "100"],
+    ["อำเภอ/เขต", "100"],
+    ["จังหวัด", "100"],
+    ["รหัสไปรษณีย์", "5"],
+    ["ชื่อบริษัท (ไม่บังคับ)", "200"],
+    ["หมายเหตุจัดส่ง (ไม่บังคับ)", "500"],
+  ];
+  for (const [label, max] of limits)
+    await expect(page.getByLabel(label, { exact: true })).toHaveAttribute(
+      "maxlength",
+      max,
+    );
+});
+
+test("invalid fields show messages and focus lands on the first invalid one", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await toReviewButton(page).click();
+  await expect(page.getByText("กรุณากรอกเบอร์โทรผู้รับ")).toBeVisible();
+  await expect(page.getByText("กรุณากรอกที่อยู่")).toBeVisible();
+  await expect(page.getByText("กรุณากรอกรหัสไปรษณีย์ 5 หลัก")).toBeVisible();
+  await expect(
+    page.getByLabel("เบอร์โทรผู้รับ", { exact: true }),
+  ).toBeFocused();
+  expect(fake.calls.filter((c) => c.method === "POST")).toHaveLength(0);
+});
+
+test("a refresh mid-checkout keeps what was typed", async ({ page, fake }) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await fillAddress(page, "081 234 5678");
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "ข้อมูลผู้รับ", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByLabel("ชื่อ–นามสกุลผู้รับ", { exact: true }),
+  ).toHaveValue("ผู้รับ คนละคน");
+  await expect(page.getByLabel("เบอร์โทรผู้รับ", { exact: true })).toHaveValue(
+    "081 234 5678",
+  );
+  await expect(page.getByLabel("ที่อยู่", { exact: true })).toHaveValue(
+    "99 ถนนสังเคราะห์",
+  );
+});
+
+test("review shows the amounts of a fresh GET cart and the POST is bound to that cartVersion with a normalized recipient", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await fillAddress(page, "+66 81-234-5678");
+  // The cart changes after the page loaded; review must reflect the server.
+  const base = makeSingle();
+  const other = makeSingle({
+    id: "10000000-0000-4000-8000-000000000099",
+    nameTh: "ถุงผ้า Pris",
+    variants: [
+      {
+        ...base.variants[0],
+        id: "10000000-0000-4000-8000-00000000009a",
+        priceBaht: 100,
+      },
+    ],
+    price: { kind: "exact", amountBaht: 100 },
+  });
+  fake.products.push(other);
+  fake.seedLine({
+    productId: other.id,
+    variantId: other.variants[0].id,
+    bundleSelections: [],
+    quantity: 1,
+  });
+  await toReviewButton(page).click();
+  await expect(page.getByText("ถุงผ้า Pris", { exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "QR พร้อมเพย์" })).toBeChecked();
+  await expect(confirmButton(page)).toHaveText("ยืนยันคำสั่งซื้อ");
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "฿400.00",
+  );
+  const version = fake.cart.cartVersion;
+  await confirmButton(page).click();
+  await expect(page).toHaveURL(/\/th\/souvenirs\/orders\/[0-9a-f-]{36}$/);
+  const [post] = orderPosts(fake);
+  expect(post.body).toEqual({
+    cartVersion: version,
+    recipient: {
+      fullName: "ผู้รับ คนละคน",
+      phone: "0812345678",
+      addressLine: "99 ถนนสังเคราะห์",
+      subdistrict: "ตำบลทดสอบ",
+      district: "อำเภอทดสอบ",
+      province: "กรุงเทพมหานคร",
+      postalCode: "10100",
+      company: null,
+      deliveryNote: null,
+    },
+  });
+});
+
+test("editing from review returns to the form with the draft intact", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await reachReview(page);
+  await page
+    .getByRole("button", { name: "กลับไปแก้ข้อมูลผู้รับ", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "ข้อมูลผู้รับ", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("ที่อยู่", { exact: true })).toHaveValue(
+    "99 ถนนสังเคราะห์",
+  );
+  expect(orderPosts(fake)).toHaveLength(0);
+});
+
+test("a bundle line is described in review", async ({ page, fake }) => {
+  const bundle = makeBundle();
+  fake.products = [makeSingle(), bundle];
+  fake.seedLine({
+    productId: bundle.id,
+    variantId: null,
+    bundleSelections: [
+      {
+        componentId: bundle.components[1].id,
+        variantId: bundle.components[1].allowedVariants[0].id,
+      },
+    ],
+    quantity: 1,
+  });
+  await login(page);
+  await openCheckout(page);
+  await reachReview(page);
+  await expect(page.getByText("ชุดของที่ระลึก", { exact: true })).toBeVisible();
+  await expect(page.getByText(/เสื้อยืด Pris × 1/)).toBeVisible();
+});
+
+test("required fields show a red asterisk without changing their names", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  for (const label of [
+    "ชื่อ–นามสกุลผู้รับ",
+    "เบอร์โทรผู้รับ",
+    "ที่อยู่",
+    "ตำบล/แขวง",
+    "อำเภอ/เขต",
+    "จังหวัด",
+    "รหัสไปรษณีย์",
+  ]) {
+    const field = page.getByLabel(label, { exact: true });
+    await expect(field).toHaveAttribute("required", "");
+    const star = page.locator(
+      `label[for="${await field.getAttribute("id")}"] .merch-required`,
+    );
+    await expect(star).toHaveText("*");
+    await expect(star).toHaveCSS("color", "rgb(220, 38, 38)");
+  }
+  await expect(page.locator(".merch-required")).toHaveCount(7);
+  await expect(
+    page.getByRole("complementary", { name: "สรุปคำสั่งซื้อ" }),
+  ).toHaveCount(0);
+  await expect(page.locator(".merch-checkout-bar-total")).toContainText(
+    "รวมยอดสินค้า",
+  );
+  await expect(toReviewButton(page)).toBeVisible();
+});
+
+test("the review step marks two completed steps and the current one", async ({
+  page,
+  fake,
+}) => {
+  seedCheckout(fake);
+  await login(page);
+  await openCheckout(page);
+  await reachReview(page);
+  const steps = page.getByRole("list", { name: "ขั้นตอนสั่งซื้อ" });
+  await expect(steps.locator('[data-completed="true"]')).toHaveCount(2);
+  await expect(steps.locator('[aria-current="step"]')).toContainText(
+    "ตรวจสอบ",
+  );
+});
+
+test("paired address fields share a row at 1024", async ({ page, fake }) => {
+  seedCheckout(fake);
+  await login(page);
+  const pos = async (label: string) =>
+    (await page.getByLabel(label, { exact: true }).boundingBox())!;
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await openCheckout(page);
+  for (const [a, b] of [
+    ["ตำบล/แขวง", "อำเภอ/เขต"],
+    ["จังหวัด", "รหัสไปรษณีย์"],
+  ]) {
+    const [pa, pb] = [await pos(a), await pos(b)];
+    expect(Math.abs(pa.y - pb.y)).toBeLessThanOrEqual(2);
+    expect(Math.abs(pa.x - pb.x)).toBeGreaterThan(20);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const [a, b] of [
+    ["ตำบล/แขวง", "อำเภอ/เขต"],
+    ["จังหวัด", "รหัสไปรษณีย์"],
+  ]) {
+    const [pa, pb] = [await pos(a), await pos(b)];
+    expect(Math.abs(pa.y - pb.y)).toBeGreaterThan(20);
+  }
+});

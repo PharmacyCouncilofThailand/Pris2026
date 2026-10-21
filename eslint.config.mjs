@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated merchandise verification artifacts and private browser sessions.
+    "test-results/**",
+    "playwright-report/**",
+    "playwright/.auth/**",
   ]),
 ]);
 

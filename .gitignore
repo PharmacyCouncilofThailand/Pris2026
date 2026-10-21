@@ -53,3 +53,9 @@ next-env.d.ts
 /output/pdf/
 /artifacts/agenda-pdf/
 /artifacts/agenda-screen/
+
+# Local merchandise development evidence and browser sessions
+/playwright/.auth/
+
+# local git worktrees
+.claude/worktrees/

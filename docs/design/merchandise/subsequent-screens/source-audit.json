@@ -1,0 +1,366 @@
+{
+  "auditedAt": "2026-10-15T12:19:31.745Z",
+  "repositoryHead": "6683d21a5de6b759b541188f406540eb67bce775",
+  "kind": "incumbent_theme_read_only_audit",
+  "privateAccounts": "synthetic_client_session_and_intercepted_GET_only",
+  "realProviderOrEmailTest": false,
+  "limitations": [
+    "Login Turnstile reports connectivity unavailable locally; no form was submitted.",
+    "Full-page screenshots include scroll-animated sections not yet revealed; source and visible viewport sections were also read.",
+    "Original registration receipt and entry QR are incumbent theme evidence, not souvenir receipt or payment designs."
+  ],
+  "sources": [
+    {
+      "file": "src/app/layout.tsx",
+      "sha256": "07fd2b59312fd848fb086ea89b5d4a78be184361559cf3819f9b4e0fe0c98c15"
+    },
+    {
+      "file": "src/app/globals.css",
+      "sha256": "11eb4a818c1fe959dd04f1824a1b44d4d19a9812e439e5c18eff349783caaf2f"
+    },
+    {
+      "file": "src/components/layout/Header.tsx",
+      "sha256": "5934b7cbca6f41aab476d8b65fe94cdb7b5f254338defbcf9c5e41d87f052bff"
+    },
+    {
+      "file": "src/components/layout/Footer.tsx",
+      "sha256": "f30f18e470dd88b04f076b8b50333f6f29d5ece48c2a5c5445761b6ad00554d1"
+    },
+    {
+      "file": "src/data/navigation.ts",
+      "sha256": "99cc4656fe72dfb0ccc1b15b4d506fdb7ad7a027ac648b20354c485e1a9aa467"
+    },
+    {
+      "file": "src/app/[locale]/about/page.tsx",
+      "sha256": "f5859be3ad66ba21a19672acde42a06eabecdc2b0ace9a174eb59f91cf006bca"
+    },
+    {
+      "file": "src/app/[locale]/registration/page.tsx",
+      "sha256": "221462681cf66a47585ced99de38c9e2b31e56dd1d0bde5a9a2171c7e060b6d0"
+    },
+    {
+      "file": "src/components/sections/RegistrationCTASection.tsx",
+      "sha256": "fef7176e40b3562b81f128be7c15794c428705164e4be546abeb0211bd2427ef"
+    },
+    {
+      "file": "src/app/[locale]/login/page.tsx",
+      "sha256": "f86679c90fce2a8646d4356bf0909f63812b6f32bc5d2c8b6638acc218602b4c"
+    },
+    {
+      "file": "src/app/[locale]/signup/page.tsx",
+      "sha256": "488b4e1273967a4a19f61d41ed60c8d8d7bb38a2538187bc5c9b845c7468bd59"
+    },
+    {
+      "file": "src/app/[locale]/signup/healthcare/page.tsx",
+      "sha256": "ae90d524a84c31d96354c13f9bf9d086cdfee5788f02a303b08c682e70f7b172"
+    },
+    {
+      "file": "src/app/[locale]/profile/page.tsx",
+      "sha256": "c02c8e6b618ba7248da7e03758b8644195707383767e261a2d5611daa60b832f"
+    },
+    {
+      "file": "src/lib/profileReceipt.test.ts",
+      "sha256": "4be4e2135ee9eacbe43e382ccc2bea78db4e38aec15a7d5bd51a1ec2d659423f"
+    },
+    {
+      "file": "src/app/[locale]/ticket/page.tsx",
+      "sha256": "d637f1a5377d73ec458dbd8a41261ec86405b271fe34e9e00fcaa510a0aa1377"
+    },
+    {
+      "file": "src/lib/entryTicket.ts",
+      "sha256": "9f8c6d95005b50d86bb1141ff60dd3d6edb83f5e53db5c80c66f4d7a9b722297"
+    },
+    {
+      "file": "src/app/[locale]/agenda/page.tsx",
+      "sha256": "1477fd0183bb56ef46d1b667b2ec1879e50943f46bdb8abc2e86af0fa19c0ab3"
+    },
+    {
+      "file": "src/components/sections/AgendaSchedule.tsx",
+      "sha256": "2f15335b882cc99bc8c5091fe03aaedc2ff9313593806d35f6c2b835348b7298"
+    },
+    {
+      "file": "src/context/AuthContext.tsx",
+      "sha256": "3484987e10e6001e631323bc065f93cbca5323d255fdf33a947c68b6e56c1757"
+    }
+  ],
+  "approvedHomeUnchanged": [
+    {
+      "file": "../docs/recovery/pris-souvenir-design-spec-2026-10-14/git-snapshot/docs/design/souvenirs-approved-2026-10-14/mockups/mobile.png",
+      "sha256": "53c6264820e19d4d9563e8b491318c0bdde012b281ca02cfbffd2d67aab1b2af"
+    },
+    {
+      "file": "../docs/recovery/pris-souvenir-design-spec-2026-10-14/git-snapshot/docs/design/souvenirs-approved-2026-10-14/mockups/tablet.png",
+      "sha256": "ba8dde6f06a4a9160be5a993d4ff41649728deb06d49aa519ee75835ecdff55d"
+    },
+    {
+      "file": "../docs/recovery/pris-souvenir-design-spec-2026-10-14/git-snapshot/docs/design/souvenirs-approved-2026-10-14/mockups/desktop.png",
+      "sha256": "48f4551eae7e314877af4c7194eaeb0a6a5f0c48710a1a3d83a22d68e7bf259c"
+    }
+  ],
+  "browserResults": [
+    {
+      "route": "about",
+      "width": 390,
+      "actualPath": "/th/about",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": [
+        "เกี่ยวกับเราPRIS 2026",
+        "PRIS คืออะไร?",
+        "คณะกรรมการ",
+        "Mobile Navigation"
+      ]
+    },
+    {
+      "route": "registration",
+      "width": 390,
+      "actualPath": "/th/registration",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["รับบัตร", "เข้างานของคุณ"]
+    },
+    {
+      "route": "login",
+      "width": 390,
+      "actualPath": "/th/login",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["เข้าสู่ระบบ"]
+    },
+    {
+      "route": "signup",
+      "width": 390,
+      "actualPath": "/th/signup",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["ลงทะเบียน"]
+    },
+    {
+      "route": "agenda",
+      "width": 390,
+      "actualPath": "/th/agenda",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["กำหนดการการประชุม"]
+    },
+    {
+      "route": "profile",
+      "width": 390,
+      "actualPath": "/th/profile",
+      "syntheticPrivateSession": true,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["ผู้ใช้ ทดสอบ", "ผู้ใช้ ทดสอบ"]
+    },
+    {
+      "route": "ticket",
+      "width": 390,
+      "actualPath": "/th/ticket",
+      "syntheticPrivateSession": true,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["บัตรเข้าร่วมงาน", "PRIS 2026", "ขยาย QR"]
+    },
+    {
+      "route": "about",
+      "width": 1440,
+      "actualPath": "/th/about",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["เกี่ยวกับเราPRIS 2026", "PRIS คืออะไร?", "คณะกรรมการ"]
+    },
+    {
+      "route": "registration",
+      "width": 1440,
+      "actualPath": "/th/registration",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["รับบัตร", "เข้างานของคุณ"]
+    },
+    {
+      "route": "login",
+      "width": 1440,
+      "actualPath": "/th/login",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["เข้าสู่ระบบ"]
+    },
+    {
+      "route": "signup",
+      "width": 1440,
+      "actualPath": "/th/signup",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["ลงทะเบียน"]
+    },
+    {
+      "route": "agenda",
+      "width": 1440,
+      "actualPath": "/th/agenda",
+      "syntheticPrivateSession": false,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["กำหนดการการประชุม"]
+    },
+    {
+      "route": "profile",
+      "width": 1440,
+      "actualPath": "/th/profile",
+      "syntheticPrivateSession": true,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["ผู้ใช้ ทดสอบ", "ผู้ใช้ ทดสอบ"]
+    },
+    {
+      "route": "ticket",
+      "width": 1440,
+      "actualPath": "/th/ticket",
+      "syntheticPrivateSession": true,
+      "unknownApiReads": [],
+      "pageErrors": [],
+      "theme": {
+        "font": "Outfit, \"Outfit Fallback\", \"Noto Sans Thai\", \"Noto Sans Thai Fallback\", ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+        "background": "lab(2.75381 0 0)"
+      },
+      "headings": ["บัตรเข้าร่วมงาน", "PRIS 2026", "ขยาย QR"]
+    }
+  ],
+  "localScreens": [
+    {
+      "file": ".merchandise-local/p03-audit/about-1440.png",
+      "sha256": "94c58d052bd6aa34fb7049de270878cbc25ded28d39c60951ea0f3639e7c7595",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/about-390.png",
+      "sha256": "64cb90bc0df027a1489685e923776c29f210b5060d6f291a2c9977264c812ea5",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/agenda-1440.png",
+      "sha256": "6223778cc3122bfc70030839602ba4f6b2f713b618396e37ad750d2813f5103d",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/agenda-390.png",
+      "sha256": "d2038a051baf3a82eae9744d4d49e189ddb8a7d5d427972cb18847882d6cfcaa",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/login-1440.png",
+      "sha256": "14e349893ccb9334a6496736987ee82e19c4a211d09c8249f303de8c296cfd1d",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/login-390.png",
+      "sha256": "1fcfaa574cc6662a671cd7147e29fb3b299b7d22e5a9434e123efddb3a323c06",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/mobile-menu.png",
+      "sha256": "858c200d48425de1edcf9b8e04594b494b7ee298841626849283d0b2b966bcaf",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/profile-1440.png",
+      "sha256": "f3d5445d917eda531d2154e2246ee29d75eb6e87c163aba9406e5bae2cad3c4d",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/profile-390.png",
+      "sha256": "638dfb3e2abddb6a4b99d56246d34b334e6763d864ff1174fcf64a250b02fed2",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/registration-1440.png",
+      "sha256": "d36659b21c5b46fa57d800408d6a90f9b1e10c6556b71d93f41f386d4cac1225",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/registration-390.png",
+      "sha256": "a0d8fd3497e9247b7b1e5d9f5d48fb6eac4489e43903144185f8c827bb1c5197",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/signup-1440.png",
+      "sha256": "30abacc377f21f12bdd9f2053fee08290f87163a7070e49ec039a5f72adfe5ee",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/signup-390.png",
+      "sha256": "069ff4ffc828b2e65db2889b4d83b02c5a4958f3e86c403a2d1c3c1b310fc1ed",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/ticket-1440.png",
+      "sha256": "4a830b00a0025f401370d424cd8077257f6821ef2fc44f69d4eeb9323f9c9558",
+      "privateIgnoredLocalProof": true
+    },
+    {
+      "file": ".merchandise-local/p03-audit/ticket-390.png",
+      "sha256": "db91b1213f0bd1768f89efc0f06134447e726ec317e43d078434b644b76daca2",
+      "privateIgnoredLocalProof": true
+    }
+  ]
+}
