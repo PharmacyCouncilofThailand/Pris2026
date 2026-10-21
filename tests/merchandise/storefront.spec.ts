@@ -16,6 +16,48 @@ const productReads = (fake: { calls: { method: string; path: string }[] }) =>
   fake.calls.filter((c) => c.method === "GET" && c.path.endsWith("/products"))
     .length;
 
+test("bundle filter is hidden until a published bundle exists", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [makeSingle()];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  const bundles = page.getByRole("button", { name: "ชุดสินค้า", exact: true });
+  await expect(bundles).toHaveCount(0);
+  fake.products.push(makeBundle());
+  await page.reload();
+  await expect(bundles).toBeVisible();
+  await bundles.click();
+  await expect(page.locator(".merch-product")).toHaveCount(1);
+  await expect(bundles).toHaveAttribute("aria-pressed", "true");
+  fake.products = [];
+  await page.goto("/th/souvenirs");
+  await expect(
+    page.getByText("ยังไม่มีสินค้าที่เปิดแสดง", { exact: true }),
+  ).toBeVisible();
+  await expect(bundles).toHaveCount(0);
+});
+
+test("bundle filter uses the full catalog even when the current page or search has no bundle", async ({
+  page,
+  fake,
+}) => {
+  fake.products = [
+    ...Array.from({ length: 12 }, (_, index) =>
+      makeSingle({ id: uid(index + 100) }),
+    ),
+    makeBundle(),
+  ];
+  await page.goto("/th/souvenirs");
+  await expect(page.locator(".merch-product")).toHaveCount(12);
+  const bundles = page.getByRole("button", { name: "ชุดสินค้า", exact: true });
+  await expect(bundles).toBeVisible();
+  await page.getByRole("searchbox", { name: "ค้นหาสินค้า" }).fill("ไม่พบคำนี้");
+  await expect(page.locator(".merch-product")).toHaveCount(0);
+  await expect(bundles).toBeVisible();
+});
+
 test("open store lists products with exact and from prices", async ({
   page,
   fake,
@@ -456,7 +498,10 @@ test("a product that can't be bought shows a tag and no add button", async ({
   );
 });
 
-test("the catalog shows skeleton cards while loading", async ({ page, fake }) => {
+test("the catalog shows skeleton cards while loading", async ({
+  page,
+  fake,
+}) => {
   fake.products = [makeSingle()];
   await page.route("**/products?**", async (r) => {
     await new Promise((f) => setTimeout(f, 1500));
@@ -464,6 +509,8 @@ test("the catalog shows skeleton cards while loading", async ({ page, fake }) =>
   });
   await page.goto("/th/souvenirs");
   await expect(page.locator(".merch-skeleton-card").first()).toBeVisible();
-  await expect(page.getByRole("status").filter({ hasText: "กำลังโหลดสินค้า" })).toBeAttached();
+  await expect(
+    page.getByRole("status").filter({ hasText: "กำลังโหลดสินค้า" }),
+  ).toBeAttached();
   await expect(page.locator(".merch-product")).toHaveCount(1);
 });

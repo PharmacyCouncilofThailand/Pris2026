@@ -12,6 +12,7 @@ import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
 export interface StorefrontViewProps {
   store: StoreDto;
   products: ProductDto[];
+  hasBundles: boolean;
   headerSlot: ReactNode | null;
   showOrdersLink: boolean;
   query: string;
@@ -247,15 +248,17 @@ export function StorefrontView(props: StorefrontViewProps) {
                   {c.nameTh}
                 </button>
               ))}
-            <button
-              type="button"
-              className="merch-pill"
-              aria-pressed={props.activeKind === "bundle"}
-              onClick={() => props.onFilter("bundle")}
-            >
-              <Icon name="gift" />
-              ชุดสินค้า
-            </button>
+            {props.hasBundles && (
+              <button
+                type="button"
+                className="merch-pill"
+                aria-pressed={props.activeKind === "bundle"}
+                onClick={() => props.onFilter("bundle")}
+              >
+                <Icon name="gift" />
+                ชุดสินค้า
+              </button>
+            )}
           </nav>
         </div>
         <div className="merch-catalog-heading">

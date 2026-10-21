@@ -4,7 +4,11 @@
 
 On the product detail page, clicking or tapping the currently displayed product photo opens a large image viewer over the same page. Support mobile, tablet, and desktop. Keep the full image visible with its original proportions, contained within the available viewport and clear of the controls.
 
-The viewer starts on the image clicked. With multiple images, provide previous/next buttons, horizontal swipes, and a current/total counter. Stop at both ends, as in the existing gallery. Hide navigation and the counter for a single image. Do not add autoplay, a new browser tab, or custom zoom/pan controls.
+The viewer starts on the image clicked. With multiple images, provide previous/next buttons, horizontal swipes, and a current/total counter. Stop at both ends, as in the existing gallery. Hide navigation and the counter for a single image. Do not add autoplay or a new browser tab.
+
+### Approved follow-up: touch zoom
+
+Two fingers pinch to zoom only the viewer image from 1x to 4x, centered around the fingers. Moving both fingers pans the image with bounded movement. There is no one-finger pan or reset button. As soon as fewer than two fingers remain, or touch is cancelled, return to 1x with zero translation. Ignore the remaining finger until that gesture ends so it cannot navigate or dismiss the viewer. At 1x, a fresh one-finger horizontal swipe continues navigating slides. Changing images or reopening the viewer also resets zoom and translation. Keep the image clipped to its stage so navigation and close controls remain usable. Prevent browser page zoom only over the custom gesture stage; leave browser behavior elsewhere intact.
 
 Close the viewer with its visible X button, a click/tap on the backdrop, or Escape. Clicking the image or navigation must not close it. A swipe must not accidentally open or dismiss the viewer.
 

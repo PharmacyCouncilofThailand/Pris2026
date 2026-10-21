@@ -246,6 +246,9 @@ export default function StorefrontClient() {
       <StorefrontView
         store={store.data}
         products={view.items}
+        hasBundles={Boolean(
+          catalog.data?.some((product) => product.kind === "bundle"),
+        )}
         headerSlot={header}
         showOrdersLink={Boolean(token)}
         query={query}

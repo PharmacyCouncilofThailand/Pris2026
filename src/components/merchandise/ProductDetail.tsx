@@ -7,7 +7,6 @@ import {
   useState,
 } from "react";
 import { useSearchParams } from "next/navigation";
-import Image from "next/image";
 import { ArrowLeft, ArrowRight, Minus, Plus } from "lucide-react";
 import { Link, useRouter } from "@/i18n/routing";
 import type { ProductDto, StoreDto } from "@/types/merchandise";
@@ -32,7 +31,7 @@ import {
 } from "@/lib/merchandiseIntent";
 import { useMerchandise } from "./MerchandiseProvider";
 import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
-import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
+import ProductGallery from "./ProductGallery";
 import VariantSelector from "./VariantSelector";
 import BundleSelector from "./BundleSelector";
 
@@ -247,29 +246,15 @@ export default function ProductDetail({
         <ArrowLeft size={18} aria-hidden="true" /> กลับ
       </Link>
       <div className="merch-detail-grid">
-        <div className="merch-detail-gallery">
-          {shownImages.map((image, index) => (
-            <figure key={image.id}>
-              <Image
-                unoptimized
-                src={image.url}
-                alt={product.nameTh}
-                width={image.width}
-                height={image.height}
-                loading={index ? "lazy" : "eager"}
-                onError={() =>
-                  setFailedImages((failed) => new Set(failed).add(image.id))
-                }
-              />
-              {index === 0 && <figcaption>พรีออเดอร์</figcaption>}
-            </figure>
-          ))}
-          {shownImages.length === 0 && (
-            <div className="merch-detail-placeholder">
-              <ProductImagePlaceholder failed={product.images.length > 0} />
-            </div>
-          )}
-        </div>
+        <ProductGallery
+          key={JSON.stringify([leadId, shownImages.map((image) => image.id)])}
+          images={shownImages}
+          name={product.nameTh}
+          failed={product.images.length > 0}
+          onImageError={(id) =>
+            setFailedImages((failed) => new Set(failed).add(id))
+          }
+        />
         <div className="merch-detail-info">
           <h1>{product.nameTh}</h1>
           {product.kind === "bundle" && (
@@ -293,7 +278,10 @@ export default function ProductDetail({
             )}
           </p>
           {product.descriptionTh && (
-            <p className="merch-detail-description">{product.descriptionTh}</p>
+            <section className="merch-detail-description">
+              <h2>รายละเอียดสินค้า</h2>
+              <p>{product.descriptionTh}</p>
+            </section>
           )}
           {notice && (
             <p role="alert" className="merch-detail-notice">
