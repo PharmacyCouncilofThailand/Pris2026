@@ -40,3 +40,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Graft local context graph (regenerable cache)
+/graft/
+
+# Generated code graphs and local browser / PDF verification
+/graphify-out/
+/.playwright-cli/
+/playwright-report/
+/test-results/
+/tmp/
+/output/pdf/
+/artifacts/agenda-pdf/
