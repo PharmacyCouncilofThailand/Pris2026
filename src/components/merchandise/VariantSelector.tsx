@@ -1,21 +1,32 @@
 "use client";
 import { useState } from "react";
-import type { VariantDto } from "@/types/merchandise";
+import Image from "next/image";
+import type { ImageAsset, VariantDto } from "@/types/merchandise";
+import {
+  optionImageId,
+  optionValueImageId,
+  type OptionDraft,
+} from "@/lib/merchandiseSelection";
 export default function VariantSelector({
   variants,
   selectedId,
   onChange,
+  images = [],
+  onPreviewChange,
   label = "ตัวเลือกสินค้า",
   disabled = false,
 }: {
   variants: VariantDto[];
   selectedId: string | null;
   onChange(id: string | null): void;
+  images?: ImageAsset[];
+  onPreviewChange?(imageId: string | null): void;
   label?: string;
   disabled?: boolean;
 }) {
   const selected = variants.find((v) => v.id === selectedId);
-  const [draft, setDraft] = useState({
+  const [failed, setFailed] = useState<ReadonlySet<string>>(() => new Set());
+  const [draft, setDraft] = useState<OptionDraft>({
     colorTh: selected?.colorTh ?? null,
     sizeTh: selected?.sizeTh ?? null,
   });
@@ -42,6 +53,7 @@ export default function VariantSelector({
     )
       next.sizeTh = null;
     setDraft(next);
+    onPreviewChange?.(optionImageId(variants, next));
     const match = variants.find(
       (v) =>
         v.saleEnabled && v.colorTh === next.colorTh && v.sizeTh === next.sizeTh,
@@ -88,6 +100,10 @@ export default function VariantSelector({
                         draft.colorTh === null ||
                         v.colorTh === draft.colorTh),
                   );
+                  const thumb = images.find(
+                    (image) =>
+                      image.id === optionValueImageId(variants, field, value),
+                  );
                   return (
                     <button
                       key={value}
@@ -96,6 +112,21 @@ export default function VariantSelector({
                       aria-pressed={draft[field] === value && available}
                       onClick={() => choose(field, value)}
                     >
+                      {thumb && !failed.has(thumb.id) && (
+                        <Image
+                          unoptimized
+                          src={thumb.url}
+                          width={32}
+                          height={32}
+                          alt=""
+                          aria-hidden="true"
+                          loading="lazy"
+                          className="merch-option-thumb"
+                          onError={() =>
+                            setFailed((f) => new Set(f).add(thumb.id))
+                          }
+                        />
+                      )}
                       {value}
                       {!available && (
                         <span className="merch-sr-only"> — ไม่เปิดขาย</span>

@@ -4,9 +4,13 @@ import {
   ids,
   image,
   makeBundle,
+  makeOptionImagesProduct,
   makeOptionsProduct,
+  makeSizeColorImagesProduct,
+  makeSizeImagesProduct,
   makeSingle,
   makeStore,
+  stubImages,
   uid,
 } from "./data";
 
@@ -431,4 +435,130 @@ test("back link ignores an unsafe saved storefront URL", async ({
       "/th/souvenirs",
     );
   }
+});
+
+const firstFigure = (page: Page) =>
+  page.locator(".merch-detail-gallery figure").first();
+
+test("choosing a colour shows its photo first and its button has a thumbnail", async ({
+  page,
+  context,
+  fake,
+}) => {
+  await stubImages(context);
+  const p = makeOptionImagesProduct();
+  fake.products = [p];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  const blue = page.getByRole("button", { name: "สีฟ้า", exact: true });
+  await expect(blue.locator("img")).toHaveCount(1);
+  await blue.click();
+  await expect(firstFigure(page).locator("img")).toHaveAttribute("src", /902/);
+  await expect(firstFigure(page).locator("figcaption")).toHaveText(
+    "พรีออเดอร์",
+  );
+});
+
+test("a size-only product shows size thumbnails and leads with the chosen size photo", async ({
+  page,
+  context,
+  fake,
+}) => {
+  await stubImages(context);
+  const p = makeSizeImagesProduct();
+  fake.products = [p];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  const big = page.getByRole("button", { name: "46Oz", exact: true });
+  await expect(big.locator("img")).toHaveCount(1);
+  await big.click();
+  await expect(firstFigure(page).locator("img")).toHaveAttribute("src", /912/);
+  await expect(firstFigure(page).locator("figcaption")).toHaveText(
+    "พรีออเดอร์",
+  );
+});
+
+test("on a size and colour product only colour buttons have thumbnails", async ({
+  page,
+  context,
+  fake,
+}) => {
+  await stubImages(context);
+  const p = makeSizeColorImagesProduct();
+  fake.products = [p];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await expect(
+    page.getByRole("button", { name: "ฟ้า", exact: true }).locator("img"),
+  ).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "M", exact: true }).locator("img"),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "L", exact: true }).locator("img"),
+  ).toHaveCount(0);
+});
+
+test("a product without option images keeps its gallery order and plain buttons", async ({
+  page,
+  context,
+  fake,
+}) => {
+  await stubImages(context);
+  const p = makeOptionsProduct({ images: [image(1), image(2)] });
+  fake.products = [p];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await expect(page.locator(".merch-detail-choices img")).toHaveCount(0);
+  await page.getByRole("button", { name: "ขาว", exact: true }).click();
+  await page.getByRole("button", { name: "L", exact: true }).click();
+  await expect(firstFigure(page).locator("img")).toHaveAttribute(
+    "src",
+    /1\.png/,
+  );
+});
+
+test("restored selection leads the gallery with its photo", async ({
+  page,
+  context,
+  fake,
+}) => {
+  await stubImages(context);
+  const p = makeOptionImagesProduct();
+  fake.products = [p];
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  await page.getByRole("button", { name: "สีฟ้า", exact: true }).click();
+  await addButton(page).click();
+  await expect(page).toHaveURL(/\/th\/login\?redirect=/);
+  const redirect = new URL(page.url()).searchParams.get("redirect")!;
+  await login(page);
+  await page.goto("/th" + redirect);
+  await expect(
+    page.getByText("เพิ่มลงตะกร้าแล้ว", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "สีฟ้า", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(firstFigure(page).locator("img")).toHaveAttribute("src", /902/);
+});
+
+test("a broken option photo falls back to text and saved order", async ({
+  page,
+  context,
+  fake,
+}) => {
+  await context.route("https://img.example.test/**", (route) =>
+    route.fulfill({ status: 404 }),
+  );
+  const p = makeOptionImagesProduct();
+  fake.products = [p];
+  await login(page);
+  await page.goto(`/th/souvenirs/products/${p.id}`);
+  const blue = page.getByRole("button", { name: "สีฟ้า", exact: true });
+  await expect(blue).toBeVisible();
+  await expect(blue.locator("img")).toHaveCount(0);
+  await blue.click();
+  await expect(blue).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".merch-detail-gallery figure img")).toHaveCount(0);
+  await expect(page.locator(".merch-detail-placeholder")).toBeVisible();
 });

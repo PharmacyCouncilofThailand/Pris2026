@@ -40,7 +40,11 @@ export default function CartRow({
   priceChange?: { from: number; to: number };
 }) {
   const product = line.product,
-    image = product?.images[0];
+    lineImageId = product?.variants.find(
+      (v) => v.id === line.variantId,
+    )?.imageId,
+    image =
+      product?.images.find((i) => i.id === lineImageId) ?? product?.images[0];
   const name = product?.nameTh ?? "สินค้าที่ไม่พร้อมแสดง";
   const [quantity, setQuantity] = useState(String(line.quantity));
   const [imageFailed, setImageFailed] = useState(false),
@@ -260,6 +264,7 @@ export default function CartRow({
               ) : (
                 <VariantSelector
                   variants={product.variants}
+                  images={product.images}
                   selectedId={selection.variantId}
                   onChange={(variantId) =>
                     setSelection((s) => ({ ...s, variantId }))

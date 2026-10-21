@@ -1,6 +1,13 @@
 import type { Page } from "@playwright/test";
 import { test, expect, login } from "./fixtures";
-import { makeOptionsProduct, makeSingle, makeStore, uid } from "./data";
+import {
+  makeOptionImagesProduct,
+  makeOptionsProduct,
+  makeSingle,
+  makeStore,
+  stubImages,
+  uid,
+} from "./data";
 import type { FakeMerchApi } from "./fakeApi";
 
 const proceed = (page: Page) =>
@@ -297,4 +304,14 @@ test("quantity above one shows the line total", async ({ page, fake }) => {
   await expect(page.locator(".merch-cart-unit-price")).toHaveText(
     "฿250.00 / ชิ้น · รวม ฿750.00",
   );
+});
+
+test("a cart line shows its option photo", async ({ page, context, fake }) => {
+  await stubImages(context);
+  const p = makeOptionImagesProduct();
+  fake.products = [p];
+  seed(fake, p, 1, p.variants[1].id);
+  await login(page);
+  await page.goto("/th/souvenirs/cart");
+  await expect(page.locator(".merch-cart-image")).toHaveAttribute("src", /902/);
 });

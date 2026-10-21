@@ -228,3 +228,70 @@ export const image = (n: number) => ({
   width: 640,
   height: 360,
 });
+
+const IMG: Record<string, number> = {
+  white: 901,
+  blue: 902,
+  small: 911,
+  big: 912,
+};
+const optionImg = (key: string, n: number) => ({
+  id: uid(IMG[key]),
+  url: `https://img.example.test/${n}.png`,
+  width: 640,
+  height: 360,
+});
+const OPT_BASE = "10000000-0000-4000-8000-0000000001";
+/** Colour-only product whose colours each point at a saved photo. */
+export function makeOptionImagesProduct(
+  o: Partial<ProductDto> = {},
+): ProductDto {
+  return makeSingle({
+    id: `${OPT_BASE}00`,
+    nameTh: "เสื้อสี Pris",
+    hasOptions: true,
+    images: [optionImg("white", 901), optionImg("blue", 902)],
+    variants: [
+      makeVariant({ id: `${OPT_BASE}01`, colorTh: "สีขาว", imageId: uid(901) }),
+      makeVariant({ id: `${OPT_BASE}02`, colorTh: "สีฟ้า", imageId: uid(902) }),
+    ],
+    price: { kind: "exact", amountBaht: 250 },
+    ...o,
+  });
+}
+/** Size-only product whose sizes each point at a saved photo. */
+export function makeSizeImagesProduct(o: Partial<ProductDto> = {}): ProductDto {
+  return makeSingle({
+    id: `${OPT_BASE}10`,
+    nameTh: "แก้วขนาด Pris",
+    hasOptions: true,
+    images: [optionImg("small", 911), optionImg("big", 912)],
+    variants: [
+      makeVariant({ id: `${OPT_BASE}11`, sizeTh: "46Oz", imageId: uid(912) }),
+      makeVariant({ id: `${OPT_BASE}12`, sizeTh: "32Oz", imageId: uid(911) }),
+    ],
+    ...o,
+  });
+}
+/** Size x colour product: only the colour variants carry a photo. */
+export function makeSizeColorImagesProduct(
+  o: Partial<ProductDto> = {},
+): ProductDto {
+  const base = makeOptionsProduct();
+  return {
+    ...base,
+    images: [optionImg("white", 901), optionImg("blue", 902)],
+    variants: [
+      { ...base.variants[0], imageId: uid(901) },
+      { ...base.variants[1], imageId: uid(901) },
+      makeVariant({
+        id: `${OPT_BASE}23`,
+        sizeTh: "M",
+        colorTh: "ฟ้า",
+        priceBaht: 300,
+        imageId: uid(902),
+      }),
+    ],
+    ...o,
+  };
+}

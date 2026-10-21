@@ -13,6 +13,7 @@ import { Link, useRouter } from "@/i18n/routing";
 import type { ProductDto, StoreDto } from "@/types/merchandise";
 import {
   defaultSelection,
+  leadImageFirst,
   parseQuantity,
   selectionComplete,
   selectionPriceBaht,
@@ -74,6 +75,8 @@ export default function ProductDetail({
   const [quantity, setQuantity] = useState("1"),
     [restored, setRestored] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  // undefined until the buyer picks an option; then the preview image id.
+  const [preview, setPreview] = useState<string | null | undefined>(undefined);
   const [failedImages, setFailedImages] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
@@ -159,6 +162,7 @@ export default function ProductDetail({
       .then(([fresh, freshStore]) => {
         if (!active.current) return;
         setProduct(fresh);
+        setPreview(undefined);
         setStore(freshStore);
         // Keep the buyer's choice only where it is still on offer.
         setSelection((current) =>
@@ -214,8 +218,14 @@ export default function ProductDetail({
     if (!intentId) started.current = false;
   }, [intentId]);
   const unit = product.kind === "bundle" ? "ชุด" : "ชิ้น";
-  const shownImages = product.images.filter(
-    (image) => !failedImages.has(image.id),
+  const selectedVariant = product.variants.find(
+    (v) => v.id === selection.variantId,
+  );
+  const leadId =
+    preview !== undefined ? preview : (selectedVariant?.imageId ?? null);
+  const shownImages = leadImageFirst(
+    product.images.filter((image) => !failedImages.has(image.id)),
+    leadId,
   );
   const unavailable = [
     ...new Set(
@@ -303,6 +313,8 @@ export default function ProductDetail({
               <VariantSelector
                 key={`${product.id}:${restored}`}
                 variants={product.variants}
+                images={product.images}
+                onPreviewChange={setPreview}
                 selectedId={selection.variantId}
                 disabled={busy}
                 onChange={(variantId) =>

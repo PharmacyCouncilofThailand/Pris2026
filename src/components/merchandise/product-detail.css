@@ -99,12 +99,23 @@
   gap: 8px;
 }
 .merch-detail-choices button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border: 1px solid #b8c9e9;
   border-radius: 12px;
   min-height: 46px;
   padding: 10px 16px;
   background: white;
   font-weight: 600;
+}
+.merch-option-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #e9eef6;
+  flex: none;
 }
 .merch-detail-choices button[aria-pressed="true"] {
   color: white;
