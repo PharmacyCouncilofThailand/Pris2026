@@ -93,7 +93,7 @@ Status: Implemented and verified locally on 2026-10-21
 - [x] Separate AgendaPrintDocument, shared font variables, chronological time column, localized room/station labels
 - [x] Compact repeated day header, native A4 page numbers, normal prose pagination
 - [x] Await fonts and logo before print; preserve Thai research details when English translation is absent
-- [x] Full lint and production build passed; seven focused print regression tests passed
+- [x] Focused lint and production build passed; seven focused print regression tests passed
 - [x] Full suite: 101/104 passed; three unchanged agendaPresentation.test.ts fixtures reference absent IDs 1031, 1008, 202
 - [x] Both PDFs: 21 A4 pages; every one of 58 titles and every description paragraph found in extracted PDF text; no text boxes beyond printable bounds
 - [x] Visual review of all Thai and English pages; embedded fonts verified with pdffonts; mobile remains unchanged
@@ -107,3 +107,14 @@ Browser QA uses Chromium. Custom margin-box page numbers may differ in Firefox/S
 INTENT: เดิม PDF ใช้ Arial และจัดข้อมูลต่อกัน; งานนี้ต้องอ่านง่ายและข้อมูลครบ; แผนกำหนดให้ใช้ฟอนต์ PRIS, A4, แยกเวลาและให้รายละเอียดไหลข้ามหน้า
 TWINS: searched src/app CSS for global visibility:hidden / Arial print overrides - no other matching print owners found
 AUTH: user said "ถ้าเสร็จแล้ว Git pushได้เลย comment= ปรับปรุงAgenda PDF Export"
+
+
+## PDF typography refinement (2026-10-21, later screenshot feedback)
+
+User asked for larger Day 1 / Day 2 markers and a clearer bold heading hierarchy. Day markers increase from 10pt medium to 15pt bold, matching the date heading. Session headings increase to 13pt bold; room labels use 10.5pt bold; time, column labels and speaker-group headings use 10pt bold. Names and long details remain 10.5pt regular. All changes are inside print CSS; no content or pagination logic changed.
+
+Production build, CSS formatting and all seven print tests pass. Regenerated TH and EN PDFs each have 23 A4 pages with day 2 beginning on page 17. All 58 titles and every description paragraph survive extraction after normalizing Poppler's removal of ASCII hyphens at line endings; no text bounding boxes exceed the printable area. Fonts remain embedded. Browser computed styles confirm 700-weight headings and 400-weight speaker names. Generated PDFs and verification images remain ignored.
+
+User authorized push with commit message: `ปรับปรุงAgenda page Not AI Slop`.
+
+Independent visual review covered all 46 pages via contact sheets, plus full-size first/day-2/long-content pages. No visible clipping, overlap or broken glyphs. Non-blocking reflow note: English page 3 ends with the 13:00 session heading and organizer, with speakers continuing on page 4; content remains complete.

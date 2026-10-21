@@ -92,7 +92,7 @@ Historical compact revision (superseded by the long-pass request): the column wa
 
 ## Agenda print document (2026-10-21)
 
-The /th/agenda and /en/agenda print surface uses the incumbent Noto Sans Thai and Outfit fonts on white A4 paper. Body text is 10.5pt with 1.55 line height; event headings are 12pt semibold. Existing #1d4ed8 blue marks room/date labels; #172033 and #475569 handle primary/secondary text. The time rail is 31mm; page margins are 14mm top, 15mm sides, 16mm bottom. No decorative cards or background imagery.
+The /th/agenda and /en/agenda print surface uses the incumbent Noto Sans Thai and Outfit fonts on white A4 paper. Body text is 10.5pt with 1.55 line height; event headings are 13pt bold. Dates and day markers are equally prominent at 15pt bold. Time and column/people headings are 10pt bold; room labels are 10.5pt bold. Keep names and descriptive text at regular weight to preserve hierarchy. Existing #1d4ed8 blue marks room/date labels; #172033 and #475569 handle primary/secondary text. The time rail is 31mm; page margins are 14mm top, 15mm sides, 16mm bottom. No decorative cards or background imagery.
 
 A full PRIS masthead starts each day. A compact date/column header repeats on continuation pages. Keep short sessions together; allow long research descriptions to flow between paragraphs. Native CSS margin boxes provide page numbers in the verified Chromium print path. Printing always includes all 58 current events, independent of web filters; localize when available and retain source-language details when no translation exists. Data remains in scheduleData. See design-plans/agenda-pdf.md for verification and browser limits.
 

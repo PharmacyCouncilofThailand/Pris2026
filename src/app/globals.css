@@ -490,6 +490,7 @@ body.hero-playing main > div:not(:first-child) {
     background: #fff;
     font-family: var(--font-outfit), var(--font-noto-sans-thai), sans-serif;
     font-size: 10.5pt;
+    font-weight: 400;
     line-height: 1.55;
     font-synthesis: none;
     -webkit-print-color-adjust: exact;
@@ -563,13 +564,14 @@ body.hero-playing main > div:not(:first-child) {
     margin: 0;
     color: var(--agenda-accent);
     font-size: 15pt;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .agenda-print-day-heading > span {
-    color: var(--agenda-muted);
-    font-size: 10pt;
-    font-weight: 500;
+    color: var(--agenda-ink);
+    font-size: 15pt;
+    font-weight: 700;
+    white-space: nowrap;
   }
 
   .agenda-print-column-headings {
@@ -577,9 +579,9 @@ body.hero-playing main > div:not(:first-child) {
     padding-top: 3mm;
     padding-bottom: 2mm;
     border-bottom: 0.5pt solid var(--agenda-rule);
-    color: var(--agenda-muted);
-    font-size: 9pt;
-    font-weight: 500;
+    color: var(--agenda-ink);
+    font-size: 10pt;
+    font-weight: 700;
   }
 
   .agenda-print-event--compact {
@@ -600,8 +602,8 @@ body.hero-playing main > div:not(:first-child) {
   .agenda-print-event .agenda-print-time {
     float: left;
     width: 27mm;
-    font-size: 9.5pt;
-    font-weight: 600;
+    font-size: 10pt;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
     color: var(--agenda-ink);
   }
@@ -612,7 +614,7 @@ body.hero-playing main > div:not(:first-child) {
 
   .agenda-print-time time {
     display: block;
-    max-width: 25mm;
+    max-width: 27mm;
   }
 
   .agenda-print-event-title {
@@ -623,8 +625,8 @@ body.hero-playing main > div:not(:first-child) {
   .agenda-print-venue {
     margin: 0 0 1mm;
     color: var(--agenda-accent);
-    font-size: 9.5pt;
-    font-weight: 600;
+    font-size: 10.5pt;
+    font-weight: 700;
   }
 
   .agenda-print-station {
@@ -634,8 +636,8 @@ body.hero-playing main > div:not(:first-child) {
 
   .agenda-print-details h3 {
     margin: 0;
-    font-size: 12pt;
-    font-weight: 600;
+    font-size: 13pt;
+    font-weight: 700;
     line-height: 1.5;
   }
 
@@ -647,14 +649,14 @@ body.hero-playing main > div:not(:first-child) {
   }
 
   .agenda-print-organizer > span {
-    font-weight: 500;
+    font-weight: 700;
   }
 
   .agenda-print-people h4 {
     margin: 3mm 0 1mm;
-    font-size: 9.5pt;
-    font-weight: 600;
-    color: var(--agenda-muted);
+    font-size: 10pt;
+    font-weight: 700;
+    color: var(--agenda-ink);
     break-after: avoid;
   }
 
