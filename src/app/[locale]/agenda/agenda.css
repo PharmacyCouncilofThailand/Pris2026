@@ -61,7 +61,7 @@
 
       p:last-child {
         margin-top: 8px;
-        color: var(--agenda-ink);
+        color: var(--color-orange-800);
         font-size: 36px;
         font-weight: 600;
         line-height: 1.3;
@@ -201,6 +201,7 @@
       background: #f4f6f9;
       box-shadow: none;
       scrollbar-color: #94a3b8 #eef2f6;
+      --agenda-time-width: 120px;
       --agenda-room-width: 210px;
       --agenda-station-width: 210px;
     }
@@ -241,7 +242,7 @@
       padding: 18px 14px;
       background: #edf2f7;
       color: var(--agenda-ink);
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 600;
       white-space: nowrap;
     }

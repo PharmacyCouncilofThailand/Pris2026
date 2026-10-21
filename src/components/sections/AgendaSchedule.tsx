@@ -212,7 +212,7 @@ export default function AgendaSchedule() {
     activeVenueGroup === "rooms"
       ? "var(--agenda-room-width, clamp(150px, 17vw, 220px))"
       : "var(--agenda-station-width, clamp(110px, 12vw, 190px))";
-  const tableColumns = `clamp(92px, 8.5vw, 120px) repeat(${desktopColumns.length}, minmax(${venueColumnWidth}, 1fr))`;
+  const tableColumns = `var(--agenda-time-width, clamp(92px, 8.5vw, 120px)) repeat(${desktopColumns.length}, minmax(${venueColumnWidth}, 1fr))`;
 
   useGSAP(
     () => {
