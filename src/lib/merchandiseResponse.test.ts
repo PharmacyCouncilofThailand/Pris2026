@@ -35,6 +35,7 @@ const variant = {
   colorTh: null,
   priceBaht: null,
   saleEnabled: true,
+  imageId: null,
 };
 const product = {
   id: id(5),

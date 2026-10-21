@@ -44,6 +44,7 @@ export function makeVariant(o: Partial<VariantDto> = {}): VariantDto {
     colorTh: null,
     priceBaht: 250,
     saleEnabled: true,
+    imageId: null,
     ...o,
   };
 }

@@ -3,6 +3,7 @@ import type {
   CartDto,
   CartLine,
   Baht,
+  ImageAsset,
   ProductDto,
   StoreDto,
   VariantDto,
@@ -122,4 +123,55 @@ export function canCheckout(cart: CartDto, store: StoreDto): boolean {
     cart.items.every((line) => line.valid) &&
     cart.amounts !== null
   );
+}
+
+export type OptionDraft = { colorTh: string | null; sizeTh: string | null };
+
+/** Photo id that represents the chosen option, or null when none applies. */
+export function optionImageId(
+  variants: VariantDto[],
+  draft: OptionDraft,
+): string | null {
+  const { colorTh, sizeTh } = draft;
+  if (colorTh !== null && sizeTh !== null) {
+    const v = variants.find(
+      (x) => x.saleEnabled && x.colorTh === colorTh && x.sizeTh === sizeTh,
+    );
+    return v?.imageId ?? null;
+  }
+  if (colorTh !== null) {
+    const v = variants.find(
+      (x) => x.saleEnabled && x.colorTh === colorTh && x.imageId !== null,
+    );
+    return v?.imageId ?? null;
+  }
+  if (sizeTh !== null && variants.every((x) => x.colorTh === null)) {
+    const v = variants.find((x) => x.saleEnabled && x.sizeTh === sizeTh);
+    return v?.imageId ?? null;
+  }
+  return null;
+}
+
+/** Thumbnail photo id for an option button (sale state ignored). */
+export function optionValueImageId(
+  variants: VariantDto[],
+  field: "colorTh" | "sizeTh",
+  value: string,
+): string | null {
+  if (field === "sizeTh" && variants.some((x) => x.colorTh !== null)) {
+    return null;
+  }
+  const v = variants.find((x) => x[field] === value && x.imageId !== null);
+  return v?.imageId ?? null;
+}
+
+/** Lead image first, the rest in order; unchanged if leadId is absent. */
+export function leadImageFirst(
+  images: ImageAsset[],
+  leadId: string | null,
+): ImageAsset[] {
+  if (leadId === null) return images;
+  const lead = images.find((i) => i.id === leadId);
+  if (!lead) return images;
+  return [lead, ...images.filter((i) => i.id !== leadId)];
 }

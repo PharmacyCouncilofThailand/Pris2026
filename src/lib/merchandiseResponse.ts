@@ -128,6 +128,7 @@ const variant = shape<VariantDto>({
   colorTh: nullable(text),
   priceBaht: nullable(isBaht),
   saleEnabled: boolean,
+  imageId: nullable(uuid),
 });
 const component = shape<BundleComponentDto>({
   id: uuid,

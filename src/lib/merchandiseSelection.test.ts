@@ -8,6 +8,9 @@ import {
   parseQuantity,
   unavailableMessage,
   canCheckout,
+  optionImageId,
+  optionValueImageId,
+  leadImageFirst,
 } from "./merchandiseSelection";
 import type {
   CartDto,
@@ -23,6 +26,7 @@ const v = (id: string, o: Partial<VariantDto> = {}): VariantDto => ({
   colorTh: null,
   priceBaht: null,
   saleEnabled: true,
+  imageId: null,
   ...o,
 });
 const base: ProductDto = {
@@ -245,4 +249,38 @@ test("canCheckout needs an open store, valid lines and server amounts", () => {
     canCheckout(cart([{ ...line, valid: false }], amounts), store("open")),
     false,
   );
+});
+
+const shirt: VariantDto[] = [
+  { id: "a", sizeTh: "S", colorTh: "ขาว", priceBaht: null, saleEnabled: true, imageId: null },
+  { id: "b", sizeTh: "M", colorTh: "ขาว", priceBaht: null, saleEnabled: true, imageId: "w" },
+  { id: "c", sizeTh: "S", colorTh: "ดำ", priceBaht: null, saleEnabled: false, imageId: "k" },
+];
+const mug: VariantDto[] = [
+  { id: "x", sizeTh: "46Oz", colorTh: null, priceBaht: null, saleEnabled: true, imageId: "big" },
+  { id: "y", sizeTh: "32Oz", colorTh: null, priceBaht: null, saleEnabled: true, imageId: null },
+];
+
+test("optionImageId follows the chosen option", () => {
+  assert.equal(optionImageId(shirt, { colorTh: "ขาว", sizeTh: null }), "w");
+  assert.equal(optionImageId(shirt, { colorTh: "ขาว", sizeTh: "S" }), null);
+  assert.equal(optionImageId(shirt, { colorTh: "ดำ", sizeTh: null }), null);
+  assert.equal(optionImageId(shirt, { colorTh: null, sizeTh: "M" }), null);
+  assert.equal(optionImageId(mug, { colorTh: null, sizeTh: "46Oz" }), "big");
+  assert.equal(optionImageId(mug, { colorTh: null, sizeTh: null }), null);
+});
+
+test("optionValueImageId gives colour thumbnails, and size thumbnails only without colours", () => {
+  assert.equal(optionValueImageId(shirt, "colorTh", "ขาว"), "w");
+  assert.equal(optionValueImageId(shirt, "colorTh", "ดำ"), "k");
+  assert.equal(optionValueImageId(shirt, "sizeTh", "M"), null);
+  assert.equal(optionValueImageId(mug, "sizeTh", "46Oz"), "big");
+  assert.equal(optionValueImageId(mug, "sizeTh", "32Oz"), null);
+});
+
+test("leadImageFirst moves the lead image to the front only when present", () => {
+  const imgs = ["p1", "p2", "p3"].map((id) => ({ id, url: `/${id}.png`, width: 1, height: 1 }));
+  assert.deepEqual(leadImageFirst(imgs, "p3").map((i) => i.id), ["p3", "p1", "p2"]);
+  assert.deepEqual(leadImageFirst(imgs, null).map((i) => i.id), ["p1", "p2", "p3"]);
+  assert.deepEqual(leadImageFirst(imgs, "zz").map((i) => i.id), ["p1", "p2", "p3"]);
 });
