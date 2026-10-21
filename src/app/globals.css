@@ -422,3 +422,110 @@ body.hero-playing main > div:not(:first-child) {
     font-size: 1.0625rem;
   }
 }
+
+.agenda-print-document {
+  display: none;
+}
+
+@page agenda {
+  size: A4;
+  margin: 12mm;
+}
+
+@media print {
+  html,
+  body {
+    height: auto !important;
+    background: #fff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .agenda-print-document,
+  .agenda-print-document * {
+    visibility: visible !important;
+  }
+
+  .agenda-print-document {
+    page: agenda;
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    color: #172033;
+    background: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+  }
+
+  .agenda-print-header {
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #1d4ed8;
+    padding-bottom: 1rem;
+  }
+
+  .agenda-print-header > p {
+    margin: 0;
+    color: #1d4ed8;
+    font-size: 11pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .agenda-print-header h1 {
+    margin: 0.25rem 0;
+    font-size: 22pt;
+  }
+
+  .agenda-print-header span {
+    color: #475569;
+  }
+
+  .agenda-print-day {
+    break-before: page;
+  }
+
+  .agenda-print-day:first-of-type {
+    break-before: auto;
+  }
+
+  .agenda-print-day > h2 {
+    margin: 0 0 0.75rem;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 0.4rem;
+    color: #1d4ed8;
+    font-size: 16pt;
+  }
+
+  .agenda-print-event {
+    break-inside: avoid;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.55rem 0;
+  }
+
+  .agenda-print-event-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: #475569;
+    font-size: 9pt;
+    font-weight: 700;
+  }
+
+  .agenda-print-event h3 {
+    margin: 0.2rem 0;
+    font-size: 11pt;
+  }
+
+  .agenda-print-event > p {
+    margin: 0.25rem 0;
+    white-space: pre-wrap;
+  }
+
+  .agenda-print-event ul {
+    margin: 0.25rem 0 0;
+    padding-left: 1.2rem;
+  }
+}
