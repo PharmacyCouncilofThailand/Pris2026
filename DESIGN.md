@@ -88,3 +88,10 @@ Latest long-pass fixture: at 390 × 844 px, the ticket measured 300 × 560 px, p
 Long-pass verification: focused lint and typecheck passed; the design detector reported no findings. The 320 px fixture had no horizontal overflow, QR-dialog Escape/focus return passed, and review accepted the revision with no material findings.
 
 Historical compact revision (superseded by the long-pass request): the column was capped at 380 px and the primary QR wrapper adapted from 144 to 200 px. Its 330 × 717 px fixture placed the collapsed details summary bottom at 695.75 px without horizontal overflow; at 390 × 844 px the bottom was 748.75 px. Production build, native disclosure, and QR-dialog Escape/focus return passed for that revision; reviewer reported no material findings for its 330 × 717 px fixture. These results do not certify the latest long-pass revision.
+
+
+## Agenda print document (2026-10-21)
+
+The /th/agenda and /en/agenda print surface uses the incumbent Noto Sans Thai and Outfit fonts on white A4 paper. Body text is 10.5pt with 1.55 line height; event headings are 12pt semibold. Existing #1d4ed8 blue marks room/date labels; #172033 and #475569 handle primary/secondary text. The time rail is 31mm; page margins are 14mm top, 15mm sides, 16mm bottom. No decorative cards or background imagery.
+
+A full PRIS masthead starts each day. A compact date/column header repeats on continuation pages. Keep short sessions together; allow long research descriptions to flow between paragraphs. Native CSS margin boxes provide page numbers in the verified Chromium print path. Printing always includes all 58 current events, independent of web filters; localize when available and retain source-language details when no translation exists. Data remains in scheduleData. See design-plans/agenda-pdf.md for verification and browser limits.
