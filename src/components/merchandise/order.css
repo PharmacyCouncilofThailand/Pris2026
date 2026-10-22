@@ -286,9 +286,9 @@
   font-weight: 700;
 }
 
-.merch-pay-number {
+.merch-pay-card .merch-pay-number {
   margin: 8px 0 0;
-  font-size: 14px;
+  font-size: clamp(16px, 2vw, 20px);
   font-weight: 500;
   color: #526787;
   overflow-wrap: anywhere;

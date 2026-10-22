@@ -61,7 +61,8 @@ export default function PaymentQr({
           />
           {children}
           <p className="merch-cart-muted">
-            กดค้างที่รูป QR หรือแคปหน้าจอ แล้วเลือกรูปในแอปธนาคาร
+            โปรดจับภาพหน้าจอนี้เพื่อบันทึก QR code
+            จากนั้นเลือกรูปในแอปธนาคารเพื่อดำเนินการชำระเงิน
           </p>
           {message && (
             <p className="merch-payment-message" role="status">
