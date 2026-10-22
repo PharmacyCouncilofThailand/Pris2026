@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0-review",
+  "task": "P03",
+  "status": "approved_by_user",
+  "approvedAt": "2026-10-15T12:29:39.711Z",
+  "approvedBy": "user",
+  "approvalSource": {
+    "kind": "direct_human_reply_in_this_chat",
+    "questionItemId": "[\"request_user_input_async\",\"call_f32710d00ffe4c86b9f14deeb7e4d207\",0]",
+    "answer": "ยืนยัน P03 ทุกภาพ",
+    "recordedAt": "2026-10-15T12:29:39.711Z",
+    "reviewedPreparationCommit": "ed7084c"
+  },
+  "inventory": "inventory.json",
+  "scope": "Subsequent purchase-flow visual references only; approved home unchanged; synthetic content is not sale data",
+  "functionalUiImplemented": false,
+  "P06ThroughP11VisualCodeAllowed": true,
+  "releaseGate": "not_ready",
+  "realProvider": "deferred_to_user_test",
+  "inventorySha256": "6b3cc444527be710d566d6fa0052ae9c74daffca1dc990e97696d2a01f18f79c",
+  "inventoryDigestFormat": "JSON.stringify(parsed inventory)"
+}

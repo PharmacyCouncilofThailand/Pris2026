@@ -1,0 +1,324 @@
+.merch-order-bar > button {
+  background: #0055ff;
+}
+.merch-order-bar > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 1160px;
+  min-height: 56px;
+  margin: auto;
+  padding: 12px 22px;
+  border-radius: 999px;
+  color: white;
+  font-size: 19px;
+  font-weight: 700;
+  background: #0055ff;
+}
+.merch-paid #order-details {
+  scroll-margin-top: calc(var(--merch-host-header-height, 69px) + 16px);
+}
+.merch-order-reissue > button {
+  background: #ff5800;
+}
+.merch-payment-closed {
+  padding: 16px;
+  border-radius: 12px;
+  background: #fff0e5;
+  color: #8f3400;
+}
+.merch-paid-thanks {
+  text-align: center;
+  padding: 32px 20px;
+  border-radius: 16px;
+  background: white;
+  margin-block: 28px 24px;
+}
+.merch-paid-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  color: #14663e;
+  background: #e3f4e9;
+  margin-bottom: 20px;
+}
+.merch-paid-thanks h2 {
+  font-size: 23px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.merch-paid-thanks p {
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.merch-paid-badge {
+  display: inline-block;
+  color: #14663e;
+  background: #e3f4e9;
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-block: 14px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.merch-paid-summary {
+  background: white;
+  padding: 24px 20px;
+  border-radius: 16px;
+  align-self: start;
+}
+.merch-paid-summary h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 22px;
+}
+.merch-paid-summary dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.merch-paid-summary dd {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.merch-paid-summary .merch-paid-total {
+  padding-top: 22px;
+  border-top: 1px solid #d4def0;
+  margin-top: 24px;
+  font-weight: 700;
+}
+.merch-paid-total dd {
+  color: #0055ff;
+  font-size: 26px;
+}
+.merch-paid-summary > p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #526787;
+}
+.merch-paid-item {
+  border-bottom: 1px solid #d4def0;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+.merch-paid-item h2 {
+  margin-bottom: 8px;
+}
+.merch-paid-item strong {
+  font-size: 20px;
+}
+.merch-paid-item ul {
+  padding-left: 18px;
+  list-style: disc;
+}
+.merch-paid-item:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.merch-order-message {
+  background: white;
+  border-radius: 16px;
+  padding: 44px 24px;
+  text-align: center;
+  margin-block: 28px;
+  line-height: 1.8;
+}
+.merch-order-message h2 {
+  font-size: 23px;
+  font-weight: 800;
+  margin-bottom: 18px;
+}
+.merch-payment-panel {
+  align-self: start;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: white;
+  text-align: center;
+}
+.merch-payment-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.merch-payment-heading h2 {
+  font-size: 17px;
+  font-weight: 700;
+}
+.merch-payment-heading span {
+  background: #e7efff;
+  color: #0055ff;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.merch-payment-amount {
+  font-family: var(--font-outfit), var(--font-noto-sans-thai), sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  margin-block: 22px;
+  overflow-wrap: anywhere;
+}
+.merch-payment-qr {
+  display: block;
+  max-width: 100%;
+  width: 280px;
+  height: auto;
+  margin: 20px auto;
+  image-rendering: crisp-edges;
+}
+.merch-payment-panel > p {
+  line-height: 1.8;
+}
+.merch-payment-working {
+  display: grid;
+  place-items: center;
+  gap: 18px;
+  background: #f5f8fe;
+  border-radius: 12px;
+  margin: 22px auto;
+  padding: 28px 18px;
+  min-height: 160px;
+  color: #526787;
+}
+.merch-payment-spinner {
+  animation: merch-payment-spin 1s linear infinite;
+}
+.merch-payment-breakdown {
+  border-top: 1px solid #d4def0;
+  padding-top: 18px;
+  margin-top: 28px;
+  color: #526787;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.merch-order address {
+  font-style: normal;
+  margin-top: 12px;
+}
+/* Shop info and the delivery note keep the line breaks staff typed. */
+.merch-order .merch-review-section p,
+.merch-order address {
+  white-space: pre-wrap;
+}
+.merch-order .merch-review-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.merch-order-item {
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.merch-order-item h3 {
+  font-weight: 700;
+}
+.merch-order-support {
+  font-size: 14px;
+  line-height: 1.8;
+  padding-block: 24px;
+}
+.merch-order-support a {
+  color: #0055ff;
+  text-decoration: underline;
+}
+@keyframes merch-payment-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .merch-payment-spinner {
+    animation: none;
+  }
+}
+.merch-order-amounts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 6px;
+}
+.merch-payment-notice {
+  margin-top: 16px;
+  color: #8f3400;
+}
+.merch-payment-panel > button {
+  display: block;
+  margin-inline: auto;
+}
+.merch-cart.merch-pay > .merch-pay-card {
+  max-width: 440px;
+  margin: 24px auto 0;
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+}
+.merch-pay-card .merch-payment-panel,
+.merch-pay-card .merch-just-paid {
+  padding: 0;
+}
+.merch-just-paid h2 {
+  font-size: 23px;
+  font-weight: 800;
+  margin-block: 0 14px;
+}
+.merch-just-paid-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 22px;
+  margin-block: 8px 14px;
+  border-radius: 999px;
+  color: white;
+  background: #ff5800;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.merch-pay-card .merch-pay-number {
+  margin: 8px 0 0;
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 500;
+  color: #526787;
+  overflow-wrap: anywhere;
+}
+.merch-pay-card .merch-payment-panel > h2 {
+  margin: 18px 0 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+.merch-pay-card .merch-payment-amount {
+  font-size: 32px;
+  margin-block: 8px 16px;
+}
+.merch-payment-qr-brand {
+  display: block;
+  width: 79px;
+  height: 24px;
+  margin: 0 auto 8px;
+  background: url("/assets/Img/payment/thai-qr.webp") center / contain no-repeat;
+}
+.merch-pay-card .merch-payment-qr {
+  margin: 0 auto 12px;
+}
+.merch-payment-time {
+  margin: 0 0 8px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: #0055ff;
+}
+.merch-pay-card .merch-payment-panel > p.merch-payment-message {
+  margin-top: 12px;
+  color: #3b4b66;
+}

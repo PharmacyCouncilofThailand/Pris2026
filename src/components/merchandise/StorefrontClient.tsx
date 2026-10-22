@@ -1,0 +1,291 @@
+"use client";
+import { ProductGridSkeleton } from "./MerchSkeletons";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type PointerEvent,
+} from "react";
+import { useSearchParams } from "next/navigation";
+import toast from "react-hot-toast";
+import { useRouter } from "@/i18n/routing";
+import { useMerchandise } from "./MerchandiseProvider";
+import { useMerchandiseResource } from "./useMerchandiseResource";
+import { MerchandiseIntentResume } from "./MerchandiseAuthBoundary";
+import { StorefrontView } from "./StorefrontView";
+import { filterCatalog, nextCatalogFilter } from "@/lib/merchandiseCatalog";
+import {
+  savePurchaseIntent,
+  type PurchaseIntent,
+} from "@/lib/merchandiseIntent";
+import {
+  merchandiseLoginPath,
+  merchandiseReturnPath,
+} from "@/lib/merchandiseRoutes";
+import {
+  defaultSelection,
+  selectionComplete,
+} from "@/lib/merchandiseSelection";
+import type { ProductDto } from "@/types/merchandise";
+
+const PAGE_SIZE = 12;
+const MAX_PAGES = 50;
+
+export default function StorefrontClient() {
+  const { store, api, eventCode, token } = useMerchandise(),
+    router = useRouter(),
+    params = useSearchParams(),
+    search = params.toString();
+  const canonical = useMemo(
+    () => merchandiseReturnPath("/souvenirs" + (search ? "?" + search : "")),
+    [search],
+  );
+  useEffect(() => {
+    if (!canonical) return;
+    try {
+      window.sessionStorage.setItem("pris_merch_storefront_url", canonical);
+    } catch {
+      /* storage unavailable */
+    }
+  }, [canonical]);
+  const filters = useMemo(() => {
+    const q = new URL(canonical ?? "/souvenirs", "https://internal.invalid")
+      .searchParams;
+    const kind = q.get("kind") as "single" | "bundle" | null;
+    return {
+      query: q.get("q") ?? "",
+      // Filters are single-select: a legacy URL with both keeps the bundle.
+      categoryId:
+        kind === "bundle" ? undefined : (q.get("categoryId") ?? undefined),
+      kind,
+      page: Number(q.get("page") ?? 1),
+      intentId: q.get("intentId"),
+    };
+  }, [canonical]);
+  const [draft, setDraft] = useState({ source: search, value: filters.query });
+  const query = draft.source === search ? draft.value : filters.query;
+  const pendingQuery = useRef<URLSearchParams | null>(null);
+  const change = useCallback(
+    (patch: Record<string, string | null>) => {
+      const current = pendingQuery.current ?? new URLSearchParams(search);
+      const fresh = pendingQuery.current === null;
+      for (const [key, value] of Object.entries(patch)) {
+        if (value === null || value === "") current.delete(key);
+        else current.set(key, value);
+      }
+      if (!Object.hasOwn(patch, "page")) current.delete("page");
+      pendingQuery.current = current;
+      if (fresh)
+        queueMicrotask(() => {
+          const next = pendingQuery.current;
+          pendingQuery.current = null;
+          if (next)
+            router.replace(
+              merchandiseReturnPath("/souvenirs?" + next) ?? "/souvenirs",
+              { scroll: false },
+            );
+        });
+    },
+    [search, router],
+  );
+  useEffect(() => {
+    if (!canonical) router.replace("/souvenirs", { scroll: false });
+  }, [canonical, router]);
+  useEffect(() => {
+    if (!canonical) return;
+    const q = new URL(canonical, "https://internal.invalid").searchParams;
+    if (q.has("categoryId") && q.get("kind") === "bundle")
+      change({ categoryId: null });
+  }, [canonical, change]);
+  useEffect(() => {
+    if (query === filters.query) return;
+    const timer = setTimeout(() => change({ q: query }), 200);
+    return () => clearTimeout(timer);
+  }, [query, filters.query, change]);
+
+  // Search and filters run on the full published catalog, loaded once (spec 6.1).
+  const loadAll = useCallback(
+    async (signal: AbortSignal) => {
+      const first = await api.products(
+        eventCode,
+        { limit: 100, page: 1 },
+        signal,
+      );
+      const items: ProductDto[] = [...first.items];
+      const pages = Math.min(first.pagination.totalPages, MAX_PAGES);
+      for (let page = 2; page <= pages; page++)
+        items.push(
+          ...(await api.products(eventCode, { limit: 100, page }, signal))
+            .items,
+        );
+      return items;
+    },
+    [api, eventCode],
+  );
+  const catalog = useMerchandiseResource(eventCode, loadAll);
+  const view = useMemo(
+    () =>
+      filterCatalog(
+        catalog.data ?? [],
+        {
+          q: query,
+          categoryId: filters.categoryId,
+          kind: filters.kind ?? undefined,
+          page: filters.page,
+        },
+        PAGE_SIZE,
+      ),
+    [catalog.data, query, filters.categoryId, filters.kind, filters.page],
+  );
+
+  const addStarted = useRef(false);
+  useEffect(() => {
+    if (!filters.intentId) addStarted.current = false;
+  }, [filters.intentId]);
+  const purchaseBusy = Boolean(token && filters.intentId);
+  const viewRoot = useRef<HTMLDivElement>(null),
+    swipe = useRef<{ x: number; y: number } | null>(null);
+  const startSwipe = (e: PointerEvent<HTMLDivElement>) => {
+    if (
+      e.pointerType === "touch" &&
+      (e.target as HTMLElement).closest(".merch-banner-art")
+    )
+      swipe.current = { x: e.clientX, y: e.clientY };
+  };
+  const endSwipe = (e: PointerEvent<HTMLDivElement>) => {
+    const start = swipe.current;
+    swipe.current = null;
+    if (!start) return;
+    const dx = e.clientX - start.x,
+      dy = e.clientY - start.y;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy))
+      viewRoot.current
+        ?.querySelector<HTMLButtonElement>(
+          dx < 0 ? ".merch-banner-next" : ".merch-banner-prev",
+        )
+        ?.click();
+  };
+  if (!store.data || catalog.error)
+    return (
+      <main
+        className="merchandise-host-message"
+        aria-busy={store.status === "loading"}
+      >
+        {store.error || catalog.error ? (
+          <>
+            <p role="alert">{(store.error ?? catalog.error)!.message}</p>
+            <button
+              className="mt-4 min-h-11 rounded-xl bg-[#0055ff] px-5 font-semibold text-white"
+              onClick={store.error ? store.reload : catalog.reload}
+            >
+              ลองโหลดอีกครั้ง
+            </button>
+          </>
+        ) : (
+          <ProductGridSkeleton label="กำลังโหลดร้านของที่ระลึก" />
+        )}
+      </main>
+    );
+  const add = (productId: string) => {
+    if (addStarted.current) return;
+    const product = catalog.data?.find((p) => p.id === productId);
+    if (!product) return;
+    const selection = defaultSelection(product);
+    if (!selectionComplete(product, selection)) {
+      router.push(`/souvenirs/products/${productId}`);
+      return;
+    }
+    try {
+      const destination = new URL(
+        canonical ?? "/souvenirs",
+        "https://internal.invalid",
+      );
+      const id = crypto.randomUUID();
+      destination.searchParams.set("intentId", id);
+      const returnPath = destination.pathname + destination.search;
+      const intent: PurchaseIntent = {
+        id,
+        eventCode,
+        returnPath,
+        productId,
+        selection,
+        quantity: 1,
+      };
+      savePurchaseIntent(window.sessionStorage, intent);
+      addStarted.current = true;
+      router.push(token ? returnPath : merchandiseLoginPath(returnPath), {
+        scroll: false,
+      });
+    } catch {
+      addStarted.current = false;
+      toast.error(
+        "ไม่สามารถเก็บรายการที่เลือกได้ กรุณาตรวจสอบการตั้งค่าเบราว์เซอร์",
+      );
+    }
+  };
+  const withDraft = (patch: Record<string, string | null>) =>
+    change(pendingQuery.current ? patch : { q: query, ...patch });
+  const header = (
+    <>
+      <div className="mx-auto max-w-[1200px] px-4">
+        <MerchandiseIntentResume intentId={filters.intentId} />
+      </div>
+    </>
+  );
+  return (
+    <div
+      ref={viewRoot}
+      onPointerDown={startSwipe}
+      onPointerUp={endSwipe}
+      onPointerCancel={() => {
+        swipe.current = null;
+      }}
+    >
+      <StorefrontView
+        store={store.data}
+        products={view.items}
+        hasBundles={Boolean(
+          catalog.data?.some((product) => product.kind === "bundle"),
+        )}
+        headerSlot={header}
+        showOrdersLink={Boolean(token)}
+        query={query}
+        activeCategory={filters.categoryId ?? "all"}
+        activeKind={filters.kind === "bundle" ? "bundle" : "all"}
+        busy={catalog.status === "loading" || purchaseBusy}
+        errorMessage={null}
+        noMatches={Boolean(query || filters.categoryId || filters.kind)}
+        pagination={
+          catalog.data
+            ? {
+                page: view.page,
+                limit: PAGE_SIZE,
+                total: view.total,
+                totalPages: view.totalPages,
+              }
+            : null
+        }
+        onQuery={(value) => {
+          setDraft({ source: search, value: value.slice(0, 200) });
+          if (!value) change({ q: null });
+        }}
+        onFilter={(pressed) => {
+          const next = nextCatalogFilter(
+            {
+              categoryId: filters.categoryId ?? null,
+              kind: filters.kind === "bundle" ? "bundle" : null,
+            },
+            pressed,
+          );
+          withDraft({ categoryId: next.categoryId, kind: next.kind });
+        }}
+        onPage={(page) => withDraft({ page: String(page) })}
+        onProduct={(id) => router.push(`/souvenirs/products/${id}`)}
+        onAdd={add}
+        onRetry={catalog.reload}
+      />
+    </div>
+  );
+}

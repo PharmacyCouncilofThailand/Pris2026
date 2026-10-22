@@ -1,0 +1,509 @@
+{
+  "kind": "static_reference_dom_only",
+  "browser": "Chromium",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "checks": [
+    {
+      "id": "01-product-options",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "สีตัวอย่าง A",
+          "disabled": false,
+          "width": 111.671875,
+          "height": 45.59375
+        },
+        {
+          "label": "สีตัวอย่าง B",
+          "disabled": false,
+          "width": 111.5625,
+          "height": 45.59375
+        },
+        {
+          "label": "ขนาดตัวอย่าง A",
+          "disabled": false,
+          "width": 138.375,
+          "height": 45.59375
+        },
+        {
+          "label": "ขนาดตัวอย่าง B",
+          "disabled": false,
+          "width": 138.265625,
+          "height": 45.59375
+        },
+        {
+          "label": "ลดจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มลงตะกร้า · ฿150.00",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "03-cart",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ลดจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "นำสินค้าออก",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ลดจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "นำสินค้าออก",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ดำเนินการต่อ · ฿300.00",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true,
+      "semanticVisualGeometryUnchanged": true
+    },
+    {
+      "id": "04-cart-unavailable",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 726.203125,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ลดจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "นำสินค้าออก",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ลดจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "นำสินค้าออก",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เลือกตัวเลือกใหม่",
+          "disabled": false,
+          "width": 144.875,
+          "height": 47.59375
+        },
+        {
+          "label": "ดำเนินการต่อ",
+          "disabled": true,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "05-recipient",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ตรวจสอบคำสั่งซื้อ",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "07-review",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "แก้ไข",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ยืนยันคำสั่งซื้อ · ฿300.00",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "09-qr-ready",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": 694.765625,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "บันทึกภาพ QR",
+          "disabled": false,
+          "width": 310,
+          "height": 47.59375
+        },
+        {
+          "label": "ตรวจสอบการชำระเงิน",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "12-payment-unknown",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ตรวจสอบอีกครั้ง",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "13-qr-expired-open",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ขอ QR ใหม่",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "14-qr-expired-closed",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ตรวจสอบการชำระเงิน",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    },
+    {
+      "id": "19-product-no-options",
+      "barPosition": "fixed",
+      "barBottom": 844,
+      "barTop": 755,
+      "qrBottom": null,
+      "scrollWidth": 390,
+      "ctaCount": 1,
+      "buttons": [
+        {
+          "label": "2",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "EN",
+          "disabled": false,
+          "width": 52.65625,
+          "height": 44
+        },
+        {
+          "label": "เมนู",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "ลดจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มจำนวน",
+          "disabled": false,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "label": "เพิ่มลงตะกร้า · ฿100.00",
+          "disabled": false,
+          "width": 350,
+          "height": 56
+        }
+      ],
+      "sourceHasNoFormSubmit": true
+    }
+  ]
+}

@@ -79,7 +79,6 @@ export function PresentationWorkspace(p: {
     progress: p.progress,
   });
   const block = `blocks.${o.blockCode ?? "PRESENTATION_ALREADY_SUBMITTED"}`;
-  const close = o.selectedRequest?.closesAt ?? o.mainClosesAt;
   return (
     <main className="min-h-screen bg-[#fafafa] pb-24 text-slate-900 selection:bg-gold selection:text-black">
       <PageHero
@@ -99,12 +98,7 @@ export function PresentationWorkspace(p: {
             className="mt-0.5 shrink-0 text-amber-600"
           />
           <div>
-            <p className="text-sm leading-relaxed">
-              <strong>{t("deadline")}</strong> ·{" "}
-              {date(new Date(Date.parse(close) - 1000).toISOString())}{" "}
-              {t("thaiTime")}
-            </p>
-            <p className="mt-1 text-sm">{t("completionRule")}</p>
+            <p className="text-sm leading-relaxed">{t("completionRule")}</p>
           </div>
         </div>
         <div className="grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-8">

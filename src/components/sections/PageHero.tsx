@@ -18,6 +18,8 @@ interface PageHeroProps {
   titleSizeClassName?: string;
   /** Paragraph below the title */
   subtitle?: string;
+  /** Optional action rendered below the subtitle */
+  action?: React.ReactNode;
   /** Use dark theme (for pages like committee) */
   dark?: boolean;
   /** Place title1 and title2 on the same line */
@@ -33,6 +35,7 @@ export default function PageHero({
   title2,
   titleSizeClassName,
   subtitle,
+  action,
   dark = false,
   inlineTitle = false,
   inlineTitleTight = false,
@@ -150,6 +153,7 @@ export default function PageHero({
             </p>
           </div>
         )}
+        {action}
       </div>
     </section>
   );
