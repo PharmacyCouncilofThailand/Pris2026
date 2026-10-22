@@ -329,6 +329,35 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
           messages().errors.PRESENTATION_FILE_INVALID,
         ),
       );
+      for (const status of ["deletion_pending", "deleted"] as const) {
+        await act(async () =>
+          renderer!.update(
+            React.createElement(PresentationWorkspace, {
+              ...props,
+              owner: {
+                ...revision,
+                uploads: [upload, { ...legacyUpload, fileStatus: status }],
+              },
+              file: null,
+            }),
+          ),
+        );
+        assert.equal(
+          renderer!.root
+            .findAllByType("a")
+            .some((node) => node.props.href === legacyUpload.fileUrl),
+          false,
+        );
+        const rendered = JSON.stringify(renderer!.toJSON());
+        assert.ok(rendered.includes(legacyUpload.fileName));
+        assert.ok(
+          rendered.includes(
+            status === "deleted"
+              ? messages().fileDeleted
+              : messages().fileDeletionPending,
+          ),
+        );
+      }
       const oralUpload: UploadDto = {
         ...upload,
         fileName: "slides.pdf",
@@ -470,6 +499,31 @@ test("TH/EN workspace selection/progress/locks/revision/history and native recei
     assert.ok(tree.includes("<img onerror=attack>.pdf"));
     assert.ok(tree.includes("11:00:00")); // server receivedAt displayed in Bangkok, not browser clock
     assert.equal(renderer!.root.findAllByType("img").length, 0);
+    for (const fileStatus of ["deletion_pending", "deleted"] as const) {
+      await act(async () =>
+        renderer!.update(
+          React.createElement(PresentationSuccessDialog, {
+            upload: {
+              ...upload,
+              fileStatus,
+              fileUrl: fileStatus === "deleted" ? upload.fileUrl : null,
+            },
+            owner,
+            onClose: () => {
+              cancel++;
+            },
+          }),
+        ),
+      );
+      assert.equal(renderer!.root.findAllByType("a").length, 0);
+      assert.ok(
+        JSON.stringify(renderer!.toJSON()).includes(
+          fileStatus === "deleted"
+            ? messages().fileDeleted
+            : messages().fileDeletionPending,
+        ),
+      );
+    }
     assert.equal(
       renderer!.root
         .findAllByType("dt")
