@@ -160,7 +160,7 @@ test("an expired token offers forced reauthentication that keeps the history pag
   expect(query.get("redirect")).toBe("/souvenirs/orders?page=2");
 });
 
-test("pending orders offer a pay button and one page hides pagination", async ({
+test("pending orders have no payment shortcut and one page hides pagination", async ({
   page,
   fake,
 }) => {
@@ -174,20 +174,8 @@ test("pending orders offer a pay button and one page hides pagination", async ({
     await expect(
       rows(page)
         .filter({ hasText: number(n) })
-        .getByRole("link", { name: new RegExp(`ชำระเงิน.*${number(n)}`) }),
-    ).toHaveCount(1);
-  const pay = rows(page)
-    .filter({ hasText: number(1) })
-    .getByRole("link", { name: "ชำระเงิน" });
-  await expect(pay).toHaveAttribute("href", `/th/souvenirs/orders/${uid(1)}`);
-  await expect(pay).toHaveCSS("background-color", "rgb(255, 88, 0)");
-  await expect(
-    rows(page)
-      .filter({ hasText: number(1) })
-      .getByRole("link", {
-        name: "ดูรายละเอียด",
-      }),
-  ).toHaveCount(0);
+        .getByRole("link"),
+    ).toHaveCount(0);
   await expect(
     rows(page)
       .filter({ hasText: number(2) })

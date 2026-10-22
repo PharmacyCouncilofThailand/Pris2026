@@ -202,13 +202,3 @@
   margin-bottom: 16px;
   overflow-wrap: anywhere;
 }
-.merch-history-row-bottom > a.merch-history-pay {
-  justify-content: center;
-  min-width: 120px;
-  padding: 10px 22px;
-  border-radius: 999px;
-  color: white;
-  background: #ff5800;
-  font-size: 19px;
-  font-weight: 700;
-}
