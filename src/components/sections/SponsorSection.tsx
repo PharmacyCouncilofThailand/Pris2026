@@ -127,6 +127,18 @@ const universitiesRow = [
     logo: "/assets/Img/University/รังสิต.jpg",
     twClass: "scale-[1.3]",
   },
+  {
+    id: 10,
+    name: "จุฬาลงกรณ์มหาวิทยาลัย",
+    logo: "/assets/Img/University/Logo_of_Faculty_of_Pharmaceutical_Sciences,_Chulalongkorn_University.svg.webp",
+    twClass: "scale-100",
+  },
+  {
+    id: 11,
+    name: "มหาวิทยาลัยเกษตรศาสตร์",
+    logo: "/assets/Img/University/คณะเภสัชศาสตร์.png",
+    twClass: "scale-100",
+  },
 ];
 
 const sponsorsRow = [
@@ -134,21 +146,21 @@ const sponsorsRow = [
     id: 1,
     name: "Berlin Pharmaceutical Industry",
     logo: "/assets/Img/sponsors/Berlin pharmaceutical.jpg",
-    twClass: "scale-[1.15]",
+    twClass: "scale-[0.88]",
     marginClass: "mx-6 sm:mx-9 md:mx-12",
   },
   {
     id: 2,
     name: "TILSNA",
     logo: "/assets/Img/sponsors/S__109420674.jpg",
-    twClass: "scale-[1.3]",
+    twClass: "scale-[0.95]",
     marginClass: "mx-6 sm:mx-9 md:mx-12",
   },
   {
     id: 3,
     name: "Novaceutical",
     logo: "/assets/Img/sponsors/Novaceutical.jpg",
-    twClass: "scale-[1.45]",
+    twClass: "scale-[1.05]",
     marginClass: "mx-6 sm:mx-9 md:mx-12",
   },
   {
@@ -411,6 +423,14 @@ const sponsorsRow = [
     marginClass: "mx-8 sm:mx-12 md:mx-15",
     unconstrained: true,
   },
+  {
+    id: 40,
+    name: "สมาคมเภสัชกรรมโรงพยาบาล (ประเทศไทย)",
+    logo: "/assets/Img/sponsors/HP.jpg",
+    twClass: "scale-[1.15]",
+    marginClass: "mx-8 sm:mx-12 md:mx-15",
+    unconstrained: true,
+  },
 ];
 
 export default function SponsorSection() {
@@ -428,30 +448,7 @@ export default function SponsorSection() {
   const universitiesRowRef = useRef<HTMLDivElement>(null);
   const sponsorsRowRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    // Uniform linear velocity (pixels per second) across all 3 tracks
-    const SPEED_PX_PER_SEC = 50;
-
-    const syncSpeeds = () => {
-      [partnersRowRef, universitiesRowRef, sponsorsRowRef].forEach((ref) => {
-        if (ref.current) {
-          const oneSetDistance = ref.current.scrollWidth / 3;
-          if (oneSetDistance > 0) {
-            const duration = oneSetDistance / SPEED_PX_PER_SEC;
-            ref.current.style.animationDuration = `${duration.toFixed(2)}s`;
-          }
-        }
-      });
-    };
-
-    syncSpeeds();
-    const timer = setTimeout(syncSpeeds, 600);
-    window.addEventListener("resize", syncSpeeds);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("resize", syncSpeeds);
-    };
-  }, []);
+  // Smooth pure GPU-driven animations (no JS timer recalculations to cause stutter)
 
   useGSAP(
     () => {
@@ -515,7 +512,8 @@ export default function SponsorSection() {
                   src={sponsor.logo}
                   alt={sponsor.name}
                   className={`h-full w-auto max-w-[120px] sm:max-w-[150px] md:max-w-[180px] object-contain ${sponsor.twClass || ""}`}
-                  loading="lazy"
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -547,7 +545,8 @@ export default function SponsorSection() {
                   src={uni.logo}
                   alt={uni.name}
                   className={`h-full w-auto max-w-[140px] sm:max-w-[180px] md:max-w-[220px] object-contain ${uni.twClass || ""}`}
-                  loading="lazy"
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -591,7 +590,8 @@ export default function SponsorSection() {
                         ? "max-w-[160px] sm:max-w-[200px] md:max-w-[240px]"
                         : "max-w-[130px] sm:max-w-[160px] md:max-w-[190px]"
                     } object-contain ${sponsor.twClass || ""}`}
-                    loading="lazy"
+                    loading="eager"
+                    decoding="async"
                   />
                 </div>
               </div>
@@ -605,29 +605,35 @@ export default function SponsorSection() {
           __html: `
         @keyframes scroll-left {
           0% { transform: translate3d(0, 0, 0); }
-          100% { transform: translate3d(-33.333%, 0, 0); }
+          100% { transform: translate3d(calc(-100% / 3), 0, 0); }
         }
         @keyframes scroll-right {
-          0% { transform: translate3d(-33.333%, 0, 0); }
+          0% { transform: translate3d(calc(-100% / 3), 0, 0); }
           100% { transform: translate3d(0, 0, 0); }
         }
         .animate-partners-scroll {
           animation: scroll-left 42s linear infinite;
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          perspective: 1000px;
+          transform: translate3d(0, 0, 0);
         }
         .animate-universities-scroll {
           animation: scroll-right 45s linear infinite;
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          perspective: 1000px;
+          transform: translate3d(0, 0, 0);
         }
         .animate-sponsors-scroll {
           animation: scroll-left 185s linear infinite;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-partners-scroll,
-          .animate-universities-scroll,
-          .animate-sponsors-scroll {
-            animation: none;
-            flex-wrap: wrap;
-            justify-content: center;
-          }
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          perspective: 1000px;
+          transform: translate3d(0, 0, 0);
         }
       `,
         }}
