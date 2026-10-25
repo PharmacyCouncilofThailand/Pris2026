@@ -30,6 +30,8 @@ export function PosterKiosk() {
   const [now, setNow] = useState(0);
   const [focused, setFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLElement>(null);
+  const wasViewing = useRef(false);
   const stateRef = useRef(state);
   const rosterRef = useRef(roster);
   useEffect(() => {
@@ -98,6 +100,14 @@ export function PosterKiosk() {
       ? (roster.find((item) => item.trackingId === state.viewingTrackingId) ?? null)
       : null;
 
+  const isViewing = viewingItem?.file != null;
+  useEffect(() => {
+    // Return focus to the root once the viewer is gone, never to the search input
+    // (that would summon the on-screen keyboard).
+    if (wasViewing.current && !isViewing) rootRef.current?.focus({ preventScroll: true });
+    wasViewing.current = isViewing;
+  }, [isViewing]);
+
   const announce = loading
     ? t("loadingRoster")
     : result?.status === "found"
@@ -110,6 +120,8 @@ export function PosterKiosk() {
 
   return (
     <main
+      ref={rootRef}
+      tabIndex={-1}
       className={`${styles.root} ${atTop ? styles.atTop : ""}`}
       onPointerDown={markActivity}
       onKeyDown={markActivity}

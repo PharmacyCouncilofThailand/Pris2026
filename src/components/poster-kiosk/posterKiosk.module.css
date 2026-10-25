@@ -12,6 +12,8 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.root:focus { outline: none; }
+
 .stage {
   position: relative;
   width: calc(1080 * var(--u));
@@ -418,6 +420,7 @@
   left: 0;
   right: 0;
   top: 50%;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;

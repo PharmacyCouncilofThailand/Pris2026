@@ -17,6 +17,7 @@ export function PosterViewer({
   const t = useTranslations("posterKiosk");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const onCloseRef = useRef(onClose);
+  const unmountingRef = useRef(false);
   const { stageRef, zoom, handlers } = usePosterZoom();
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -30,8 +31,10 @@ export function PosterViewer({
     const dialog = dialogRef.current;
     if (!dialog) return;
     const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    unmountingRef.current = false;
     if (!dialog.open) dialog.showModal();
     return () => {
+      unmountingRef.current = true;
       if (dialog.open) dialog.close();
       if (opener?.isConnected) opener.focus();
     };
@@ -53,6 +56,11 @@ export function PosterViewer({
       onCancel={(e) => {
         e.preventDefault();
         onCloseRef.current();
+      }}
+      // Fallback for browsers that close the dialog without a cancel event.
+      onClose={() => {
+        // A stale event from our own cleanup (e.g. StrictMode remount) finds the dialog open again.
+        if (!unmountingRef.current && !dialogRef.current?.open) onCloseRef.current();
       }}
     >
       <div ref={stageRef} className={styles.viewerStage} {...handlers}>
@@ -81,15 +89,15 @@ export function PosterViewer({
             {t("loadingPoster")}
           </p>
         ) : null}
-        {failed ? (
-          <div className={styles.viewerStatus} role="alert">
-            <p>{t("fileError")}</p>
-            <button type="button" className={styles.viewerRetry} onClick={retry}>
-              {t("retry")}
-            </button>
-          </div>
-        ) : null}
       </div>
+      {failed ? (
+        <div className={styles.viewerStatus} role="alert">
+          <p>{t("fileError")}</p>
+          <button type="button" className={styles.viewerRetry} onClick={retry}>
+            {t("retry")}
+          </button>
+        </div>
+      ) : null}
       <button type="button" className={styles.viewerClose} onClick={() => onClose()}>
         {t("close")}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
