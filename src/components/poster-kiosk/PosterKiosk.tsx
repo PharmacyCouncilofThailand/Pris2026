@@ -115,6 +115,7 @@ export function PosterKiosk() {
       onKeyDown={markActivity}
     >
       <div className={styles.beams} aria-hidden="true" />
+      <div className={styles.stage}>
       {state.mode === "idle" && roster ? <PosterWall key={rosterVersion} items={roster} /> : null}
       <div className={styles.fade} aria-hidden="true" />
       <Image
@@ -210,6 +211,7 @@ export function PosterKiosk() {
       ) : null}
 
       {seconds !== null ? <IdleCountdown seconds={seconds} /> : null}
+      </div>
     </main>
   );
 }

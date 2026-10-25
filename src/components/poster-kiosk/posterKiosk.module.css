@@ -1,5 +1,5 @@
 .root {
-  --u: calc(100vw / 1080);
+  --u: min(100vw / 1080, 100svh / 1920);
   --cta: linear-gradient(90deg, #2563eb 0%, #6d5ee0 50%, #ea580c 100%);
   position: relative;
   width: 100vw;
@@ -10,6 +10,13 @@
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.stage {
+  position: relative;
+  width: calc(1080 * var(--u));
+  height: 100%;
+  margin: 0 auto;
 }
 
 .srOnly {
@@ -78,8 +85,8 @@
 }
 .fade {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: -50vw;
+  right: -50vw;
   top: 0;
   height: calc(1300 * var(--u));
   background: linear-gradient(rgba(5, 10, 28, 0.1) 0%, rgba(5, 10, 28, 0.5) 45%, rgba(5, 10, 28, 0.92) 96%, rgba(5, 10, 28, 0));
@@ -329,7 +336,7 @@
 /* ---- roster error ---- */
 .rosterError {
   position: absolute;
-  top: calc(1450 * var(--u));
+  top: calc(1570 * var(--u));
   left: calc(60 * var(--u));
   right: calc(60 * var(--u));
   z-index: 3;
