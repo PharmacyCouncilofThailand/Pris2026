@@ -9,6 +9,7 @@
     "test": "tsx --test src/**/*.test.ts",
     "test:merchandise": "tsx --test src/lib/merchandise*.test.ts",
     "test:e2e:merchandise": "playwright test -c playwright.merchandise.config.ts",
+    "test:e2e:poster-kiosk": "playwright test -c playwright.poster-kiosk.config.ts",
     "lint": "eslint",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
