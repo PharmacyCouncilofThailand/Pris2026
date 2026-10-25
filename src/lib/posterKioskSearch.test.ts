@@ -84,3 +84,10 @@ test("items without files are still returned", () => {
   assert.equal(r.status, "found");
   if (r.status === "found") assert.equal(r.items[0].file, null);
 });
+
+test("affiliation is not searched", () => {
+  const items = [
+    make("PRIS-2026-P300", "งานวิจัย", { affiliation: "โรงพยาบาลอุดรธานี" }),
+  ];
+  assert.deepEqual(searchPosters(items, "โรงพยาบาลอุดรธานี"), { status: "none" });
+});

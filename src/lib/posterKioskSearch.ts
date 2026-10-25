@@ -34,7 +34,7 @@ export function searchPosters(
     if (tracking && id === tracking) rank = 0;
     else if (tracking && id.includes(tracking)) rank = 1;
     else if (
-      [item.title, item.submitterName, item.affiliation].some(
+      [item.title, item.submitterName].some(
         (field) => field && normalizeSearchText(field).includes(text),
       )
     )
