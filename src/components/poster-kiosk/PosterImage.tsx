@@ -29,16 +29,22 @@ function PdfPoster({ file, variant, alt, onError, onLoad }: PosterImageProps) {
       variant === "thumb"
         ? THUMB_WIDTH
         : Math.min(FULL_WIDTH, Math.round(window.innerWidth * window.devicePixelRatio));
+    let objectUrl: string | null = null;
     setSrc(null);
     renderPdfFirstPage(file.url, width, controller.signal).then(
-      (objectUrl) => {
-        if (!controller.signal.aborted) setSrc(objectUrl);
+      (blob) => {
+        if (controller.signal.aborted) return;
+        objectUrl = URL.createObjectURL(blob);
+        setSrc(objectUrl);
       },
       () => {
         if (!controller.signal.aborted) onError?.();
       },
     );
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
     // onError is intentionally excluded: a changing callback must not restart the render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file.url, variant]);

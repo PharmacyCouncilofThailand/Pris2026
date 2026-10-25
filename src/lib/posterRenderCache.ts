@@ -1,26 +1,19 @@
-export function createRenderCache(limit: number, revoke: (url: string) => void) {
-  const entries = new Map<string, string>();
+export function createRenderCache<T>(limit: number) {
+  const entries = new Map<string, T>();
 
   return {
-    get(key: string): string | undefined {
-      const url = entries.get(key);
-      if (url === undefined) return undefined;
+    get(key: string): T | undefined {
+      if (!entries.has(key)) return undefined;
+      const value = entries.get(key) as T;
       entries.delete(key);
-      entries.set(key, url);
-      return url;
+      entries.set(key, value);
+      return value;
     },
-    set(key: string, url: string): void {
-      const previous = entries.get(key);
-      if (previous !== undefined) {
-        entries.delete(key);
-        if (previous !== url) revoke(previous);
-      }
-      entries.set(key, url);
+    set(key: string, value: T): void {
+      entries.delete(key);
+      entries.set(key, value);
       while (entries.size > limit) {
-        const oldest = entries.keys().next().value as string;
-        const oldUrl = entries.get(oldest) as string;
-        entries.delete(oldest);
-        revoke(oldUrl);
+        entries.delete(entries.keys().next().value as string);
       }
     },
   };

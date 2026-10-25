@@ -1,13 +1,13 @@
 import { createRenderCache } from "@/lib/posterRenderCache";
 
-const cache = createRenderCache(10, (url) => URL.revokeObjectURL(url));
-const inFlight = new Map<string, Promise<string>>();
+const cache = createRenderCache<Blob>(10);
+const inFlight = new Map<string, Promise<Blob>>();
 
 function abortError(): Error {
   return new DOMException("Poster render aborted", "AbortError");
 }
 
-async function render(url: string, width: number): Promise<string> {
+async function render(url: string, width: number): Promise<Blob> {
   const pdfjs = await import("pdfjs-dist");
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -24,13 +24,12 @@ async function render(url: string, width: number): Promise<string> {
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
     await page.render({ canvas, viewport }).promise;
-    const blob = await new Promise<Blob>((resolve, reject) =>
+    return await new Promise<Blob>((resolve, reject) =>
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("Poster canvas export failed"))),
         "image/png",
       ),
     );
-    return URL.createObjectURL(blob);
   } finally {
     void task.destroy();
   }
@@ -40,7 +39,7 @@ export async function renderPdfFirstPage(
   url: string,
   width: number,
   signal?: AbortSignal,
-): Promise<string> {
+): Promise<Blob> {
   if (signal?.aborted) throw abortError();
   const key = `${url}@${width}`;
 
@@ -50,16 +49,16 @@ export async function renderPdfFirstPage(
   let pending = inFlight.get(key);
   if (!pending) {
     pending = render(url, width)
-      .then((objectUrl) => {
-        cache.set(key, objectUrl);
-        return objectUrl;
+      .then((blob) => {
+        cache.set(key, blob);
+        return blob;
       })
       .finally(() => inFlight.delete(key));
     inFlight.set(key, pending);
   }
 
   if (!signal) return pending;
-  return new Promise<string>((resolve, reject) => {
+  return new Promise<Blob>((resolve, reject) => {
     const onAbort = () => reject(abortError());
     signal.addEventListener("abort", onAbort, { once: true });
     pending.then(
