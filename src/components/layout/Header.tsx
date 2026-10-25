@@ -127,6 +127,7 @@ export default function Header() {
   const useDarkText = isLightPage && !isScrolled;
 
   if (
+    pathname.startsWith("/poster-kiosk") ||
     pathname.includes("/login") ||
     pathname.includes("/signup") ||
     pathname.includes("/forgot-password") ||

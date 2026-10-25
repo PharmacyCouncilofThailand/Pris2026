@@ -1435,5 +1435,28 @@
     "pending": "No qualifying ticket confirmed yet",
     "error": "Unable to load eligibility",
     "loading": "Loading Booth information"
+  },
+  "posterKiosk": {
+    "headingLine1": "Find your",
+    "headingLine2": "Poster",
+    "intro": "Type your work details to open your Poster",
+    "searchLabel": "Search Posters",
+    "searchPlaceholder": "Tracking ID, submitter or title",
+    "searchButton": "Search",
+    "searchHint": "Search by Tracking ID, submitter name or title",
+    "resultCount": "{count} works match “{query}”",
+    "resultCapped": "Showing 20 of {total}. Type more to narrow down",
+    "view": "View full screen",
+    "noFile": "No Poster file in the system",
+    "notListed": "Not in the list of accepted works",
+    "loadingRoster": "Loading the list of works…",
+    "rosterError": "Cannot reach the system. Please try again",
+    "retry": "Try again",
+    "loadingPoster": "Opening Poster…",
+    "fileError": "Cannot open the Poster file",
+    "close": "Close and search again",
+    "countdown": "Returning to start in {seconds} seconds",
+    "typePoster": "Poster Presentation",
+    "typeHighlighted": "Highlighted Poster Presentation"
   }
 }
