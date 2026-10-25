@@ -1,6 +1,7 @@
 import type {
   Announcement,
   OwnerPresentationDto,
+  PosterKioskItem,
   UploadDto,
 } from "@/types/presentations";
 
@@ -160,4 +161,24 @@ export function uploadPresentation(
       unknown();
     }
   });
+}
+
+export async function getPosterKiosk(
+  signal?: AbortSignal,
+): Promise<PosterKioskItem[]> {
+  const response = await fetch(
+    `${API_BASE}/api/events/PRIS-2026/poster-kiosk`,
+    { signal, cache: "no-store" },
+  );
+  const json = await response.json().catch(() => null);
+  if (
+    !response.ok ||
+    json?.success !== true ||
+    !Array.isArray(json.data?.items)
+  )
+    throw new PresentationApiError(
+      errorCode(json?.code, "POSTER_KIOSK_UNAVAILABLE"),
+      response.status,
+    );
+  return json.data.items;
 }

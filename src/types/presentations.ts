@@ -58,3 +58,19 @@ export type OwnerPresentationDto = {
   currentUpload: UploadDto | null;
   uploads: UploadDto[];
 };
+
+export type PosterKioskFile = {
+  url: string;
+  mimeType: "image/png" | "application/pdf";
+  version: number;
+};
+
+export type PosterKioskItem = {
+  trackingId: string;
+  title: string;
+  submitterName: string | null;
+  affiliation: string | null;
+  categoryName: string;
+  presentationType: "poster" | "highlighted-poster";
+  file: PosterKioskFile | null;
+};
