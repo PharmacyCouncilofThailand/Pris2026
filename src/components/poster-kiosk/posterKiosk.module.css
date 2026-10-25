@@ -112,7 +112,7 @@
 }
 .head {
   position: absolute;
-  top: calc(880 * var(--u));
+  top: calc(740 * var(--u));
   left: calc(60 * var(--u));
   right: calc(60 * var(--u));
   text-align: center;

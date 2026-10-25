@@ -182,9 +182,47 @@ test("long titles do not overflow", async ({ page }) => {
   await expect(page.getByRole("article")).toHaveCount(1);
   const overflows = () =>
     page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
-  expect(await overflows()).toBe(false);
-  await page.setViewportSize({ width: 768, height: 1366 });
-  expect(await overflows()).toBe(false);
+  const clamp = () =>
+    page.evaluate(() => {
+      const el = document.querySelector("article h2") as HTMLElement;
+      const lines = Math.round(el.clientHeight / parseFloat(getComputedStyle(el).lineHeight));
+      const cta = document.querySelector("article button")!.getBoundingClientRect();
+      const card = document.querySelector("article")!.getBoundingClientRect();
+      return {
+        clamped: el.scrollHeight > el.clientHeight,
+        lines,
+        ctaInsideCard: cta.bottom <= card.bottom && cta.top >= card.top,
+      };
+    });
+  for (const size of [
+    { width: 1080, height: 1920 },
+    { width: 768, height: 1366 },
+  ]) {
+    await page.setViewportSize(size);
+    expect(await overflows()).toBe(false);
+    const result = await clamp();
+    expect(result.clamped).toBe(true);
+    expect(result.lines).toBeLessThanOrEqual(4);
+    expect(result.ctaInsideCard).toBe(true);
+    await expect(page.getByRole("button", { name: "ดูเต็มจอ" })).toBeVisible();
+  }
+});
+
+test("idle intro sits between the heading and the search field", async ({ page }) => {
+  await page.goto("/th/poster-kiosk");
+  const intro = page.getByText("พิมพ์ข้อมูลผลงานเพื่อเปิดดู Poster ของคุณ");
+  await expect(intro).toBeVisible();
+  for (const size of [
+    { width: 1080, height: 1920 },
+    { width: 768, height: 1366 },
+  ]) {
+    await page.setViewportSize(size);
+    const i = (await intro.boundingBox())!;
+    const s = (await page.getByRole("search").boundingBox())!;
+    const h = (await page.getByRole("heading", { level: 1 }).boundingBox())!;
+    expect(i.y).toBeGreaterThanOrEqual(h.y + h.height - 1);
+    expect(i.y + i.height).toBeLessThanOrEqual(s.y);
+  }
 });
 
 test("visual capture", async ({ page }) => {
