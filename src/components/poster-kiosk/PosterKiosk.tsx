@@ -15,8 +15,8 @@ import {
 import { POSTER_SEARCH_LIMIT, searchPosters } from "@/lib/posterKioskSearch";
 import type { PosterKioskItem } from "@/types/presentations";
 import { IdleCountdown } from "./IdleCountdown";
-import { PosterImage } from "./PosterImage";
 import { PosterResultCard } from "./PosterResultCard";
+import { PosterViewer } from "./PosterViewer";
 import { PosterWall } from "./PosterWall";
 import styles from "./posterKiosk.module.css";
 
@@ -201,13 +201,10 @@ export function PosterKiosk() {
       </section>
 
       {viewingItem?.file ? (
-        // Placeholder until the full viewer lands.
-        <div className={styles.viewerPlaceholder}>
-          <PosterImage file={viewingItem.file} variant="full" alt={viewingItem.title} />
-          <button type="button" className={styles.viewButton} onClick={() => dispatch({ type: "close" })}>
-            {t("close")}
-          </button>
-        </div>
+        <PosterViewer
+          item={{ ...viewingItem, file: viewingItem.file }}
+          onClose={() => dispatch({ type: "close" })}
+        />
       ) : null}
 
       {seconds !== null ? <IdleCountdown seconds={seconds} /> : null}
