@@ -29,6 +29,8 @@ export function PosterKiosk() {
   const [retryTick, setRetryTick] = useState(0);
   const [now, setNow] = useState(0);
   const [focused, setFocused] = useState(false);
+  // Snapshot of the opened poster, so a roster refresh cannot pull it away mid-view.
+  const [viewed, setViewed] = useState<PosterKioskItem | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const rootRef = useRef<HTMLElement>(null);
   const wasViewing = useRef(false);
@@ -96,9 +98,7 @@ export function PosterKiosk() {
   const atTop = state.mode !== "idle" || focused;
   const loading = roster === null && !rosterFailed && queryText.length >= 2;
   const viewingItem =
-    state.mode === "viewing" && roster
-      ? (roster.find((item) => item.trackingId === state.viewingTrackingId) ?? null)
-      : null;
+    state.mode === "viewing" && viewed?.trackingId === state.viewingTrackingId ? viewed : null;
 
   const isViewing = viewingItem?.file != null;
   useEffect(() => {
@@ -202,7 +202,10 @@ export function PosterKiosk() {
               <PosterResultCard
                 key={item.trackingId}
                 item={item}
-                onView={() => dispatch({ type: "view", trackingId: item.trackingId, now: Date.now() })}
+                onView={() => {
+                  setViewed(item);
+                  dispatch({ type: "view", trackingId: item.trackingId, now: Date.now() });
+                }}
               />
             ))}
             {result.total > POSTER_SEARCH_LIMIT ? (
@@ -215,11 +218,12 @@ export function PosterKiosk() {
       {viewingItem?.file ? (
         <PosterViewer
           item={{ ...viewingItem, file: viewingItem.file }}
+          countdownSeconds={seconds}
           onClose={() => dispatch({ type: "close" })}
         />
       ) : null}
 
-      {seconds !== null ? <IdleCountdown seconds={seconds} /> : null}
+      {seconds !== null && !isViewing ? <IdleCountdown seconds={seconds} /> : null}
       </div>
     </main>
   );

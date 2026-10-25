@@ -71,8 +71,7 @@ export function PosterImage(props: PosterImageProps) {
         alt={alt}
         width={width}
         height={Math.round(width / ASPECT)}
-        quality={85}
-        sizes={variant === "full" ? "(orientation: portrait) 100vw" : undefined}
+        quality={variant === "full" ? 85 : undefined}
         style={boxStyle}
         onLoad={onLoad}
         onError={onError}

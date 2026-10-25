@@ -148,12 +148,45 @@ test("idle reset with countdown", async ({ page }) => {
   await search(page).fill("RDU");
   await expect(page.getByRole("article")).toHaveCount(2);
 
-  await page.clock.fastForward(51_000);
+  await page.clock.fastForward(49_000);
+  await expect(page.getByText(/จะกลับหน้าแรกใน/)).toHaveCount(0);
+  await page.clock.fastForward(2_000);
   await expect(page.getByText(/จะกลับหน้าแรกใน/)).toBeVisible();
 
   await page.clock.fastForward(10_000);
   await expect(search(page)).toHaveValue("");
   await expect(page.getByRole("article")).toHaveCount(0);
+});
+
+test("countdown shows inside the viewer, then the kiosk resets", async ({ page }) => {
+  await page.clock.install();
+  await page.goto("/th/poster-kiosk");
+  await search(page).fill("RDU");
+  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  await expect(viewer(page)).toBeVisible();
+
+  await page.clock.fastForward(51_000);
+  await expect(viewer(page).getByText(/จะกลับหน้าแรกใน/)).toBeVisible();
+
+  await page.clock.fastForward(10_000);
+  await expect(viewer(page)).toHaveCount(0);
+  await expect(search(page)).toHaveValue("");
+});
+
+test("full-screen poster requests a 2160px q85 variant", async ({ page }) => {
+  await page.goto("/th/poster-kiosk");
+  await search(page).fill("RDU");
+  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  const img = viewer(page).getByRole("img", { name: /RDU/ });
+  await expect(img).toBeVisible();
+  const srcset = (await img.getAttribute("srcset")) ?? "";
+  console.log("full srcset:", srcset);
+  // Density descriptors (no `sizes`), widest Next image size >= 2160, quality 85.
+  expect(srcset).toMatch(/\dx/);
+  expect(srcset).not.toMatch(/\d+w/);
+  expect(srcset).toMatch(/q=85/);
+  const widths = [...srcset.matchAll(/[?&]w=(\d+)/g)].map((m) => Number(m[1]));
+  expect(Math.max(...widths)).toBeGreaterThanOrEqual(2160);
 });
 
 test("escape closes the viewer and restores focus to the kiosk root", async ({ page }) => {

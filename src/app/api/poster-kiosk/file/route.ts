@@ -4,11 +4,11 @@ const MAX_BYTES = 31_457_280;
 const UPSTREAM_TIMEOUT_MS = 20_000;
 
 const fail = (status: number, code: string) =>
-  Response.json({ success: false, code }, { status, headers: { "cache-control": "no-store" } });
+  Response.json({ success: false, code }, { status, headers: { "cache-control": "no-store", "x-content-type-options": "nosniff" } });
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url).searchParams.get("url");
-  if (!url || !isAllowedPosterFileUrl(url)) return fail(400, "POSTER_FILE_URL_INVALID");
+  if (!url || !isAllowedPosterFileUrl(url, process.env.NEXT_PUBLIC_POSTER_R2_HOST || undefined)) return fail(400, "POSTER_FILE_URL_INVALID");
 
   let upstream: Response;
   try {
@@ -37,6 +37,7 @@ export async function GET(request: Request): Promise<Response> {
     headers: {
       "content-type": "application/pdf",
       "cache-control": "public, max-age=31536000, immutable",
+      "x-content-type-options": "nosniff",
     },
   });
 }

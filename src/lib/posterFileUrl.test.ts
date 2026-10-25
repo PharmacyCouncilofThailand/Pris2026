@@ -36,3 +36,15 @@ test("rejects percent-encoded and backslash path tricks", () => {
   assert.equal(isAllowedPosterFileUrl(ok.replace("/presentations/", "%2Fpresentations/")), false);
   assert.equal(isAllowedPosterFileUrl(ok.replace("/presentations/", "\\presentations/")), false);
 });
+
+test("pinned host accepts only that exact host", () => {
+  assert.equal(isAllowedPosterFileUrl(ok, "pub-abc123.r2.dev"), true);
+  assert.equal(isAllowedPosterFileUrl(ok.replace("pub-abc123", "pub-other"), "pub-abc123.r2.dev"), false);
+  assert.equal(isAllowedPosterFileUrl(ok.replace("pub-abc123", "x.pub-abc123"), "pub-abc123.r2.dev"), false);
+  assert.equal(isAllowedPosterFileUrl(ok.replace("https:", "http:"), "pub-abc123.r2.dev"), false);
+});
+
+test("unpinned (undefined or empty) keeps any *.r2.dev", () => {
+  assert.equal(isAllowedPosterFileUrl(ok, undefined), true);
+  assert.equal(isAllowedPosterFileUrl(ok.replace("pub-abc123", "pub-other")), true);
+});
