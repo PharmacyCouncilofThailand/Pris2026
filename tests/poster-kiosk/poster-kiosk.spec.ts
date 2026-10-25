@@ -54,22 +54,15 @@ async function stub(page: Page) {
       ? route.fulfill({ status: 200, contentType: "image/png", body: PNG })
       : route.continue(),
   );
-  await page.route(`${R2}/ok.pdf`, (route) =>
-    route.fulfill({
+  // The proxy fetches R2 server-side, so intercept the same-origin request instead.
+  await page.route("**/api/poster-kiosk/file**", (route) => {
+    const upstream = new URL(route.request().url()).searchParams.get("url") ?? "";
+    return route.fulfill({
       status: 200,
       contentType: "application/pdf",
-      headers: { "access-control-allow-origin": "*" },
-      body: PDF,
-    }),
-  );
-  await page.route(`${R2}/broken.pdf`, (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: "application/pdf",
-      headers: { "access-control-allow-origin": "*" },
-      body: BROKEN,
-    }),
-  );
+      body: upstream.endsWith("/broken.pdf") ? BROKEN : PDF,
+    });
+  });
 }
 
 const search = (page: Page) => page.getByRole("searchbox", { name: "ค้นหา Poster" });

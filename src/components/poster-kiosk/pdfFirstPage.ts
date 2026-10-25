@@ -14,7 +14,7 @@ async function render(url: string, width: number): Promise<Blob> {
     import.meta.url,
   ).toString();
 
-  const task = pdfjs.getDocument({ url });
+  const task = pdfjs.getDocument({ url: `/api/poster-kiosk/file?url=${encodeURIComponent(url)}` });
   try {
     const pdf = await task.promise;
     const page = await pdf.getPage(1);
