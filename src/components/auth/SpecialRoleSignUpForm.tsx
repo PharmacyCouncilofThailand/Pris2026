@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
 import BoothSelector from "./BoothSelector";
+import ConsentCheckbox from "./ConsentCheckbox";
 import SignupDropdown from "./SignupDropdown";
 import {
   eventReturnQuery,
@@ -338,16 +339,7 @@ export default function SpecialRoleSignUpForm({
                   />
                 </div>
               )}
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  className="mt-0.5 w-4 h-4 rounded-[4px] border-gray-300 text-black focus:ring-black cursor-pointer transition-colors checked:border-black"
-                  required
-                />
-                <span className="text-sm font-medium text-gray-500 group-hover:text-gray-900 transition-colors select-none">
-                  {t("iAgree")} {t("tos")} {t("and")} {t("privacy")}
-                </span>
-              </label>
+              <ConsentCheckbox />
               <div className="pt-4 pb-2">
                 <button
                   type="submit"
