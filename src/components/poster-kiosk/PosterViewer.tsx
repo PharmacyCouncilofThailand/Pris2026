@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PosterKioskFile, PosterKioskItem } from "@/types/presentations";
 import { PosterImage } from "./PosterImage";
+import { RefreshIcon } from "./RefreshIcon";
 import { usePosterZoom } from "./usePosterZoom";
 import styles from "./posterKiosk.module.css";
 
@@ -96,9 +97,7 @@ export function PosterViewer({
           <button type="button" className={`${styles.ctaBtn} ${styles.viewerRetry}`} onClick={retry}>
             {t("retry")}
             <span className={styles.chip} aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" />
-              </svg>
+              <RefreshIcon />
             </span>
           </button>
         </div>

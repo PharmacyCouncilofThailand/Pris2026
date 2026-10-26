@@ -210,6 +210,26 @@ for (const size of [
     expect(noOverflow).toBe(true);
   });
 
+  test(`search placeholder is not truncated at ${size.width}x${size.height}`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto("/th/poster-kiosk");
+    const input = search(page);
+    await expect(input).toBeVisible();
+    const placeholder = (await input.getAttribute("placeholder"))!;
+    const { textWidth, boxWidth } = await input.evaluate((el: HTMLInputElement) => {
+      const cs = getComputedStyle(el, "::placeholder");
+      const ctx = document.createElement("canvas").getContext("2d")!;
+      ctx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const own = getComputedStyle(el);
+      return {
+        textWidth: ctx.measureText(el.placeholder).width,
+        boxWidth: el.clientWidth - parseFloat(own.paddingLeft) - parseFloat(own.paddingRight),
+      };
+    });
+    expect(placeholder.length).toBeGreaterThan(0);
+    expect(textWidth).toBeLessThanOrEqual(boxWidth);
+  });
+
   test(`idle content is vertically centred at ${size.width}x${size.height}`, async ({ page }) => {
     await page.setViewportSize(size);
     await page.goto("/th/poster-kiosk");
