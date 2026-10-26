@@ -1,6 +1,6 @@
 .root {
   --u: min(100vw / 1080, 100svh / 1920);
-  --cta: linear-gradient(90deg, #0055ff 0%, #ff5a00 100%);
+  --cta: linear-gradient(90deg in oklab, #0055ff 0%, #ff5a00 100%);
   position: relative;
   width: 100vw;
   height: 100svh;
@@ -81,6 +81,10 @@
   opacity: 0.95;
   background: #0d1f4a;
 }
+/* columns alternate: down, up, down */
+.wallCol:nth-child(odd) .wallTrack {
+  animation-direction: reverse;
+}
 @keyframes drift {
   from { transform: translateY(0); }
   to { transform: translateY(-50%); }
@@ -153,7 +157,7 @@
 }
 .logo {
   flex: none;
-  width: calc(380 * var(--u));
+  width: calc(520 * var(--u));
   height: auto;
   margin-bottom: calc(76 * var(--u));
   filter: brightness(0) invert(1);
@@ -240,8 +244,7 @@
   flex: none;
   height: calc(124 * var(--u));
   min-width: 64px;
-  padding: 0 calc(26 * var(--u)) 0 calc(56 * var(--u));
-  --chip: calc(76 * var(--u));
+  padding: 0 calc(60 * var(--u));
   font-size: calc(42 * var(--u));
 }
 .opts {
@@ -424,7 +427,7 @@
   background: #050a1c;
   color: #fff;
   --u: min(100vw / 1080, 100svh / 1920);
-  --cta: linear-gradient(90deg, #0055ff 0%, #ff5a00 100%);
+  --cta: linear-gradient(90deg in oklab, #0055ff 0%, #ff5a00 100%);
 }
 .viewer::backdrop { background: #050a1c; }
 .viewerStage {
