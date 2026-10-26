@@ -15,7 +15,7 @@ const notoSansThai = Noto_Sans_Thai({
 });
 
 export const metadata: Metadata = {
-  title: "PRIS 2026 | Pharmacy Research and Innovation Symposium",
+  title: "PRIS 2026 | Pharmacy Research and Innovation Summit 2026",
   description: "Official PRIS 2026 Conference Website",
 };
 
