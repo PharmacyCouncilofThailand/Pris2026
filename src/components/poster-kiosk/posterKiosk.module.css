@@ -157,7 +157,7 @@
 }
 .logo {
   flex: none;
-  width: calc(520 * var(--u));
+  width: calc(720 * var(--u));
   height: auto;
   margin-bottom: calc(76 * var(--u));
   filter: brightness(0) invert(1);
