@@ -137,6 +137,7 @@ export default function AgendaSchedule() {
     "rooms" | "innovation"
   >("rooms");
   const [viewMode, setViewMode] = useState<"grid" | "timeline">("grid");
+  const [mobileVenueKey, setMobileVenueKey] = useState("all");
   const [selectedEventModal, setSelectedEventModal] = useState<Event | null>(
     null,
   );
@@ -191,9 +192,27 @@ export default function AgendaSchedule() {
     [desktopEvents],
   );
 
-  const mobileGroups = useMemo(
+  const timelineGroups = useMemo(
     () => groupEventsForMobile(allEvents),
     [allEvents],
+  );
+
+  // A venue can disappear on another day; never leave a hidden, stale filter.
+  const selectedMobileVenueKey = allColumns.some(
+    (column) => column.key === mobileVenueKey,
+  )
+    ? mobileVenueKey
+    : "all";
+  const mobileGroups = useMemo(
+    () =>
+      groupEventsForMobile(
+        selectedMobileVenueKey === "all"
+          ? allEvents
+          : allEvents.filter((event) =>
+              resolveVenueKeys(event).includes(selectedMobileVenueKey),
+            ),
+      ),
+    [allEvents, selectedMobileVenueKey],
   );
 
   const columnIndex = useMemo(
@@ -363,7 +382,7 @@ export default function AgendaSchedule() {
               </div>
 
               {/* View Mode Toggle (Desktop only) */}
-              <div className="agenda-view hidden sm:inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
+              <div className="agenda-view hidden md:inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
                 <button
                   type="button"
                   aria-pressed={viewMode === "grid"}
@@ -394,6 +413,26 @@ export default function AgendaSchedule() {
                 </button>
               </div>
             </div>
+
+            <label className="agenda-mobile-venue flex min-w-0 flex-col gap-2 md:hidden">
+              <span className="text-sm font-semibold text-slate-700">
+                {t("mobileVenueLabel")}
+              </span>
+              <select
+                value={selectedMobileVenueKey}
+                onChange={(event) => setMobileVenueKey(event.target.value)}
+                className="min-h-12 w-full min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2 text-base font-semibold text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              >
+                <option value="all">{t("allVenues")}</option>
+                {allColumns.map((column) => (
+                  <option key={column.key} value={column.key}>
+                    {column.kind === "innovation"
+                      ? `${t("innovationZone")} · ${column.label}`
+                      : column.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
             {/* Bottom Row: Venue Category Group (Only for Desktop Grid view) */}
             {viewMode === "grid" && (
@@ -668,24 +707,31 @@ export default function AgendaSchedule() {
                     </div>
                   )}
                 </div>
+              </>
+            ) : (
+              /* Desktop timeline always includes every venue. */
+              <div className="hidden space-y-6 md:block">
+                <MobileTimelineList
+                  groups={timelineGroups}
+                  locale={locale}
+                  onSelectEvent={(ev) => setSelectedEventModal(ev)}
+                />
+              </div>
+            )}
 
-                {/* Mobile View (Chronological Cards) */}
-                <div className="space-y-4 md:hidden">
+            {allEvents.length > 0 && (
+              <div className="agenda-mobile-results space-y-4 md:hidden">
+                {mobileGroups.length > 0 ? (
                   <MobileTimelineList
                     groups={mobileGroups}
                     locale={locale}
                     onSelectEvent={(ev) => setSelectedEventModal(ev)}
                   />
-                </div>
-              </>
-            ) : (
-              /* TIMELINE VIEW (Detailed List for Desktop & Mobile) */
-              <div className="space-y-6">
-                <MobileTimelineList
-                  groups={mobileGroups}
-                  locale={locale}
-                  onSelectEvent={(ev) => setSelectedEventModal(ev)}
-                />
+                ) : (
+                  <p role="status" className="py-8 text-center text-slate-600">
+                    {t("emptyVenue")}
+                  </p>
+                )}
               </div>
             )}
           </div>
