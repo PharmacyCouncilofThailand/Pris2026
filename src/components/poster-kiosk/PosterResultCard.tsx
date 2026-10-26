@@ -14,11 +14,10 @@ export function PosterResultCard({
 }) {
   const t = useTranslations("posterKiosk");
   const byline = [item.submitterName, item.affiliation].filter(Boolean).join(" · ");
-  const type =
-    item.presentationType === "highlighted-poster" ? t("typeHighlighted") : t("typePoster");
+  const highlighted = item.presentationType === "highlighted-poster";
 
   return (
-    <article className={styles.card}>
+    <article className={styles.card} data-type={highlighted ? "highlighted" : "poster"}>
       <div className={styles.cardThumb}>
         {item.file ? (
           <PosterImage file={item.file} variant="thumb" alt={item.title} />
@@ -27,10 +26,17 @@ export function PosterResultCard({
         )}
       </div>
       <div className={styles.cardBody}>
+        <p className={styles.typeBadge} data-type={highlighted ? "highlighted" : "poster"}>
+          {highlighted ? (
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="m12 2.5 2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" />
+            </svg>
+          ) : null}
+          {highlighted ? t("typeHighlighted") : t("typePoster")}
+        </p>
         <div className={styles.cardId}>{item.trackingId}</div>
         <h2 className={styles.cardTitle}>{item.title}</h2>
         {byline ? <p className={styles.cardBy}>{byline}</p> : null}
-        <p className={styles.cardType}>{type}</p>
         <div className={styles.cardGo}>
           {item.file ? (
             <button type="button" className={`${styles.ctaBtn} ${styles.viewButton}`} onClick={onView}>
