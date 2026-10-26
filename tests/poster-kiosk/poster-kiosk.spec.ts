@@ -88,7 +88,7 @@ test("search, view, close returns to an empty idle", async ({ page }) => {
   await expect(viewer(page)).toBeVisible();
   await expect(viewer(page).getByRole("img", { name: /RDU นโยบายเรื่องที่หนึ่ง/ })).toBeVisible();
 
-  await page.getByRole("button", { name: "ปิดและค้นหาใหม่" }).click();
+  await viewer(page).getByRole("button", { name: "ปิดและค้นหาใหม่" }).click();
   await expect(viewer(page)).toHaveCount(0);
   await expect(search(page)).toHaveValue("");
 });
@@ -158,15 +158,32 @@ test("idle reset with countdown", async ({ page }) => {
   await expect(page.getByRole("article")).toHaveCount(0);
 });
 
-test("countdown shows inside the viewer, then the kiosk resets", async ({ page }) => {
+test("corner close button counts down, warns, then the kiosk resets", async ({ page }) => {
+  await page.setViewportSize({ width: 1080, height: 1920 });
   await page.clock.install();
   await page.goto("/th/poster-kiosk");
   await search(page).fill("RDU");
   await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
   await expect(viewer(page)).toBeVisible();
 
-  await page.clock.fastForward(51_000);
-  await expect(viewer(page).getByText(/จะกลับหน้าแรกใน/)).toBeVisible();
+  const close = viewer(page).getByRole("button", { name: "ปิดและค้นหาใหม่" });
+  await expect(close).toHaveText("60");
+  await expect(close).not.toHaveAttribute("data-warning", "true");
+
+  const box = (await close.boundingBox())!;
+  const vp = page.viewportSize()!;
+  expect(box.x).toBeGreaterThanOrEqual(vp.width / 2);
+  expect(box.y + box.height).toBeLessThanOrEqual(vp.height / 2);
+  expect(box.x + box.width).toBeLessThanOrEqual(vp.width);
+  expect(box.width).toBeLessThanOrEqual(160);
+  expect(box.height).toBeLessThanOrEqual(120);
+
+  await page.clock.fastForward(30_000);
+  await expect(close).toHaveText("30");
+
+  await page.clock.fastForward(21_000);
+  await expect(close).toHaveAttribute("data-warning", "true");
+  await expect(viewer(page).getByText(/จะกลับหน้าแรกใน/)).toHaveCount(1);
 
   await page.clock.fastForward(10_000);
   await expect(viewer(page)).toHaveCount(0);

@@ -4,6 +4,7 @@ import {
   initialKioskState,
   kioskReducer,
   secondsUntilReset,
+  secondsRemaining,
   canRefreshRoster,
   type KioskState,
 } from "./posterKioskState";
@@ -75,6 +76,17 @@ test("countdown only in the last ten seconds", () => {
   assert.equal(secondsUntilReset(s, s.lastActivityAt + 49_000), null);
   assert.equal(secondsUntilReset(s, s.lastActivityAt + 51_000), 9);
   assert.equal(secondsUntilReset(initialKioskState, 55_000), null);
+});
+
+test("secondsRemaining counts down from 60 and clamps at 0", () => {
+  assert.equal(secondsRemaining(initialKioskState, 5_000), null);
+  const r = results();
+  const v = viewing();
+  assert.equal(secondsRemaining(r, r.lastActivityAt), 60);
+  assert.equal(secondsRemaining(v, v.lastActivityAt), 60);
+  assert.equal(secondsRemaining(v, v.lastActivityAt + 30_500), 30);
+  assert.equal(secondsRemaining(v, v.lastActivityAt + 60_000), 0);
+  assert.equal(secondsRemaining(v, v.lastActivityAt + 90_000), 0);
 });
 
 test("roster refresh only in idle", () => {

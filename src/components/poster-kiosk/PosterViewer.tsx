@@ -3,18 +3,18 @@
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { PosterKioskFile, PosterKioskItem } from "@/types/presentations";
-import { IdleCountdown } from "./IdleCountdown";
+import { COUNTDOWN_MS } from "@/lib/posterKioskState";
 import { PosterImage } from "./PosterImage";
 import { usePosterZoom } from "./usePosterZoom";
 import styles from "./posterKiosk.module.css";
 
 export function PosterViewer({
   item,
-  countdownSeconds,
+  secondsLeft,
   onClose,
 }: {
   item: PosterKioskItem & { file: PosterKioskFile };
-  countdownSeconds: number | null;
+  secondsLeft: number;
   onClose: () => void;
 }) {
   const t = useTranslations("posterKiosk");
@@ -50,6 +50,8 @@ export function PosterViewer({
     setLoaded(false);
     setAttempt((n) => n + 1);
   };
+
+  const warning = secondsLeft <= COUNTDOWN_MS / 1000;
 
   return (
     <dialog
@@ -101,13 +103,24 @@ export function PosterViewer({
           </button>
         </div>
       ) : null}
-      {countdownSeconds !== null ? <IdleCountdown seconds={countdownSeconds} /> : null}
-      <button type="button" className={styles.viewerClose} onClick={() => onClose()}>
-        {t("close")}
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
+      <button
+        type="button"
+        className={styles.viewerClose}
+        data-warning={warning ? "true" : undefined}
+        aria-label={t("close")}
+        onClick={() => onClose()}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" aria-hidden="true">
           <path d="M6 6l12 12M18 6 6 18" />
         </svg>
+        <span aria-hidden="true">{secondsLeft}</span>
       </button>
+      {warning ? (
+        // Constant text: announced once when the warning starts, not on every tick.
+        <p className={styles.srOnly} role="status">
+          {t("countdown", { seconds: COUNTDOWN_MS / 1000 })}
+        </p>
+      ) : null}
     </dialog>
   );
 }

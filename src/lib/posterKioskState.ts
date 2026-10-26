@@ -62,6 +62,12 @@ export function secondsUntilReset(state: KioskState, now: number): number | null
   return null;
 }
 
+export function secondsRemaining(state: KioskState, now: number): number | null {
+  if (state.mode === "idle") return null;
+  const remaining = IDLE_RESET_MS - (now - state.lastActivityAt);
+  return Math.max(0, Math.ceil(remaining / 1000));
+}
+
 export function canRefreshRoster(state: KioskState): boolean {
   return state.mode === "idle";
 }
