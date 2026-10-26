@@ -93,20 +93,27 @@ export function PosterViewer({
       {failed ? (
         <div className={styles.viewerStatus} role="alert">
           <p>{t("fileError")}</p>
-          <button type="button" className={styles.viewerRetry} onClick={retry}>
+          <button type="button" className={`${styles.ctaBtn} ${styles.viewerRetry}`} onClick={retry}>
             {t("retry")}
+            <span className={styles.chip} aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" />
+              </svg>
+            </span>
           </button>
         </div>
       ) : null}
       <button
         type="button"
-        className={styles.viewerClose}
+        className={`${styles.ctaBtn} ${styles.viewerClose}`}
         onClick={() => onClose()}
       >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" aria-hidden="true">
-          <path d="M6 6l12 12M18 6 6 18" />
-        </svg>
         <span>{t("close")}</span>
+        <span className={styles.chip} aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+            <path d="M6 6l12 12M18 6 6 18" />
+          </svg>
+        </span>
       </button>
     </dialog>
   );

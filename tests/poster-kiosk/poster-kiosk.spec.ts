@@ -190,22 +190,47 @@ for (const size of [
   { width: 1080, height: 1920 },
   { width: 768, height: 1366 },
 ]) {
-  test(`idle heading first line stays on one line at ${size.width}x${size.height}`, async ({ page }) => {
+  test(`idle heading lines each stay on one line at ${size.width}x${size.height}`, async ({ page }) => {
     await page.setViewportSize(size);
     await page.goto("/th/poster-kiosk");
-    const line = page.getByRole("heading", { level: 1 }).locator("span").first();
-    await expect(line).toHaveText("ค้นหาผลงาน Poster");
-    const { height, lineHeight } = await line.evaluate((el) => ({
-      height: el.getBoundingClientRect().height,
-      lineHeight: parseFloat(getComputedStyle(el).lineHeight),
-    }));
-    expect(height).toBeLessThan(lineHeight * 1.6);
+    const spans = page.getByRole("heading", { level: 1 }).locator("span");
+    await expect(spans).toHaveCount(2);
+    await expect(spans.nth(0)).toHaveText("ค้นหาผลงาน");
+    await expect(spans.nth(1)).toHaveText("Poster ของคุณ");
+    for (const i of [0, 1]) {
+      const { height, lineHeight } = await spans.nth(i).evaluate((el) => ({
+        height: el.getBoundingClientRect().height,
+        lineHeight: parseFloat(getComputedStyle(el).lineHeight),
+      }));
+      expect(height).toBeLessThan(lineHeight * 1.4);
+    }
     const noOverflow = await page.evaluate(
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     );
     expect(noOverflow).toBe(true);
   });
+
+  test(`idle content is vertically centred at ${size.width}x${size.height}`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto("/th/poster-kiosk");
+    await expect(search(page)).toBeVisible();
+    const logo = (await page.locator("main img[src*=\"Logo-Final\"]").boundingBox())!;
+    const hint = (await page.getByText("ค้นหาได้จาก Tracking ID").boundingBox())!;
+    const centre = (logo.y + hint.y + hint.height) / 2;
+    expect(Math.abs(centre - size.height / 2)).toBeLessThan(size.height * 0.1);
+  });
 }
+
+test("search button uses the static registration gradient", async ({ page }) => {
+  await page.goto("/th/poster-kiosk");
+  const style = await page.getByRole("button", { name: "ค้นหา", exact: true }).evaluate((el) => {
+    const cs = getComputedStyle(el);
+    return { image: cs.backgroundImage, animation: cs.animationName };
+  });
+  expect(style.image).toContain("rgb(0, 85, 255)");
+  expect(style.image).toContain("rgb(255, 90, 0)");
+  expect(style.animation).toBe("none");
+});
 
 test("full-screen poster requests a 2160px q85 variant", async ({ page }) => {
   await page.goto("/th/poster-kiosk");

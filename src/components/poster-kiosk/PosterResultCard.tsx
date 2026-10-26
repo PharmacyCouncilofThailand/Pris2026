@@ -33,12 +33,14 @@ export function PosterResultCard({
         <p className={styles.cardType}>{type}</p>
         <div className={styles.cardGo}>
           {item.file ? (
-            <button type="button" className={styles.viewButton} onClick={onView}>
+            <button type="button" className={`${styles.ctaBtn} ${styles.viewButton}`} onClick={onView}>
               {t("view")}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+              <span className={styles.chip} aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </span>
             </button>
           ) : (
             <p className={styles.noFile}>{t("noFile")}</p>
