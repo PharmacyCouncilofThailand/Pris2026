@@ -91,3 +91,9 @@ test("ticket and Lucky Wheel auth-return reloads stay in their journeys", () => 
   assert.equal(shouldRedirectReload("/th/profile"), true);
   assert.equal(shouldRedirectReload("/en/sessions/confirm"), false);
 });
+
+test("poster kiosk reloads stay on the kiosk", () => {
+  for (const path of ["/poster-kiosk", "/th/poster-kiosk", "/en/poster-kiosk/"]) {
+    assert.equal(shouldRedirectReload(path), false, path);
+  }
+});

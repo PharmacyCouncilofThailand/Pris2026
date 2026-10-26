@@ -1436,5 +1436,28 @@
     "pending": "ยังไม่ได้รับตั๋วตามเงื่อนไขคูปอง",
     "error": "โหลดข้อมูลสิทธิ์ไม่สำเร็จ",
     "loading": "กำลังโหลดข้อมูล Booth"
+  },
+  "posterKiosk": {
+    "headingLine1": "ค้นหาผลงาน",
+    "headingLine2": "Poster ของคุณ",
+    "intro": "พิมพ์ข้อมูลผลงานเพื่อเปิดดู Poster ของคุณ",
+    "searchLabel": "ค้นหา Poster",
+    "searchPlaceholder": "Tracking ID, ชื่อผู้ส่ง หรือชื่อบทความ",
+    "searchButton": "ค้นหา",
+    "searchHint": "ค้นหาได้จาก Tracking ID, ชื่อผู้ส่ง และชื่อบทความ",
+    "resultCount": "พบ {count} ผลงานที่ตรงกับ “{query}”",
+    "resultCapped": "แสดง 20 จาก {total} รายการ พิมพ์เพิ่มเพื่อให้แคบลง",
+    "view": "ดูผลงาน",
+    "noFile": "ไม่มีไฟล์ผลงานในระบบ",
+    "notListed": "ไม่มีในรายชื่อผลงานที่ผ่านการคัดเลือก",
+    "loadingRoster": "กำลังโหลดรายชื่อผลงาน…",
+    "rosterError": "เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่",
+    "retry": "ลองใหม่",
+    "loadingPoster": "กำลังเปิด Poster…",
+    "fileError": "เปิดไฟล์ Poster ไม่ได้",
+    "close": "ออกจากหน้านี้",
+    "countdown": "จะกลับหน้าแรกใน {seconds} วินาที",
+    "typePoster": "Poster Presentation",
+    "typeHighlighted": "Highlighted Poster Presentation"
   }
 }

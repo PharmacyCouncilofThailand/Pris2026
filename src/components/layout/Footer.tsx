@@ -28,6 +28,7 @@ export default function Footer() {
   if (
     pathname === "/ticket" ||
     pathname.startsWith("/lucky-wheel") ||
+    pathname.startsWith("/poster-kiosk") ||
     pathname.includes("/login") ||
     pathname.includes("/signup") ||
     isMerchandisePath(pathname)

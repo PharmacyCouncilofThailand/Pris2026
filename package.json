@@ -9,6 +9,7 @@
     "test": "tsx --test src/**/*.test.ts",
     "test:merchandise": "tsx --test src/lib/merchandise*.test.ts",
     "test:e2e:merchandise": "playwright test -c playwright.merchandise.config.ts",
+    "test:e2e:poster-kiosk": "playwright test -c playwright.poster-kiosk.config.ts",
     "lint": "eslint",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
@@ -24,6 +25,7 @@
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "next-intl": "^4.8.3",
+    "pdfjs-dist": "5.6.205",
     "qrcode.react": "^4.2.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
