@@ -84,11 +84,11 @@ test("search, view, close returns to an empty idle", async ({ page }) => {
   await search(page).fill("RDU");
   await expect(page.getByRole("article")).toHaveCount(2);
 
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).first().click();
   await expect(viewer(page)).toBeVisible();
   await expect(viewer(page).getByRole("img", { name: /RDU นโยบายเรื่องที่หนึ่ง/ })).toBeVisible();
 
-  await viewer(page).getByRole("button", { name: "ปิดและค้นหาใหม่" }).click();
+  await viewer(page).getByRole("button", { name: "ออกจากหน้านี้" }).click();
   await expect(viewer(page)).toHaveCount(0);
   await expect(search(page)).toHaveValue("");
 });
@@ -96,7 +96,7 @@ test("search, view, close returns to an empty idle", async ({ page }) => {
 test("pdf poster renders", async ({ page }) => {
   await page.goto("/th/poster-kiosk");
   await search(page).fill("PDFPOSTER");
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).click();
   await expect(viewer(page).getByRole("img", { name: /PDFPOSTER/ })).toHaveAttribute(
     "src",
     /^blob:/,
@@ -106,7 +106,7 @@ test("pdf poster renders", async ({ page }) => {
 test("broken pdf shows the file error", async ({ page }) => {
   await page.goto("/th/poster-kiosk");
   await search(page).fill("BROKENPDF");
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).click();
   await expect(viewer(page).getByText("เปิดไฟล์ Poster ไม่ได้")).toBeVisible();
   await expect(page.getByText("ไม่มีไฟล์ผลงานในระบบ")).toHaveCount(0);
 });
@@ -115,7 +115,7 @@ test("no-file and not-listed states", async ({ page }) => {
   await page.goto("/th/poster-kiosk");
   await search(page).fill("NOFILE");
   await expect(page.getByText("ไม่มีไฟล์ผลงานในระบบ")).toBeVisible();
-  await expect(page.getByRole("button", { name: "ดูเต็มจอ" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "ดูผลงาน" })).toHaveCount(0);
 
   await search(page).fill("PRIS-2026-O078");
   await expect(page.getByText("ไม่มีในรายชื่อผลงานที่ผ่านการคัดเลือก")).toBeVisible();
@@ -158,42 +158,59 @@ test("idle reset with countdown", async ({ page }) => {
   await expect(page.getByRole("article")).toHaveCount(0);
 });
 
-test("corner close button counts down, warns, then the kiosk resets", async ({ page }) => {
+test("viewer stays open without a countdown", async ({ page }) => {
   await page.setViewportSize({ width: 1080, height: 1920 });
   await page.clock.install();
   await page.goto("/th/poster-kiosk");
   await search(page).fill("RDU");
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).first().click();
   await expect(viewer(page)).toBeVisible();
 
-  const close = viewer(page).getByRole("button", { name: "ปิดและค้นหาใหม่" });
-  await expect(close).toHaveText("60");
-  await expect(close).not.toHaveAttribute("data-warning", "true");
+  await page.clock.fastForward(120_000);
+  await expect(viewer(page)).toBeVisible();
+  await expect(page.getByText(/จะกลับหน้าแรกใน/)).toHaveCount(0);
 
+  const close = viewer(page).getByRole("button", { name: "ออกจากหน้านี้" });
+  await expect(close).toBeVisible();
   const box = (await close.boundingBox())!;
   const vp = page.viewportSize()!;
   expect(box.x).toBeGreaterThanOrEqual(vp.width / 2);
   expect(box.y + box.height).toBeLessThanOrEqual(vp.height / 2);
   expect(box.x + box.width).toBeLessThanOrEqual(vp.width);
-  expect(box.width).toBeLessThanOrEqual(160);
-  expect(box.height).toBeLessThanOrEqual(120);
+  expect(box.width).toBeLessThanOrEqual(360);
+  expect(box.height).toBeLessThanOrEqual(140);
+  expect(box.height).toBeGreaterThanOrEqual(64);
 
-  await page.clock.fastForward(30_000);
-  await expect(close).toHaveText("30");
-
-  await page.clock.fastForward(21_000);
-  await expect(close).toHaveAttribute("data-warning", "true");
-  await expect(viewer(page).getByText(/จะกลับหน้าแรกใน/)).toHaveCount(1);
-
-  await page.clock.fastForward(10_000);
+  await close.click();
   await expect(viewer(page)).toHaveCount(0);
   await expect(search(page)).toHaveValue("");
 });
 
+for (const size of [
+  { width: 1080, height: 1920 },
+  { width: 768, height: 1366 },
+]) {
+  test(`idle heading first line stays on one line at ${size.width}x${size.height}`, async ({ page }) => {
+    await page.setViewportSize(size);
+    await page.goto("/th/poster-kiosk");
+    const line = page.getByRole("heading", { level: 1 }).locator("span").first();
+    await expect(line).toHaveText("ค้นหาผลงาน Poster");
+    const { height, lineHeight } = await line.evaluate((el) => ({
+      height: el.getBoundingClientRect().height,
+      lineHeight: parseFloat(getComputedStyle(el).lineHeight),
+    }));
+    expect(height).toBeLessThan(lineHeight * 1.6);
+    const noOverflow = await page.evaluate(
+      () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+    );
+    expect(noOverflow).toBe(true);
+  });
+}
+
 test("full-screen poster requests a 2160px q85 variant", async ({ page }) => {
   await page.goto("/th/poster-kiosk");
   await search(page).fill("RDU");
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).first().click();
   const img = viewer(page).getByRole("img", { name: /RDU/ });
   await expect(img).toBeVisible();
   const srcset = (await img.getAttribute("srcset")) ?? "";
@@ -209,7 +226,7 @@ test("full-screen poster requests a 2160px q85 variant", async ({ page }) => {
 test("escape closes the viewer and restores focus to the kiosk root", async ({ page }) => {
   await page.goto("/th/poster-kiosk");
   await search(page).fill("RDU");
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).first().click();
   await expect(viewer(page)).toBeVisible();
 
   await page.keyboard.press("Escape");
@@ -247,7 +264,7 @@ test("long titles do not overflow", async ({ page }) => {
     expect(result.clamped).toBe(true);
     expect(result.lines).toBeLessThanOrEqual(4);
     expect(result.ctaInsideCard).toBe(true);
-    await expect(page.getByRole("button", { name: "ดูเต็มจอ" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "ดูผลงาน" })).toBeVisible();
   }
 });
 
@@ -277,7 +294,7 @@ test("visual capture", async ({ page }) => {
   await expect(page.getByRole("article")).toHaveCount(2);
   await page.waitForTimeout(1500);
   await page.screenshot({ path: ".impeccable/screenshots/poster-kiosk-results.png" });
-  await page.getByRole("button", { name: "ดูเต็มจอ" }).first().click();
+  await page.getByRole("button", { name: "ดูผลงาน" }).first().click();
   await expect(viewer(page).getByRole("img", { name: /RDU/ })).toBeVisible();
   await page.screenshot({ path: ".impeccable/screenshots/poster-kiosk-viewing.png" });
 });

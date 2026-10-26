@@ -47,7 +47,7 @@ export function kioskReducer(state: KioskState, action: KioskAction): KioskState
     case "activity":
       return { ...state, lastActivityAt: action.now };
     case "tick":
-      if (state.mode === "idle") return state;
+      if (state.mode !== "results") return state;
       if (action.now - state.lastActivityAt >= IDLE_RESET_MS) {
         return { ...initialKioskState, lastActivityAt: state.lastActivityAt };
       }
@@ -56,16 +56,10 @@ export function kioskReducer(state: KioskState, action: KioskAction): KioskState
 }
 
 export function secondsUntilReset(state: KioskState, now: number): number | null {
-  if (state.mode === "idle") return null;
+  if (state.mode !== "results") return null;
   const remaining = IDLE_RESET_MS - (now - state.lastActivityAt);
   if (remaining > 0 && remaining <= COUNTDOWN_MS) return Math.ceil(remaining / 1000);
   return null;
-}
-
-export function secondsRemaining(state: KioskState, now: number): number | null {
-  if (state.mode === "idle") return null;
-  const remaining = IDLE_RESET_MS - (now - state.lastActivityAt);
-  return Math.max(0, Math.ceil(remaining / 1000));
 }
 
 export function canRefreshRoster(state: KioskState): boolean {

@@ -1446,7 +1446,7 @@
     "searchHint": "Search by Tracking ID, submitter name or title",
     "resultCount": "{count} works match “{query}”",
     "resultCapped": "Showing 20 of {total}. Type more to narrow down",
-    "view": "View full screen",
+    "view": "View work",
     "noFile": "No Poster file in the system",
     "notListed": "Not in the list of accepted works",
     "loadingRoster": "Loading the list of works…",
@@ -1454,7 +1454,7 @@
     "retry": "Try again",
     "loadingPoster": "Opening Poster…",
     "fileError": "Cannot open the Poster file",
-    "close": "Close and search again",
+    "close": "Leave this page",
     "countdown": "Returning to start in {seconds} seconds",
     "typePoster": "Poster Presentation",
     "typeHighlighted": "Highlighted Poster Presentation"

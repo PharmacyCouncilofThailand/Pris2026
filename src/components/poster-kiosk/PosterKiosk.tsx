@@ -11,7 +11,6 @@ import {
   initialKioskState,
   kioskReducer,
   secondsUntilReset,
-  secondsRemaining,
 } from "@/lib/posterKioskState";
 import { POSTER_SEARCH_LIMIT, searchPosters } from "@/lib/posterKioskSearch";
 import type { PosterKioskItem } from "@/types/presentations";
@@ -95,7 +94,6 @@ export function PosterKiosk() {
     [roster, state.query],
   );
   const seconds = secondsUntilReset(state, now);
-  const secondsLeft = secondsRemaining(state, now) ?? 0;
   const queryText = state.query.trim();
   const atTop = state.mode !== "idle" || focused;
   const loading = roster === null && !rosterFailed && queryText.length >= 2;
@@ -220,7 +218,6 @@ export function PosterKiosk() {
       {viewingItem?.file ? (
         <PosterViewer
           item={{ ...viewingItem, file: viewingItem.file }}
-          secondsLeft={secondsLeft}
           onClose={() => dispatch({ type: "close" })}
         />
       ) : null}
