@@ -101,6 +101,18 @@ const universityCrests = [
     logo: "/assets/Img/University/สถาบันวิทยาการประกอบการแห่งอโยธยา.jpeg",
     scaleClass: "scale-[1.02]",
   },
+  {
+    id: 10,
+    name: "จุฬาลงกรณ์มหาวิทยาลัย",
+    logo: "/assets/Img/University/Logo_of_Faculty_of_Pharmaceutical_Sciences,_Chulalongkorn_University.svg.webp",
+    scaleClass: "scale-100",
+  },
+  {
+    id: 11,
+    name: "มหาวิทยาลัยเกษตรศาสตร์",
+    logo: "/assets/Img/University/คณะเภสัชศาสตร์.png",
+    scaleClass: "scale-[1.12]",
+  },
 ];
 
 const universityWide = [
@@ -367,6 +379,13 @@ const sponsorLogos = [
     scaleClass: "scale-[1.15]",
     unconstrained: true,
   },
+  {
+    id: 40,
+    name: "สมาคมเภสัชกรรมโรงพยาบาล (ประเทศไทย)",
+    logo: "/assets/Img/sponsors/HP.jpg",
+    scaleClass: "scale-[1.15]",
+    unconstrained: true,
+  },
 ];
 
 export default function SponsorshipPage() {
@@ -469,8 +488,8 @@ export default function SponsorshipPage() {
                 UNIVERSITY
               </h2>
             </div>
-            {/* Row 1: 6 Crests (Khon Kaen as benchmark) */}
-            <div className="flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 md:gap-x-14 lg:gap-x-16 xl:gap-x-20 gap-y-8 sm:gap-y-10 mb-12 sm:mb-16 md:mb-20 lg:mb-24">
+            {/* Row 1 & 2: 8 Crests (Balanced 4x2 Grid) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 items-center justify-items-center gap-x-8 sm:gap-x-12 md:gap-x-16 lg:gap-x-20 gap-y-8 sm:gap-y-12 max-w-5xl mx-auto mb-12 sm:mb-16 md:mb-20 lg:mb-24">
               {universityCrests.map((uni) => (
                 <div
                   key={uni.id}

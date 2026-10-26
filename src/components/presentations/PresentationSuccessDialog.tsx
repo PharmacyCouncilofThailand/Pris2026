@@ -87,14 +87,27 @@ export function PresentationSuccessDialog({
           </dd>
         </div>
       </dl>
-      <a
-        href={upload.fileUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-5 inline-block text-sm font-bold text-blue-700 underline underline-offset-4"
-      >
-        {t("viewFile")}
-      </a>
+      {upload.fileUrl &&
+      (!upload.fileStatus || upload.fileStatus === "available") ? (
+        <a
+          href={upload.fileUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 inline-block text-sm font-bold text-blue-700 underline underline-offset-4"
+        >
+          {t("viewFile")}
+        </a>
+      ) : (
+        <p className="mt-5 text-sm text-slate-600">
+          {t(
+            upload.fileStatus === "deleted"
+              ? "fileDeleted"
+              : upload.fileStatus === "deletion_pending"
+                ? "fileDeletionPending"
+                : "fileUnavailable",
+          )}
+        </p>
+      )}
       <p className="mt-5 text-sm leading-relaxed text-slate-600">
         {t("receiptNotice")}
       </p>

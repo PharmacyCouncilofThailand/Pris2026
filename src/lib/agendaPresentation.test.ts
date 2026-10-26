@@ -29,16 +29,13 @@ test("Day1 Jupiter 4-7 corrections preserve the shared agenda layout", () => {
     cell.events.some((event) => event.id === 1006),
   )!;
   assert.deepEqual(cell.columnKeys, ["track:JUPITER 4-7"]);
-  assert.equal(
-    eventById(1031).speakers[0].nameTh,
-    "ภก.ภัทรพงศ์ ภาพภักดี (รองประธานเจ้าหน้าที่บริหาร สายงานการจัดการทั่วไป โรงพยาบาลบำรุงราษฎร์)",
-  );
+  assert.ok(!events.some((event) => event.id === 1031));
 });
 
 test("Day1 Jupiter 11-13 corrections retain organizers and separate moderator roles", () => {
   const eventById = (id: number) =>
     scheduleData[0].events.find((event) => event.id === id)!;
-  const workshop = eventById(1008);
+  const workshop = eventById(1007);
   assert.deepEqual(getAgendaDescription(workshop.descriptionTh), {
     organizer: "สภาเภสัชกรรม",
     description: undefined,
@@ -53,7 +50,7 @@ test("Day1 Jupiter 11-13 corrections retain organizers and separate moderator ro
   );
   assert.equal(
     getAgendaDescription(eventById(1010).descriptionTh).organizer,
-    "วิทยาลัยคุ้มครองผู้บริโภค และ ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
+    "วิทยาลัยการคุ้มครองผู้บริโภคด้านยาและสุขภาพ ราชวิทยาลัยเภสัชกรรมแห่งประเทศไทย",
   );
   assert.equal(
     getAgendaDescription(eventById(1016).descriptionTh).organizer,
@@ -173,10 +170,9 @@ test("Day2 titles omit หัวข้อ and Health Hack organizer occupies its
 test("Day2 revisions align times, remove TED FUND and preserve speaker roles", () => {
   const events = scheduleData[1].events;
   const eventById = (id: number) => events.find((event) => event.id === id)!;
-  assert.equal(eventById(202).time, "11:00 – 11:10");
-  assert.equal(eventById(202).speakers[0].nameTh, "ศ.ดร.ภก.ชลภัทร สุขเกษม");
+  assert.ok(!events.some((event) => event.id === 202));
   assert.equal(eventById(203).time, "09:00 – 09:50");
-  assert.equal(eventById(206).time, "11:10 – 12:00");
+  assert.equal(eventById(206).time, "11:00 – 12:00");
   assert.ok(
     eventById(206).speakers[0].nameTh?.includes(
       "รองนายกรัฐมนตรี\nรัฐมนตรีว่าการ",
@@ -187,7 +183,13 @@ test("Day2 revisions align times, remove TED FUND and preserve speaker roles", (
       (event) => event.id === 221 || event.description?.includes("TED FUND"),
     ),
   );
-  assert.equal(eventById(224).speakers[0].nameTh, "ศ.ดร.ภก.ชลภัทร สุขเกษม");
+  const pharmacogenomics = groupAgendaSpeakers(eventById(224).speakers);
+  assert.equal(pharmacogenomics.speakers.length, 2);
+  assert.equal(pharmacogenomics.moderators.length, 1);
+  assert.equal(
+    pharmacogenomics.speakers[0].nameTh,
+    "ผศ.ภก.ศุภทัต ชุทนุมวัฒน์ (คณะเภสัชศาสตร์ มหาวิทยาลัยมหิดล)",
+  );
   const digital = groupAgendaSpeakers(eventById(209).speakers);
   assert.equal(
     digital.moderators[0].nameTh,
@@ -201,16 +203,8 @@ test("Day2 revisions align times, remove TED FUND and preserve speaker roles", (
   assert.ok(
     layout.cells.some(
       (cell) =>
-        cell.events.some((event) => event.id === 202) &&
-        cell.start === 660 &&
-        cell.end === 670,
-    ),
-  );
-  assert.ok(
-    layout.cells.some(
-      (cell) =>
         cell.events.some((event) => event.id === 206) &&
-        cell.start === 670 &&
+        cell.start === 660 &&
         cell.end === 720,
     ),
   );

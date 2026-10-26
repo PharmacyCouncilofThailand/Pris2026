@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { UploadCloud } from "lucide-react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import toast from "react-hot-toast";
+import ConsentCheckbox from "@/components/auth/ConsentCheckbox";
 import { normalizeLocalizedRedirectPath } from "@/lib/localizedRedirect";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
@@ -533,29 +534,7 @@ export default function StudentSignUpPage() {
 
               {/* Terms and conditions */}
               <div>
-                <label className="flex items-start gap-3 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    className="mt-0.5 w-4 h-4 rounded-[4px] border-gray-300 text-black focus:ring-black cursor-pointer transition-colors checked:border-black"
-                    required
-                  />
-                  <span className="text-sm font-medium text-gray-500 group-hover:text-gray-900 transition-colors select-none">
-                    {t("iAgree")}{" "}
-                    <Link
-                      href="#"
-                      className="font-bold text-gray-900 hover:underline"
-                    >
-                      {t("tos")}
-                    </Link>{" "}
-                    {t("and")}{" "}
-                    <Link
-                      href="#"
-                      className="font-bold text-gray-900 hover:underline"
-                    >
-                      {t("privacy")}
-                    </Link>
-                  </span>
-                </label>
+                <ConsentCheckbox />
               </div>
 
               {/* Submit Button */}

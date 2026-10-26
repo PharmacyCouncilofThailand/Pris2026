@@ -206,14 +206,22 @@ export function PresentationWorkspace(p: {
                   <CheckCircle2 size={18} aria-hidden="true" />
                   {t("received")}
                 </p>
-                <a
-                  href={o.currentUpload.fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-block break-all text-sm font-bold text-emerald-950 underline decoration-emerald-200 underline-offset-4"
-                >
-                  {o.currentUpload.fileName}
-                </a>
+                {o.currentUpload.fileUrl &&
+                (!o.currentUpload.fileStatus ||
+                  o.currentUpload.fileStatus === "available") ? (
+                  <a
+                    href={o.currentUpload.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block break-all text-sm font-bold text-emerald-950 underline decoration-emerald-200 underline-offset-4"
+                  >
+                    {o.currentUpload.fileName}
+                  </a>
+                ) : (
+                  <p className="mt-3 break-all text-sm font-bold">
+                    {o.currentUpload.fileName}
+                  </p>
+                )}
                 <p className="mt-2 text-xs leading-relaxed text-emerald-800">
                   {t("receivedAt")}: {date(o.currentUpload.receivedAt)}
                 </p>
@@ -229,14 +237,30 @@ export function PresentationWorkspace(p: {
                     .filter((u) => u.id !== o.currentUpload?.id)
                     .map((u) => (
                       <li key={u.id}>
-                        <a
-                          href={u.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="break-all underline"
-                        >
-                          {u.fileName}
-                        </a>
+                        {u.fileUrl &&
+                        (!u.fileStatus || u.fileStatus === "available") ? (
+                          <a
+                            href={u.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="break-all underline"
+                          >
+                            {u.fileName}
+                          </a>
+                        ) : (
+                          <>
+                            <span className="break-all">{u.fileName}</span>
+                            <p className="mt-1 text-slate-500">
+                              {t(
+                                u.fileStatus === "deleted"
+                                  ? "fileDeleted"
+                                  : u.fileStatus === "deletion_pending"
+                                    ? "fileDeletionPending"
+                                    : "fileUnavailable",
+                              )}
+                            </p>
+                          </>
+                        )}
                         <p className="mt-1 text-slate-500">
                           {date(u.receivedAt)}
                         </p>

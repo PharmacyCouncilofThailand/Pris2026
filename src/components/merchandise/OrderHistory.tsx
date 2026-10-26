@@ -136,15 +136,7 @@ function HistoryLoader({ page }: { page: number }) {
                 <OrderStatus order={order} />
                 <div className="merch-history-row-bottom">
                   <strong>{formatBaht(order.amounts.totalBaht)}</strong>
-                  {order.paymentStatus === "pending" ? (
-                    <Link
-                      className="merch-history-pay"
-                      href={`/souvenirs/orders/${order.id}`}
-                      aria-label={`ชำระเงิน ${order.orderNumber}`}
-                    >
-                      ชำระเงิน
-                    </Link>
-                  ) : (
+                  {order.paymentStatus !== "pending" && (
                     <Link
                       href={`/souvenirs/orders/${order.id}`}
                       aria-label={`ดูรายละเอียด ${order.orderNumber}`}

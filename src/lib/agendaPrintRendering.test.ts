@@ -23,16 +23,14 @@ function expectedText(value: string) {
 }
 
 function renderDocument(locale: "th" | "en") {
+  const providerProps = {
+    locale,
+    messages: locale === "th" ? th : en,
+    timeZone: "Asia/Bangkok",
+    children: React.createElement(AgendaPrintDocument, { locale }),
+  };
   const markup = renderToStaticMarkup(
-    React.createElement(
-      NextIntlClientProvider,
-      {
-        locale,
-        messages: locale === "th" ? th : en,
-        timeZone: "Asia/Bangkok",
-      },
-      React.createElement(AgendaPrintDocument, { locale }),
-    ),
+    React.createElement(NextIntlClientProvider, providerProps),
   );
   const matches = [...markup.matchAll(/data-event-id="(\d+)"/g)];
   const events = new Map(
@@ -53,8 +51,9 @@ for (const locale of ["th", "en"] as const) {
       day.events.map((event) => event.id),
     );
 
-    assert.equal(ids.length, 58);
-    assert.equal(new Set(ids).size, 58);
+    assert.ok(sourceIds.length > 0);
+    assert.equal(ids.length, sourceIds.length);
+    assert.equal(new Set(ids).size, sourceIds.length);
     assert.deepEqual(
       [...ids].sort((a, b) => a - b),
       sourceIds.sort((a, b) => a - b),
@@ -63,7 +62,8 @@ for (const locale of ["th", "en"] as const) {
     let offset = 0;
     for (const day of scheduleData) {
       const dayIds = ids.slice(offset, offset + day.events.length);
-      assert.equal(dayIds.length, 29);
+      assert.ok(day.events.length > 0);
+      assert.equal(dayIds.length, day.events.length);
       const events = new Map(day.events.map((event) => [event.id, event]));
       const starts = dayIds.map((id) => {
         const event = events.get(id);
