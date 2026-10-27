@@ -819,6 +819,9 @@
   },
   "auth": {
     "joinAsHealthHack": "Register as HealthHack",
+    "speaker": "Speaker",
+    "speakerDesc": "For conference speakers",
+    "joinAsSpeaker": "Join as a Speaker",
     "joinAsBooth": "Register as Booth",
     "specialInstitution": "School / University / Institution",
     "boothName": "Event booth",
@@ -1088,6 +1091,7 @@
     "submitRequest": "Submit Request",
     "delegateTypes": {
       "healthHack": "HealthHack",
+      "speaker": "Speaker",
       "booth": "Booth",
       "thaiStudent": "Thai Student",
       "internationalStudent": "International Student",

@@ -30,7 +30,7 @@ const labelClass = "block text-sm font-bold text-gray-900 mb-2";
 export default function SpecialRoleSignUpForm({
   accountType,
 }: {
-  accountType: "healthhack" | "booth";
+  accountType: "healthhack" | "booth" | "speaker";
 }) {
   const locale = useLocale();
   const pathname = usePathname();
@@ -47,6 +47,7 @@ export default function SpecialRoleSignUpForm({
   const turnstileRef = useRef<TurnstileInstance>(null);
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
   const isHealthHack = accountType === "healthhack";
+  const isBooth = accountType === "booth";
   const secondaryGrades =
     group === "lower" || group === "upper" ? HEALTH_HACK_GRADES[group] : null;
   const returnQuery = eventReturnQuery(
@@ -68,7 +69,7 @@ export default function SpecialRoleSignUpForm({
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    if (!isHealthHack && (!boothsReady || !fd.get("boothId"))) {
+    if (isBooth && (!boothsReady || !fd.get("boothId"))) {
       toast.error(t("selectBooth"));
       e.currentTarget.querySelector<HTMLButtonElement>("#boothId")?.focus();
       return;
@@ -193,7 +194,7 @@ export default function SpecialRoleSignUpForm({
             </div>
             <div className="text-center mb-10">
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
-                {t(isHealthHack ? "joinAsHealthHack" : "joinAsBooth")}
+                {t(isHealthHack ? "joinAsHealthHack" : isBooth ? "joinAsBooth" : "joinAsSpeaker")}
               </h1>
               <p className="text-sm font-medium text-gray-500">
                 {t("fillDetails")}
@@ -302,7 +303,7 @@ export default function SpecialRoleSignUpForm({
                   />
                 </div>
               </div>
-              {!isHealthHack && (
+              {isBooth && (
                 <BoothSelector
                   api={API_URL}
                   eventCode={EVENT_CODE}
@@ -343,7 +344,7 @@ export default function SpecialRoleSignUpForm({
               <div className="pt-4 pb-2">
                 <button
                   type="submit"
-                  disabled={isLoading || (!isHealthHack && !boothsReady)}
+                  disabled={isLoading || (isBooth && !boothsReady)}
                   className="w-full bg-black hover:bg-gray-900 text-white font-bold text-base py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/10 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {isLoading ? t("creatingAcc") : t("createBtn")}
