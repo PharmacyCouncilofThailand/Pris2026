@@ -1272,6 +1272,25 @@ const day2Events = [
       },
     ],
   },
+  {
+    ...day1Event(
+      203.5,
+      "10:00 – 11:11",
+      "Aesthetic Pharmacy Next Gen: วิจัย ผลิต หรือ คลินิก ? ค้นหาตัวตนในวงจร ผลิตภัณฑ์เวชศาสตร์ความงาม",
+      "Aesthetic Pharmacy Next Gen: วิจัย ผลิต หรือ คลินิก ? ค้นหาตัวตนในวงจร ผลิตภัณฑ์เวชศาสตร์ความงาม",
+      "JUPITER 11",
+      "ห้อง JUPITER 11",
+      "Session",
+      "บรรยาย",
+      "JUPITER 11",
+    ),
+    speakers: [
+      {
+        name: "Assoc.Prof.Dr.Pharmacist Amaraporn Wongrakpanich (Faculty of Pharmacy, Mahidol University)",
+        nameTh: "รศ.ดร.ภญ.อมราพร วงศ์รักษ์พานิช (คณะเภสัชศาสตร์ มหาวิทยาลัยมหิดล)",
+      },
+    ],
+  },
   day1Event(
     205,
     "10:30 – 11:00",
