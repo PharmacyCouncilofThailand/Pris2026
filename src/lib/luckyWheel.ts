@@ -259,6 +259,10 @@ export class LuckyWheelApiError extends Error {
   }
 }
 
+export const LUCKY_WHEEL_IMAGE_BASE_URL =
+  process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL ||
+  "https://pub-a4f4c7f0b5fb481abb1a48dd228ee6f3.r2.dev";
+
 export function resolveWheelImageUrl(
   imageKey: string | null,
   publicBaseUrl: string | undefined,

@@ -18,7 +18,7 @@ import {
 } from "@/lib/luckyWheel";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
-const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
+const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "PRIS-2026";
 const LOGIN_RETURN = "/login?redirect=%2Flucky-wheel%2Fclaim";
 
 function formatBangkok(

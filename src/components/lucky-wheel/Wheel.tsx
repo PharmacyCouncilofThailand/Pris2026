@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useId, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Gift } from "lucide-react";
-import { resolveWheelImageUrl, type LuckyWheelSegment } from "@/lib/luckyWheel";
+import {
+  LUCKY_WHEEL_IMAGE_BASE_URL,
+  resolveWheelImageUrl,
+  type LuckyWheelSegment,
+} from "@/lib/luckyWheel";
 import {
   buildWheelSectors,
   rotationForWinningSegment,
@@ -25,6 +29,15 @@ function polar(radius: number, angle: number) {
     x: 100 + radius * Math.cos(radians),
     y: 100 + radius * Math.sin(radians),
   };
+}
+
+// Largest image that stays inside a wedge: the image's bounding circle must
+// clear both wedge edges (r * sin(half-angle) >= c) and the rim (r + c <= 94).
+function imageFit(sweep: number) {
+  const sinHalf = Math.sin((Math.min(sweep, 180) * Math.PI) / 360);
+  const radius = Math.min((94 * sinHalf) / (1 + sinHalf), 30) - 2;
+  const distance = (radius / sinHalf + (94 - radius)) / 2;
+  return { distance, size: radius * 1.7 };
 }
 
 function wedge(startAngle: number, endAngle: number) {
@@ -50,8 +63,8 @@ export function Wheel({
   onAnimationComplete,
   ariaLabel,
 }: Props) {
-  const locale = useLocale();
   const t = useTranslations("luckyWheel");
+  const clipPrefix = useId().replace(/:/g, "");
   const sectors = useMemo(() => buildWheelSectors(segments), [segments]);
   const [rotation, setRotation] = useState(0);
   const [animate, setAnimate] = useState(false);
@@ -91,8 +104,6 @@ export function Wheel({
     onAnimationComplete,
   ]);
 
-  const imageBase = process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL;
-
   return (
     <div className={styles.wheelFrame}>
       <svg className={styles.pointer} viewBox="0 0 32 42" aria-hidden="true">
@@ -120,80 +131,93 @@ export function Wheel({
             segment.kind === "prize" &&
             segment.remaining !== null &&
             segment.remaining <= 0;
-          const imagePoint = polar(
-            segments.length <= 2 ? 44 : 62,
-            sector.centerAngle + 90,
-          );
-          const imageSize =
-            segments.length > 10 ? 16 : segments.length > 6 ? 25 : 36;
+          const fit = imageFit(sector.endAngle - sector.startAngle);
+          const imagePoint =
+            segments.length === 1
+              ? { x: 100, y: 100 }
+              : polar(fit.distance, sector.centerAngle + 90);
+          const imageSize = fit.size;
+          const clipId = `${clipPrefix}-wedge-${index}`;
+          const wedgePath = wedge(sector.startAngle + 90, sector.endAngle + 90);
           const labelWidth =
             segments.length > 10 ? 30 : segments.length > 6 ? 38 : 52;
           const imageUrl =
             segment.kind === "prize" && !failedImages.has(segment.id)
-              ? resolveWheelImageUrl(segment.imageKey, imageBase)
+              ? resolveWheelImageUrl(
+                  segment.imageKey,
+                  LUCKY_WHEEL_IMAGE_BASE_URL,
+                )
               : null;
 
           return (
             <g key={segment.id}>
-              <title>{`${segment.name.th} / ${segment.name.en}`}</title>
+              <clipPath id={clipId}>
+                <path d={wedgePath} />
+              </clipPath>
+              <path d={wedgePath} fill="#fff" />
+              <g clipPath={`url(#${clipId})`}>
+                {imageUrl ? (
+                  <image
+                    href={imageUrl}
+                    x={imagePoint.x - imageSize / 2}
+                    y={imagePoint.y - imageSize / 2}
+                    width={imageSize}
+                    height={imageSize}
+                    preserveAspectRatio="xMidYMid meet"
+                    onError={() =>
+                      setFailedImages((current) => {
+                        const next = new Set(current);
+                        next.add(segment.id);
+                        return next;
+                      })
+                    }
+                  />
+                ) : (
+                  <Gift
+                    x={imagePoint.x - imageSize * 0.3}
+                    y={imagePoint.y - imageSize * 0.3}
+                    width={imageSize * 0.6}
+                    height={imageSize * 0.6}
+                    color="#18181b"
+                    strokeWidth={1.6}
+                    aria-hidden="true"
+                  />
+                )}
+                {(soldOut || !segment.enabled) && (
+                  <foreignObject
+                    x={imagePoint.x - labelWidth / 2}
+                    y={imagePoint.y - 8}
+                    width={labelWidth}
+                    height={16}
+                  >
+                    <div
+                      className={styles.wheelLabel}
+                      style={{
+                        fontSize:
+                          segments.length > 10
+                            ? 5
+                            : segments.length > 6
+                              ? 6
+                              : 7.5,
+                      }}
+                    >
+                      <span className={styles.wheelBadge}>
+                        {t(
+                          !segment.enabled
+                            ? "unavailableSegment"
+                            : "soldOutPrize",
+                        )}
+                      </span>
+                    </div>
+                  </foreignObject>
+                )}
+              </g>
               <path
-                d={wedge(sector.startAngle + 90, sector.endAngle + 90)}
-                fill="#fff"
+                d={wedgePath}
+                fill="none"
                 stroke="#18181b"
                 strokeWidth="0.9"
               />
-              {imageUrl ? (
-                <image
-                  href={imageUrl}
-                  x={imagePoint.x - imageSize / 2}
-                  y={imagePoint.y - imageSize / 2 - 6}
-                  width={imageSize}
-                  height={imageSize}
-                  preserveAspectRatio="xMidYMid meet"
-                  onError={() =>
-                    setFailedImages((current) => {
-                      const next = new Set(current);
-                      next.add(segment.id);
-                      return next;
-                    })
-                  }
-                />
-              ) : (
-                <Gift
-                  x={imagePoint.x - imageSize * 0.3}
-                  y={imagePoint.y - imageSize * 0.3 - 6}
-                  width={imageSize * 0.6}
-                  height={imageSize * 0.6}
-                  color="#18181b"
-                  strokeWidth={1.6}
-                  aria-hidden="true"
-                />
-              )}
-              <foreignObject
-                x={imagePoint.x - labelWidth / 2}
-                y={imagePoint.y + imageSize / 2 - 5}
-                width={labelWidth}
-                height={32}
-              >
-                <div
-                  className={styles.wheelLabel}
-                  style={{
-                    fontSize:
-                      segments.length > 10 ? 5 : segments.length > 6 ? 6 : 7.5,
-                  }}
-                >
-                  <span>{segment.name[locale === "th" ? "th" : "en"]}</span>
-                  {(soldOut || !segment.enabled) && (
-                    <span className={styles.wheelBadge}>
-                      {t(
-                        !segment.enabled
-                          ? "unavailableSegment"
-                          : "soldOutPrize",
-                      )}
-                    </span>
-                  )}
-                </div>
-              </foreignObject>
             </g>
           );
         })}

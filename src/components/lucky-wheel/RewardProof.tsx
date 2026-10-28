@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Check, Clipboard, Clock3, MapPin, UserRound } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import {
+  LUCKY_WHEEL_IMAGE_BASE_URL,
   resolveWheelImageUrl,
   type OwnedLuckyWheelSpin,
 } from "@/lib/luckyWheel";
@@ -21,10 +22,7 @@ export function RewardProof({ detail }: Props) {
   const [copied, setCopied] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
   const imageUrl = !imageFailed
-    ? resolveWheelImageUrl(
-        detail.prize.imageKey,
-        process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL,
-      )
+    ? resolveWheelImageUrl(detail.prize.imageKey, LUCKY_WHEEL_IMAGE_BASE_URL)
     : null;
   const formatter = new Intl.DateTimeFormat(
     locale === "th" ? "th-TH" : "en-GB",

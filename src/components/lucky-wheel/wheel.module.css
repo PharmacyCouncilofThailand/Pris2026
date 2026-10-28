@@ -73,13 +73,6 @@
   background: #fafafa;
 }
 
-.wheelLabel > span:first-child {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
 .activityTicket .action {
   min-height: 52px;
   border: 1.5px solid #09090b;

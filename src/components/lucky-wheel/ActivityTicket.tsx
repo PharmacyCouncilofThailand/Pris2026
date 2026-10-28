@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import {
+  LUCKY_WHEEL_IMAGE_BASE_URL,
   luckyWheelBlockMessageKey,
   resolveWheelImageUrl,
 } from "@/lib/luckyWheel";
@@ -126,9 +127,6 @@ export function ActivityTicket({
           <div className="mt-4 text-center">
             <p className="text-sm font-extrabold sm:text-lg">
               {t("equalChance")}
-            </p>
-            <p className="mt-1 text-xs text-zinc-500 sm:text-base">
-              {t("soldOutChance")}
             </p>
           </div>
         </section>
@@ -289,7 +287,7 @@ export function ActivityTicket({
                 segment.remaining !== null && segment.remaining <= 0;
               const imageUrl = resolveWheelImageUrl(
                 segment.imageKey,
-                process.env.NEXT_PUBLIC_LUCKY_WHEEL_IMAGE_BASE_URL,
+                LUCKY_WHEEL_IMAGE_BASE_URL,
               );
               return (
                 <li

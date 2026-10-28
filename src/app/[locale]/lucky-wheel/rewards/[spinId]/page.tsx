@@ -15,7 +15,7 @@ import {
 import { RewardProof } from "@/components/lucky-wheel/RewardProof";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002";
-const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE;
+const EVENT_CODE = process.env.NEXT_PUBLIC_EVENT_CODE || "PRIS-2026";
 
 export default function LuckyWheelRewardPage() {
   const t = useTranslations("luckyWheel");
