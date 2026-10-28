@@ -823,6 +823,7 @@
     "speaker": "วิทยากร",
     "speakerDesc": "สำหรับวิทยากรของงาน",
     "joinAsSpeaker": "สมัครสมาชิกสำหรับวิทยากร",
+    "joinAsMedia": "สมัครสมาชิกสำหรับสื่อมวลชน",
     "joinAsBooth": "ลงทะเบียน (Booth)",
     "specialInstitution": "โรงเรียน / มหาวิทยาลัย / สถาบัน",
     "boothName": "บูธในงาน",
@@ -1093,6 +1094,7 @@
     "delegateTypes": {
       "healthHack": "HealthHack",
       "speaker": "วิทยากร",
+      "media": "สื่อมวลชน",
       "booth": "Booth",
       "thaiStudent": "นักศึกษา (ไทย)",
       "internationalStudent": "นักศึกษา (ต่างชาติ)",

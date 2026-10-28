@@ -27,10 +27,17 @@ const inputClass =
   "w-full bg-[#f8f9fc] border border-transparent rounded-2xl py-3.5 px-5 text-sm font-medium text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-gray-100";
 const labelClass = "block text-sm font-bold text-gray-900 mb-2";
 
+const signupTitleKeys = {
+  healthhack: "joinAsHealthHack",
+  booth: "joinAsBooth",
+  speaker: "joinAsSpeaker",
+  media: "joinAsMedia",
+} as const;
+
 export default function SpecialRoleSignUpForm({
   accountType,
 }: {
-  accountType: "healthhack" | "booth" | "speaker";
+  accountType: keyof typeof signupTitleKeys;
 }) {
   const locale = useLocale();
   const pathname = usePathname();
@@ -194,7 +201,7 @@ export default function SpecialRoleSignUpForm({
             </div>
             <div className="text-center mb-10">
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
-                {t(isHealthHack ? "joinAsHealthHack" : isBooth ? "joinAsBooth" : "joinAsSpeaker")}
+                {t(signupTitleKeys[accountType])}
               </h1>
               <p className="text-sm font-medium text-gray-500">
                 {t("fillDetails")}

@@ -822,6 +822,7 @@
     "speaker": "Speaker",
     "speakerDesc": "For conference speakers",
     "joinAsSpeaker": "Join as a Speaker",
+    "joinAsMedia": "Register as Media",
     "joinAsBooth": "Register as Booth",
     "specialInstitution": "School / University / Institution",
     "boothName": "Event booth",
@@ -1092,6 +1093,7 @@
     "delegateTypes": {
       "healthHack": "HealthHack",
       "speaker": "Speaker",
+      "media": "Media",
       "booth": "Booth",
       "thaiStudent": "Thai Student",
       "internationalStudent": "International Student",

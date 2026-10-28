@@ -70,6 +70,7 @@ function getDelegateLabel(
 ): string {
   if (role === "healthhack") return t("delegateTypes.healthHack");
   if (role === "speaker") return t("delegateTypes.speaker");
+  if (role === "media") return t("delegateTypes.media");
   if (role === "booth") return t("delegateTypes.booth");
   switch (delegateType) {
     case "thai_student":
