@@ -80,8 +80,8 @@ const day1Events = [
     ),
     speakers: [
       {
-        name: "Mr. Pattana Prompat (Minister of Public Health)",
-        nameTh: "นายพัฒนา พร้อมพัฒน์ (รัฐมนตรีว่าการกระทรวงสาธารณสุข)",
+        name: "Pharm.Supattra Boonserm (Secretary-General of the Thai Food and Drug Administration (Thai FDA))",
+        nameTh: "ภญ.สุภัทรา บุญเสริม (เลขาธิการคณะกรรมการอาหารและยา)",
       },
     ],
   },
@@ -89,8 +89,8 @@ const day1Events = [
     ...day1Event(
       1005,
       "09:30 – 10:30",
-      "Keynote: Transforming Pharmacy under Ministry of Public Health Policy",
-      "ปาฐกถาพิเศษ พลิกโฉมงานเภสัชกรรมภายใต้นโยบายกระทรวงสาธารณสุข",
+      "Keynote: Roles, Missions, and Vision of the Pharmacy Council of Thailand",
+      "ปาฐกถาพิเศษ บทบาทภารกิจและวิสัยทัศน์สภาเภสัชกรรม",
       "JUPITER 4-7",
       "ห้อง JUPITER 4-7",
       "Keynote",
@@ -99,8 +99,8 @@ const day1Events = [
     ),
     speakers: [
       {
-        name: "Mr. Pattana Prompat (Minister of Public Health)",
-        nameTh: "นายพัฒนา พร้อมพัฒน์ (รัฐมนตรีว่าการกระทรวงสาธารณสุข)",
+        name: "Pharm.Supattra Boonserm (Secretary-General of the Thai Food and Drug Administration (Thai FDA))",
+        nameTh: "ภญ.สุภัทรา บุญเสริม (เลขาธิการคณะกรรมการอาหารและยา)",
       },
       {
         name: "President, Secretary-General and Board Members of the Pharmacy Council",
