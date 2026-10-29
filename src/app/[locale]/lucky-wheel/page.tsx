@@ -30,11 +30,12 @@ function renderSegments(
   eligibility: LuckyWheelEligibility,
 ): LuckyWheelSegment[] {
   if (eligibility.availability.length > 0) {
-    return [...eligibility.availability].sort(
-      (a, b) => a.position - b.position,
-    );
+    return eligibility.availability
+      .filter((segment) => segment.enabled)
+      .sort((a, b) => a.position - b.position);
   }
   return (eligibility.configuration?.segments ?? [])
+    .filter((segment) => segment.enabled)
     .map((segment) => ({
       id: segment.id,
       kind: segment.kind,
