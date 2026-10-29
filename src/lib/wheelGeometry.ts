@@ -28,6 +28,32 @@ export function buildWheelSectors(
   }));
 }
 
+// Spreads no-prize slots evenly between prize slots so admins creating them
+// back to back does not cluster them on the wheel. Each group keeps its own
+// order; every slot gets a key at the centre of its share of the circle.
+export function spreadNoPrizeSegments<T extends { kind: "prize" | "no_prize" }>(
+  segments: ReadonlyArray<T>,
+): T[] {
+  const prizes = segments.filter((segment) => segment.kind === "prize");
+  const noPrizes = segments.filter((segment) => segment.kind === "no_prize");
+  if (prizes.length === 0 || noPrizes.length === 0) return [...segments];
+  const keyed = [
+    ...prizes.map((segment, index) => ({
+      segment,
+      key: (index + 0.5) / prizes.length,
+      group: 0,
+    })),
+    ...noPrizes.map((segment, index) => ({
+      segment,
+      key: (index + 0.5) / noPrizes.length,
+      group: 1,
+    })),
+  ];
+  return keyed
+    .sort((a, b) => a.key - b.key || a.group - b.group)
+    .map(({ segment }) => segment);
+}
+
 export function rotationForWinningSegment(
   segments: ReadonlyArray<{ id: string }>,
   winningSegmentId: string,

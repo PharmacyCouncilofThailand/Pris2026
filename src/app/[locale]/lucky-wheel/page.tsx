@@ -18,6 +18,7 @@ import {
   type LuckyWheelSegment,
   type LuckyWheelSpin,
 } from "@/lib/luckyWheel";
+import { spreadNoPrizeSegments } from "@/lib/wheelGeometry";
 import {
   ActivityTicket,
   type WheelActionPhase,
@@ -30,11 +31,13 @@ function renderSegments(
   eligibility: LuckyWheelEligibility,
 ): LuckyWheelSegment[] {
   if (eligibility.availability.length > 0) {
-    return eligibility.availability
-      .filter((segment) => segment.enabled)
-      .sort((a, b) => a.position - b.position);
+    return spreadNoPrizeSegments(
+      eligibility.availability
+        .filter((segment) => segment.enabled)
+        .sort((a, b) => a.position - b.position),
+    );
   }
-  return (eligibility.configuration?.segments ?? [])
+  const configured = (eligibility.configuration?.segments ?? [])
     .filter((segment) => segment.enabled)
     .map((segment) => ({
       id: segment.id,
@@ -46,6 +49,7 @@ function renderSegments(
       remaining: null,
     }))
     .sort((a, b) => a.position - b.position);
+  return spreadNoPrizeSegments(configured);
 }
 
 export default function LuckyWheelPage() {

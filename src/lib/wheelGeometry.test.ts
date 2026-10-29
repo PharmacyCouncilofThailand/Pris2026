@@ -6,6 +6,7 @@ import {
   buildWheelSectors,
   normalizeAngle,
   rotationForWinningSegment,
+  spreadNoPrizeSegments,
 } from "./wheelGeometry.js";
 
 function ids(count: number) {
@@ -75,4 +76,41 @@ test("unknown winner and invalid turns fail closed", () => {
   const segments = ids(2);
   assert.throws(() => rotationForWinningSegment(segments, "missing"));
   assert.throws(() => rotationForWinningSegment(segments, segments[0].id, -1));
+});
+
+function kinds(pattern: string) {
+  return [...pattern].map((char, index) => ({
+    id: `${char}${index}`,
+    kind: char === "P" ? ("prize" as const) : ("no_prize" as const),
+  }));
+}
+
+function layout(segments: ReadonlyArray<{ kind: string }>) {
+  return segments.map((s) => (s.kind === "prize" ? "P" : "N")).join("");
+}
+
+test("no-prize slots created back to back are spread between prizes", () => {
+  assert.equal(layout(spreadNoPrizeSegments(kinds("PPPNNN"))), "PNPNPN");
+  assert.equal(layout(spreadNoPrizeSegments(kinds("PPPPNN"))), "PNPPNP");
+  assert.equal(layout(spreadNoPrizeSegments(kinds("NNNNPP"))), "NPNNPN");
+});
+
+test("spreading keeps each group's order and every segment", () => {
+  const segments = kinds("PPPNNPNN");
+  const spread = spreadNoPrizeSegments(segments);
+  assert.equal(spread.length, segments.length);
+  assert.deepEqual(
+    spread.filter((s) => s.kind === "prize").map((s) => s.id),
+    ["P0", "P1", "P2", "P5"],
+  );
+  assert.deepEqual(
+    spread.filter((s) => s.kind === "no_prize").map((s) => s.id),
+    ["N3", "N4", "N6", "N7"],
+  );
+});
+
+test("a wheel with only one kind keeps its order", () => {
+  assert.equal(layout(spreadNoPrizeSegments(kinds("PPP"))), "PPP");
+  assert.equal(layout(spreadNoPrizeSegments(kinds("NN"))), "NN");
+  assert.deepEqual(spreadNoPrizeSegments([]), []);
 });
