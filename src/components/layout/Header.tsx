@@ -104,6 +104,7 @@ export default function Header() {
     "/welcome-messages",
     "/abstract-guidelines",
     "/approved-abstracts",
+    "/poster-gallery",
     "/registration-policies",
     "/hotel-booking-form",
     "/oral-poster-presentation-criteria",
@@ -191,7 +192,7 @@ export default function Header() {
             "flex items-center justify-between gap-3",
             isShop
               ? "2xl:grid 2xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] 2xl:items-center 2xl:gap-4"
-              : "xl:grid xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] xl:items-center xl:gap-4",
+              : "min-[1440px]:grid min-[1440px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] min-[1440px]:items-center min-[1440px]:gap-4",
           )}
         >
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
@@ -229,11 +230,11 @@ export default function Header() {
               "hidden items-center justify-center",
               isShop
                 ? "2xl:flex 2xl:justify-self-center"
-                : "xl:flex xl:justify-self-center",
+                : "min-[1440px]:flex min-[1440px]:justify-self-center",
             )}
           >
             <NavigationMenu>
-              <NavigationMenuList className="gap-2">
+              <NavigationMenuList className="gap-0 2xl:gap-2">
                 {visibleNav.map((item) => (
                   <NavigationMenuItem key={item.labelKey}>
                     {item.disabled ? (
@@ -347,7 +348,7 @@ export default function Header() {
               "hidden items-center justify-end gap-3",
               isShop
                 ? "2xl:flex 2xl:justify-self-end"
-                : "xl:flex xl:justify-self-end",
+                : "min-[1440px]:flex min-[1440px]:justify-self-end",
             )}
           >
             {isShop && (
@@ -435,7 +436,7 @@ export default function Header() {
           <div
             className={cn(
               "flex items-center justify-end gap-2 shrink-0",
-              isShop ? "2xl:hidden" : "xl:hidden",
+              isShop ? "2xl:hidden" : "min-[1440px]:hidden",
             )}
           >
             {isShop && (
