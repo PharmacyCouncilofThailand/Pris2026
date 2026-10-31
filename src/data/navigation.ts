@@ -35,6 +35,10 @@ export const navigationData: NavItem[] = [
     ],
   },
   {
+    labelKey: "posterGallery",
+    href: "/poster-gallery",
+  },
+  {
     labelKey: "registration",
     href: "/registration",
   },

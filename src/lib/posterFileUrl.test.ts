@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { isAllowedPosterFileUrl } from "./posterFileUrl";
+import { isAllowedPosterDownloadUrl, isAllowedPosterFileUrl } from "./posterFileUrl";
 
 const ok =
   "https://pub-abc123.r2.dev/events/12/presentations/345/0b9c1f2e-1a2b-4c3d-8e9f-0123456789ab.pdf";
@@ -47,4 +47,14 @@ test("pinned host accepts only that exact host", () => {
 test("unpinned (undefined or empty) keeps any *.r2.dev", () => {
   assert.equal(isAllowedPosterFileUrl(ok, undefined), true);
   assert.equal(isAllowedPosterFileUrl(ok.replace("pub-abc123", "pub-other")), true);
+});
+
+test("download variant also accepts png but keeps every other rule", () => {
+  const png = ok.replace(".pdf", ".png");
+  assert.equal(isAllowedPosterDownloadUrl(png), true);
+  assert.equal(isAllowedPosterDownloadUrl(ok), true);
+  assert.equal(isAllowedPosterDownloadUrl(ok.replace(".pdf", ".exe")), false);
+  assert.equal(isAllowedPosterDownloadUrl(png.replace("pub-abc123.r2.dev", "example.com")), false);
+  assert.equal(isAllowedPosterDownloadUrl(`${png}?x=1`), false);
+  assert.equal(isAllowedPosterDownloadUrl(png, "pub-other.r2.dev"), false);
 });
