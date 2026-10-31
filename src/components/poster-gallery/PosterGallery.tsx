@@ -37,9 +37,8 @@ const TYPES: {
 
 const ROWS_PER_PAGE = 3;
 
-/** Columns of the grid at the current width; mirrors the min-[761px] / min-[1101px] classes. */
-const columnsFor = (width: number) =>
-  width >= 1101 ? 5 : width >= 761 ? 4 : 3;
+/** Columns of the grid at the current width; mirrors the min-[1101px] grid class. */
+const columnsFor = (width: number) => (width >= 1101 ? 4 : 3);
 function useGridColumns(): number {
   return useSyncExternalStore(
     (notify) => {
@@ -47,7 +46,7 @@ function useGridColumns(): number {
       return () => window.removeEventListener("resize", notify);
     },
     () => columnsFor(window.innerWidth),
-    () => 5,
+    () => 4,
   );
 }
 
@@ -259,7 +258,7 @@ export function PosterGallery() {
 
         {list.length > 0 && (
           <>
-            <ul className="grid grid-cols-3 gap-x-3 gap-y-6 pt-6 min-[761px]:grid-cols-4 min-[761px]:gap-x-5 min-[761px]:gap-y-9 min-[761px]:pt-10 min-[1101px]:grid-cols-5 min-[1101px]:gap-x-7 min-[1101px]:gap-y-11 pb-10">
+            <ul className="grid grid-cols-3 gap-x-3 gap-y-6 pt-6 min-[761px]:gap-x-5 min-[761px]:gap-y-9 min-[761px]:pt-10 min-[1101px]:grid-cols-4 min-[1101px]:gap-x-7 min-[1101px]:gap-y-11 pb-10">
               {visible.map((item, index) => {
                 const highlighted =
                   item.presentationType === "highlighted-poster";
