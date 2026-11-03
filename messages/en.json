@@ -193,6 +193,9 @@
   },
   "common": {
     "home": "Home",
+    "eventGallery": "Event Photos",
+    "eventGalleryDay1": "PRIS2026-Day1_HL",
+    "eventGalleryDay2": "PRIS2026-Day2_HL",
     "merchandise": "Souvenirs",
     "innovationWork": "Innovation Work",
     "about": "About",
