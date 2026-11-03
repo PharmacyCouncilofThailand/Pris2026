@@ -1,7 +1,6 @@
 export interface NavItem {
   labelKey: string;
   href?: string;
-  external?: boolean;
   children?: NavItem[];
   disabled?: boolean;
   /** Hide from nav until user is logged in */
@@ -15,19 +14,8 @@ export const navigationData: NavItem[] = [
   },
   {
     labelKey: "eventGallery",
+    href: "/event-gallery",
     authRequired: true,
-    children: [
-      {
-        labelKey: "eventGalleryDay1",
-        href: "https://photos.app.goo.gl/8LyX4zJF2j6KzLjv9",
-        external: true,
-      },
-      {
-        labelKey: "eventGalleryDay2",
-        href: "https://photos.app.goo.gl/iJ89uSGoX8kUxWei7",
-        external: true,
-      },
-    ],
   },
   {
     labelKey: "about",

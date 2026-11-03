@@ -303,37 +303,28 @@ export default function Header() {
                               <li key={child.labelKey}>
                                 <NavigationMenuLink
                                   render={
-                                    child.external ? (
-                                      <a
-                                        href={child.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
-                                      />
-                                    ) : (
-                                      <Link
-                                        href={(child.href || "#") as LinkHref}
-                                        prefetch={true}
-                                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
-                                        onClick={() => {
-                                          if (typeof document !== "undefined") {
-                                            if (
-                                              document.activeElement instanceof
-                                              HTMLElement
-                                            ) {
-                                              document.activeElement.blur();
-                                            }
-                                            document.dispatchEvent(
-                                              new KeyboardEvent("keydown", {
-                                                key: "Escape",
-                                                bubbles: true,
-                                              }),
-                                            );
-                                            document.body.click();
+                                    <Link
+                                      href={(child.href || "#") as LinkHref}
+                                      prefetch={true}
+                                      className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors text-slate-800 hover:text-blue-600 hover:!bg-slate-50 data-[active]:!bg-blue-50 data-[active]:!text-blue-700"
+                                      onClick={() => {
+                                        if (typeof document !== "undefined") {
+                                          if (
+                                            document.activeElement instanceof
+                                            HTMLElement
+                                          ) {
+                                            document.activeElement.blur();
                                           }
-                                        }}
-                                      />
-                                    )
+                                          document.dispatchEvent(
+                                            new KeyboardEvent("keydown", {
+                                              key: "Escape",
+                                              bubbles: true,
+                                            }),
+                                          );
+                                          document.body.click();
+                                        }
+                                      }}
+                                    />
                                   }
                                 >
                                   <div className="text-sm font-black leading-none whitespace-nowrap">
@@ -535,24 +526,13 @@ export default function Header() {
                                 <ul className="mt-4 flex flex-col gap-3 pl-4 border-l-2 border-white/20">
                                   {item.children?.map((child) => (
                                     <li key={child.labelKey}>
-                                      {child.external ? (
-                                        <a
-                                          href={child.href}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="text-gray-300 hover:text-cyan-400 block py-1"
-                                        >
-                                          {t(child.labelKey as TranslationKey)}
-                                        </a>
-                                      ) : (
-                                        <Link
-                                          href={(child.href || "#") as LinkHref}
-                                          prefetch={true}
-                                          className="text-gray-300 hover:text-cyan-400 block py-1"
-                                        >
-                                          {t(child.labelKey as TranslationKey)}
-                                        </Link>
-                                      )}
+                                      <Link
+                                        href={(child.href || "#") as LinkHref}
+                                        prefetch={true}
+                                        className="text-gray-300 hover:text-cyan-400 block py-1"
+                                      >
+                                        {t(child.labelKey as TranslationKey)}
+                                      </Link>
                                     </li>
                                   ))}
                                 </ul>
