@@ -6,18 +6,46 @@ import { useTranslations } from "next-intl";
 
 const albums = [
   {
-    dayKey: "eventGalleryDay1",
+    titleKey: "eventGalleryDay1",
     dateKey: "eventGalleryDay1Date",
     image: "/assets/Img/PRIS_Higlight/PRISHL-47.jpg",
     href: "https://photos.app.goo.gl/8LyX4zJF2j6KzLjv9",
     albumName: "PRIS2026-Day1_HL",
   },
   {
-    dayKey: "eventGalleryDay2",
+    titleKey: "eventGalleryDay2",
     dateKey: "eventGalleryDay2Date",
     image: "/assets/Img/PRIS_Higlight/PRIS30HL-2-5.jpg",
     href: "https://photos.app.goo.gl/iJ89uSGoX8kUxWei7",
     albumName: "PRIS2026-Day2_HL",
+  },
+  {
+    titleKey: "eventGalleryDay1Overview",
+    dateKey: "eventGalleryDay1Date",
+    image: "/assets/Img/PRIS_Higlight/PRIS2026-Day1-Overview.jpg",
+    href: "https://photos.app.goo.gl/ugNd5JfU9vPiuoDQ8",
+    albumName: "PRIS2026_Day1_ภาพรวมงาน",
+  },
+  {
+    titleKey: "eventGalleryDay1Jupiter",
+    dateKey: "eventGalleryDay1Date",
+    image: "/assets/Img/PRIS_Higlight/PRIS2026-Day1-Jupiter.jpg",
+    href: "https://photos.app.goo.gl/Gq3eGs8QRSiivtUN8",
+    albumName: "PRIS2026_Day1_ห้อง Jupiter 11-13",
+  },
+  {
+    titleKey: "eventGalleryDay2Overview",
+    dateKey: "eventGalleryDay2Date",
+    image: "/assets/Img/PRIS_Higlight/PRIS2026-Day2-Overview.jpg",
+    href: "https://photos.app.goo.gl/AWJCJThdFPcapYCR8",
+    albumName: "PRIS2026_Day2_ภาพรวมงาน",
+  },
+  {
+    titleKey: "eventGalleryDay2Jupiter",
+    dateKey: "eventGalleryDay2Date",
+    image: "/assets/Img/PRIS_Higlight/PRIS2026-Day2-Jupiter.jpg",
+    href: "https://photos.app.goo.gl/gwUZ95dtfv3tTPr27",
+    albumName: "PRIS2026_Day2_ห้อง Jupiter 11-13",
   },
 ] as const;
 
@@ -52,7 +80,7 @@ export default function EventGalleryPage() {
               href={album.href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`${t("eventGalleryOpenAlbum")}: ${t(album.dayKey)}`}
+              aria-label={`${t("eventGalleryOpenAlbum")}: ${t(album.titleKey)}`}
               className="group relative isolate min-h-[25rem] overflow-hidden rounded-2xl border border-white/10 bg-[#15171c] shadow-2xl shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300 sm:min-h-[31rem]"
             >
               <Image
@@ -70,7 +98,7 @@ export default function EventGalleryPage() {
                     {t(album.dateKey)}
                   </p>
                   <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
-                    {t(album.dayKey)}
+                    {t(album.titleKey)}
                   </h2>
                   <p className="mt-3 text-sm text-white/70">
                     {t("eventGalleryOpenAlbum")}
