@@ -6,6 +6,13 @@ import { useTranslations } from "next-intl";
 
 const albums = [
   {
+    titleKey: "eventGalleryMainCamera",
+    dateKey: "eventGalleryDateRange",
+    image: "/assets/Img/PRIS_Higlight/PRIS2026-Main-Camera.jpg",
+    href: "https://photos.app.goo.gl/UgfnqNDsmLJuhw9M7",
+    albumName: "PRIS2026_กล้องหลัก",
+  },
+  {
     titleKey: "eventGalleryDay1",
     dateKey: "eventGalleryDay1Date",
     image: "/assets/Img/PRIS_Higlight/PRISHL-47.jpg",
@@ -72,7 +79,7 @@ export default function EventGalleryPage() {
 
         <section
           aria-label={t("eventGallery")}
-          className="grid gap-6 lg:grid-cols-2 lg:gap-8"
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
         >
           {albums.map((album, index) => (
             <a
@@ -81,7 +88,11 @@ export default function EventGalleryPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`${t("eventGalleryOpenAlbum")}: ${t(album.titleKey)}`}
-              className="group relative isolate min-h-[25rem] overflow-hidden rounded-2xl border border-white/10 bg-[#15171c] shadow-2xl shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300 sm:min-h-[31rem]"
+              className={`group relative isolate overflow-hidden rounded-2xl border border-white/10 bg-[#15171c] shadow-2xl shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300 ${
+                index === 0
+                  ? "col-span-1 aspect-[4/3] sm:col-span-2 sm:aspect-[16/8] lg:col-span-4 lg:aspect-[16/6]"
+                  : "aspect-[4/3]"
+              }`}
             >
               <Image
                 src={album.image}
@@ -92,20 +103,45 @@ export default function EventGalleryPage() {
                 loading={index === 0 ? "eager" : "lazy"}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-black/10" />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-5 p-6 sm:p-9">
+              <div
+                className={`absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 ${
+                  index === 0 ? "p-6 sm:p-9 lg:p-12" : "p-4 sm:p-5"
+                }`}
+              >
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-amber-300">
+                  <p
+                    className={`mb-2 font-bold uppercase tracking-[0.2em] text-amber-300 ${
+                      index === 0 ? "text-xs sm:mb-3 sm:text-sm" : "text-[0.65rem]"
+                    }`}
+                  >
                     {t(album.dateKey)}
                   </p>
-                  <h2 className="text-3xl font-black tracking-tight sm:text-4xl">
+                  <h2
+                    className={`font-black tracking-tight ${
+                      index === 0
+                        ? "text-3xl sm:text-5xl lg:text-6xl"
+                        : "text-xl sm:text-2xl"
+                    }`}
+                  >
                     {t(album.titleKey)}
                   </h2>
-                  <p className="mt-3 text-sm text-white/70">
+                  <p
+                    className={`text-white/70 ${
+                      index === 0 ? "mt-3 text-sm sm:text-base" : "mt-2 text-xs"
+                    }`}
+                  >
                     {t("eventGalleryOpenAlbum")}
                   </p>
                 </div>
-                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/35 bg-white/10 text-white backdrop-blur transition-colors group-hover:border-amber-300 group-hover:bg-amber-300 group-hover:text-black">
-                  <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
+                <span
+                  className={`grid shrink-0 place-items-center rounded-full border border-white/35 bg-white/10 text-white backdrop-blur transition-colors group-hover:border-amber-300 group-hover:bg-amber-300 group-hover:text-black ${
+                    index === 0 ? "h-12 w-12 sm:h-14 sm:w-14" : "h-10 w-10"
+                  }`}
+                >
+                  <ArrowUpRight
+                    className={index === 0 ? "h-5 w-5 sm:h-6 sm:w-6" : "h-4 w-4"}
+                    aria-hidden="true"
+                  />
                 </span>
               </div>
             </a>
