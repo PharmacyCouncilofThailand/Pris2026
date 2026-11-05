@@ -1,22 +1,18 @@
 .awards-page {
   --aw-ink: #0f172a;
-  --aw-muted: #526076;
+  --aw-muted: #475569;
   --aw-blue: #2563eb;
+  --aw-orange: #c2410c;
   --aw-rule: #e2e8f0;
   background: #fff;
   color: var(--aw-ink);
   min-height: 100svh;
-  padding-top: 80px;
   line-height: 1.65;
 }
 .awards-page * {
   box-sizing: border-box;
 }
-.awards-page h1,
-.awards-page h2,
-.awards-page h3,
-.awards-page h4,
-.awards-page p {
+.aw-container :is(h2, h3, h4, p) {
   margin: 0;
 }
 .awards-page button,
@@ -61,39 +57,33 @@
   border-radius: 8px;
 }
 .aw-container {
-  width: min(1320px, calc(100% - 72px));
+  width: 100%;
+  max-width: 1320px;
+  padding-inline: 40px;
   margin-inline: auto;
 }
-.aw-hero {
-  padding: 48px 0 35px;
-  background:
-    radial-gradient(ellipse at 70% 0%, #2563eb07, transparent 60%),
-    radial-gradient(ellipse at 15% 100%, #ea580c06, transparent 60%);
+.awards-page > section:first-child {
+  padding-top: 128px;
+  padding-bottom: 48px;
 }
-.aw-hero h1 {
-  font-size: clamp(34px, 4.2vw, 58px);
-  font-weight: 800;
-  line-height: 1.28;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
+.aw-hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  margin-top: 22px;
+  max-width: 100%;
 }
-.aw-hero h1 span {
-  color: var(--aw-blue);
-}
-.aw-hero > .aw-container > p {
-  color: var(--aw-muted);
-  max-width: 750px;
-  margin-top: 14px;
-  font-size: 16px;
-  line-height: 1.8;
+.awards-page .page-hero-line.bg-clip-text {
+  background-image: linear-gradient(to right, #3b82f6, #2563eb, #c2410c);
 }
 .aw-meta {
-  margin-top: 18px;
   display: flex;
+  justify-content: center;
   gap: 16px;
   align-items: center;
   font-size: 12px;
-  color: #64748b;
+  color: var(--aw-muted);
   flex-wrap: wrap;
 }
 .aw-meta span {
@@ -113,38 +103,38 @@
   display: flex;
   align-items: stretch;
   border-bottom: 1px solid var(--aw-rule);
-  gap: 32px;
+  gap: 8px;
+  padding: 16px 0;
 }
 .aw-tabs button {
-  border: 0;
-  background: none;
-  padding: 18px 0 15px;
+  border: 1px solid var(--aw-rule);
+  border-radius: 999px;
+  background: #fff;
+  padding: 7px 8px 7px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 9px;
-  position: relative;
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
-  min-height: 56px;
+  color: var(--aw-muted);
+  min-height: 44px;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
+}
+.aw-tabs button:hover {
+  border-color: #cbd5e1;
+  color: var(--aw-ink);
 }
 .aw-tabs button[aria-pressed="true"] {
-  color: var(--aw-blue);
-}
-.aw-tabs button[aria-pressed="true"]:after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: 3px 3px 0 0;
-  background: var(--aw-blue);
+  color: #fff;
+  border-color: var(--aw-ink);
+  background: var(--aw-ink);
 }
 .aw-count {
   color: #526076;
-  border-radius: 5px;
+  border-radius: 999px;
   background: #f1f5f9;
   min-width: 25px;
   line-height: 23px;
@@ -153,8 +143,8 @@
   font-variant-numeric: tabular-nums;
 }
 .aw-tabs button[aria-pressed="true"] .aw-count {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #ffffff26;
+  color: #fff;
 }
 .aw-tab-short {
   display: none;
@@ -183,10 +173,10 @@
 .aw-search input {
   width: 100%;
   height: 46px;
-  border: 1px solid #d9e0e9;
-  border-radius: 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
   padding: 0 16px 0 43px;
-  background: #fff;
+  background: #f8fafc;
   font-size: 13px;
   color: var(--aw-ink);
 }
@@ -196,9 +186,9 @@
 }
 .aw-filters select {
   height: 46px;
-  border: 1px solid #d9e0e9;
-  border-radius: 9px;
-  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
   padding: 0 35px 0 13px;
   font-size: 13px;
   color: #334155;
@@ -262,15 +252,18 @@
   font-variant-numeric: tabular-nums;
 }
 .aw-index > button[aria-pressed="true"] {
-  background: #eff6ff;
-  color: #1d4ed8;
+  background: #fff7ed;
+  color: #431407;
   font-weight: 600;
 }
 .aw-index > button:hover {
   background: #f8fafc;
 }
 .aw-index > button[aria-pressed="true"]:hover {
-  background: #eff6ff;
+  background: #ffedd5;
+}
+.aw-index > button[aria-pressed="true"] > span:last-child {
+  color: #c2410c;
 }
 .aw-index .aw-index-note {
   margin: 22px 13px 0;
@@ -345,7 +338,7 @@
   color: var(--aw-rank-ink);
   background: var(--aw-rank-ground);
   border: 1px solid var(--aw-rank-line);
-  border-radius: 9px;
+  border-radius: 12px;
   padding: 15px 18px;
   margin-bottom: 3px;
   display: flex;
@@ -388,8 +381,9 @@
 }
 .aw-work {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 174px;
-  gap: 30px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 28px;
   border-bottom: 1px solid var(--aw-rule);
   padding: 25px 0;
 }
@@ -419,108 +413,62 @@
 }
 .aw-actions {
   display: flex;
-  gap: 16px;
   align-items: center;
-  flex-wrap: wrap;
-  margin-top: 11px;
 }
-.aw-actions > a,
-.aw-actions > button {
-  border: 0;
-  background: none;
-  padding: 0;
+.aw-button {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  min-height: 34px;
-  color: var(--aw-blue);
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 4px;
-}
-.aw-actions > button,
-.aw-actions > span {
-  color: #64748b;
-  font-size: 12px;
-}
-.aw-actions :is(a, button):hover {
-  text-decoration-color: currentColor;
-}
-.aw-actions svg {
-  width: 14px;
-  height: 14px;
-}
-.aw-thumb-button {
-  align-self: center;
-  border: 1px solid var(--aw-rule);
-  border-radius: 10px;
-  background: #f5f7fa;
-  overflow: hidden;
-  padding: 0;
-  width: 100%;
-}
-.aw-thumb-button:hover {
-  border-color: #94a3b8;
-}
-.aw-thumbnail {
-  aspect-ratio: 16/10;
-  width: 100%;
-  position: relative;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  background: #f5f7fa;
-  overflow: hidden;
-}
-.aw-thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  position: absolute;
-  inset: 0;
-}
-.aw-thumbnail-status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 11px;
-  line-height: 1.6;
-  color: #64748b;
-  padding: 10px;
+  gap: 10px;
+  min-height: 46px;
+  padding: 11px 18px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.5;
   text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease-out,
+    border-color 160ms ease-out;
 }
-.aw-thumbnail-status svg {
-  width: 25px;
-  height: 25px;
+.aw-view-work {
+  background: var(--aw-ink);
+  color: #fff;
+  white-space: nowrap;
 }
-.aw-expanded {
-  grid-column: 1/-1;
-  background: #f4f6f8;
-  border-radius: 10px;
-  padding: 18px;
+.aw-view-work:hover {
+  background: #000;
 }
-.aw-expanded[hidden] {
-  display: none;
+.aw-view-work:active {
+  background: #1e293b;
 }
-.aw-expanded > p {
+.aw-announcement-download {
+  background: var(--aw-orange);
+  color: #fff;
+  min-height: 48px;
+  padding-inline: 24px;
+}
+.aw-announcement-download:hover {
+  background: #9a3412;
+}
+.aw-announcement-download:active {
+  background: #7c2d12;
+}
+.aw-file-format {
+  border-left: 1px solid #ffffff66;
+  padding-left: 10px;
   font-size: 11px;
-  color: #64748b;
-  margin-top: 8px;
+  font-weight: 700;
 }
-.aw-thumbnail-expanded {
-  aspect-ratio: auto;
-  min-height: 180px;
+.aw-actions > span {
+  color: var(--aw-muted);
+  font-size: 12px;
 }
-.aw-thumbnail-expanded img {
-  position: static;
-  max-height: 650px;
-  height: auto;
-  object-fit: contain;
+.aw-button svg {
+  width: 18px;
+  height: 18px;
 }
 .aw-status,
 .aw-empty {
@@ -539,10 +487,15 @@
 .aw-empty button {
   margin-top: 16px;
   border: 1px solid var(--aw-rule);
-  border-radius: 8px;
-  background: #fff;
-  padding: 9px 15px;
-  color: var(--aw-ink);
+  border-radius: 999px;
+  background: var(--aw-ink);
+  padding: 11px 20px;
+  min-height: 44px;
+  color: #fff;
+}
+.aw-status button:hover,
+.aw-empty button:hover {
+  background: #000;
 }
 .aw-end-note {
   font-size: 12px;
@@ -570,10 +523,10 @@
 }
 @media (max-width: 1099px) {
   .aw-container {
-    width: calc(100% - 48px);
+    padding-inline: 24px;
   }
   .aw-tabs {
-    gap: 23px;
+    gap: 8px;
   }
   .aw-tabs button {
     font-size: 13px;
@@ -583,7 +536,6 @@
     gap: 28px;
   }
   .aw-work {
-    grid-template-columns: minmax(0, 1fr) 134px;
     gap: 20px;
   }
   .aw-work h4 {
@@ -591,28 +543,15 @@
   }
 }
 @media (max-width: 760px) {
-  .awards-page {
-    padding-top: 68px;
+  .awards-page > section:first-child {
+    padding-top: 112px;
+    padding-bottom: 32px;
   }
   .aw-container {
-    width: calc(100% - 36px);
+    padding-inline: 16px;
   }
-  .aw-hero {
-    padding: 34px 0 28px;
-  }
-  .aw-hero h1 {
-    font-size: 38px;
-    line-height: 1.35;
-    letter-spacing: -0.02em;
-  }
-  .aw-hero h1 span {
-    display: block;
-    margin-top: 2px;
-  }
-  .aw-hero > .aw-container > p {
-    font-size: 13px;
-    line-height: 1.8;
-    margin-top: 13px;
+  .aw-hero-actions {
+    width: 100%;
   }
   .aw-meta {
     gap: 11px;
@@ -627,16 +566,16 @@
     height: 12px;
   }
   .aw-tabs {
-    gap: 0;
+    gap: 6px;
     display: grid;
     grid-template-columns: 0.8fr 1.45fr 1fr;
   }
   .aw-tabs button {
     gap: 6px;
     font-size: 12px;
-    padding: 14px 3px 12px;
+    padding: 7px 6px;
     line-height: 1.5;
-    min-height: 53px;
+    min-height: 44px;
   }
   .aw-tab-full {
     display: none;
@@ -740,7 +679,7 @@
     padding: 3px 7px;
   }
   .aw-work {
-    grid-template-columns: minmax(0, 1fr) 88px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
     padding: 20px 0;
   }
@@ -755,35 +694,14 @@
     font-size: 10px;
   }
   .aw-actions {
-    gap: 15px;
-    margin-top: 8px;
+    width: 100%;
   }
-  .aw-actions > a,
-  .aw-actions > button {
-    font-size: 11px;
-    min-height: 40px;
+  .aw-view-work,
+  .aw-announcement-download {
+    width: 100%;
   }
-  .aw-thumb-button {
-    align-self: start;
-    margin-top: 25px;
-    border-radius: 7px;
-  }
-  .aw-thumbnail {
-    aspect-ratio: 4/3;
-  }
-  .aw-thumbnail-status {
-    font-size: 10px;
-    padding: 7px;
-  }
-  .aw-thumbnail-status svg {
-    width: 19px;
-    height: 19px;
-  }
-  .aw-expanded {
-    padding: 12px;
-  }
-  .aw-expanded .aw-thumbnail-expanded {
-    aspect-ratio: auto;
+  .aw-button {
+    font-size: 13px;
   }
   .aw-end-note {
     text-align: left;

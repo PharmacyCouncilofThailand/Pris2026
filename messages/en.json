@@ -1,6 +1,8 @@
 {
   "awards": {
     "title": "Research Awards",
+    "title1": "Research",
+    "title2": "Awards",
     "description": "Celebrating award-winning pharmacy research and innovation at the Pharmacy Research and Innovation Summit 2026.",
     "date": "Announced on 30 October 2026",
     "works": "57 award-winning works",
@@ -10,12 +12,9 @@
     "allAwards": "All awards",
     "awards": "Award level",
     "result": "works",
-    "preview": "Preview",
-    "closePreview": "Close preview",
-    "open": "Open presentation",
+    "open": "View presentation",
+    "downloadResults": "Download award results",
     "newTab": "Open presentation in a new tab",
-    "firstPage": "First-page preview",
-    "noPreview": "Preview is currently unavailable",
     "none": "No matching works",
     "noneDescription": "Try another search term, category, or award level.",
     "reset": "Clear filters",
@@ -35,7 +34,6 @@
     "error": "Unable to load award results. Please try again.",
     "retry": "Try again",
     "fileUnavailable": "Presentation file is unavailable",
-    "loadingPreview": "Loading preview…",
     "presentationTypes": "Presentation type"
   },
   "paymentReturn": {

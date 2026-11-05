@@ -2,8 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { CalendarDays, ExternalLink, Eye, Search, Trophy } from "lucide-react";
+import {
+  CalendarDays,
+  Download,
+  ExternalLink,
+  Search,
+  Trophy,
+} from "lucide-react";
 import { Link } from "@/i18n/routing";
+import PageHero from "@/components/sections/PageHero";
 import { getAwardResults } from "@/lib/presentationApi";
 import {
   awardGroups,
@@ -12,7 +19,6 @@ import {
   type AwardFilters,
 } from "@/lib/awards";
 import type { AwardItem, AwardLevel } from "@/types/awards";
-import { AwardThumbnail } from "./AwardThumbnail";
 import "./awards.css";
 
 const groupLabels = {
@@ -34,71 +40,27 @@ const initialFilters: AwardFilters = {
 
 function AwardWork({ item }: { item: AwardItem }) {
   const t = useTranslations("awards");
-  const [expanded, setExpanded] = useState(false);
-  const key = `${item.trackingId}:${item.file?.url}:${item.file?.version}`;
-  const previewId = `award-preview-${item.trackingId}`;
   return (
     <article className="aw-work">
       <div className="aw-work-copy">
         <span className="aw-code">{item.trackingId}</span>
         <h4>{item.title}</h4>
         <p className="aw-author">{item.submitterName}</p>
-        <div className="aw-actions">
-          {item.file ? (
-            <a
-              href={item.file.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`${t("newTab")}: ${item.trackingId}`}
-            >
-              {t("open")}
-              <ExternalLink aria-hidden="true" />
-            </a>
-          ) : (
-            <span>{t("fileUnavailable")}</span>
-          )}
-          {item.file && (
-            <button
-              type="button"
-              aria-expanded={expanded}
-              aria-controls={previewId}
-              onClick={() => setExpanded((v) => !v)}
-            >
-              {t(expanded ? "closePreview" : "preview")}
-              <Eye aria-hidden="true" />
-            </button>
-          )}
-        </div>
       </div>
-      <button
-        type="button"
-        className="aw-thumb-button"
-        disabled={!item.file}
-        aria-expanded={expanded}
-        aria-controls={previewId}
-        aria-label={`${t("preview")}: ${item.trackingId}`}
-        onClick={() => setExpanded((v) => !v)}
-      >
-        <AwardThumbnail
-          key={key}
-          file={item.file}
-          title={`${item.title} — ${t("firstPage")}`}
-        />
-      </button>
-      <div id={previewId} className="aw-expanded" hidden={!expanded}>
-        {expanded && (
-          <>
-            <AwardThumbnail
-              key={`${key}:expanded`}
-              file={item.file}
-              title={item.title}
-              expanded
-            />
-            <p>
-              {t("firstPage")} ·{" "}
-              {item.file?.mimeType === "application/pdf" ? "PDF" : "PNG"}
-            </p>
-          </>
+      <div className="aw-actions">
+        {item.file ? (
+          <a
+            href={item.file.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="aw-button aw-view-work"
+            aria-label={`${t("open")}: ${item.trackingId} (${t("newTab")})`}
+          >
+            {t("open")}
+            <ExternalLink aria-hidden="true" />
+          </a>
+        ) : (
+          <span>{t("fileUnavailable")}</span>
         )}
       </div>
     </article>
@@ -141,24 +103,36 @@ export function AwardsPage() {
   }
   return (
     <main className="awards-page">
-      <section className="aw-hero">
-        <div className="aw-container">
-          <h1>
-            {t("title")} <span>PRIS 2026</span>
-          </h1>
-          <p>{t("description")}</p>
-          <div className="aw-meta">
-            <span>
-              <CalendarDays aria-hidden="true" />
-              {t("date")}
-            </span>
-            <span>
-              <Trophy aria-hidden="true" />
-              {t("works")}
-            </span>
+      <PageHero
+        title1={t("title1")}
+        title2={t("title2")}
+        inlineTitle
+        titleSizeClassName="text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem]"
+        subtitle={t("description")}
+        action={
+          <div className="aw-hero-actions page-hero-sub">
+            <div className="aw-meta">
+              <span>
+                <CalendarDays aria-hidden="true" />
+                {t("date")}
+              </span>
+              <span>
+                <Trophy aria-hidden="true" />
+                {t("works")}
+              </span>
+            </div>
+            <a
+              className="aw-button aw-announcement-download"
+              href="/documents/award-results-2026.pdf"
+              download="ผลการตัดสินรางวัล.pdf"
+            >
+              <Download aria-hidden="true" />
+              <span>{t("downloadResults")}</span>
+              <span className="aw-file-format">PDF</span>
+            </a>
           </div>
-        </div>
-      </section>
+        }
+      />
       <div className="aw-container">
         <div
           className="aw-tabs"
