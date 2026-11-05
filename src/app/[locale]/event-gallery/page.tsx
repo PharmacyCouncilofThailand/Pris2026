@@ -8,23 +8,16 @@ const albums = [
   {
     titleKey: "eventGalleryMainCamera",
     dateKey: "eventGalleryDateRange",
+    image: "/assets/Img/PRIS_Higlight/PRIS2026-PRIS-Main-Camera.jpg",
+    href: "https://photos.app.goo.gl/RAxwEH672YZYsZTM7",
+    albumName: "PRIS-กล้องหลัก",
+  },
+  {
+    titleKey: "eventGallerySecondaryCamera",
+    dateKey: "eventGalleryDateRange",
     image: "/assets/Img/PRIS_Higlight/PRIS2026-Main-Camera.jpg",
     href: "https://photos.app.goo.gl/UgfnqNDsmLJuhw9M7",
     albumName: "PRIS2026_กล้องหลัก",
-  },
-  {
-    titleKey: "eventGalleryDay1",
-    dateKey: "eventGalleryDay1Date",
-    image: "/assets/Img/PRIS_Higlight/PRISHL-47.jpg",
-    href: "https://photos.app.goo.gl/8LyX4zJF2j6KzLjv9",
-    albumName: "PRIS2026-Day1_HL",
-  },
-  {
-    titleKey: "eventGalleryDay2",
-    dateKey: "eventGalleryDay2Date",
-    image: "/assets/Img/PRIS_Higlight/PRIS30HL-2-5.jpg",
-    href: "https://photos.app.goo.gl/iJ89uSGoX8kUxWei7",
-    albumName: "PRIS2026-Day2_HL",
   },
   {
     titleKey: "eventGalleryDay1Overview",
@@ -53,6 +46,20 @@ const albums = [
     image: "/assets/Img/PRIS_Higlight/PRIS2026-Day2-Jupiter.jpg",
     href: "https://photos.app.goo.gl/gwUZ95dtfv3tTPr27",
     albumName: "PRIS2026_Day2_ห้อง Jupiter 11-13",
+  },
+  {
+    titleKey: "eventGalleryDay1",
+    dateKey: "eventGalleryDay1Date",
+    image: "/assets/Img/PRIS_Higlight/PRISHL-47.jpg",
+    href: "https://photos.app.goo.gl/8LyX4zJF2j6KzLjv9",
+    albumName: "PRIS2026-Day1_HL",
+  },
+  {
+    titleKey: "eventGalleryDay2",
+    dateKey: "eventGalleryDay2Date",
+    image: "/assets/Img/PRIS_Higlight/PRIS30HL-2-5.jpg",
+    href: "https://photos.app.goo.gl/iJ89uSGoX8kUxWei7",
+    albumName: "PRIS2026-Day2_HL",
   },
 ] as const;
 
@@ -90,7 +97,7 @@ export default function EventGalleryPage() {
               aria-label={`${t("eventGalleryOpenAlbum")}: ${t(album.titleKey)}`}
               className={`group relative isolate overflow-hidden rounded-2xl border border-white/10 bg-[#15171c] shadow-2xl shadow-black/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-300 ${
                 index === 0
-                  ? "col-span-1 aspect-[4/3] sm:col-span-2 sm:aspect-[16/8] lg:col-span-4 lg:aspect-[16/6]"
+                  ? "col-span-1 aspect-[4/3] sm:col-span-2 sm:aspect-[16/7] lg:col-span-4 lg:aspect-[16/5]"
                   : "aspect-[4/3]"
               }`}
             >
@@ -98,7 +105,11 @@ export default function EventGalleryPage() {
                 src={album.image}
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
+                sizes={
+                  index === 0
+                    ? "(min-width: 1024px) 100vw, (min-width: 640px) 100vw, 100vw"
+                    : "(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                }
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 loading={index === 0 ? "eager" : "lazy"}
               />
@@ -111,16 +122,14 @@ export default function EventGalleryPage() {
                 <div>
                   <p
                     className={`mb-2 font-bold uppercase tracking-[0.2em] text-amber-300 ${
-                      index === 0 ? "text-xs sm:mb-3 sm:text-sm" : "text-[0.65rem]"
+                      index === 0 ? "text-xs sm:text-sm" : "text-[0.65rem]"
                     }`}
                   >
                     {t(album.dateKey)}
                   </p>
                   <h2
                     className={`font-black tracking-tight ${
-                      index === 0
-                        ? "text-3xl sm:text-5xl lg:text-6xl"
-                        : "text-xl sm:text-2xl"
+                      index === 0 ? "text-3xl sm:text-5xl lg:text-6xl" : "text-xl sm:text-2xl"
                     }`}
                   >
                     {t(album.titleKey)}
