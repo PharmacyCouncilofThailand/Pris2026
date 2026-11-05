@@ -37,8 +37,11 @@ export const navigationData: NavItem[] = [
         href: "/approved-abstracts",
       },
       { labelKey: "presentationTemplates", href: "/presentation-templates" },
-      { labelKey: "awardResults", href: "/awards" },
     ],
+  },
+  {
+    labelKey: "awardResults",
+    href: "/awards",
   },
   {
     labelKey: "posterGallery",

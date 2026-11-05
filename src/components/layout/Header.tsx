@@ -186,16 +186,8 @@ export default function Header() {
       )}
     >
       <div className="w-full px-4 md:px-6 xl:px-8">
-        {/* Shop pages add a cart button, so they switch to the full menu at
-            2xl (1536px) instead of xl to keep the menu from overlapping. */}
-        <div
-          className={cn(
-            "flex items-center justify-between gap-3",
-            isShop
-              ? "2xl:grid 2xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] 2xl:items-center 2xl:gap-4"
-              : "min-[1440px]:grid min-[1440px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] min-[1440px]:items-center min-[1440px]:gap-4",
-          )}
-        >
+        {/* The expanded primary menu needs room for the logo and account/cart controls. */}
+        <div className="flex items-center justify-between gap-3 min-[1760px]:grid min-[1760px]:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] min-[1760px]:items-center min-[1760px]:gap-4">
           <div className="flex min-w-0 items-center justify-start xl:justify-self-start">
             <Link
               href="/"
@@ -226,14 +218,7 @@ export default function Header() {
             </Link>
           </div>
 
-          <div
-            className={cn(
-              "hidden items-center justify-center",
-              isShop
-                ? "2xl:flex 2xl:justify-self-center"
-                : "min-[1440px]:flex min-[1440px]:justify-self-center",
-            )}
-          >
+          <div className="hidden items-center justify-center min-[1760px]:flex min-[1760px]:justify-self-center">
             <NavigationMenu>
               <NavigationMenuList className="gap-0 2xl:gap-2">
                 {visibleNav.map((item) => (
@@ -344,14 +329,7 @@ export default function Header() {
             </NavigationMenu>
           </div>
 
-          <div
-            className={cn(
-              "hidden items-center justify-end gap-3",
-              isShop
-                ? "2xl:flex 2xl:justify-self-end"
-                : "min-[1440px]:flex min-[1440px]:justify-self-end",
-            )}
-          >
+          <div className="hidden items-center justify-end gap-3 min-[1760px]:flex min-[1760px]:justify-self-end">
             {isShop && (
               <MerchandiseCartButton tone={useDarkText ? "dark" : "light"} />
             )}
@@ -434,12 +412,7 @@ export default function Header() {
             )}
           </div>
 
-          <div
-            className={cn(
-              "flex items-center justify-end gap-2 shrink-0",
-              isShop ? "2xl:hidden" : "min-[1440px]:hidden",
-            )}
-          >
+          <div className="flex items-center justify-end gap-2 shrink-0 min-[1760px]:hidden">
             {isShop && (
               <MerchandiseCartButton tone={useDarkText ? "dark" : "light"} />
             )}
@@ -515,6 +488,7 @@ export default function Header() {
                                     : undefined
                                 }
                                 className="text-lg font-medium hover:text-cyan-400 block"
+                                onClick={() => setMenuOpen(false)}
                               >
                                 {t(item.labelKey as TranslationKey)}
                               </Link>

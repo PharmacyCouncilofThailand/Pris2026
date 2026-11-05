@@ -1,6 +1,10 @@
 # Awards announcement implementation
 
-Recorded 5 November 2026. This public Read surface implements the user-approved design B and [approved specification](../superpowers/specs/2026-11-05-awards-announcement-design.md) at `/th/awards` and `/en/awards`, under Abstracts.
+Recorded 5 November 2026. This public Read surface implements the user-approved design B and [approved specification](../superpowers/specs/2026-11-05-awards-announcement-design.md) at `/th/awards` and `/en/awards`. Following the user's navigation revision, Award results is a top-level Header item between Abstracts and Poster Gallery, using the shared desktop/mobile navigation data.
+
+The extra primary item caused the desktop navigation to overlap the locale/account controls at 1440px. The Header now consistently switches to its existing compact menu below 1760px, including shop pages; the full navigation retains its original typography and spacing. No links are removed. The same item order is used in the compact menu.
+
+Navigation follow-up: Thai desktop at 1920px and English at 1760px showed Award results immediately after Abstracts and before Poster Works; the compact menu preserved that order at 1440px and 390px. Selecting a primary compact-menu link closes the drawer. Changed-file ESLint and TypeScript passed. Captures: `.impeccable/review/awards/navigation-top-level-desktop.jpg` and `navigation-top-level-mobile.jpg`.
 
 ## Current visual reference — Poster Gallery
 
