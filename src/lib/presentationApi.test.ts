@@ -2,12 +2,39 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   getApprovedAnnouncements,
+  getAwardResults,
   getOwnerPresentation,
   PresentationApiError,
   uploadPresentation,
 } from "./presentationApi";
 import { selectPresentationFile } from "./presentationSubmissionState";
 import type { UploadDto } from "../types/presentations";
+
+test("awards fetch current public data without caching and reject failed responses", async () => {
+  const original = globalThis.fetch;
+  const controller = new AbortController();
+  const items = [{ trackingId: "PRIS-2026-O099", file: null }];
+  try {
+    globalThis.fetch = async (url, options) => {
+      assert.ok(String(url).endsWith("/api/events/PRIS-2026/awards"));
+      assert.equal(options?.cache, "no-store");
+      assert.equal(options?.signal, controller.signal);
+      assert.equal(new Headers(options?.headers).has("Authorization"), false);
+      return Response.json({ success: true, data: { items } });
+    };
+    assert.deepEqual(await getAwardResults(controller.signal), items);
+    for (const response of [
+      Response.json({ success: true, data: {} }),
+      Response.json({ success: false, data: { items: [] } }),
+      new Response("unavailable", { status: 503 }),
+    ]) {
+      globalThis.fetch = async () => response;
+      await assert.rejects(getAwardResults(), /AWARDS_UNAVAILABLE/);
+    }
+  } finally {
+    globalThis.fetch = original;
+  }
+});
 
 test("announcements use the public API, no cache, and abort signal; failures reject", async () => {
   const originalFetch = globalThis.fetch;

@@ -8,13 +8,16 @@ function abortError(): Error {
 }
 
 async function render(url: string, width: number): Promise<Blob> {
-  const pdfjs = await import("pdfjs-dist");
+  // The minified ESM build avoids PDF.js/Next 16 Webpack runtime name collisions.
+  const pdfjs = await import("pdfjs-dist/build/pdf.min.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
     import.meta.url,
   ).toString();
 
-  const task = pdfjs.getDocument({ url: `/api/poster-kiosk/file?url=${encodeURIComponent(url)}` });
+  const task = pdfjs.getDocument({
+    url: `/api/poster-kiosk/file?url=${encodeURIComponent(url)}`,
+  });
   try {
     const pdf = await task.promise;
     const page = await pdf.getPage(1);
@@ -26,7 +29,8 @@ async function render(url: string, width: number): Promise<Blob> {
     await page.render({ canvas, viewport }).promise;
     return await new Promise<Blob>((resolve, reject) =>
       canvas.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error("Poster canvas export failed"))),
+        (b) =>
+          b ? resolve(b) : reject(new Error("Poster canvas export failed")),
         "image/png",
       ),
     );
@@ -39,9 +43,10 @@ export async function renderPdfFirstPage(
   url: string,
   width: number,
   signal?: AbortSignal,
+  version?: number,
 ): Promise<Blob> {
   if (signal?.aborted) throw abortError();
-  const key = `${url}@${width}`;
+  const key = `${url}@${width}${version === undefined ? "" : `@v${version}`}`;
 
   const cached = cache.get(key);
   if (cached) return cached;

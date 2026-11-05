@@ -104,6 +104,7 @@ export default function Header() {
     "/welcome-messages",
     "/abstract-guidelines",
     "/approved-abstracts",
+    "/awards",
     "/poster-gallery",
     "/registration-policies",
     "/hotel-booking-form",

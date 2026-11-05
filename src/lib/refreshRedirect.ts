@@ -19,6 +19,7 @@ export function shouldRedirectReload(pathname: string, search = ""): boolean {
     normalized === "/sessions/confirm" ||
     normalized === "/presentation-templates" ||
     normalized === "/poster-kiosk" ||
+    normalized === "/awards" ||
     directReturn
   ) {
     return false;

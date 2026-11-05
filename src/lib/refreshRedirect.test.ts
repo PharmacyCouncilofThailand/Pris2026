@@ -14,6 +14,9 @@ test("reload redirect exemption keeps home and invitation confirmation routes", 
     "/presentation-templates",
     "/th/presentation-templates/",
     "/en/presentation-templates",
+    "/awards",
+    "/th/awards/",
+    "/en/awards",
   ]) {
     assert.equal(shouldRedirectReload(pathname), false, pathname);
   }

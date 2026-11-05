@@ -9,6 +9,23 @@ const API_BASE = (
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3002"
 ).replace(/\/$/, "");
 
+export async function getAwardResults(
+  signal?: AbortSignal,
+): Promise<import("@/types/awards").AwardItem[]> {
+  const response = await fetch(`${API_BASE}/api/events/PRIS-2026/awards`, {
+    signal,
+    cache: "no-store",
+  });
+  const body = await response.json().catch(() => null);
+  if (
+    !response.ok ||
+    body?.success !== true ||
+    !Array.isArray(body.data?.items)
+  )
+    throw new PresentationApiError("AWARDS_UNAVAILABLE", response.status);
+  return body.data.items;
+}
+
 export async function getApprovedAnnouncements(
   signal?: AbortSignal,
 ): Promise<Announcement[]> {
