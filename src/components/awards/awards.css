@@ -380,15 +380,8 @@
   font-variant-numeric: tabular-nums;
 }
 .aw-work {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 28px;
   border-bottom: 1px solid var(--aw-rule);
   padding: 25px 0;
-}
-.aw-work-copy {
-  min-width: 0;
 }
 .aw-code {
   display: block;
@@ -411,10 +404,6 @@
   color: var(--aw-muted);
   line-height: 1.7;
 }
-.aw-actions {
-  display: flex;
-  align-items: center;
-}
 .aw-button {
   display: inline-flex;
   align-items: center;
@@ -433,17 +422,6 @@
     background-color 160ms ease-out,
     border-color 160ms ease-out;
 }
-.aw-view-work {
-  background: var(--aw-ink);
-  color: #fff;
-  white-space: nowrap;
-}
-.aw-view-work:hover {
-  background: #000;
-}
-.aw-view-work:active {
-  background: #1e293b;
-}
 .aw-announcement-download {
   background: var(--aw-orange);
   color: #fff;
@@ -461,10 +439,6 @@
   padding-left: 10px;
   font-size: 11px;
   font-weight: 700;
-}
-.aw-actions > span {
-  color: var(--aw-muted);
-  font-size: 12px;
 }
 .aw-button svg {
   width: 18px;
@@ -534,9 +508,6 @@
   .aw-reading {
     grid-template-columns: 205px minmax(0, 1fr);
     gap: 28px;
-  }
-  .aw-work {
-    gap: 20px;
   }
   .aw-work h4 {
     font-size: 16px;
@@ -679,8 +650,6 @@
     padding: 3px 7px;
   }
   .aw-work {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
     padding: 20px 0;
   }
   .aw-work h4 {
@@ -693,10 +662,6 @@
   .aw-code {
     font-size: 10px;
   }
-  .aw-actions {
-    width: 100%;
-  }
-  .aw-view-work,
   .aw-announcement-download {
     width: 100%;
   }

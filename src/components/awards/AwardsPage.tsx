@@ -39,30 +39,11 @@ const initialFilters: AwardFilters = {
 };
 
 function AwardWork({ item }: { item: AwardItem }) {
-  const t = useTranslations("awards");
   return (
     <article className="aw-work">
-      <div className="aw-work-copy">
-        <span className="aw-code">{item.trackingId}</span>
-        <h4>{item.title}</h4>
-        <p className="aw-author">{item.submitterName}</p>
-      </div>
-      <div className="aw-actions">
-        {item.file ? (
-          <a
-            href={item.file.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="aw-button aw-view-work"
-            aria-label={`${t("open")}: ${item.trackingId} (${t("newTab")})`}
-          >
-            {t("open")}
-            <ExternalLink aria-hidden="true" />
-          </a>
-        ) : (
-          <span>{t("fileUnavailable")}</span>
-        )}
-      </div>
+      <span className="aw-code">{item.trackingId}</span>
+      <h4>{item.title}</h4>
+      <p className="aw-author">{item.submitterName}</p>
     </article>
   );
 }
@@ -311,7 +292,7 @@ export function AwardsPage() {
                               .filter((r) => r.awardLevel === level)
                               .map((item) => (
                                 <AwardWork
-                                  key={`${item.trackingId}:${item.file?.url}:${item.file?.version}`}
+                                  key={item.trackingId}
                                   item={item}
                                 />
                               ))}

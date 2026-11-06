@@ -12,9 +12,7 @@
     "allAwards": "All awards",
     "awards": "Award level",
     "result": "works",
-    "open": "View presentation",
     "downloadResults": "Download award results",
-    "newTab": "Open presentation in a new tab",
     "none": "No matching works",
     "noneDescription": "Try another search term, category, or award level.",
     "reset": "Clear filters",
@@ -33,7 +31,6 @@
     "loading": "Loading award results…",
     "error": "Unable to load award results. Please try again.",
     "retry": "Try again",
-    "fileUnavailable": "Presentation file is unavailable",
     "presentationTypes": "Presentation type"
   },
   "paymentReturn": {
